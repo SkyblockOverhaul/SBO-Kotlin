@@ -21,6 +21,7 @@ import net.sbo.mod.utils.Helper.lastInqDeath
 import net.sbo.mod.utils.Helper.lastLootShare
 import net.sbo.mod.utils.Helper.removeFormatting
 import net.sbo.mod.utils.Helper.sleep
+import net.sbo.mod.utils.Mayor
 import net.sbo.mod.utils.Mayor.getMayor
 import net.sbo.mod.utils.Player
 import net.sbo.mod.utils.SboTimerManager
@@ -42,7 +43,7 @@ import net.sbo.mod.utils.data.SboDataObject.sboData
 import java.util.regex.Pattern
 
 object DianaTracker {
-    private val rareDrops = mapOf<String, String>("DWARF_TURTLE_SHELLMET" to "§9", "CROCHET_TIGER_PLUSHIE" to "§5", "ANTIQUE_REMEDIES" to "§5", "MINOS_RELIC" to "§5")
+    private val rareDrops = mapOf<String, String>("DWARF_TURTLE_SHELMET" to "§9", "CROCHET_TIGER_PLUSHIE" to "§5", "ANTIQUE_REMEDIES" to "§5", "MINOS_RELIC" to "§5")
     private val otherDrops = listOf("ENCHANTED_ANCIENT_CLAW", "ANCIENT_CLAW", "ENCHANTED_GOLD", "ENCHANTED_IRON")
     private val sackDrops = listOf("Enchanted Gold", "Enchanted Iron", "Ancient Claw", "Enchanted Ancient Claw")
     private val forbiddenCoins = listOf(1L, 5L, 20L, 1000L, 2000L, 3000L, 4000L, 5000L, 7500L, 8000L, 10000L, 12000L, 15000L, 20000L, 25000L, 40000L, 50000L)
@@ -52,11 +53,11 @@ object DianaTracker {
 
     fun init() {
         Register.command("sboresetsession") {
-            dianaTrackerSession = DianaTrackerSessionData()
-            timerSession.reset()
-            SboDataObject.save("DianaTrackerSessionData")
+            dianaTrackerSession.reset().save()
             Chat.chat("§6[SBO] §aDiana session tracker has been reset.")
             DianaMobs.updateLines()
+            DianaLoot.updateLines()
+            InquisLoot.updateLines()
         }
 
         Register.command("sboresetstatstracker") {
@@ -72,26 +73,7 @@ object DianaTracker {
         Register.onChatMessageCancable(
             Pattern.compile("^§eThe election room is now closed\\. Clerk Seraphine is doing a final count of the votes\\.\\.\\.$", Pattern.DOTALL)
         ) { _, _ ->
-            val lastYear = dianaTrackerMayor.year
-            if (lastYear == 0) return@onChatMessageCancable true
-            var allZero = true
-            for (item in dianaTrackerMayor.mobs::class.java.declaredFields) {
-                item.isAccessible = true
-                if (item.get(dianaTrackerMayor.mobs) is Int) {
-                    if (item.getInt(dianaTrackerMayor.mobs) > 0) {
-                        allZero = false
-                        break
-                    }
-                }
-            }
-            if (!allZero) {
-                pastDianaEventsData.events += dianaTrackerMayor
-                SboDataObject.save("PastDianaEventsData")
-            }
-            dianaTrackerMayor = DianaTrackerMayorData()
-            dianaTrackerMayor.year = lastYear + 1
-            SboDataObject.save("DianaTrackerMayorData")
-            getMayor()
+            checkMayorTracker()
             true
         }
 
@@ -241,7 +223,7 @@ object DianaTracker {
     }
 
     fun trackCoinsWithChat() {
-        Register.onChatMessageCancable(Pattern.compile("^§l§6Wow! §eYou dug out §6(.*?) coins§e!$", Pattern.DOTALL)) { message, matchResult ->
+        Register.onChatMessageCancable(Pattern.compile("^§6§lWow! §eYou dug out §6(.*?) coins§e!$", Pattern.DOTALL)) { message, matchResult ->
             val coins = matchResult.group(1).replace(",", "").toIntOrNull() ?: 0
             if (coins > 0) trackItem("COINS", coins)
             true
@@ -249,7 +231,7 @@ object DianaTracker {
     }
 
     fun trackTreasuresWithChat() {
-        Register.onChatMessageCancable(Pattern.compile("^§l§6RARE DROP! §eYou dug out a (.*?)§e!$", Pattern.DOTALL)) { message, matchResult ->
+        Register.onChatMessageCancable(Pattern.compile("^§6§lRARE DROP! §eYou dug out a (.*?)§e!$", Pattern.DOTALL)) { message, matchResult ->
             val drop = matchResult.group(1).drop(2)
             when (drop) {
                 "Griffin Feather" -> trackItem(drop, 1)
@@ -261,7 +243,7 @@ object DianaTracker {
     }
 
     fun trackRngDropsWithChat() {
-        Register.onChatMessageCancable(Pattern.compile("^§l§6RARE DROP! (.*?)$", Pattern.DOTALL)) { message, matchResult ->
+        Register.onChatMessageCancable(Pattern.compile("^§6§lRARE DROP! (.*?)$", Pattern.DOTALL)) { message, matchResult ->
             if (!checkDiana()) return@onChatMessageCancable true
             val drop = matchResult.group(1)
             val isLootShare = gotLootShareRecently(2)
@@ -271,20 +253,12 @@ object DianaTracker {
             if (magicfind > 0) mfPrefix = " (+$magicfind ✯ Magic Find)"
             when (drop.substring(2, 16)) {
                 "Enchanted Book" -> {
-                    if (!drop.contains("Chimera 1")) return@onChatMessageCancable true
+                    if (!drop.contains("Chimera")) return@onChatMessageCancable true
 
                     playCustomSound(Customization.chimSound[0], Customization.chimVolume)
                     if (Diana.lootAnnouncerScreen) {
                         val subTitle = if (Diana.lootAnnouncerPrice) "§6${Helper.getItemPriceFormatted("CHIMERA")} coins" else ""
                         Helper.showTitle("§d§lChimera!", subTitle, 0, 25, 35)
-                    }
-
-                    val customChimMsg = Helper.checkCustomChimMessage(magicfind)
-                    if (customChimMsg.first) {
-                        Chat.chat(customChimMsg.second)
-                        announceLootToParty("Chimera!", customChimMsg.second, true)
-                    } else {
-                        announceLootToParty("Chimera!", "Chimera!$mfPrefix")
                     }
 
                     if (!isLootShare) {
@@ -325,6 +299,14 @@ object DianaTracker {
                             }
                             sboData.inqsSinceLsChim = 0
                         }
+                    }
+
+                    val customChimMsg = Helper.checkCustomChimMessage(magicfind)
+                    if (customChimMsg.first) {
+                        Chat.chat(customChimMsg.second)
+                        announceLootToParty("Chimera!", customChimMsg.second, true)
+                    } else {
+                        announceLootToParty("Chimera!", "Chimera!$mfPrefix")
                     }
                 }
                 "Daedalus Stick" -> {
@@ -415,6 +397,31 @@ object DianaTracker {
         return "§6[SBO] §c$streakText $prettyName!"
     }
 
+    fun checkMayorTracker() {
+        if (dianaTrackerMayor.year == 0 || dianaTrackerMayor.year >= Mayor.mayorElectedYear) return
+        var allZero = true
+        for (item in dianaTrackerMayor.mobs::class.java.declaredFields) {
+            item.isAccessible = true
+            if (item.get(dianaTrackerMayor.mobs) is Int) {
+                if (item.getInt(dianaTrackerMayor.mobs) > 0) {
+                    allZero = false
+                    break
+                }
+            }
+        }
+        if (!allZero) {
+            pastDianaEventsData.events += dianaTrackerMayor
+            SboDataObject.save("PastDianaEventsData")
+        }
+        dianaTrackerMayor.reset()
+        dianaTrackerMayor.year = Mayor.mayorElectedYear
+        dianaTrackerMayor.save()
+        getMayor()
+        DianaMobs.updateLines()
+        DianaLoot.updateLines()
+        InquisLoot.updateLines()
+    }
+
     fun trackMob(item: String, amount: Int) {
         trackItem(item, amount)
         trackItem("TOTAL_MOBS", amount)
@@ -424,6 +431,7 @@ object DianaTracker {
     }
 
     fun trackItem(item: String, amount: Int, fromInq: Boolean = false) {
+        checkMayorTracker()
         val itemName = Helper.toUpperSnakeCase(item)
         if (itemName == "MINOS_INQUISITOR_LS") sboData.inqsSinceLsChim += 1
 
@@ -441,6 +449,7 @@ object DianaTracker {
 
     fun trackOne(tracker: DianaTracker, item: String, amount: Int, fromInq: Boolean = false) {
         when (item) {
+            // ITEMS
             "COINS" -> tracker.items.COINS += amount
             "GRIFFIN_FEATHER" -> tracker.items.GRIFFIN_FEATHER += amount
             "CROWN_OF_GREED" -> tracker.items.CROWN_OF_GREED += amount
@@ -449,12 +458,17 @@ object DianaTracker {
             "CHIMERA_LS" -> tracker.items.CHIMERA_LS += amount
             "DAEDALUS_STICK" -> tracker.items.DAEDALUS_STICK += amount
             "DWARF_TURTLE_SHELMET" -> tracker.items.DWARF_TURTLE_SHELMET += amount
+            "CROCHET_TIGER_PLUSHIE" -> tracker.items.CROCHET_TIGER_PLUSHIE += amount
             "ANTIQUE_REMEDIES" -> tracker.items.ANTIQUE_REMEDIES += amount
             "ENCHANTED_ANCIENT_CLAW" -> tracker.items.ENCHANTED_ANCIENT_CLAW += amount
             "ANCIENT_CLAW" -> tracker.items.ANCIENT_CLAW += amount
             "MINOS_RELIC" -> tracker.items.MINOS_RELIC += amount
             "ENCHANTED_GOLD" -> tracker.items.ENCHANTED_GOLD += amount
             "ENCHANTED_IRON" -> tracker.items.ENCHANTED_IRON += amount
+            "SCAVENGER_COINS" -> tracker.items.SCAVENGER_COINS += amount
+            "FISH_COINS" -> tracker.items.FISH_COINS += amount
+            "TOTAL_BURROWS" -> tracker.items.TOTAL_BURROWS += amount
+            // MOBS
             "MINOS_INQUISITOR" -> tracker.mobs.MINOS_INQUISITOR += amount
             "MINOS_INQUISITOR_LS" -> tracker.mobs.MINOS_INQUISITOR_LS += amount
             "MINOS_CHAMPION" -> tracker.mobs.MINOS_CHAMPION += amount
@@ -463,17 +477,11 @@ object DianaTracker {
             "SIAMESE_LYNXES" -> tracker.mobs.SIAMESE_LYNXES += amount
             "MINOS_HUNTER" -> tracker.mobs.MINOS_HUNTER += amount
             "TOTAL_MOBS" -> tracker.mobs.TOTAL_MOBS += amount
-            "DWARF_TURTLE_SHELMET_LS" -> tracker.inquis.DWARF_TURTLE_SHELMET_LS += amount
-            "CROCHET_TIGER_PLUSHIE" -> tracker.inquis.CROCHET_TIGER_PLUSHIE += amount
-            "CROCHET_TIGER_PLUSHIE_LS" -> tracker.inquis.CROCHET_TIGER_PLUSHIE_LS += amount
-            "ANTIQUE_REMEDIES_LS" -> tracker.inquis.ANTIQUE_REMEDIES_LS += amount
-            "SCAVENGER_COINS" -> tracker.items.SCAVENGER_COINS += amount
-            "FISH_COINS" -> tracker.items.FISH_COINS += amount
-            "TOTAL_BURROWS" -> tracker.items.TOTAL_BURROWS += amount
         }
 
         if (fromInq) {
             when (item) {
+                // ITEMS from inquis
                 "DWARF_TURTLE_SHELMET" -> tracker.inquis.DWARF_TURTLE_SHELMET += amount
                 "DWARF_TURTLE_SHELMET_LS" -> tracker.inquis.DWARF_TURTLE_SHELMET_LS += amount
                 "CROCHET_TIGER_PLUSHIE" -> tracker.inquis.CROCHET_TIGER_PLUSHIE += amount

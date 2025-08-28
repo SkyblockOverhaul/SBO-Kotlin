@@ -7,6 +7,7 @@ import net.azureaaron.hmapi.network.packet.s2c.HelloS2CPacket
 import net.azureaaron.hmapi.network.packet.s2c.HypixelS2CPacket
 import net.azureaaron.hmapi.network.packet.v1.s2c.LocationUpdateS2CPacket
 import net.azureaaron.hmapi.network.packet.v2.s2c.PartyInfoS2CPacket
+import net.sbo.mod.partyfinder.PartyFinderManager
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.events.Register
 
@@ -111,11 +112,17 @@ object HypixelModApi {
         errorListeners.add(listener)
     }
 
-    fun sendPartyInfoPacket() {
-        if (isOnHypixel) {
-            HypixelNetworking.sendPartyInfoC2SPacket(2)
-        } else {
-            Chat.chat("§6[SBO] §eYou are not on Hypixel. You can only use this feature on Hypixel.")
+    fun sendPartyInfoPacket(createParty: Boolean = false) {
+        try {
+            if (isOnHypixel) {
+                if (createParty) PartyFinderManager.creatingParty = true
+                HypixelNetworking.sendPartyInfoC2SPacket(2)
+            } else {
+                PartyFinderManager.creatingParty = false
+                Chat.chat("§6[SBO] §eYou are not on Hypixel. You can only use this feature on Hypixel.")
+            }
+        } catch (e: Exception) {
+            PartyFinderManager.creatingParty = false
         }
     }
 }

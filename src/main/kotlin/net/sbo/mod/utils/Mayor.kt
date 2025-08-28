@@ -26,6 +26,7 @@ object Mayor {
     var newMayor: Boolean = false
     var outDatedApi: Boolean = false
     var sbYear: Int = 0
+    var mayorElectedYear = 0
 
     fun init() {
         Register.onTick(20) {
@@ -40,9 +41,11 @@ object Mayor {
                         val currentYear = calendar.get(Calendar.YEAR)
                         val compareDate = convertStringToDate("27.3.$currentYear")
                         if (compareDate.time > skyblockDate!!.time) {
+                            mayorElectedYear = currentYear - 1
                             dateMayorElected = convertStringToDate("27.3.${currentYear - 1}")
                             newMayorAtDate = convertStringToDate("27.3.$currentYear")
                         } else {
+                            mayorElectedYear = currentYear
                             dateMayorElected = convertStringToDate("27.3.$currentYear")
                             newMayorAtDate = convertStringToDate("27.3.${currentYear + 1}")
                         }

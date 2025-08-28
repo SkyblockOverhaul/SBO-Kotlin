@@ -4,6 +4,7 @@ import net.minecraft.client.gui.screen.Screen
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.item.ItemStack
 import net.sbo.mod.SBOKotlin.mc
+import net.sbo.mod.diana.DianaMobDetect
 import net.sbo.mod.diana.DianaTracker
 import net.sbo.mod.utils.data.DianaTracker as DianaTrackerDataClass
 import net.sbo.mod.overlays.DianaLoot
@@ -18,6 +19,7 @@ import net.sbo.mod.utils.data.HypixelBazaarResponse
 import net.sbo.mod.utils.data.Item
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.http.Http
+import net.sbo.mod.utils.waypoint.WaypointManager.onLootshare
 import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.reflect.full.memberProperties
@@ -41,7 +43,8 @@ object Helper {
     private var priceDataBazaar: HypixelBazaarResponse? = null
 
     fun init() {
-        Register.onChatMessageCancable(Pattern.compile("§l§eLOOT SHARE §fYou received loot for assisting (.*?)", Pattern.DOTALL)) { message, matchResult ->
+        Register.onChatMessageCancable(Pattern.compile("^§e§lLOOT SHARE §fYou received loot for assisting (.*?)$", Pattern.DOTALL)) { message, matchResult ->
+            onLootshare()
             lastLootShare = System.currentTimeMillis()
             true
         }
@@ -68,11 +71,9 @@ object Helper {
         }
         updateItemPriceInfo()
 
-        Register.onEntityDeath { entity ->
+        // todo: test if this works as intended
+        DianaMobDetect.onMobDeath { name, entity ->
             val dist = entity.distanceTo(mc.player)
-            val name = entity.name.string
-            val isDianaMob = dianaMobNames.any { it in name }
-            if (dist > 10) return@onEntityDeath
             if (name.contains("Minos Inquisitor")) {
                 if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedInq) {
                     hasTrackedInq = true
@@ -83,13 +84,35 @@ object Helper {
                 }
                 lastInqDeath = System.currentTimeMillis()
             }
-            if (isDianaMob) {
-                if (dist <= 30) {
-                    allowSackTracking = true
-                    lastDianaMobDeath = System.currentTimeMillis()
-                }
+            if (dist <= 30) {
+                allowSackTracking = true
+                lastDianaMobDeath = System.currentTimeMillis()
             }
         }
+
+        // old entity death listener, kept for reference
+//        Register.onEntityDeath { entity ->
+//            val dist = entity.distanceTo(mc.player)
+//            val name = entity.name.string
+//            val isDianaMob = dianaMobNames.any { it in name }
+//            if (dist > 10) return@onEntityDeath
+//            if (name.contains("Minos Inquisitor")) {
+//                if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedInq) {
+//                    hasTrackedInq = true
+//                    DianaTracker.trackItem("MINOS_INQUISITOR_LS", 1)
+//                    sleep(2000) {
+//                        hasTrackedInq = false
+//                    }
+//                }
+//                lastInqDeath = System.currentTimeMillis()
+//            }
+//            if (isDianaMob) {
+//                if (dist <= 30) {
+//                    allowSackTracking = true
+//                    lastDianaMobDeath = System.currentTimeMillis()
+//                }
+//            }
+//        }
     }
 
     /**
@@ -392,9 +415,9 @@ object Helper {
     }
 
     fun getMagicFind(mf: String): Int {
-        val mfMatch = Regex("""(\+)?(&r&b)?(\d+)%""").find(mf)
+        val mfMatch = Regex("""§b\(\+§b(\d+)""").find(mf)
         if (mfMatch != null) {
-            val mfValue = mfMatch.groupValues[3].toIntOrNull() ?: 0
+            val mfValue = mfMatch.groupValues[1].toIntOrNull() ?: 0
             return mfValue
         }
         return 0
@@ -406,14 +429,14 @@ object Helper {
                 priceDataAh = json.flatMap { it.entries }.associate { it.key to it.value["price"]!! }
                 DianaLoot.updateLines()
             }.error { error ->
-                Chat.chat("§6[SBO] §4Unexpected error while fetching AH item prices: $error")
+//                Chat.chat("§6[SBO] §4Unexpected error while fetching AH item prices: $error")
             }
         Http.sendGetRequest("https://api.hypixel.net/skyblock/bazaar?product")
             .toJson<HypixelBazaarResponse> {
                 priceDataBazaar = it
                 DianaLoot.updateLines()
             }.error { error ->
-                Chat.chat("§6[SBO] §4Unexpected error while fetching Bazaar item prices: $error")
+//                Chat.chat("§6[SBO] §4Unexpected error while fetching Bazaar item prices: $error")
             }
     }
 
@@ -455,13 +478,11 @@ object Helper {
         return getSecondsPassed(lastDianaMobDeath) <= seconds
     }
 
-    fun getBurrowsPerHr(tracker: DianaTrackerDataClass): Double {
+    fun getBurrowsPerHr(tracker: DianaTrackerDataClass, timer: SboTimerManager.SBOTimer): Double {
+        val hours = timer.getHourTime()
+        if (hours <= 0.01) return 0.0
         val totalBurrows = tracker.items.TOTAL_BURROWS.toDouble()
-        val rawMiliTime = tracker.items.TIME.toDouble()
-        if (rawMiliTime <= 0) return 0.0
-        val hours = rawMiliTime / (1000.0 * 60.0 * 60.0)
-        val adjustedHours = if (hours <= 0.01) 0.01 else hours
-        val burrowsPerHr = totalBurrows / adjustedHours
+        val burrowsPerHr = totalBurrows / hours
         return BigDecimal(burrowsPerHr).setScale(2, RoundingMode.HALF_UP).toDouble()
     }
 }

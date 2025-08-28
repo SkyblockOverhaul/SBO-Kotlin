@@ -9,6 +9,10 @@ object General : CategoryKt("General") {
         RED, GREEN, BLUE, YELLOW, PURPLE
     }
 
+    enum class HideOwnWaypoints {
+        NORMAL, INQ
+    }
+
     init {
         separator {
             this.title = "Overlays"
@@ -36,6 +40,20 @@ object General : CategoryKt("General") {
                 }
             }
         }
+
+        separator {
+            this.title = "Waypoints"
+        }
+    }
+
+    var hideOwnWaypoints by select<HideOwnWaypoints> {
+        this.name = Translated("Hide Own Waypoints")
+        this.description = Translated("Hides waypoints you created")
+    }
+
+    var patcherWaypoints by boolean(true) {
+        this.name = Translated("Waypoints From Chat")
+        this.description = Translated("Creates waypoints from chat messages (format: x: 20, y: 60, z: 80)")
     }
 
 //    var test1 by boolean(false) {

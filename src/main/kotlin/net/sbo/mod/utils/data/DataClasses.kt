@@ -35,10 +35,10 @@ data class PartyAddResponse(
     val message: String? = null,
 
     @SerialName("PartyInfo")
-    val partyInfo: List<PartyPlayerStats>,
+    val partyInfo: List<PartyPlayerStats>? = null,
 
     @SerialName("PartyReqs")
-    val partyReqs: Reqs,
+    val partyReqs: Reqs? = null,
 
     @SerialName("Error")
     val error: String? = null
@@ -53,7 +53,7 @@ data class PartyUpdateResponse(
     val message: String? = null,
 
     @SerialName("PartyReqs")
-    val partyReqs: Reqs,
+    val partyReqs: Reqs? = null,
 
     @SerialName("Error")
     val error: String? = null

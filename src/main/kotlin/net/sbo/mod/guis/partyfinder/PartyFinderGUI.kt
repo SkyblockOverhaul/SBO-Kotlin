@@ -284,13 +284,7 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
         if (PartyFinderManager.inQueue) {
             removePartyFromQueue { success ->
                 Window.enqueueRenderOperation {
-                    dequeued = success
-                    if (dequeued) {
-                        updateCurrentPartyList(true)
-                        Chat.chat("§6[SBO] §eYou have been removed from the party queue.")
-                    } else {
-                        Chat.chat("§6[SBO] §eFailed to unqueue party.")
-                    }
+                    updateCurrentPartyList(true)
                 }
             }
         }

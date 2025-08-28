@@ -2,6 +2,7 @@ package net.sbo.mod
 
 import com.teamresourceful.resourcefulconfig.api.client.ResourcefulConfigScreen
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.MinecraftClient
 import net.sbo.mod.diana.DianaTracker
 import net.sbo.mod.utils.waypoint.WaypointManager
@@ -38,6 +39,7 @@ import net.sbo.mod.qol.MessageHider
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.SboTimerManager
 import net.sbo.mod.utils.SoundHandler
+import net.sbo.mod.utils.chat.ChatHandler
 import net.sbo.mod.utils.overlay.OverlayManager
 
 object SBOKotlin {
@@ -54,9 +56,15 @@ object SBOKotlin {
 	val settings = Settings.register(configurator)
 	val guis = Main
 
+	lateinit var version: String
+
 	@JvmStatic
 	fun onInitializeClient() {
-		logger.info("Initializing SBO-Kotlin...")
+		version = FabricLoader.getInstance().getModContainer(MOD_ID)
+			.map { it.metadata.version.friendlyString }
+			.orElse("unknown")
+
+		logger.info("Initializing SBO-Kotlin, version: $version...")
 
 		// Load configuration and data
 		SboDataObject.init()
@@ -103,9 +111,11 @@ object SBOKotlin {
 		InquisLoot.init()
 		AchievementManager.init()
 		MessageHider.init()
+		ChatHandler.init()
 
 		Register.onTick(100) { unregister ->
 			if (mc.player != null && World.isInSkyblock()) {
+				DianaTracker.checkMayorTracker()
 				PartyPlayer.load()
 				unlockAchievement(38)
 				unregister()

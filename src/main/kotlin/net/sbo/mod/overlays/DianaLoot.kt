@@ -51,6 +51,20 @@ object DianaLoot {
             updateLines()
         }
 
+    val resetSession : OverlayTextLine = OverlayTextLine("${RED}Reset Session")
+        .onClick {
+            SboTimerManager.timerSession.reset()
+            SBOConfigBundle.dianaTrackerSessionData.reset().save()
+            updateLines()
+            DianaMobs.updateLines()
+        }
+        .onMouseEnter {
+            resetSession.text = "$RED${UNDERLINE}Reset Session"
+        }
+        .onMouseLeave {
+            resetSession.text = "${RED}Reset Session"
+        }
+
     fun init() {
         overlay.init()
         updateLines()
@@ -65,6 +79,7 @@ object DianaLoot {
                 overlay.removeLine(changeView)
                 overlay.removeLine(delimiter)
                 overlay.removeLine(changeSellType)
+                overlay.removeLine(resetSession)
             }
         }
         Register.onTick(1) {
@@ -102,13 +117,24 @@ object DianaLoot {
                 return
             }
         }
+        val timer = when (type) {
+            Diana.Tracker.TOTAL -> SboTimerManager.timerTotal
+            Diana.Tracker.EVENT -> SboTimerManager.timerMayor
+            Diana.Tracker.SESSION -> SboTimerManager.timerSession
+            else -> SboTimerManager.timerMayor
+        }
 
         val chimPercent = calcPercentOne(tracker.items, tracker.mobs, "CHIMERA", "MINOS_INQUISITOR")
         val chimLsPercent = calcPercentOne(tracker.items, tracker.mobs, "CHIMERA_LS", "MINOS_INQUISITOR_LS")
         val relicPercent = calcPercentOne(tracker.items, tracker.mobs, "MINOS_RELIC", "MINOS_CHAMPION")
         val stickPercent = calcPercentOne(tracker.items, tracker.mobs, "DAEDALUS_STICK", "MINOTAUR")
         val playTimeHrs = tracker.items.TIME.toDouble() / TimeUnit.HOURS.toMillis(1)
-        val burrowsPerHr = Helper.getBurrowsPerHr(tracker)
+        val burrowsPerHr = Helper.getBurrowsPerHr(tracker, timer)
+        val bphText = if (burrowsPerHr.isNaN() || burrowsPerHr == 0.0) {
+            ""
+        } else {
+            " $GRAY[$AQUA$burrowsPerHr$GRAY/${AQUA}hr$GRAY]"
+        }
         val chimPrice = Helper.getItemPriceFormatted("CHIMERA", tracker.items.CHIMERA)
         val chimLsPrice = Helper.getItemPriceFormatted("CHIMERA", tracker.items.CHIMERA_LS)
         val relicPrice = Helper.getItemPriceFormatted("MINOS_RELIC", tracker.items.MINOS_RELIC)
@@ -160,7 +186,7 @@ object DianaLoot {
                 createLine("ENCHANTED_ANCIENT_CLAW", "$GOLD$echClawPrice $GRAY|$BLUE Enchanted Ancient Claw: $AQUA${Helper.formatNumber(tracker.items.ENCHANTED_ANCIENT_CLAW,)}"),
                 createLine("ENCHANTED_GOLD", "$GOLD$echGoldPrice $GRAY|$BLUE Enchanted Gold: $AQUA${Helper.formatNumber(tracker.items.ENCHANTED_GOLD)}"),
                 createLine("ENCHANTED_IRON", "$GOLD$echIronPrice $GRAY|$BLUE Enchanted Iron: $AQUA${Helper.formatNumber(tracker.items.ENCHANTED_IRON)}"),
-                OverlayTextLine("${GRAY}Total Burrows: $AQUA${Helper.formatNumber(tracker.items.TOTAL_BURROWS, true)} $GRAY[$AQUA$burrowsPerHr$GRAY/${AQUA}hr$GRAY]"),
+                OverlayTextLine("${GRAY}Total Burrows: $AQUA${Helper.formatNumber(tracker.items.TOTAL_BURROWS, true)}$bphText"),
                 OverlayTextLine("${GOLD}Total Coins: $AQUA${Helper.formatNumber(tracker.items.COINS)}")
                     .onHover { drawContext, textRenderer ->
                         val scaleFactor = mc.window.scaleFactor
@@ -187,6 +213,7 @@ object DianaLoot {
         )
         lines.add(timerLine)
         if (type == Diana.Tracker.TOTAL) lines.add(OverlayTextLine("${YELLOW}Total Events: $AQUA$totalEvents"))
+        if (screen == "CraftingOpen" || mc.currentScreen?.title?.string == "Crafting" && type == Diana.Tracker.SESSION) lines.add(resetSession)
         overlay.setLines(lines)
     }
 

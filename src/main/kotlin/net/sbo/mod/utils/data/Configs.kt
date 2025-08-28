@@ -6,6 +6,24 @@ interface DianaTracker {
     var items: DianaItemsData
     var mobs: DianaMobsData
     var inquis: DianaInquisData
+
+    fun reset(): DianaTracker {
+        items = DianaItemsData()
+        mobs = DianaMobsData()
+        inquis = DianaInquisData()
+        if (this is DianaTrackerMayorData) year = 0
+        return this
+    }
+
+    fun save(): DianaTracker {
+        when(this) {
+            is DianaTrackerTotalData -> SboDataObject.save("DianaTrackerTotalData")
+            is DianaTrackerSessionData -> SboDataObject.save("DianaTrackerSessionData")
+            is DianaTrackerMayorData -> SboDataObject.save("DianaTrackerMayorData")
+            else -> {}
+        }
+        return this
+    }
 }
 
 data class SboConfigBundle(
@@ -67,7 +85,7 @@ data class PastDianaEventsData(
 data class DianaTrackerTotalData(
     override var items: DianaItemsData = DianaItemsData(),
     override var mobs: DianaMobsData = DianaMobsData(),
-    override var inquis: DianaInquisData = DianaInquisData()
+    override var inquis: DianaInquisData = DianaInquisData(),
 ) : DianaTracker
 
 data class DianaTrackerSessionData(

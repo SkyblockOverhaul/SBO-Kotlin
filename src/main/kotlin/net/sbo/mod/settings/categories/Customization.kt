@@ -115,7 +115,7 @@ object Customization : CategoryKt("Customization") {
     var inqVolume by float(1.0f) {
         this.name = Translated("Inquisitor Spawn Volume")
         this.description = Translated("Set the volume of the inquisitor spawn sound")
-        this.range = 0.0f..5.0f
+        this.range = 0.0f..1.0f
         this.slider = true
     }
 
@@ -126,7 +126,7 @@ object Customization : CategoryKt("Customization") {
     var burrowVolume by float(1.0f) {
         this.name = Translated("Burrow Found Volume")
         this.description = Translated("Set the volume of the burrow found sound")
-        this.range = 0.0f..5.0f
+        this.range = 0.0f..1.0f
         this.slider = true
     }
 
@@ -137,7 +137,7 @@ object Customization : CategoryKt("Customization") {
     var chimVolume by float(1.0f) {
         this.name = Translated("Chimera Drop Volume")
         this.description = Translated("Set the volume of the chimera drop sound")
-        this.range = 0.0f..5.0f
+        this.range = 0.0f..1.0f
         this.slider = true
     }
 
@@ -148,7 +148,7 @@ object Customization : CategoryKt("Customization") {
     var relicVolume by float(1.0f) {
         this.name = Translated("Relic Drop Volume")
         this.description = Translated("Set the volume of the relic drop sound")
-        this.range = 0.0f..5.0f
+        this.range = 0.0f..1.0f
         this.slider = true
     }
 
@@ -159,18 +159,18 @@ object Customization : CategoryKt("Customization") {
     var stickVolume by float(1.0f) {
         this.name = Translated("Daedalus Stick Drop Volume")
         this.description = Translated("Set the volume of the daedalus stick drop sound")
-        this.range = 0.0f..5.0f
+        this.range = 0.0f..1.0f
         this.slider = true
     }
 
-    var sprSound by strings("Shelmet, Plushie and Remedies Drop Sound") {
+    var sprSound by strings("") {
         this.name = Translated("Shelmet/Plushie/Remedies Drop Sound")
         this.description = Translated("Set the sound that plays when you drop a Shelmet/Plushie/Remedies. (enter filename)")
     }
     var sprVolume by float(1.0f) {
         this.name = Translated("Shelmet/Plushie/Remedies Drop Volume")
         this.description = Translated("Set the volume of the Shelmet/Plushie/Remedies drop sound")
-        this.range = 0.0f..5.0f
+        this.range = 0.0f..1.0f
         this.slider = true
     }
 }

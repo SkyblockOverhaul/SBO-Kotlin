@@ -137,19 +137,14 @@ object BurrowDetector {
             Chat.chat("§6[SBO] §4Burrow Waypoints Cleared!")
         }
 
-        Register.onChatMessageCancable(Pattern.compile("§eYou dug out a Griffin Burrow! (.*?)", Pattern.DOTALL)) { message, matchResult ->
+        Register.onChatMessageCancable(Pattern.compile("^§eYou (.*?) Griffin [Bb]urrow(.*?)$", Pattern.DOTALL)) { message, matchResult ->
             if (!Diana.dianaBurrowDetect) return@onChatMessageCancable true
             refreshBurrows()
             true
         }
 
-        Register.onChatMessageCancable(Pattern.compile("§eYou finished the Griffin burrow chain!(.*?)", Pattern.DOTALL)) { message, matchResult ->
-            if (!Diana.dianaBurrowDetect) return@onChatMessageCancable true
-            refreshBurrows()
-            true
-        }
 
-        Register.onChatMessageCancable(Pattern.compile(" ☠ You (.*?)", Pattern.DOTALL)) { message, matchResult ->
+        Register.onChatMessageCancable(Pattern.compile("^ ☠ You (.*?)$", Pattern.DOTALL)) { message, matchResult ->
             if (World.getWorld() != "Hub") return@onChatMessageCancable true
             refreshBurrows()
             true

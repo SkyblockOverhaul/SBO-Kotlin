@@ -11,8 +11,11 @@ object TabList {
      */
     fun getTabEntries(): List<PlayerListEntry> {
         val client = mc
-        // Use toList() to convert the Collection to a List
-        return client.player?.networkHandler?.playerList?.toList() ?: emptyList()
+        return try {
+            client.player?.networkHandler?.playerList?.toList() ?: emptyList()
+        } catch (e: Exception) {
+            emptyList()
+        }
     }
 
     /**
@@ -23,6 +26,7 @@ object TabList {
      */
     fun findInfo(key: String): String? {
         val tabEntries = getTabEntries()
+        if (tabEntries.isEmpty()) return null
         for (entry in tabEntries) {
             val lineText: Text = entry.displayName ?: Text.literal(entry.profile.name)
             val lineString = lineText.string.trim()

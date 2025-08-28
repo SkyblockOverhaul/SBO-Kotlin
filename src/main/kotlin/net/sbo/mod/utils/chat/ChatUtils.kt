@@ -17,15 +17,13 @@ object ChatUtils {
     }
 
     private fun Style.getFormatCodes() = buildString {
-        append("§r")
+        this@getFormatCodes.color?.let(ChatUtils::getColorFormatChar)?.run { append("§").append(this) }
 
         if (this@getFormatCodes.isBold) append("§l")
         if (this@getFormatCodes.isItalic) append("§o")
         if (this@getFormatCodes.isUnderlined) append("§n")
         if (this@getFormatCodes.isStrikethrough) append("§m")
         if (this@getFormatCodes.isObfuscated) append("§k")
-
-        this@getFormatCodes.color?.let(ChatUtils::getColorFormatChar)?.run { append("§").append(this) }
     }
 
     fun Text.formattedString(): String {

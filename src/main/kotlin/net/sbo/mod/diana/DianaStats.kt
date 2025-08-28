@@ -1,11 +1,13 @@
 package net.sbo.mod.diana
 
+import net.sbo.mod.overlays.DianaLoot
 import net.sbo.mod.utils.data.SboDataObject
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.data.DianaTracker
 import java.util.concurrent.TimeUnit
 import net.sbo.mod.settings.categories.Diana
+import net.sbo.mod.utils.SboTimerManager
 import net.sbo.mod.utils.events.Register
 import java.util.regex.Pattern
 import java.util.Locale
@@ -37,14 +39,15 @@ object DianaStats {
 
     fun getPlayerStats(total: Boolean = false): PlayerStats {
         val tracker: DianaTracker = if (total) SboDataObject.dianaTrackerTotal else SboDataObject.dianaTrackerMayor
+        val timer: SboTimerManager.SBOTimer = if (total) SboTimerManager.timerTotal else SboTimerManager.timerMayor
 
         val playtime = tracker.items.TIME
         val playTimeHrs = playtime.toDouble() / TimeUnit.HOURS.toMillis(1)
 
-        val burrowsPerHour = Helper.getBurrowsPerHr(tracker)
+        val burrowsPerHour = Helper.getBurrowsPerHr(tracker, timer)
         val mobsPerHour = if (playTimeHrs > 0) tracker.mobs.TOTAL_MOBS.toDouble() / playTimeHrs else 0.0
 
-        val totalValue = 0.0 // todo: getTotalValue(tracker)
+        val totalValue = DianaLoot.totalProfit(tracker)
         val profit = listOf(
             Helper.formatNumber(totalValue),
             Diana.bazaarSettingDiana.toString(),

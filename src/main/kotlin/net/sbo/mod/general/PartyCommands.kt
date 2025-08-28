@@ -11,9 +11,12 @@ import net.sbo.mod.utils.Helper.calcPercentOne
 import net.sbo.mod.utils.Helper.formatNumber
 import net.sbo.mod.utils.Helper.formatTime
 import net.sbo.mod.diana.DianaStats
+import net.sbo.mod.overlays.DianaLoot
+import net.sbo.mod.settings.categories.Diana
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.Helper.removeFormatting
 import net.sbo.mod.utils.Player
+import net.sbo.mod.utils.SboTimerManager
 import java.util.concurrent.TimeUnit
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -22,7 +25,7 @@ import java.util.Date
 
 object PartyCommands {
 
-    val commandRegex = Regex("^§r§[0-9a-fk-or]Party §[0-9a-fk-or]> (.*?)§[0-9a-fk-or]*: ?(.*)\$")
+    val commandRegex = Regex("^§[0-9a-fk-or]Party §[0-9a-fk-or]> (.*?)§[0-9a-fk-or]*: ?(.*)\$")
 
     val settings = PartyCommands
     val carrot = listOf(
@@ -141,7 +144,8 @@ object PartyCommands {
                 "!burrows", "!burrow" -> {
                     if (!settings.dianaPartyCommands) return@onChatMessage
                     val burrows = dianaTrackerMayor.items.TOTAL_BURROWS
-                    val burrowsPerHr = Helper.getBurrowsPerHr(dianaTrackerMayor)
+                    val timer = SboTimerManager.timerMayor
+                    val burrowsPerHr = Helper.getBurrowsPerHr(dianaTrackerMayor, timer)
                     sleep(200) {
                         Chat.command("pc Burrows: $burrows ($burrowsPerHr/h)")
                     }
@@ -209,12 +213,13 @@ object PartyCommands {
                 }
                 "!profits", "!profit" -> {
                     if (!settings.dianaPartyCommands) return@onChatMessage
-                    // todo: getDianaMayorTotalProfitAndOfferType()
+                    val playtime = dianaTrackerMayor.items.TIME
+                    val playTimeHrs = playtime.toDouble() / TimeUnit.HOURS.toMillis(1)
                     sleep(200) {
-                        val profit = 0
-                        val offerType = "N/A"
-                        val profitHour = 0
-                        Chat.command("pc Profit: $profit ($offerType) $profitHour/h")
+                        val profit = DianaLoot.totalProfit(dianaTrackerMayor)
+                        val offerType = Diana.bazaarSettingDiana.toString()
+                        val profitHour = profit / playTimeHrs
+                        Chat.command("pc Profit: ${formatNumber(profit)} (${Helper.toTitleCase(offerType)}) ${formatNumber(profitHour)}/h")
                     }
                 }
                 "!stats", "!stat" -> {
@@ -252,11 +257,14 @@ object PartyCommands {
                         "lschim", "chimls", "lschimera", "chimerals", "lsbook", "bookls", "lootsharechim" -> sleep(200) {
                             Chat.command("pc Inqs since lootshare chim: ${sboData.inqsSinceLsChim}")
                         }
-                        else -> sleep(200) {
+                    }
+                    if (secondArg == null) {
+                        sleep(200) {
                             Chat.command("pc Mobs since inq: ${sboData.mobsSinceInq}")
                         }
                     }
                 }
+
             }
         }
     }
