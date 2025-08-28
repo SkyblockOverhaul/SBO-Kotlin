@@ -37,6 +37,13 @@ object Customization : CategoryKt("Customization") {
         this.allowAlpha = true
     }
 
+    var focusedColor by color(
+        Color(0.6f, 0.964f, 0.6f).rgb) {
+        this.name = Translated("Focused Color")
+        this.description = Translated("Pick a color for your focused guess")
+        this.allowAlpha = true
+    }
+
     var MobColor by color(
         Color(1.0f, 0.333f, 0.333f).rgb) {
         this.name = Translated("Mob Burrow Color")

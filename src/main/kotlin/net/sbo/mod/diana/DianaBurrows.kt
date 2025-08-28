@@ -14,7 +14,10 @@ import java.awt.Color
 import net.sbo.mod.utils.waypoint.WaypointManager
 import net.sbo.mod.utils.math.SboVec
 import net.sbo.mod.utils.World
+import net.sbo.mod.utils.waypoint.WaypointManager.getGuessWaypoints
 import net.sbo.mod.utils.waypoint.WaypointManager.guessWp
+import net.sbo.mod.utils.waypoint.WaypointManager.removeWaypoint
+import net.sbo.mod.utils.waypoint.WaypointManager.waypoints
 import java.util.regex.Pattern
 
 internal class EvictingQueue<T>(internal val maxSize: Int) {
@@ -189,6 +192,18 @@ object BurrowDetector {
                 type = "burrow"
             )
             WaypointManager.addWaypoint(burrow.waypoint!!)
+            if(Diana.dianaMultiBurrowGuess) {
+                val removedGuesses = mutableListOf<Waypoint>()
+                getGuessWaypoints().forEach { waypoint ->
+                    if (waypoint.pos.distanceTo(pos) < 2) {
+                        waypoint.hide()
+                        removedGuesses.add(waypoint)
+                    }
+                }
+                removedGuesses.forEach {
+                    removeWaypoint(it)
+                }
+            }
         }
     }
 
@@ -230,10 +245,24 @@ object BurrowDetector {
         if (guessWp != null && guessWp!!.pos.distanceTo(playerPos) < 4) {
             guessWp?.hide()
         }
+
+        if(!Diana.dianaMultiBurrowGuess) return
+        val removedGuesses = mutableListOf<Waypoint>()
+        getGuessWaypoints().forEach { waypoint ->
+            if(waypoint.pos.distanceTo(playerPos) < 4) {
+                removedGuesses.add(waypoint)
+                guessWp?.hide()
+            }
+        }
+
+        removedGuesses.forEach { waypoint ->
+            removeWaypoint(waypoint)
+        }
     }
 
     fun resetBurrows() {
         WaypointManager.removeAllOfType("burrow")
+        WaypointManager.removeAllOfType("guess")
         burrows.clear()
         burrowsHistory.clear()
     }

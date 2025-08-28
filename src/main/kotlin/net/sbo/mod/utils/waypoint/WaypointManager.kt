@@ -2,6 +2,10 @@ package net.sbo.mod.utils.waypoint
 
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
+import net.minecraft.client.MinecraftClient
+import net.minecraft.text.Text
+import net.sbo.mod.SBOKotlin.mc
+import net.sbo.mod.diana.BurrowDetector.refreshBurrows
 import net.sbo.mod.diana.DianaGuess
 import net.sbo.mod.settings.categories.Customization
 import net.sbo.mod.utils.render.WaypointRenderer
@@ -14,7 +18,9 @@ import net.sbo.mod.utils.Player
 import net.sbo.mod.utils.SoundHandler.playCustomSound
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.math.SboVec
+import java.awt.Color
 import kotlin.collections.iterator
+import kotlin.math.acos
 import kotlin.math.roundToInt
 import kotlin.text.get
 
@@ -22,10 +28,28 @@ object WaypointManager {
     var guessWp: Waypoint? = null
     val waypoints = mutableMapOf<String, MutableList<Waypoint>>()
     var closestBurrow: Pair<Waypoint?, Double> = null to 1000.0
+    var focusedGuess : Waypoint? = null
 
     fun init() {
         if (guessWp == null) {
             guessWp = Waypoint("Guess", 100.0, 100.0, 100.0, 0.0f, 0.964f, 1.0f, 0,"guess")
+        }
+
+        Register.command("sboraitestguess") {
+            val pos = Player.getLastPosition()
+            val waypoint = createGuessWaypoint(pos.plus(SboVec(10.0, 2.0, 10.0)))
+            if (waypoint == null) return@command;
+
+            addWaypoint(waypoint)
+            println("Added test guess waypoint at ${pos.x+10}, ${pos.y+2}, ${pos.z+10}")
+        }
+
+        Register.command("sboraitestresetguess") {
+            getGuessWaypoints().clear()
+        }
+
+        Register.command("raitestrefreshguess") {
+            refreshBurrows()
         }
 
         Register.command("sbosendinq") {
@@ -84,6 +108,32 @@ object WaypointManager {
             }
 
             guessWp?.format(inqWps, closestBurrow.second)
+            refreshBurrows()
+        }
+
+        Register.onTick(2){ _ ->
+            if(!Diana.dianaMultiBurrowGuess) return@onTick
+            focusedGuess = null
+            var minAngle = Double.MAX_VALUE
+
+            getGuessWaypoints().forEach { waypoint ->
+                val player = MinecraftClient.getInstance().player
+                if (player == null) return@forEach
+                val eyeLocation = player.eyePos;
+                val lookVec = player.getRotationVector().normalize()
+                val dirToWaypoint = waypoint.pos.center().toVec3d().subtract(eyeLocation).normalize()
+                val angle = acos(lookVec.dotProduct(dirToWaypoint))
+
+                if (angle < minAngle) {
+                    minAngle = angle
+                    focusedGuess = waypoint
+                }
+            }
+
+            val angletreshold = Math.toRadians(4.0)
+            if (minAngle > angletreshold) {
+                focusedGuess = null
+            }
         }
 
         WorldRenderEvents.AFTER_TRANSLUCENT.register(WaypointRenderer)
@@ -98,7 +148,23 @@ object WaypointManager {
             waypoint.render(context)
         }
 
-        this.guessWp?.render(context)
+        //this.guessWp?.render(context)
+
+        // Create a copy of the list to avoid ConcurrentModificationException
+        //val guessWaypointsCopy = this.guessWaypoints.toList()
+        //guessWaypointsCopy.forEach { it.render(context) }
+    }
+
+    fun createGuessWaypoint(pos: SboVec?) : Waypoint? {
+        if (pos == null) return null
+        val color = Color(Customization.guessColor)
+        val r = color.red.toFloat() / 255.0f
+        val g = color.green.toFloat() / 255.0f
+        val b = color.blue.toFloat() / 255.0f
+
+        val guess = Waypoint("Guess", pos.x, pos.y, pos.z, r,g,b, 0,"guess")
+        guess.show()
+        return guess
     }
 
     /**
@@ -106,9 +172,7 @@ object WaypointManager {
      * @param waypoint The waypoint to add.
      */
     fun addWaypoint(waypoint: Waypoint) {
-        if (waypoint.type.lowercase() != "guess") {
-            waypoints.getOrPut(waypoint.type.lowercase()) { mutableListOf() }.add(waypoint)
-        }
+        waypoints.getOrPut(waypoint.type.lowercase()) { mutableListOf() }.add(waypoint)
     }
 
     /**
@@ -156,12 +220,18 @@ object WaypointManager {
      * @param pos The new position for the guess waypoint.
      */
     fun updateGuess(pos: SboVec?) {
-        guessWp?.apply {
-            show()
-            if (pos != null) {
-                this.pos = pos
+        if(!Diana.dianaMultiBurrowGuess) {
+            guessWp?.apply {
+                show()
+                if (pos != null) {
+                    this.pos = pos
+                }
             }
+            return
         }
+        if(pos == null) return
+        var waypoint = createGuessWaypoint(pos) ?: return
+        addWaypoint(waypoint)
     }
 
     /**
@@ -181,6 +251,10 @@ object WaypointManager {
      */
     fun forEachWaypoint(action: (Waypoint) -> Unit) {
         waypoints.values.flatten().forEach(action)
+    }
+
+    fun getGuessWaypoints(): MutableList<Waypoint> {
+        return waypoints.getOrPut("guess") { mutableListOf()  }
     }
 
     /**
@@ -252,10 +326,27 @@ object WaypointManager {
     }
 
     fun warpToGuess() {
-        if (guessWp == null) return
-        if (guessWp!!.hidden) return
-        val warp = getClosestWarp(guessWp?.pos ?: SboVec(0.0, 0.0, 0.0))
-        if (warp != null) executeWarpCommand(warp)
+        if(!Diana.dianaMultiBurrowGuess) {
+            if (guessWp == null) return
+            if (guessWp!!.hidden) return
+            val warp = getClosestWarp(guessWp?.pos ?: SboVec(0.0, 0.0, 0.0))
+            if (warp != null) executeWarpCommand(warp)
+        }else{
+            var warpWaypoint = focusedGuess
+            if(warpWaypoint == null){
+                val distance = Double.MAX_VALUE
+                getGuessWaypoints().forEach { waypoint ->
+                    val dist = waypoint.pos.distanceTo(Player.getLastPosition())
+                    if(dist < distance){
+                        warpWaypoint = waypoint
+                    }
+                }
+            }
+            if(warpWaypoint == null) return
+
+            val warp = getClosestWarp(warpWaypoint.pos)
+            if (warp != null) executeWarpCommand(warp)
+        }
     }
 
     fun warpToInq() {
