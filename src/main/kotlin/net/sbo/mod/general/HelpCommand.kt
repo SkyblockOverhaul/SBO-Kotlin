@@ -39,7 +39,7 @@ object HelpCommand {
                 .formatted(Formatting.GOLD)
                 .append(Text.literal("Commands:").formatted(Formatting.YELLOW))
 
-            Chat.chat(headerText.toString())
+            Chat.chat(headerText)
 
             commands.forEach { command ->
                 val cmd = command["cmd"]!!

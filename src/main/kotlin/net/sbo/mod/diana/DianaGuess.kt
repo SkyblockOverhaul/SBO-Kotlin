@@ -13,7 +13,7 @@ import net.sbo.mod.utils.math.SboVec
 import net.sbo.mod.utils.data.PlayerInteractEvent
 import net.sbo.mod.utils.waypoint.WaypointManager
 import net.sbo.mod.settings.categories.Diana
-import net.sbo.mod.utils.World
+import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.math.PolynomialFitter
 import kotlin.math.PI
 import kotlin.math.atan2

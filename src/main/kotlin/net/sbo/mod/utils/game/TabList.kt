@@ -1,4 +1,4 @@
-package net.sbo.mod.utils
+package net.sbo.mod.utils.game
 
 import net.minecraft.client.network.PlayerListEntry
 import net.minecraft.text.Text

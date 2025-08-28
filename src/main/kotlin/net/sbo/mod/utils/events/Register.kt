@@ -1,35 +1,33 @@
 package net.sbo.mod.utils.events
 
-import net.sbo.mod.SBOKotlin.mc
+import com.mojang.brigadier.arguments.StringArgumentType
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.client.MinecraftClient
-import net.minecraft.text.Text
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.world.ClientWorld
-import net.minecraft.client.gui.DrawContext
-import java.util.regex.Matcher
-import java.util.regex.Pattern
-import net.sbo.mod.utils.chat.ChatHandler
-import net.sbo.mod.utils.Helper.removeFormatting
-import net.sbo.mod.utils.data.PlayerInteractEvent
-
-import com.mojang.brigadier.arguments.StringArgumentType
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
+import net.minecraft.client.MinecraftClient
+import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.Entity
-import net.minecraft.entity.damage.DamageSource
 import net.minecraft.network.packet.Packet
+import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
+import net.sbo.mod.SBOKotlin.mc
+import net.sbo.mod.utils.Helper.removeFormatting
+import net.sbo.mod.utils.chat.ChatHandler
 import net.sbo.mod.utils.chat.ChatUtils.formattedString
+import net.sbo.mod.utils.data.PacketActionPair
+import net.sbo.mod.utils.data.PlayerInteractEvent
 import net.sbo.mod.utils.events.TickScheduler.ScheduledTask
 import net.sbo.mod.utils.events.TickScheduler.tasks
-import net.sbo.mod.utils.data.PacketActionPair
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 /**
  * Utility object for registering events
@@ -176,85 +174,18 @@ object Register {
     }
 
     /**
-     * Registers an event that listens for chat messages that match a list of regex patterns.
-     * The action receives both the message and the regex match result for easy value extraction.
+     * Registers an event that listens for chat messages that match a regex.
+     * The action receives both the message and the regex matcher for easy value extraction.
+     * If the action returns true, the message will be cancelled (not displayed in chat).
      *
-     * @param regexes A list of regular expressions to filter messages with.
-     * @param noFormatting If true, removes formatting from the message before matching.
-     * @param action The action to execute. It receives the message and the `MatchResult
+     * @param regex The regular expression to filter messages with.
+     * @param action The action to execute. It receives the message and the `Matcher`.
      */
-    fun onChatMessage(
-        regexes: List<Regex>,
-        noFormatting: Boolean = false,
-        action: (message: Text, matchResult: MatchResult) -> Unit
-    ) {
-        ClientReceiveMessageEvents.GAME.register { message, _ ->
-            var text = message.formattedString()
-
-            if (noFormatting) text = text.removeFormatting()
-
-            regexes.forEach { regex ->
-                regex.find(text)?.let { result ->
-                    action(message, result)
-                }
-            }
-        }
-    }
-
-    /**
-     * Registers a listener for chat messages that match a given criteria string.
-     *
-     * @param criteria The pattern to match. Use ${variable} for placeholders.
-     * @param action A lambda function to execute upon a match. It receives a list of the captured strings.
-     */
-    fun onChatMessage(
-        criteria: String,
-        noFormatting: Boolean,
-        action: (message: Text, capturedParts: List<String>) -> Unit
-    ) {
-        val processedCriteria = criteria.replace('&', '§')
-        val placeholderRegex = Regex("\\{[^}]+}")
-        val literalParts = processedCriteria.split(placeholderRegex)
-        val finalRegexPattern = literalParts
-            .joinToString(separator = "(.*?)") { Regex.escape(it) }
-        val criteriaRegex = Regex(finalRegexPattern)
-
-        ClientReceiveMessageEvents.GAME.register { message: Text, _ ->
-            var text = message.formattedString()
-
-            if (noFormatting) text = text.removeFormatting()
-
-            val matchResult = criteriaRegex.matchEntire(text)
-
-            if (matchResult != null) {
-                val captured = matchResult.groupValues.drop(1)
-
-                action(message, captured)
-            }
-        }
-    }
-
     fun onChatMessageCancable(
         regex: Pattern,
         action: (message: Text, matchResult: Matcher) -> Boolean
     ) {
         ChatHandler.registerHandler(regex, action)
-    }
-
-    /**
-     * Registers an event that listens for chat messages containing a specific string.
-     * The action receives the message as a `Text` object.
-     * This is mainly used for testing purposes
-     *
-     * @param criteria The string to search for in chat messages.
-     * @param action The action to execute when a matching message is found.
-     */
-    fun chatMessageNormal(criteria: String, action: (message: Text) -> Unit) {
-        ClientReceiveMessageEvents.GAME.register { message, _ ->
-            if (message.string.contains(criteria)) {
-                action(message)
-            }
-        }
     }
 
     /**
@@ -315,24 +246,12 @@ object Register {
         packetReceivedActions.add(PacketActionPair(packetClass, action))
     }
 
-    fun onPacketReceived(action: (packet: Packet<*>) -> Unit) {
-        packetReceivedActions.add(PacketActionPair(null, action))
-    }
-
     fun <T: Packet<*>> onPacketSent(packetClass: Class<T>, action: (packet: T) -> Unit) {
         sentPacketActions.add(PacketActionPair(packetClass, action))
     }
 
-    fun onPacketSent(action: (packet: Packet<*>) -> Unit) {
-        sentPacketActions.add(PacketActionPair(null, action))
-    }
-
     fun onPlayerInteract(action: (action: String, pos: BlockPos?, event: PlayerInteractEvent?) -> Unit) {
         playerInteractActions.add(action)
-    }
-
-    fun onEntityDeath(action: (entity: Entity) -> Unit) {
-        entityDeathActions.add(action)
     }
 
     fun onEntityLoad(action: (entity: Entity, clientWorld: ClientWorld) -> Unit) {

@@ -1,4 +1,4 @@
-package net.sbo.mod.utils
+package net.sbo.mod.utils.game
 
 import net.sbo.mod.SBOKotlin
 import net.minecraft.scoreboard.*

@@ -1,14 +1,8 @@
 package net.sbo.mod.utils
 
-import com.mojang.serialization.DataResult
-import net.minecraft.component.DataComponentTypes
-import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.item.ItemStack
 import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.utils.math.SboVec
-import net.minecraft.nbt.NbtCompound
-import net.sbo.mod.utils.Helper.getCursorItemStack
-import net.sbo.mod.utils.data.Item
 import java.util.UUID
 
 object Player {

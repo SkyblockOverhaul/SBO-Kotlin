@@ -3,7 +3,7 @@ package net.sbo.mod.utils.overlay
 import net.minecraft.client.gui.DrawContext
 import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.utils.Helper
-import net.sbo.mod.utils.World
+import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.data.OverlayValues
 import net.sbo.mod.utils.data.SboDataObject.overlayData
 import java.awt.Color

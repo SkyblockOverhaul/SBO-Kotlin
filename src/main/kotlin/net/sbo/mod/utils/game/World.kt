@@ -1,7 +1,6 @@
-package net.sbo.mod.utils
+package net.sbo.mod.utils.game
 
 import net.sbo.mod.settings.categories.Debug
-import net.sbo.mod.utils.ScoreBoard
 
 object World {
     /**

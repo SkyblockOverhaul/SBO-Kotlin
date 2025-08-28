@@ -4,7 +4,7 @@ import net.minecraft.client.MinecraftClient
 import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.settings.categories.General
-import net.sbo.mod.utils.World
+import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.overlay.Overlay
 import net.sbo.mod.utils.overlay.OverlayTextLine
 import java.util.UUID

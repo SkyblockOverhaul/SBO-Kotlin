@@ -10,7 +10,7 @@ import net.minecraft.client.gui.screen.Screen
 import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.events.Register
-import net.sbo.mod.utils.World
+import net.sbo.mod.utils.game.World
 
 object OverlayManager {
     val overlays = mutableListOf<Overlay>()

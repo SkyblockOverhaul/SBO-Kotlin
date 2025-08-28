@@ -8,7 +8,7 @@ import net.sbo.mod.diana.DianaTracker
 import net.sbo.mod.utils.waypoint.WaypointManager
 import org.slf4j.LoggerFactory
 import net.sbo.mod.settings.Settings
-import net.sbo.mod.utils.Mayor
+import net.sbo.mod.utils.game.Mayor
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.general.PartyCommands
 import net.sbo.mod.general.Pickuplog
@@ -18,10 +18,9 @@ import net.sbo.mod.utils.SboKeyBinds
 import net.sbo.mod.guis.Main
 import net.sbo.mod.partyfinder.PartyCheck
 import net.sbo.mod.partyfinder.PartyPlayer
-import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.events.ClickActionManager
 import net.sbo.mod.utils.HypixelModApi
-import net.sbo.mod.utils.World
+import net.sbo.mod.utils.game.World
 import net.sbo.mod.diana.BurrowDetector
 import net.sbo.mod.diana.DianaGuess
 import net.sbo.mod.diana.DianaMobDetect

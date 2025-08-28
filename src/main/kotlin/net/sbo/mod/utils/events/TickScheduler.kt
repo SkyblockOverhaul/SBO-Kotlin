@@ -1,7 +1,6 @@
 package net.sbo.mod.utils.events
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.minecraft.client.MinecraftClient
 
 object TickScheduler {
     val tasks = mutableListOf<ScheduledTask>()

@@ -6,8 +6,7 @@ import net.sbo.mod.diana.DianaTracker
 import net.sbo.mod.settings.categories.QOL
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.events.Register
-import net.sbo.mod.utils.World
-import net.sbo.mod.utils.chat.Chat
+import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.data.Item
 import net.sbo.mod.utils.overlay.Overlay
 import net.sbo.mod.utils.overlay.OverlayTextLine

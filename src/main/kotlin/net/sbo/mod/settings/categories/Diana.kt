@@ -3,9 +3,11 @@ package net.sbo.mod.settings.categories
 import com.teamresourceful.resourcefulconfigkt.api.CategoryKt
 import com.teamresourceful.resourcefulconfigkt.api.ObservableEntry
 import net.sbo.mod.SBOKotlin.mc
+import net.sbo.mod.diana.DianaTracker.announceLootToParty
 import net.sbo.mod.overlays.DianaLoot
 import net.sbo.mod.overlays.DianaMobs
 import net.sbo.mod.overlays.InquisLoot
+import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.overlay.OverlayEditScreen
 import net.sbo.mod.utils.waypoint.AdditionalHubWarps
@@ -244,6 +246,17 @@ object Diana : CategoryKt("Diana") {
         this.description = Translated("Sends a text on inq spawn 5 seconds after spawn, use {since} for mobs since inq, {chance} for inq chance")
     }
 
+    init {
+        button {
+            title = "Send Test Inq Message"
+            text = "Send Test"
+            description = "Sends a test message for the inquisitor spawn message"
+            onClick {
+                Chat.chat(announceKilltext[0])
+            }
+        }
+    }
+
     var chimMessageBool by boolean(false) {
         this.name = Translated("Chim Message")
         this.description = Translated("Enables custom chim message")
@@ -256,11 +269,14 @@ object Diana : CategoryKt("Diana") {
 
     init {
         button {
-            title = "Send Test Inq Message"
+            title = "Send Test Chim Message"
             text = "Send Test"
-            description = "Sends a test message for the inquisitor spawn message"
+            description = "Sends a test message for the chimera message"
             onClick {
-                Chat.chat(announceKilltext[0])
+                val customChimMsg = Helper.checkCustomChimMessage(400)
+                if (customChimMsg.first) {
+                    Chat.chat(customChimMsg.second)
+                }
             }
         }
     }

@@ -10,7 +10,6 @@ import net.sbo.mod.utils.data.DianaTracker as DianaTrackerDataClass
 import net.sbo.mod.overlays.DianaLoot
 import net.sbo.mod.settings.categories.Debug
 import net.sbo.mod.settings.categories.Diana
-import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.data.SboDataObject
 import kotlin.concurrent.thread
 import net.sbo.mod.utils.data.DianaItemsData
@@ -18,6 +17,9 @@ import net.sbo.mod.utils.data.DianaMobsData
 import net.sbo.mod.utils.data.HypixelBazaarResponse
 import net.sbo.mod.utils.data.Item
 import net.sbo.mod.utils.events.Register
+import net.sbo.mod.utils.game.Mayor
+import net.sbo.mod.utils.game.ScoreBoard
+import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.http.Http
 import net.sbo.mod.utils.waypoint.WaypointManager.onLootshare
 import java.math.BigDecimal
@@ -71,7 +73,6 @@ object Helper {
         }
         updateItemPriceInfo()
 
-        // todo: test if this works as intended
         DianaMobDetect.onMobDeath { name, entity ->
             val dist = entity.distanceTo(mc.player)
             if (name.contains("Minos Inquisitor")) {
@@ -89,30 +90,6 @@ object Helper {
                 lastDianaMobDeath = System.currentTimeMillis()
             }
         }
-
-        // old entity death listener, kept for reference
-//        Register.onEntityDeath { entity ->
-//            val dist = entity.distanceTo(mc.player)
-//            val name = entity.name.string
-//            val isDianaMob = dianaMobNames.any { it in name }
-//            if (dist > 10) return@onEntityDeath
-//            if (name.contains("Minos Inquisitor")) {
-//                if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedInq) {
-//                    hasTrackedInq = true
-//                    DianaTracker.trackItem("MINOS_INQUISITOR_LS", 1)
-//                    sleep(2000) {
-//                        hasTrackedInq = false
-//                    }
-//                }
-//                lastInqDeath = System.currentTimeMillis()
-//            }
-//            if (isDianaMob) {
-//                if (dist <= 30) {
-//                    allowSackTracking = true
-//                    lastDianaMobDeath = System.currentTimeMillis()
-//                }
-//            }
-//        }
     }
 
     /**

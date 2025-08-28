@@ -6,7 +6,7 @@ import net.sbo.mod.guis.partyfinder.PartyFinderGUI
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.events.EventBus
 import net.sbo.mod.utils.events.Register
-import net.sbo.mod.utils.World
+import net.sbo.mod.utils.game.World
 
 object Main {
     private var partyFinderGui: PartyFinderGUI? = null
