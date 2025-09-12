@@ -7,6 +7,7 @@ import net.sbo.mod.settings.categories.Diana
 import java.awt.Color
 import net.sbo.mod.utils.math.SboVec
 import net.sbo.mod.utils.Player
+import net.sbo.mod.utils.waypoint.WaypointManager.focusedGuess
 import kotlin.math.sqrt
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -32,9 +33,9 @@ class Waypoint(
     val x: Double,
     val y: Double,
     val z: Double,
-    val r: Float,
-    val g: Float,
-    val b: Float,
+    var r: Float,
+    var g: Float,
+    var b: Float,
     val ttl: Int = 0,
     val type: String = "normal",
     var line: Boolean = false,
@@ -73,7 +74,21 @@ class Waypoint(
         if (this.type == "guess") {
             this.line =  Diana.guessLine && (closestBurrowDistance > 60) && inqWaypoints.isEmpty()
             this.color =  Color(Customization.guessColor)
-            this.hexCode = color.rgb
+
+            if (focusedGuess == this) {
+                this.color = Color(Customization.focusedColor)
+                this.line = Diana.guessLine && (closestBurrowDistance > 60) && inqWaypoints.isEmpty()
+
+                this.r = this.color.red.toFloat() / 255.0f
+                this.g = this.color.green.toFloat() / 255.0f
+                this.b = this.color.blue.toFloat() / 255.0f
+                this.hexCode = color.rgb
+            }else{
+                this.r = this.color.red.toFloat() / 255.0f
+                this.g = this.color.green.toFloat() / 255.0f
+                this.b = this.color.blue.toFloat() / 255.0f
+                this.hexCode = color.rgb
+            }
 
             val (exists, wp) = WaypointManager.waypointExists("burrow", this.pos)
             if (exists && wp != null) {
