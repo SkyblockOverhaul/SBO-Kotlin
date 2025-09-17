@@ -160,6 +160,7 @@ class PastEventsGui : WindowScreen(ElementaVersion.V10) {
 
             val rightData = mutableListOf(
                 "§dMinos Inquisitors: ${Helper.formatNumber(data.mobs.MINOS_INQUISITOR,true)}",
+                "§dInquisitors (LS): ${Helper.formatNumber(data.mobs.MINOS_INQUISITOR_LS,true)}",
                 "§5Minos Champions: ${Helper.formatNumber(data.mobs.MINOS_CHAMPION,true)}",
                 "§6Minotaurs: ${Helper.formatNumber(data.mobs.MINOTAUR,true)}",
                 "§2Gaias: ${Helper.formatNumber(data.mobs.GAIA_CONSTRUCT,true)}",
