@@ -19,6 +19,7 @@ import gg.essential.elementa.dsl.percent
 import gg.essential.elementa.dsl.pixels
 import net.sbo.mod.diana.achievements.Achievement
 import net.sbo.mod.diana.achievements.AchievementManager
+import net.sbo.mod.utils.data.SboDataObject
 import java.awt.Color
 import kotlin.math.floor
 
@@ -31,6 +32,7 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
 
     private var filterType = AchievementFilter.DEFAULT
     private var achievementList: List<Achievement> = emptyList()
+    private var sboData = SboDataObject.sboData
 
     private lateinit var contentPanel: UIComponent
     private lateinit var scrollComponent: ScrollComponent
@@ -46,6 +48,7 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
 
     override fun initScreen(width: Int, height: Int) {
         super.initScreen(width, height)
+        loadFilterFromSboData()
         updateAchievementList()
         renderAchievements()
     }
@@ -149,6 +152,8 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
             } else {
                 filterOptions[(currentIndex + filterOptions.size - 1) % filterOptions.size]
             }
+            sboData.achievementFilter = filterType.name
+            SboDataObject.save("SboData")
             updateAchievementList()
             renderAchievements()
         }
@@ -234,6 +239,14 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
 
         contentPanel.constrain {
             height = requiredHeight.pixels
+        }
+    }
+
+    private fun loadFilterFromSboData() {
+        filterType = try {
+            AchievementFilter.valueOf(sboData.achievementFilter.uppercase())
+        } catch (e: Exception) {
+            AchievementFilter.DEFAULT
         }
     }
 
