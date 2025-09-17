@@ -159,9 +159,9 @@ class PastEventsGui : WindowScreen(ElementaVersion.V10) {
             createBlock(leftData, 0)
 
             val rightData = mutableListOf(
-                "§dMinos Inquisitors: ${Helper.formatNumber(data.mobs.MINOS_INQUISITOR,true)}",
+                "§dInquisitors: ${Helper.formatNumber(data.mobs.MINOS_INQUISITOR,true)}",
                 "§dInquisitors (LS): ${Helper.formatNumber(data.mobs.MINOS_INQUISITOR_LS,true)}",
-                "§5Minos Champions: ${Helper.formatNumber(data.mobs.MINOS_CHAMPION,true)}",
+                "§5Champions: ${Helper.formatNumber(data.mobs.MINOS_CHAMPION,true)}",
                 "§6Minotaurs: ${Helper.formatNumber(data.mobs.MINOTAUR,true)}",
                 "§2Gaias: ${Helper.formatNumber(data.mobs.GAIA_CONSTRUCT,true)}",
                 "§2Siamese: ${Helper.formatNumber(data.mobs.SIAMESE_LYNXES,true)}",
