@@ -119,10 +119,15 @@ object Helper {
         name = name.replace(Regex("[^a-zA-Z0-9_]"), "")
         return name.trim()
     }
-
-    fun calcPercentOne(items: DianaItemsData, mobs: DianaMobsData, itemName: String, mobName: String? = null): String {
+    
+    /**
+     * Calculate percentage of one property to another.
+     * If [mobName] is provided, it calculates the percentage of [propertyName] from [items] to [mobName] from [mobs].
+     * If [mobName] is null, it calculates the percentage of [propertyName] from [mobs] to total mobs.
+     */
+    fun calcPercentOne(items: DianaItemsData, mobs: DianaMobsData, propertyName: String, mobName: String? = null): String {
         val result: Double = if (mobName != null) {
-            val itemCount = items::class.memberProperties.firstOrNull { it.name == itemName }
+            val itemCount = items::class.memberProperties.firstOrNull { it.name == propertyName }
                 ?.call(items) as? Int ?: 0
             val mobCount = mobs::class.memberProperties.firstOrNull { it.name == mobName }
                 ?.call(mobs) as? Int ?: 0
@@ -130,7 +135,7 @@ object Helper {
             if (mobCount <= 0) 0.0
             else (itemCount.toDouble() / mobCount.toDouble() * 100)
         } else {
-            val mobCount = mobs::class.memberProperties.firstOrNull { it.name == itemName }
+            val mobCount = mobs::class.memberProperties.firstOrNull { it.name == propertyName }
                 ?.call(mobs) as? Int ?: 0
             val totalMobsCount = mobs.TOTAL_MOBS
 
