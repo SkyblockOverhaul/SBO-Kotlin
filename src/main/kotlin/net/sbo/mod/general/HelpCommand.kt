@@ -16,18 +16,18 @@ object HelpCommand {
         mapOf("cmd" to "sboclearburrows", "desc" to "Clear all burrow waypoints (or: /sbocb)"),
         mapOf("cmd" to "sbocheck <player>", "desc" to "Check a player (or: /sboc <player>)"),
         mapOf("cmd" to "sbocheckp", "desc" to "Check your party (alias /sbocp)"),
-        mapOf("cmd" to "sboimporttracker <profilename>", "desc" to "Import skyhanni tracker"),
-        mapOf("cmd" to "sboimporttrackerundo", "desc" to "Undo the tracker import"),
-        mapOf("cmd" to "sbodc", "desc" to "Diana dropchances"),
-        mapOf("cmd" to "sbopartyblacklist", "desc" to "Party commands blacklisting"),
+        mapOf("cmd" to "sboimporttracker <profilename>", "desc" to "Import skyhanni tracker"), //todo: add sboimporttracker command
+        mapOf("cmd" to "sboimporttrackerundo", "desc" to "Undo the tracker import"), // todo: add sboimporttrackerundo command
+        mapOf("cmd" to "sbodc", "desc" to "Diana dropchances"), // todo: add sbodc command
+        mapOf("cmd" to "sbopartyblacklist", "desc" to "Party commands blacklisting"), // todo: add sbopartyblacklist command
         mapOf("cmd" to "sbobacktrackachievements", "desc" to "Backtrack achievements"),
         mapOf("cmd" to "sboachievements", "desc" to "Opens the achievements GUI"),
         mapOf("cmd" to "sbolockachievements", "desc" to "Locks all Achievements (needs confirmation)"),
         mapOf("cmd" to "sbopde", "desc" to "Opens the Past Diana Events GUI"),
-        mapOf("cmd" to "sboactiveuser", "desc" to "Shows the active user of the mod"),
+        mapOf("cmd" to "sboactiveuser", "desc" to "Shows the active user of the mod"), // todo: add sboactiveuser command
         mapOf("cmd" to "sbopf", "desc" to "Opens the PartyFinder GUI"),
-        mapOf("cmd" to "sbopartycommands", "desc" to "Displays all diana partycommands"),
-        mapOf("cmd" to "sboresetavgmftracker", "desc" to "Resets the avg mf tracker"),
+        mapOf("cmd" to "sbopartycommands", "desc" to "Displays all diana partycommands"), // todo: add sbopartycommands command
+        mapOf("cmd" to "sboresetavgmftracker", "desc" to "Resets the avg mf tracker"), // todo: add sboresetavgmftracker command
         mapOf("cmd" to "sboresetstatstracker", "desc" to "Resets the stats tracker"),
         mapOf("cmd" to "sboKey", "desc" to "Set your sbokey"),
         mapOf("cmd" to "sboClearKey", "desc" to "Reset your sbokey")
