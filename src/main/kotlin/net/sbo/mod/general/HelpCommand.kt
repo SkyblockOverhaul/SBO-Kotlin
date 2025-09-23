@@ -8,6 +8,7 @@ import net.minecraft.util.Formatting
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.events.Register
+import kotlin.math.roundToInt
 
 object HelpCommand {
     val commands = arrayOf(
@@ -88,8 +89,23 @@ object HelpCommand {
 
             val chances = Helper.getChance(mf, looting)
             val lsChances = Helper.getChance(mf, looting, true)
+            val chancesMap = listOf(
+                mapOf("name" to "Chimera", "chance" to chances["chim"], "label" to Helper.getMagicFindAndLooting(mf, looting)),
+                mapOf("name" to "Stick", "chance" to chances["stick"], "label" to Helper.getMagicFindAndLooting(mf, looting)),
+                mapOf("name" to "Relic", "chance" to chances["relic"], "label" to Helper.getMagicFindAndLooting(mf, looting)),
+                mapOf("name" to "Chimera", "chance" to lsChances["chim"], "label" to "§7[MF:$mf]", "ls" to true),
+                mapOf("name" to "Stick", "chance" to lsChances["stick"], "label" to "§7[MF:$mf]", "ls" to true),
+                mapOf("name" to "Relic", "chance" to lsChances["relic"], "label" to "§7[MF:$mf]", "ls" to true)
+            )
 
-
+            chancesMap.forEach { item ->
+                val name = item["name"] as String
+                val chance = item["chance"] as Double
+                val label = item["label"] as String
+                val isLs = item["ls"] as? Boolean ?: false
+                val lsPrefix = if (isLs) "§7[§bLS§7] " else ""
+                Chat.chat("§6[SBO] $lsPrefix§e$name ${Helper.formatChances(chance, label)}")
+            }
         }
     }
 }

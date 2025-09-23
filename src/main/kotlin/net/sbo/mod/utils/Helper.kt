@@ -30,6 +30,7 @@ import kotlin.reflect.full.memberProperties
 import java.text.DecimalFormat
 import java.util.Locale
 import java.util.regex.Pattern
+import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
 object Helper {
@@ -480,6 +481,16 @@ object Helper {
         }
         val lootingMultiplier = 1 + looting * 0.15
         return baseChances.mapValues { it.value * multiplier * lootingMultiplier }
+    }
+
+    fun formatChances(chance: Double, label: String): String {
+        val percent = String.format("%.2f", chance * 100)
+        val fraction = " §7(§b1/${(1 / chance).roundToInt()}§7)"
+        return "§eChance: §b$percent%$fraction $label"
+    }
+
+    fun getMagicFindAndLooting(mf: Int, looting: Int): String {
+        return " §7[MF:$mf] [L:$looting]"
     }
 }
 
