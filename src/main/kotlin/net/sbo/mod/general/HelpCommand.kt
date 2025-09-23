@@ -72,14 +72,11 @@ object HelpCommand {
 
     fun dropChances() {
         Register.command("sbodc", "sbodropchances") { args ->
-            if (args.isEmpty()) {
+            if (args.size < 2) {
                 Chat.chat("§6[SBO] §ePlease provide mf/looting values. /sbodc <mf> <looting>")
                 return@command
             }
-            if (args[1].isEmpty()) {
-                Chat.chat("§6[SBO] §ePlease provide looting value. /sbodc <mf> <looting>")
-                return@command
-            }
+
             val mf = args[0].toIntOrNull()
             val looting = args[1].toIntOrNull()
             if (mf == null || looting == null) {
@@ -87,25 +84,21 @@ object HelpCommand {
                 return@command
             }
 
-            val chances = Helper.getChance(mf, looting)
+            val items = listOf("Chimera" to "chim", "Stick" to "stick", "Relic" to "relic")
+            val normalChances = Helper.getChance(mf, looting)
             val lsChances = Helper.getChance(mf, looting, true)
-            val chancesMap = listOf(
-                mapOf("name" to "Chimera", "chance" to chances["chim"], "label" to Helper.getMagicFindAndLooting(mf, looting)),
-                mapOf("name" to "Stick", "chance" to chances["stick"], "label" to Helper.getMagicFindAndLooting(mf, looting)),
-                mapOf("name" to "Relic", "chance" to chances["relic"], "label" to Helper.getMagicFindAndLooting(mf, looting)),
-                mapOf("name" to "Chimera", "chance" to lsChances["chim"], "label" to "§7[MF:$mf]", "ls" to true),
-                mapOf("name" to "Stick", "chance" to lsChances["stick"], "label" to "§7[MF:$mf]", "ls" to true),
-                mapOf("name" to "Relic", "chance" to lsChances["relic"], "label" to "§7[MF:$mf]", "ls" to true)
-            )
 
-            chancesMap.forEach { item ->
-                val name = item["name"] as String
-                val chance = item["chance"] as Double
-                val label = item["label"] as String
-                val isLs = item["ls"] as? Boolean ?: false
-                val lsPrefix = if (isLs) "§7[§bLS§7] " else ""
-                Chat.chat("§6[SBO] $lsPrefix§e$name ${Helper.formatChances(chance, label)}")
+            (listOf(false, true)).forEach { isLs ->
+                val chances = if (isLs) lsChances else normalChances
+                val labelFunc: (String) -> String = if (isLs) { _ -> "§7[MF:$mf]" } else { _ -> Helper.getMagicFindAndLooting(mf, looting) }
+
+                items.forEach { (name, key) ->
+                    val chance = chances[key] ?: 0.0
+                    val lsPrefix = if (isLs) "§7[§bLS§7] " else ""
+                    Chat.chat("§6[SBO] $lsPrefix§e$name ${Helper.formatChances(chance, labelFunc(name))}")
+                }
             }
         }
     }
+
 }
