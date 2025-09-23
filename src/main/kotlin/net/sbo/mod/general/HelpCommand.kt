@@ -5,6 +5,7 @@ import net.minecraft.text.HoverEvent.ShowText
 import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
+import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.events.Register
 
@@ -64,6 +65,31 @@ object HelpCommand {
 
                 Chat.chat(styledText)
             }
+        }
+        dropChances()
+    }
+
+    fun dropChances() {
+        Register.command("sbodc", "sbodropchances") { args ->
+            if (args.isEmpty()) {
+                Chat.chat("§6[SBO] §ePlease provide mf/looting values. /sbodc <mf> <looting>")
+                return@command
+            }
+            if (args[1].isEmpty()) {
+                Chat.chat("§6[SBO] §ePlease provide looting value. /sbodc <mf> <looting>")
+                return@command
+            }
+            val mf = args[0].toIntOrNull()
+            val looting = args[1].toIntOrNull()
+            if (mf == null || looting == null) {
+                Chat.chat("§6[SBO] §ePlease provide valid numbers. /sbodc 500 5")
+                return@command
+            }
+
+            val chances = Helper.getChance(mf, looting)
+            val lsChances = Helper.getChance(mf, looting, true)
+
+
         }
     }
 }

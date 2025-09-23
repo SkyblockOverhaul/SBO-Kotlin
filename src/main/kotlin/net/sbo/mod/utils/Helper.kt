@@ -470,5 +470,16 @@ object Helper {
         val burrowsPerHr = totalBurrows / hours
         return BigDecimal(burrowsPerHr).setScale(2, RoundingMode.HALF_UP).toDouble()
     }
+
+    fun getChance(mf: Int, looting: Int, lootshare: Boolean = false): Map<String, Double> {
+        val baseChances = mapOf("chim" to 0.01, "stick" to 0.0008, "relic" to 0.0002)
+        val multiplier = 1 + mf / 100.0
+        if (lootshare) {
+            val factor = multiplier / 5
+            return baseChances.mapValues { it.value * factor }
+        }
+        val lootingMultiplier = 1 + looting * 0.15
+        return baseChances.mapValues { it.value * multiplier * lootingMultiplier }
+    }
 }
 
