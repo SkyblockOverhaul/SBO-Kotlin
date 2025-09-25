@@ -15,6 +15,7 @@ object Guis {
     private var partyFinderGui: PartyFinderGUI? = null
     private var pastEventsGui: PastEventsGui? = null
     internal var achievementsGui: AchievementsGUI? = null
+    private var vexelGui: VexelTest? = null
     private var updating = false
     private var lastUpdate = 0L
     private const val UPDATE_INTERVAL = 300_000L // 5 minutes in ms
@@ -49,6 +50,15 @@ object Guis {
                     pastEventsGui = PastEventsGui()
                 }
                 UScreen.displayScreen(pastEventsGui!!)
+            }
+        }
+
+        Register.command("vexeltest") {
+            mc.send {
+                if (vexelGui == null) {
+                    vexelGui = VexelTest()
+                }
+                UScreen.displayScreen(vexelGui!!)
             }
         }
 

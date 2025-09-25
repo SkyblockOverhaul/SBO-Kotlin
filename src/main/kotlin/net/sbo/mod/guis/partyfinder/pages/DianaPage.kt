@@ -1,4 +1,5 @@
 package net.sbo.mod.guis.partyfinder.pages
+//todo: remake this with Vexel https://github.com/meowing-xyz/vexel
 
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIRoundedRectangle

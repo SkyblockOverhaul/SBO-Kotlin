@@ -4,10 +4,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.sbo.mod.diana.PreciseGuessBurrow
 import net.minecraft.client.MinecraftClient
-import net.minecraft.text.Text
-import net.sbo.mod.SBOKotlin.mc
-import net.sbo.mod.diana.BurrowDetector.refreshBurrows
-import net.sbo.mod.diana.DianaGuess
+import net.sbo.mod.diana.burrows.BurrowDetector.refreshBurrows
 import net.sbo.mod.settings.categories.Customization
 import net.sbo.mod.utils.render.WaypointRenderer
 import net.sbo.mod.settings.categories.Diana

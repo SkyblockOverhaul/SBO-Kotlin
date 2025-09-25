@@ -1,6 +1,5 @@
 package net.sbo.mod.guis.partyfinder
-//todo: remake this with a newer/maintained gui library like PolyUI: https://github.com/Polyfrost/polyui-jvm
-//import org.polyfrost.polyui.component.impl.*
+//todo: remake this with Vexel https://github.com/meowing-xyz/vexel
 
 import com.teamresourceful.resourcefulconfig.api.client.ResourcefulConfigScreen
 import gg.essential.elementa.ElementaVersion

@@ -20,7 +20,7 @@ object HelpCommand {
         mapOf("cmd" to "sbocheckp", "desc" to "Check your party (alias /sbocp)"),
         mapOf("cmd" to "sboimporttracker <profilename>", "desc" to "Import skyhanni tracker"), //todo: add sboimporttracker command
         mapOf("cmd" to "sboimporttrackerundo", "desc" to "Undo the tracker import"), // todo: add sboimporttrackerundo command
-        mapOf("cmd" to "sbodc", "desc" to "Diana dropchances"), // todo: add sbodc command
+        mapOf("cmd" to "sbodc", "desc" to "Diana dropchances"),
         mapOf("cmd" to "sbopartyblacklist", "desc" to "Party commands blacklisting"), // todo: add sbopartyblacklist command
         mapOf("cmd" to "sbobacktrackachievements", "desc" to "Backtrack achievements"),
         mapOf("cmd" to "sboachievements", "desc" to "Opens the achievements GUI"),
