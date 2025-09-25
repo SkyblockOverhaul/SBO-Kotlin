@@ -75,7 +75,7 @@ object SBOKotlin {
 		SboEventGeneratedRegistry.registerAll()
 
 		// load Main Features
-		PartyCommands.registerPartyChatListeners()
+		PartyCommands.init()
 		Register.command("sbo") {
 			mc.send{
 				mc.setScreen(ResourcefulConfigScreen.getFactory("sbo").apply(null))

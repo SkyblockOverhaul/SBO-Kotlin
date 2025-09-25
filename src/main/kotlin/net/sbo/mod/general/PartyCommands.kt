@@ -49,6 +49,28 @@ object PartyCommands {
         "Very Carrot"
     )
 
+    fun init() {
+        registerPartyChatListeners()
+        partyCommands()
+    }
+
+    fun partyCommands() {
+        Register.command("sbopartycommands", "sbopcom") {
+            Chat.chat("§6[SBO] §eDiana party commands:")
+            Chat.chat("§7> §a!chim")
+            Chat.chat("§7> §a!chimls")
+            Chat.chat("§7> §a!stick")
+            Chat.chat("§7> §a!relic")
+            Chat.chat("§7> §a!feathers")
+            Chat.chat("§7> §a!profit")
+            Chat.chat("§7> §a!playtime")
+            Chat.chat("§7> §a!mobs")
+            Chat.chat("§7> §a!burrows")
+            Chat.chat("§7> §a!stats <playername>")
+            Chat.chat("§7> §a!since (chim, chimls, relic, stick, inq)")
+        }
+    }
+
     fun registerPartyChatListeners() {
         DianaStats.registerReplaceStatsMessage()
         Register.onChatMessage(commandRegex) { message, matchResult ->
