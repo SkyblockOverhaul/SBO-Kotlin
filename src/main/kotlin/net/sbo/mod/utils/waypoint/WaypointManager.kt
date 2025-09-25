@@ -331,28 +331,21 @@ object WaypointManager {
     }
 
     fun warpToGuess() {
-        if(!Diana.dianaMultiBurrowGuess) {
+        if (!Diana.dianaMultiBurrowGuess) {
             if (guessWp == null) return
             if (guessWp!!.hidden) return
             val warp = getClosestWarp(guessWp?.pos ?: SboVec(0.0, 0.0, 0.0))
             if (warp != null) executeWarpCommand(warp)
-        }else{
-            var warpWaypoint = focusedGuess
-            if(warpWaypoint == null){
-                val distance = Double.MAX_VALUE
-                getGuessWaypoints().forEach { waypoint ->
-                    val dist = waypoint.pos.distanceTo(Player.getLastPosition())
-                    if(dist < distance){
-                        warpWaypoint = waypoint
-                    }
-                }
-            }
-            if(warpWaypoint == null) return
+        } else {
+            val warpWaypoint = focusedGuess ?: getGuessWaypoints().minByOrNull {
+                it.pos.distanceTo(Player.getLastPosition())
+            } ?: return
 
-            val warp = getClosestWarp(warpWaypoint.pos)
-            if (warp != null) executeWarpCommand(warp)
+            val warp = getClosestWarp(warpWaypoint.pos) ?: return
+            executeWarpCommand(warp)
         }
     }
+
 
     fun warpToInq() {
         val newestInq = getWaypointsOfType("inq").maxByOrNull { it.creation }

@@ -142,16 +142,13 @@ object BurrowDetector {
                 type = "burrow"
             )
             WaypointManager.addWaypoint(burrow.waypoint!!)
-            if(Diana.dianaMultiBurrowGuess) {
-                val removedGuesses = mutableListOf<Waypoint>()
-                getGuessWaypoints().forEach { waypoint ->
+            if (Diana.dianaMultiBurrowGuess) {
+                getGuessWaypoints().removeIf { waypoint ->
                     if (waypoint.pos.distanceTo(pos) < 2) {
                         waypoint.hide()
-                        removedGuesses.add(waypoint)
-                    }
-                }
-                removedGuesses.forEach {
-                    removeWaypoint(it)
+                        removeWaypoint(waypoint)
+                        true
+                    } else false
                 }
             }
         }

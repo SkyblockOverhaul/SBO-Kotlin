@@ -1,16 +1,16 @@
 package net.sbo.mod.utils.waypoint
 
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
-import net.sbo.mod.utils.render.RenderUtil
 import net.sbo.mod.settings.categories.Customization
 import net.sbo.mod.settings.categories.Diana
-import java.awt.Color
-import net.sbo.mod.utils.math.SboVec
 import net.sbo.mod.utils.Player
+import net.sbo.mod.utils.math.SboVec
+import net.sbo.mod.utils.render.RenderUtil
 import net.sbo.mod.utils.waypoint.WaypointManager.focusedGuess
-import kotlin.math.sqrt
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlin.math.sqrt
+import java.awt.Color
 
 /**
  * @class Waypoint
@@ -54,14 +54,16 @@ class Waypoint(
     var formattedText: String = ""
     var warp: String? = null
 
-    fun distanceToPlayer(): Double { // works
+    fun distanceToPlayer(): Double {
         val playerPos = Player.getLastPosition()
         return sqrt((playerPos.x - this.pos.x).pow(2) + (playerPos.y - this.pos.y).pow(2) + (playerPos.z - this.pos.z).pow(2))
     }
 
     private fun setWarpText() {
         this.warp = WaypointManager.getClosestWarp(this.pos)
-        this.formattedText = this.warp?.let { "$text§7 (warp $it)${this.distanceText}" } ?: "${this.text}${this.distanceText}"
+        this.formattedText = this.warp?.let {
+            "$text§7 (warp $it)${this.distanceText}"
+        } ?: "${this.text}${this.distanceText}"
     }
 
     fun format(
@@ -72,23 +74,18 @@ class Waypoint(
         this.distanceText = if (this.distance) " §b[${this.distanceRaw.roundToInt()}m]" else ""
 
         if (this.type == "guess") {
-            this.line =  Diana.guessLine && (closestBurrowDistance > 60) && inqWaypoints.isEmpty()
-            this.color =  Color(Customization.guessColor)
+            this.line = Diana.guessLine && (closestBurrowDistance > 60) && inqWaypoints.isEmpty()
+            this.color = Color(Customization.guessColor)
 
             if (focusedGuess == this) {
                 this.color = Color(Customization.focusedColor)
                 this.line = Diana.guessLine && (closestBurrowDistance > 60) && inqWaypoints.isEmpty()
-
-                this.r = this.color.red.toFloat() / 255.0f
-                this.g = this.color.green.toFloat() / 255.0f
-                this.b = this.color.blue.toFloat() / 255.0f
-                this.hexCode = color.rgb
-            }else{
-                this.r = this.color.red.toFloat() / 255.0f
-                this.g = this.color.green.toFloat() / 255.0f
-                this.b = this.color.blue.toFloat() / 255.0f
-                this.hexCode = color.rgb
             }
+
+            this.r = this.color.red.toFloat() / 255.0f
+            this.g = this.color.green.toFloat() / 255.0f
+            this.b = this.color.blue.toFloat() / 255.0f
+            this.hexCode = color.rgb
 
             val (exists, wp) = WaypointManager.waypointExists("burrow", this.pos)
             if (exists && wp != null) {
@@ -106,19 +103,18 @@ class Waypoint(
         this.formatted = true
     }
 
-    fun hide(): Waypoint { // works
+    fun hide(): Waypoint {
         this.hidden = true
         return this
     }
 
-    fun show(): Waypoint { // works
+    fun show(): Waypoint {
         this.hidden = false
         return this
     }
 
     fun render(context: WorldRenderContext) {
         if (!this.formatted || this.hidden) return
-
         if (this.type == "guess" && this.distanceRaw <= Diana.removeGuessDistance) return
 
         RenderUtil.renderWaypoint(
