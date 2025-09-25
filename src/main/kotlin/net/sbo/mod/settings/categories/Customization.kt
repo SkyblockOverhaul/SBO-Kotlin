@@ -41,6 +41,7 @@ object Customization : CategoryKt("Customization") {
         Color(0.333f, 1.0f, 0.333f).rgb) {
         this.name = Translated("Start Burrow Color")
         this.description = Translated("Pick a color for start burrows")
+        this.allowAlpha = true
     }
     
     var focusedColor by color(
