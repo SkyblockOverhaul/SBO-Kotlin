@@ -51,11 +51,6 @@ object Diana : CategoryKt("Diana") {
         this.description = Translated("Guess the burrow location. Needs Driping Lava Partciles and set /particlequality to Extreme for more accuracy")
     }
 
-    var dianaMultiBurrowGuess by boolean(true) {
-        this.name = Translated("Diana Multi Burrow Guess")
-        this.description = Translated("Multi guess the burrow location. Needs Driping Lava Partciles and set /particlequality to Extreme for more accuracy")
-    }
-
     var dianaBurrowDetect by boolean(true) {
         this.name = Translated("Diana Burrow Detection")
         this.description = Translated("Detects Diana burrows | to reset waypoints /sboclearburrows")
