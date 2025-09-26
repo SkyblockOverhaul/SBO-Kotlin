@@ -17,6 +17,7 @@ import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.Helper.removeFormatting
 import net.sbo.mod.utils.Player
 import net.sbo.mod.utils.SboTimerManager
+import net.sbo.mod.utils.game.ServerStats
 import java.util.concurrent.TimeUnit
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -135,7 +136,8 @@ object PartyCommands {
                 "!tps" -> {
                     if (!settings.tpsCommand) return@onChatMessage
                     sleep(200) {
-                        // todo: tpsCommand(player)
+                        val tps = ServerStats.getTps()
+                        Chat.command("pc ${"%.2f".format(tps)} TPS")
                     }
                 }
                 "!chim", "!chimera", "!chims", "!chimeras", "!book", "!books" -> {
