@@ -67,6 +67,11 @@ object Diana : CategoryKt("Diana") {
         }
     }
 
+    var focusedWarp by boolean(false) {
+        this.name = Translated("Focused Warp")
+        this.description = Translated("If enabled, you warp to the guess you look at instead of the closest one")
+    }
+
     var allowedWarps by select(AdditionalHubWarps.WIZARD, AdditionalHubWarps.DA, AdditionalHubWarps.CASTLE) {
         this.name = Translated("Add Warps")
         this.description = Translated("Select the warps you want to be able to warp to with the guess and inquisitor warp keys.")
