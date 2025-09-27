@@ -1,9 +1,17 @@
 package net.sbo.mod.utils.events
 
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents
+import net.sbo.mod.utils.events.impl.WorldChangeEvent
 import kotlin.reflect.KClass
 
 object SBOEvent {
     private val listeners = mutableMapOf<KClass<*>, MutableList<(Any) -> Unit>>()
+
+    fun init () {
+        ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register { mc, world ->
+            emit(WorldChangeEvent(mc, world))
+        }
+    }
 
     /** Register a listener for a specific event type. */
     fun <T : Any> on(eventType: KClass<T>, callback: (T) -> Unit) {

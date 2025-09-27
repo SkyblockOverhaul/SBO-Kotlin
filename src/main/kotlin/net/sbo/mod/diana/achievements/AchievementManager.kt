@@ -3,6 +3,11 @@ package net.sbo.mod.diana.achievements
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import net.minecraft.component.DataComponentTypes
+import net.minecraft.component.type.NbtComponent
+import net.minecraft.item.ItemStack
+import net.minecraft.nbt.NbtCompound
+import net.sbo.mod.SBOKotlin
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.HypixelModApi.isOnHypixel
 import net.sbo.mod.utils.SboTimerManager
@@ -14,6 +19,8 @@ import net.sbo.mod.utils.data.SboDataObject.achievementsData
 import net.sbo.mod.utils.data.SboDataObject.pastDianaEventsData
 import net.sbo.mod.utils.data.SboDataObject.sboData
 import net.sbo.mod.utils.events.Register
+import net.sbo.mod.utils.events.annotations.SboEvent
+import net.sbo.mod.utils.events.impl.WorldChangeEvent
 import java.lang.Thread.sleep
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
@@ -249,6 +256,39 @@ object AchievementManager {
             playerInfo.killLeaderboard <= 10 -> unlockAchievement(64)
             playerInfo.killLeaderboard <= 50 -> unlockAchievement(63)
             playerInfo.killLeaderboard <= 100 -> unlockAchievement(62)
+        }
+    }
+
+    @SboEvent
+    fun checkDaxeEnchants(event: WorldChangeEvent) {
+        Helper.sleep(2000) {
+            var chimV = false
+            var lootingV = false
+            var divineGift3 = false
+            val player = SBOKotlin.mc.player ?: return@sleep
+
+            for (slot in 0..8) {
+                val stack: ItemStack = player.inventory.getStack(slot)
+                if (stack.isEmpty) continue
+
+                val displayName: String = stack.name.string.lowercase()
+                if (!displayName.contains("daedalus")) continue
+
+                val customData: NbtComponent = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT)
+                val nbt: NbtCompound = customData.copyNbt()
+
+                val enchants: NbtCompound = nbt.getCompound("enchantments").orElse(NbtCompound())
+                if (enchants.isEmpty) continue
+
+                if (enchants.getInt("ultimate_chimera").orElse(0) == 5) chimV = true
+                if (enchants.getInt("looting").orElse(0) == 5) lootingV = true
+                if (enchants.getInt("divine_gift").orElse(0) == 3) divineGift3 = true
+                break
+            }
+            if (chimV) unlockAchievement(52)
+            if (lootingV) unlockAchievement(53)
+            if (divineGift3) unlockAchievement(54)
+            if (chimV && lootingV && divineGift3) unlockAchievement(55)
         }
     }
 
