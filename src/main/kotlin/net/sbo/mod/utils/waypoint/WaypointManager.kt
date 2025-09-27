@@ -334,11 +334,14 @@ object WaypointManager {
         if (!Diana.dianaMultiBurrowGuess) {
             if (guessWp == null) return
             if (guessWp!!.hidden) return
-            val warp = getClosestWarp(guessWp?.pos ?: SboVec(0.0, 0.0, 0.0))
+            val warpWaypoint = getGuessWaypoints().minByOrNull { waypoint ->
+                waypoint.pos.distanceTo(Player.getLastPosition())
+            } ?: return
+            val warp = getClosestWarp(warpWaypoint.pos) ?: return
             if (warp != null) executeWarpCommand(warp)
         } else {
-            val warpWaypoint = focusedGuess ?: getGuessWaypoints().minByOrNull {
-                it.pos.distanceTo(Player.getLastPosition())
+            val warpWaypoint = focusedGuess ?: getGuessWaypoints().minByOrNull { waypoint ->
+                waypoint.pos.distanceTo(Player.getLastPosition())
             } ?: return
 
             val warp = getClosestWarp(warpWaypoint.pos) ?: return
