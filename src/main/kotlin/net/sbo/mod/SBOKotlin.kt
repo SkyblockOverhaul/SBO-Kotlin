@@ -97,7 +97,6 @@ object SBOKotlin {
 		HypixelModApi.init()
 		PartyFinderManager.init()
 		PartyCheck.init()
-		PreciseGuessBurrow.init()
 		BurrowDetector.init()
 		Mayor.init()
 		DianaTracker.init()
