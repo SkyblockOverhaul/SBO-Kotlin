@@ -135,16 +135,6 @@ object Register {
     }
 
     /**
-     * Registers an event that listens for world load events and executes an action.
-     * @param action The action to execute when a world is loaded.
-     */
-    fun onWorldChange(action: (client: MinecraftClient) -> Unit) {
-        ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register { _, _ ->
-            action(mc)
-        }
-    }
-
-    /**
      * Registers an event that listens for GUI close events and executes an action.
      * @param action The action to execute when a GUI is closed.
      */

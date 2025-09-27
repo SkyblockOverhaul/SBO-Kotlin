@@ -14,6 +14,8 @@ import net.sbo.mod.utils.events.impl.PacketSendEvent
 import net.sbo.mod.utils.events.impl.PlayerInteractEvent
 import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.math.SboVec
+import net.sbo.mod.utils.events.impl.WorldChangeEvent
+import net.minecraft.particle.ParticleTypes as MCParticleTypes
 import net.sbo.mod.utils.waypoint.Waypoint
 import net.sbo.mod.utils.waypoint.WaypointManager
 import net.sbo.mod.utils.waypoint.WaypointManager.getGuessWaypoints
@@ -30,11 +32,6 @@ object BurrowDetector {
     internal val burrowsHistory = EvictingQueue<String>(2)
 
     fun init() {
-        Register.onWorldChange {
-            if (!Diana.dianaBurrowDetect) return@onWorldChange
-            resetBurrows()
-        }
-
         Register.command("sboclearburrows", "sbocb") {
             resetBurrows()
             Chat.chat("§6[SBO] §4Burrow Waypoints Cleared!")
@@ -57,6 +54,12 @@ object BurrowDetector {
             refreshBurrows()
             true
         }
+    }
+
+    @SboEvent
+    fun onWorldChange(event: WorldChangeEvent) {
+        if (!Diana.dianaBurrowDetect) return
+        resetBurrows()
     }
 
     @SboEvent

@@ -8,6 +8,7 @@ import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.PacketReceiveEvent
 import net.sbo.mod.utils.events.impl.PlayerInteractEvent
+import net.sbo.mod.utils.events.impl.WorldChangeEvent
 import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.math.PolynomialFitter
 import net.sbo.mod.utils.math.SboVec
@@ -27,13 +28,12 @@ object PreciseGuessBurrow {
     var finalLocation: SboVec? = null
     var lastGuessTime: Long = 0
 
-    fun init() {
-        Register.onWorldChange {
-            if (!Diana.dianaBurrowGuess) return@onWorldChange
-            guessPoint = null
-            particleLocations.clear()
-            finalLocation = null
-        }
+    @SboEvent
+    fun onWorldChange(event: WorldChangeEvent) {
+        if (!Diana.dianaBurrowGuess) return
+        this.guessPoint = null
+        this.particleLocations.clear()
+        finalLocation = null
     }
 
     @SboEvent

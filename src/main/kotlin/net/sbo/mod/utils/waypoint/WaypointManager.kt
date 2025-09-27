@@ -18,6 +18,8 @@ import net.sbo.mod.utils.Helper.sleep
 import net.sbo.mod.utils.Player
 import net.sbo.mod.utils.SoundHandler.playCustomSound
 import net.sbo.mod.utils.events.Register
+import net.sbo.mod.utils.events.annotations.SboEvent
+import net.sbo.mod.utils.events.impl.WorldChangeEvent
 import net.sbo.mod.utils.math.SboVec
 import java.awt.Color
 import kotlin.collections.iterator
@@ -58,11 +60,6 @@ object WaypointManager {
         Register.command("sbosendinq") {
             val playerPos = Player.getLastPosition()
             Chat.command("pc x: ${playerPos.x.roundToInt()}, y: ${playerPos.y.roundToInt() - 1}, z: ${playerPos.z.roundToInt()}")
-        }
-
-        Register.onWorldChange {
-            guessWp?.hide()
-            removeAllOfType("world")
         }
 
         Register.onChatMessage(
@@ -158,6 +155,12 @@ object WaypointManager {
         }
 
         WorldRenderEvents.AFTER_TRANSLUCENT.register(WaypointRenderer)
+    }
+
+    @SboEvent
+    fun onWorldChange(event: WorldChangeEvent) {
+        guessWp?.hide()
+        removeAllOfType("world")
     }
 
     fun onLootshare() {

@@ -4,17 +4,25 @@ package net.sbo.mod.utils.events.annotations
 @Retention(AnnotationRetention.SOURCE)
 
 
- /**
- * Marks a function as an event listener for the Sbo event bus.
+/**
+ * Marks a function as a listener for the Sbo event bus.
  *
- * The function must have a single parameter which is the event type.
+ * The annotated function:
+ * - Must have exactly one parameter, representing the event type.
+ *   All event types can be found in [net.sbo.mod.utils.events.impl].
+ * - Must be defined inside an `object` singleton or a `companion object`.
  *
- * The function must be inside an object singleton or a companion object.
+ * The function is automatically registered with the event bus at compile time
+ * and is invoked whenever the corresponding event is fired.
  *
- * The function will be registered to the event bus at compile time.
+ * Example usage:
+ * ```kotlin
+ * @SboEvent
+ * fun onSomeEvent(event: SomeEvent) {
+ *     // handle the event here
+ * }
+ * ```
  *
- * The function will be called when the event is fired.
- *
- *  * See [net.sbo.mod.processor.SboEventProcessor] for the processor implementation.
+ * See [net.sbo.mod.processor.SboEventProcessor] for details about the compile-time processor.
  */
 annotation class SboEvent

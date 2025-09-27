@@ -39,6 +39,7 @@ import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.SboTimerManager
 import net.sbo.mod.utils.SoundHandler
 import net.sbo.mod.utils.chat.ChatHandler
+import net.sbo.mod.utils.events.SBOEvent
 import net.sbo.mod.utils.overlay.OverlayManager
 import net.sbo.mod.utils.events.SboEventGeneratedRegistry
 
@@ -71,8 +72,9 @@ object SBOKotlin {
 		// Load Custom Sound System
 		SoundHandler.init()
 
-		// Register Annotation Processor
+		// Register Annotation Pocessor and Events
 		SboEventGeneratedRegistry.registerAll()
+		SBOEvent.init()
 
 		// load Main Features
 		PartyCommands.init()
@@ -94,7 +96,6 @@ object SBOKotlin {
 		HypixelModApi.init()
 		PartyFinderManager.init()
 		PartyCheck.init()
-		PreciseGuessBurrow.init()
 		BurrowDetector.init()
 		Mayor.init()
 		DianaTracker.init()
@@ -114,6 +115,7 @@ object SBOKotlin {
 		AchievementManager.init()
 		MessageHider.init()
 		ChatHandler.init()
+
 
 		Register.onTick(100) { unregister ->
 			if (mc.player != null && World.isInSkyblock()) {
