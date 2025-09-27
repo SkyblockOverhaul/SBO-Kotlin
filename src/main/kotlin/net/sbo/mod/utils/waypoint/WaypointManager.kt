@@ -29,6 +29,7 @@ object WaypointManager {
     var guessWp: Waypoint? = null
     val waypoints = mutableMapOf<String, MutableList<Waypoint>>()
     var closestBurrow: Pair<Waypoint?, Double> = null to 1000.0
+    var closestGuess: Pair<Waypoint?, Double> = null to 1000.0
     var focusedGuess : Waypoint? = null
     private val angleThreshold = Math.toRadians(4.0)
     private val cosThreshold = cos(angleThreshold)
@@ -91,6 +92,8 @@ object WaypointManager {
 
         Register.onTick(5) { _ ->
             closestBurrow = getClosestWaypoint(Player.getLastPosition(), "burrow") ?: (null to 1000.0)
+            closestGuess = getClosestWaypoint(Player.getLastPosition(), "guess") ?: (null to 1000.0)
+
             val inqWps = getWaypointsOfType("inq")
 
             this.forEachWaypoint { waypoint ->
