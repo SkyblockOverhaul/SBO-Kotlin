@@ -17,7 +17,7 @@ import kotlin.math.roundToInt
 object DianaMobDetect {
     private val trackedArmorStands = mutableMapOf<Int, String>()
     private val defeatedMobs = mutableSetOf<Int>()
-    private val mobDeathListeners = mutableListOf<(String, ArmorStandEntity) -> Unit>() // <-- NEW
+    private val mobDeathListeners = mutableListOf<(String, ArmorStandEntity) -> Unit>()
     private val mobHpOverlay: Overlay = Overlay(
         "mythosMobHp",
         10f,

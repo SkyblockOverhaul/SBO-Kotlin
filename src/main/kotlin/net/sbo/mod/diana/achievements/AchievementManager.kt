@@ -221,9 +221,7 @@ object AchievementManager {
         }
     }
 
-    fun trackBeKills(
-        gaiaKills: Int, champKills: Int, hunterKills: Int, inqKills: Int, minoKills: Int, catKills: Int
-    ) { // todo: add this
+    fun trackBeKills(gaiaKills: Int, champKills: Int, hunterKills: Int, inqKills: Int, minoKills: Int, catKills: Int) { // todo: add this
         if (isOnHypixel) return
 
         val allMaxed = listOf(

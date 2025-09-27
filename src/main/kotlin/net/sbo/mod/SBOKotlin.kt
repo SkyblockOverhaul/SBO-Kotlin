@@ -25,7 +25,6 @@ import net.sbo.mod.diana.burrows.BurrowDetector
 import net.sbo.mod.diana.DianaMobDetect
 import net.sbo.mod.diana.achievements.AchievementManager
 import net.sbo.mod.diana.achievements.AchievementManager.unlockAchievement
-import net.sbo.mod.diana.PreciseGuessBurrow
 import net.sbo.mod.general.HelpCommand
 import net.sbo.mod.overlays.Bobber
 import net.sbo.mod.overlays.DianaLoot
