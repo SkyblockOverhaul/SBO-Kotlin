@@ -38,75 +38,75 @@ object Diana : CategoryKt("Diana") {
 
     init {
         separator {
-            this.title = "Diana Burrows"
+            title = "Diana Burrows"
         }
     }
 
     var dianaBurrowGuess by boolean(true) {
-        this.name = Translated("Diana Burrow Guess")
-        this.description =
+        name = Translated("Diana Burrow Guess")
+        description =
             Translated("Guess the burrow location. Needs Driping Lava Partciles and set /particlequality to Extreme for more accuracy")
     }
 
     var dianaMultiBurrowGuess by boolean(false) {
-        this.name = Translated("Diana Multi Burrow Guess")
-        this.description =
+        name = Translated("Diana Multi Burrow Guess")
+        description =
             Translated("Multi guess the burrow location. Needs Driping Lava Partciles and set /particlequality to Extreme for more accuracy")
     }
 
     var dianaBurrowDetect by boolean(true) {
-        this.name = Translated("Diana Burrow Detection")
-        this.description = Translated("Detects Diana burrows | to reset waypoints /sboclearburrows")
+        name = Translated("Diana Burrow Detection")
+        description = Translated("Detects Diana burrows | to reset waypoints /sboclearburrows")
     }
 
     init {
         separator {
-            this.title = "Diana Warp"
+            title = "Diana Warp"
         }
     }
 
     var focusedWarp by boolean(false) {
-        this.name = Translated("Focused Warp")
-        this.description = Translated("If enabled, you warp to the guess you look at instead of the closest one")
+        name = Translated("Focused Warp")
+        description = Translated("If enabled, you warp to the guess you look at instead of the closest one")
     }
 
     var allowedWarps by select(AdditionalHubWarps.WIZARD, AdditionalHubWarps.DA, AdditionalHubWarps.CASTLE) {
-        this.name = Translated("Add Warps")
-        this.description =
+        name = Translated("Add Warps")
+        description =
             Translated("Select the warps you want to be able to warp to with the guess and inquisitor warp keys.")
     }
 
     var dontWarpIfBurrowClose by boolean(true) {
-        this.name = Translated("Don't Warp If a Burrow is nearby")
-        this.description =
+        name = Translated("Don't Warp If a Burrow is nearby")
+        description =
             Translated("If enabled, the warp key will not warp you if you are within 60 blocks of a burrow")
     }
 
     var warpDiff by int(10) {
-        this.range = 0..60
-        this.slider = true
-        this.name = Translated("Warp Block Difference")
-        this.description =
+        range = 0..60
+        slider = true
+        name = Translated("Warp Block Difference")
+        description =
             Translated("The additional block difference to consider when warping to a waypoint. (0 to disable)")
     }
 
     var warpDelay by int(0) {
-        this.range = 0..1000
-        this.slider = true
-        this.name = Translated("Warp Delay (<X>ms)")
-        this.description = Translated("The delay bevor you can warp after guessing with spade. (0 to disable)")
+        range = 0..1000
+        slider = true
+        name = Translated("Warp Delay (<X>ms)")
+        description = Translated("The delay bevor you can warp after guessing with spade. (0 to disable)")
     }
 
     init {
         separator {
-            this.title = "Diana Tracker"
+            title = "Diana Tracker"
         }
     }
 
     var mobTracker by ObservableEntry(
         enum(Tracker.OFF) {
-            this.name = Translated("Mob Tracker")
-            this.description = Translated("Shows your Diana mob kills, /sboguis to move the overlay")
+            name = Translated("Mob Tracker")
+            description = Translated("Shows your Diana mob kills, /sboguis to move the overlay")
         }
     ) { old, new ->
         if (old != new) {
@@ -117,8 +117,8 @@ object Diana : CategoryKt("Diana") {
     }
 
     var lootTracker by ObservableEntry(enum(Tracker.OFF) {
-        this.name = Translated("Loot Tracker")
-        this.description = Translated("Shows your Diana loot, /sboguis to move the overlay")
+        name = Translated("Loot Tracker")
+        description = Translated("Shows your Diana loot, /sboguis to move the overlay")
     }
     ) { old, new ->
         if (old != new) {
@@ -129,8 +129,8 @@ object Diana : CategoryKt("Diana") {
     }
 
     var inquisTracker by ObservableEntry(enum(Tracker.OFF) {
-        this.name = Translated("Inquis Loot Tracker")
-        this.description = Translated("Shows your Inquisitor Loot so you see how lucky/unlucky you are (Shelmet/Plushie/Remedies), /sboguis to move the overlay")
+        name = Translated("Inquis Loot Tracker")
+        description = Translated("Shows your Inquisitor Loot so you see how lucky/unlucky you are (Shelmet/Plushie/Remedies), /sboguis to move the overlay")
     }
     ) { old, new ->
         if (old != new) {
@@ -141,49 +141,49 @@ object Diana : CategoryKt("Diana") {
     }
 
     var statsTracker by boolean(false) {
-        this.name = Translated("Diana Stats Tracker")
-        this.description = Translated("Shows stats like Mobs since Inquisitor, Inquisitors since Chimera, /sboguis to move the overlay")
+        name = Translated("Diana Stats Tracker")
+        description = Translated("Shows stats like Mobs since Inquisitor, Inquisitors since Chimera, /sboguis to move the overlay")
     }
 
     var magicFindTracker by boolean(false) {
-        this.name = Translated("Magic Find Tracker")
-        this.description = Translated("Shows your highest magic find for sticks and chimeras (only after you dropped it once), /sboguis to move the overlay")
+        name = Translated("Magic Find Tracker")
+        description = Translated("Shows your highest magic find for sticks and chimeras (only after you dropped it once), /sboguis to move the overlay")
     }
 
     var fourEyedFish by boolean(false) {
-        this.name = Translated("Four-Eyed Fish")
-        this.description = Translated("Set if you have a Four-Eyed Fish on your griffin pet")
+        name = Translated("Four-Eyed Fish")
+        description = Translated("Set if you have a Four-Eyed Fish on your griffin pet")
     }
 
     var sendSinceMessage by boolean(true) {
-        this.name = Translated("Stats Message")
-        this.description = Translated("Sends the chat Message with stat: [SBO] Took 120 Mobs to get a Inquis!")
+        name = Translated("Stats Message")
+        description = Translated("Sends the chat Message with stat: [SBO] Took 120 Mobs to get a Inquis!")
     }
 
     var bazaarSettingDiana by enum(SettingDiana.SELLOFFER) {
-        this.name = Translated("Bazaar Setting")
-        this.description = Translated("Bazaar setting to set the price for loot")
+        name = Translated("Bazaar Setting")
+        description = Translated("Bazaar setting to set the price for loot")
     }
 
     init {
         separator {
-            this.title = "Diana Announcer"
+            title = "Diana Announcer"
         }
     }
 
     var lootAnnouncerChat by boolean(true) {
-        this.name = Translated("Rare Drop Announcer")
-        this.description = Translated("Announces relic/shelmet/plushie/remedies in chat")
+        name = Translated("Rare Drop Announcer")
+        description = Translated("Announces relic/shelmet/plushie/remedies in chat")
     }
 
     var lootAnnouncerScreen by boolean(false) {
-        this.name = Translated("Loot Screen Announcer")
-        this.description = Translated("Announces chimera/stick/relic on screen")
+        name = Translated("Loot Screen Announcer")
+        description = Translated("Announces chimera/stick/relic on screen")
     }
 
     var lootAnnouncerPrice by ObservableEntry(boolean(true) {
-        this.name = Translated("Show Price Title")
-        this.description = Translated("Shows chimera/stick/relic price as a subtitle on screen")
+        name = Translated("Show Price Title")
+        description = Translated("Shows chimera/stick/relic price as a subtitle on screen")
     }
     ) { old, new ->
         if (old != new) {
@@ -194,18 +194,18 @@ object Diana : CategoryKt("Diana") {
     }
 
     var lootAnnouncerParty by boolean(false) {
-        this.name = Translated("Loot Party Announcer")
-        this.description = Translated("Announces chimera/stick/relic and Shelmet/Plushie/Remedies (only when dropped from Inquisitor) in party chat")
+        name = Translated("Loot Party Announcer")
+        description = Translated("Announces chimera/stick/relic and Shelmet/Plushie/Remedies (only when dropped from Inquisitor) in party chat")
     }
 
     var chimMessageBool by boolean(false) {
-        this.name = Translated("Chim Message")
-        this.description = Translated("Enables custom chim message")
+        name = Translated("Chim Message")
+        description = Translated("Enables custom chim message")
     }
 
     var customChimMessage by strings("&6[SBO] &6&lRARE DROP! &d&lChimera! &b{mf} &b#{amount}") {
-        this.name = Translated("Custom Chim Message Text")
-        this.description = Translated("use: {mf} for MagicFind, {amount} for drop Amount this event and {percentage} for chimera/inquis ratio.")
+        name = Translated("Custom Chim Message Text")
+        description = Translated("use: {mf} for MagicFind, {amount} for drop Amount this event and {percentage} for chimera/inquis ratio.")
     }
 
     init {
@@ -224,63 +224,63 @@ object Diana : CategoryKt("Diana") {
 
     init {
         separator {
-            this.title = "Diana Waypoints"
+            title = "Diana Waypoints"
         }
     }
 
     var guessLine by boolean(true) {
-        this.name = Translated("Guess Line")
-        this.description = Translated("Draws line for guess, Disable View Bobbing in controls if its buggy")
+        name = Translated("Guess Line")
+        description = Translated("Draws line for guess, Disable View Bobbing in controls if its buggy")
     }
 
     var inqLine by boolean(true) {
-        this.name = Translated("Inquisitor Line")
-        this.description = Translated("Draws line for inquisitor, Disable View Bobbing in controls if its buggy")
+        name = Translated("Inquisitor Line")
+        description = Translated("Draws line for inquisitor, Disable View Bobbing in controls if its buggy")
     }
 
     var burrowLine by boolean(true) {
-        this.name = Translated("Burrow Line")
-        this.description = Translated("Draws line for burrow, Disable View Bobbing in controls if its buggy")
+        name = Translated("Burrow Line")
+        description = Translated("Draws line for burrow, Disable View Bobbing in controls if its buggy")
     }
 
     var dianaLineWidth by int(5) {
-        this.range = 1..20
-        this.slider = true
-        this.name = Translated("Diana Line Width")
-        this.description = Translated("The width of the lines drawn for Diana waypoints")
+        range = 1..20
+        slider = true
+        name = Translated("Diana Line Width")
+        description = Translated("The width of the lines drawn for Diana waypoints")
     }
 
     var removeGuessDistance by int(0) {
-        this.range = 0..20
-        this.slider = true
-        this.name = Translated("Remove Guess When Close")
-        this.description = Translated("Removes the guess waypoint when you are within this distance of it (0 to disable)")
+        range = 0..20
+        slider = true
+        name = Translated("Remove Guess When Close")
+        description = Translated("Removes the guess waypoint when you are within this distance of it (0 to disable)")
     }
 
     init {
         separator {
-            this.title = "Inquistor"
+            title = "Inquistor"
         }
     }
 
     var shareInq by boolean(true) {
-        this.name = Translated("Share Inquisitor")
-        this.description = Translated("Sends the coordinates of the inquisitor to party chat when it spawns")
+        name = Translated("Share Inquisitor")
+        description = Translated("Sends the coordinates of the inquisitor to party chat when it spawns")
     }
 
     var receiveInq by boolean(true) {
-        this.name = Translated("Receive Inquisitor")
-        this.description = Translated("Create a waypoint when someone in your party shares an inquisitor")
+        name = Translated("Receive Inquisitor")
+        description = Translated("Create a waypoint when someone in your party shares an inquisitor")
     }
 
     var allWaypointsAreInqs by boolean(false) {
-        this.name = Translated("All Waypoints From Chat Are Inqs")
-        this.description = Translated("All coordinates from chat are considered Inquisitor waypoints (only works in Hub and during Diana event)")
+        name = Translated("All Waypoints From Chat Are Inqs")
+        description = Translated("All coordinates from chat are considered Inquisitor waypoints (only works in Hub and during Diana event)")
     }
 
     var announceKilltext by strings("") {
-        this.name = Translated("Send Text On Inq Spawn")
-        this.description = Translated("Sends a text on inq spawn 5 seconds after spawn, use {since} for mobs since inq, {chance} for inq chance")
+        name = Translated("Send Text On Inq Spawn")
+        description = Translated("Sends a text on inq spawn 5 seconds after spawn, use {since} for mobs since inq, {chance} for inq chance")
     }
 
     init {
@@ -296,12 +296,12 @@ object Diana : CategoryKt("Diana") {
 
     init {
         separator {
-            this.title = "Other"
+            title = "Other"
         }
     }
 
     var mythosMobHp by boolean(true) {
-        this.name = Translated("Mythos Mob HP")
-        this.description = Translated("Displays HP of mythological mobs near you. /sboguis to move it")
+        name = Translated("Mythos Mob HP")
+        description = Translated("Displays HP of mythological mobs near you. /sboguis to move it")
     }
 }

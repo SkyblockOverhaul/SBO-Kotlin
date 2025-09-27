@@ -26,12 +26,12 @@ class Achievement(
         SboDataObject.save("AchievementsData")
 
         var hiddenExtra = ""
-        if (this.hidden) {
-            this.description = this.description.substring(2)
+        if (hidden) {
+            description = description.substring(2)
             hiddenExtra = "§7[Secret Achievement] "
         }
         val player = mc.player
-        if (this.rarity == "Divine" || this.rarity == "Impossible") {
+        if (rarity == "Divine" || rarity == "Impossible") {
             Helper.showTitle("§kd§r $color$name §kd§r", "§aAchievement Unlocked!", 0, 50, 20)
             Chat.chat(
                 textComponent(
@@ -60,25 +60,25 @@ class Achievement(
                 1.0f
             )
         }
-        this.unlocked = true
+        unlocked = true
         AchievementManager.achievementsUnlocked += 1
     }
 
     fun lock() {
         achievementsData.achievements.remove(id)
-        this.unlocked = false
+        unlocked = false
         AchievementManager.achievementsUnlocked -= 1
-        if (this.hidden) {
-            this.description = "§k" + this.description
+        if (hidden) {
+            description = "§k$description"
         }
     }
 
     fun loadState() {
-        this.unlocked = achievementsData.achievements[id] ?: false
-        if (this.unlocked) {
+        unlocked = achievementsData.achievements[id] ?: false
+        if (unlocked) {
             AchievementManager.achievementsUnlocked += 1
         } else {
-            if (this.hidden) this.description = "§k" + this.description
+            if (hidden) description = "§k$description"
         }
     }
 

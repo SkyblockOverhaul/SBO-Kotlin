@@ -72,7 +72,7 @@ object HypixelModApi {
     }
 
     private fun onPartyInfoPacket(packet: PartyInfoS2CPacket) {
-        this.isInParty = packet.inParty
+        isInParty = packet.inParty
 
         val membersList = packet.members?.map { it.key.toString() }?.toMutableList() ?: mutableListOf()
         if (isInParty) {
@@ -81,15 +81,15 @@ object HypixelModApi {
             membersList.remove(leaderUUID)
             membersList.add(0, leaderUUID)
 
-            this.isLeader = packet.members?.get(Player.getUUID())?.toString() == "LEADER"
+            isLeader = packet.members?.get(Player.getUUID())?.toString() == "LEADER"
         } else {
-            this.isLeader = true
+            isLeader = true
             membersList.add(Player.getUUIDString())
         }
-        this.partyMembers = membersList
+        partyMembers = membersList
 
         partyInfoListeners.forEach { listener ->
-            listener(this.isInParty, this.isLeader, this.partyMembers)
+            listener(isInParty, isLeader, partyMembers)
         }
     }
 
@@ -121,7 +121,7 @@ object HypixelModApi {
                 PartyFinderManager.creatingParty = false
                 Chat.chat("§6[SBO] §eYou are not on Hypixel. You can only use this feature on Hypixel.")
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             PartyFinderManager.creatingParty = false
         }
     }

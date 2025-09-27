@@ -173,7 +173,7 @@ object PartyFinderManager {
         HypixelModApi.onPartyInfo { isInParty, isLeader, members ->
             this.isInParty = isInParty
             this.isLeader = isLeader
-            this.partyMember = members
+            partyMember = members
             partyMemberCount = members.size
             queueParty()
             updateParty()
@@ -193,18 +193,18 @@ object PartyFinderManager {
         type: String,
         size: Int,
     ) {
-        if (this.creatingParty) return
-        this.partyReqs = reqs
-        this.partyNote = checkPartyNote(note)
-        this.partyType = type
-        this.partySize = size
-        this.usedPf = true
+        if (creatingParty) return
+        partyReqs = reqs
+        partyNote = checkPartyNote(note)
+        partyType = type
+        partySize = size
+        usedPf = true
 
         HypixelModApi.sendPartyInfoPacket(true)
     }
 
     fun queueParty() {
-        if (!this.creatingParty) return
+        if (!creatingParty) return
         creatingParty = false
         if (partyMember.size < partySize && !inQueue) {
             try {
@@ -256,7 +256,7 @@ object PartyFinderManager {
     }
 
     fun updateParty() {
-        if (!this.updateBool) return
+        if (!updateBool) return
         updateBool = false
         if (inQueue && isInParty && isLeader) {
             if (partyMember.size >= partySize || partyMember.size < 2) return

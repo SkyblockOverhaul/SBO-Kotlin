@@ -58,10 +58,10 @@ object GuiHandler {
 
         init {
             uiObject.constrain {
-                this.x = this@UILine.x
-                this.y = this@UILine.y
-                this.width = this@UILine.width
-                this.height = this@UILine.height
+                x = this@UILine.x
+                y = this@UILine.y
+                width = this@UILine.width
+                height = this@UILine.height
             }.setColor(color)
 
             parent?.let { uiObject.childOf(it) }
@@ -119,17 +119,17 @@ object GuiHandler {
 
         init {
             uiObject.constrain {
-                this.x = this@Button.x
-                this.y = this@Button.y
-                this.width = this@Button.width
-                this.height = this@Button.height
+                x = this@Button.x
+                y = this@Button.y
+                width = this@Button.width
+                height = this@Button.height
             }.setColor(color)
 
             outline?.let { uiObject.enableEffect(it) }
             parent?.let { uiObject.childOf(it) }
             textObject.constrain {
-                this.x = CenterConstraint()
-                this.y = CenterConstraint()
+                x = CenterConstraint()
+                y = CenterConstraint()
             }.childOf(uiObject)
 
             textColor?.let { textObject.setColor(it) }
@@ -213,10 +213,10 @@ object GuiHandler {
 
         fun create(): UIComponent {
             bgbox.constrain {
-                this.x = this@Checkbox.x
-                this.y = this@Checkbox.y
-                this.width = this@Checkbox.width
-                this.height = this@Checkbox.height
+                x = this@Checkbox.x
+                y = this@Checkbox.y
+                width = this@Checkbox.width
+                height = this@Checkbox.height
             }.setColor(Color(0, 0, 0, 0))
 
             val groupContainer = UIBlock().constrain {

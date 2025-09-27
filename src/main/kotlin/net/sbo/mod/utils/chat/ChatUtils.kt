@@ -29,7 +29,7 @@ object ChatUtils {
     fun Text.formattedString(): String {
         val builder = StringBuilder()
 
-        this.visit(
+        visit(
             { style, content ->
                 builder.append(style.getFormatCodes())
                 builder.append(content)

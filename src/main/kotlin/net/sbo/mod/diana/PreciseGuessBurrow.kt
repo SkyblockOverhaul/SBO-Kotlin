@@ -30,8 +30,8 @@ object PreciseGuessBurrow {
     fun init() {
         Register.onWorldChange {
             if (!Diana.dianaBurrowGuess) return@onWorldChange
-            this.guessPoint = null
-            this.particleLocations.clear()
+            guessPoint = null
+            particleLocations.clear()
             finalLocation = null
         }
     }
@@ -43,19 +43,19 @@ object PreciseGuessBurrow {
         if (!Diana.dianaBurrowGuess || World.getWorld() != "Hub") return
         if (packet.parameters.type != ParticleTypes.DRIPPING_LAVA || packet.count != 2 || packet.speed != -0.5f) return
         val currLoc = SboVec(packet.x, packet.y, packet.z)
-        this.lastLavaParticle = System.currentTimeMillis()
+        lastLavaParticle = System.currentTimeMillis()
         if (System.currentTimeMillis() - lastGuessTime > 3000) return
 
-        if (this.particleLocations.isEmpty()) {
-            this.particleLocations.add(currLoc)
+        if (particleLocations.isEmpty()) {
+            particleLocations.add(currLoc)
             return
         }
 
-        val distToLast = this.particleLocations.last().distanceTo(currLoc)
+        val distToLast = particleLocations.last().distanceTo(currLoc)
         if (distToLast > 3 || distToLast == 0.0) return
-        this.particleLocations.add(currLoc)
+        particleLocations.add(currLoc)
 
-        val guessPosition = this.guessBurrowLocation()
+        val guessPosition = guessBurrowLocation()
         if (guessPosition == null) return
         finalLocation = guessPosition.down(0.5).roundLocationToBlock()
         finalLocation = guessPosition.down(0.5).roundLocationToBlock()
@@ -71,19 +71,19 @@ object PreciseGuessBurrow {
         val item = player?.mainHandStack
         if (item?.isEmpty == true) return
         if (item == null || !item.name.string.contains("Spade")) return
-        if (System.currentTimeMillis() - this.lastLavaParticle < 200) {
+        if (System.currentTimeMillis() - lastLavaParticle < 200) {
             event.isCanceled = true
             return
         }
-        this.particleLocations.clear()
+        particleLocations.clear()
         lastGuessTime = System.currentTimeMillis()
     }
 
     fun guessBurrowLocation(): SboVec? {
-        if (this.particleLocations.size < 4) return null
+        if (particleLocations.size < 4) return null
         val fitters = List(3) { PolynomialFitter(3) }
 
-        this.particleLocations.forEachIndexed { index, location ->
+        particleLocations.forEachIndexed { index, location ->
             val x = index.toDouble()
             location.toDoubleArray().forEachIndexed { i, value ->
                 fitters[i].addPoint(x, value)
@@ -93,7 +93,7 @@ object PreciseGuessBurrow {
         val coefficients = fitters.map { it.fit() }
         val startPointDerivative = SboVec.Companion.fromArray(coefficients.map { it[1] })
 
-        val pitch = this.getPitchFromDerivative(startPointDerivative)
+        val pitch = getPitchFromDerivative(startPointDerivative)
         val controlPointDistance = sqrt(24 * sin(pitch - PI) + 25)
         val t = (3 * controlPointDistance) / startPointDerivative.length()
         val result = coefficients.map { coeff ->

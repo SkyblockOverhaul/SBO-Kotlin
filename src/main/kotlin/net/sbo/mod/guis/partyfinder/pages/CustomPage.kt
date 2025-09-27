@@ -300,7 +300,7 @@ class CustomPage(private val parent: PartyFinderGUI) {
         }.setColor(Color(50, 50, 50, 255)) childOf parent.filterWindow
         parent.filterBox.grabWindowFocus()
         parent.filterBox.onMouseClick {
-            this.grabWindowFocus()
+            grabWindowFocus()
         }
         parent.filterBox.onFocusLost {
             this@CustomPage.parent.closeFilterWindow()

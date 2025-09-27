@@ -15,7 +15,7 @@ class OverlayEditScreen : Screen(Text.literal("SBO_Overlay_Editor")) {
 
     override fun render(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
         super.render(context, mouseX, mouseY, delta)
-        this.renderDarkening(context)
+        renderDarkening(context)
         OverlayManager.render(context)
     }
 

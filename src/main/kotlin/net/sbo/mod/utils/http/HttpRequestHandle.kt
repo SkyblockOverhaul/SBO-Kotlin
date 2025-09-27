@@ -45,7 +45,7 @@ class HttpRequestHandle {
      * The original result handler for raw HTTP responses.
      */
     fun result(callback: (HttpResponse) -> Unit): HttpRequestHandle {
-        this.onResult = callback
+        onResult = callback
         return this
     }
 
@@ -60,22 +60,22 @@ class HttpRequestHandle {
     inline fun <reified T> toJson(
         ignoreUnknownKeys: Boolean = false, crossinline onSuccess: (T) -> Unit
     ): HttpRequestHandle {
-        this.onResult = { response ->
+        onResult = { response ->
             if (response.isSuccessful) {
                 val body = response.body?.string()
                 if (body.isNullOrBlank()) {
-                    this.fail(Exception("Cannot parse JSON: Response body was empty."))
+                    fail(Exception("Cannot parse JSON: Response body was empty."))
                 } else {
                     try {
                         val jsonParser = Json { this.ignoreUnknownKeys = ignoreUnknownKeys }
                         val data = jsonParser.decodeFromString<T>(body)
                         onSuccess(data)
                     } catch (e: Exception) {
-                        this.fail(e)
+                        fail(e)
                     }
                 }
             } else {
-                this.fail(Exception("HTTP request failed with code: ${response.code} ${response.message}"))
+                fail(Exception("HTTP request failed with code: ${response.code} ${response.message}"))
             }
         }
         return this
@@ -86,22 +86,22 @@ class HttpRequestHandle {
      * Any error is routed to the .error() block.
      */
     fun toJsonObject(onSuccess: (JsonObject) -> Unit): HttpRequestHandle {
-        this.onResult = { response ->
+        onResult = { response ->
             if (response.isSuccessful) {
                 val body = response.body?.string()
                 if (body.isNullOrBlank()) {
-                    this.fail(Exception("Cannot parse JSON: Response body was empty."))
+                    fail(Exception("Cannot parse JSON: Response body was empty."))
 
                 } else {
                     try {
                         val data = Json.parseToJsonElement(body).jsonObject
                         onSuccess(data)
                     } catch (e: Exception) {
-                        this.fail(e)
+                        fail(e)
                     }
                 }
             } else {
-                this.fail(Exception("HTTP request failed with code: ${response.code} ${response.message}"))
+                fail(Exception("HTTP request failed with code: ${response.code} ${response.message}"))
             }
         }
         return this
@@ -111,7 +111,7 @@ class HttpRequestHandle {
      * The error handler, which now catches network, HTTP, and parsing errors.
      */
     fun error(callback: (Exception) -> Unit): HttpRequestHandle {
-        this.onError = callback
+        onError = callback
         return this
     }
 

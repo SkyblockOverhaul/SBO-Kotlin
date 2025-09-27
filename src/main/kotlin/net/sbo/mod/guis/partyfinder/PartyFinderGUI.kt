@@ -340,7 +340,7 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
 
     internal fun updateCurrentPartyList(ignoreCooldown: Boolean = false) {
         val now = System.currentTimeMillis()
-        if (!ignoreCooldown && (now - this.lastRefreshTime) < 1000) {
+        if (!ignoreCooldown && (now - lastRefreshTime) < 1000) {
             Chat.chat("§6[SBO] §ePlease wait before refreshing the party list again.")
             return
         }
@@ -603,12 +603,12 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
 
         joinButton.uiObject.onMouseEnter {
             if (filterWindowOpened) return@onMouseEnter
-            this.setColor(Color(70, 70, 70, 200))
+            setColor(Color(70, 70, 70, 200))
             partyBlock.setColor(Color(0, 0, 0, 150))
         }
         joinButton.uiObject.onMouseLeave {
             if (filterWindowOpened) return@onMouseLeave
-            this.setColor(Color(30, 30, 30, 255))
+            setColor(Color(30, 30, 30, 255))
             partyBlock.setColor(Color(0, 0, 0, 220))
         }
 

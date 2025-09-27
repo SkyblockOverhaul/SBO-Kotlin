@@ -89,17 +89,17 @@ class Overlay(
         val textRenderer = mc.textRenderer ?: return
         if (!isOverOverlay(mouseX, mouseY)) return
 
-        var currentY = y / this.scale
-        var currentX = x / this.scale
+        var currentY = y / scale
+        var currentX = x / scale
 
         for (line in getLines()) {
-            line.lineClicked(mouseX, mouseY, currentX * this.scale, currentY * this.scale, textRenderer, this.scale)
+            line.lineClicked(mouseX, mouseY, currentX * scale, currentY * scale, textRenderer, scale)
 
             if (line.linebreak) {
                 currentY += textRenderer.fontHeight + 1
-                currentX = x / this.scale
+                currentX = x / scale
             } else {
-                currentX += textRenderer.getWidth(line.text) / this.scale
+                currentX += textRenderer.getWidth(line.text) / scale
             }
         }
     }
@@ -137,8 +137,8 @@ class Overlay(
 
     fun isOverOverlay(mouseX: Double, mouseY: Double): Boolean {
         if (!condition()) return false
-        val totalWidth = getTotalWidth() * this.scale
-        val totalHeight = getTotalHeight() * this.scale
+        val totalWidth = getTotalWidth() * scale
+        val totalHeight = getTotalHeight() * scale
 
         return mouseX >= x && mouseX <= x + totalWidth && mouseY >= y && mouseY <= y + totalHeight
     }
@@ -148,10 +148,10 @@ class Overlay(
         val textRenderer = mc.textRenderer ?: return
 
         drawContext.matrices.push()
-        drawContext.matrices.scale(this.scale, this.scale, 1.0f)
+        drawContext.matrices.scale(scale, scale, 1.0f)
 
-        var currentY = (y / this.scale)
-        var currentX = (x / this.scale)
+        var currentY = (y / scale)
+        var currentX = (x / scale)
 
         val totalWidth = getTotalWidth()
         val totalHeight = getTotalHeight()
@@ -183,17 +183,17 @@ class Overlay(
             if (Helper.getGuiName() in allowedGuis) line.updateMouseInteraction(
                 mouseX,
                 mouseY,
-                currentX * this.scale,
-                currentY * this.scale,
+                currentX * scale,
+                currentY * scale,
                 textRenderer,
-                this.scale,
+                scale,
                 drawContext
             )
 
             line.draw(drawContext, currentX.toInt(), currentY.toInt(), textRenderer)
             if (line.linebreak) {
                 currentY += textRenderer.fontHeight + 1
-                currentX = (x / this.scale)
+                currentX = (x / scale)
             } else {
                 currentX += textRenderer.getWidth(line.text)
             }

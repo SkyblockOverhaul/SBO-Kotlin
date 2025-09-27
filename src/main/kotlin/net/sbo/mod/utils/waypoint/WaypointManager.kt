@@ -169,7 +169,7 @@ object WaypointManager {
      * @param context The world render context.
      */
     fun renderAllWaypoints(context: WorldRenderContext) {
-        this.forEachWaypoint { waypoint ->
+        forEachWaypoint { waypoint ->
             waypoint.render(context)
         }
 

@@ -41,7 +41,6 @@ import net.sbo.mod.utils.SoundHandler
 import net.sbo.mod.utils.chat.ChatHandler
 import net.sbo.mod.utils.overlay.OverlayManager
 import net.sbo.mod.utils.events.SboEventGeneratedRegistry
-import net.sbo.mod.utils.game.ServerStats
 
 object SBOKotlin {
 	@JvmField
@@ -72,7 +71,7 @@ object SBOKotlin {
 		// Load Custom Sound System
 		SoundHandler.init()
 
-		// Register Annotation Pocessor
+		// Register Annotation Processor
 		SboEventGeneratedRegistry.registerAll()
 
 		// load Main Features
