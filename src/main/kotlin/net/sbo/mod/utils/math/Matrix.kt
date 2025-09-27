@@ -7,25 +7,25 @@ class Matrix(val data: List<List<Double>>) {
     val cols: Int = if (data.isNotEmpty()) data[0].size else 0
 
     fun transpose(): Matrix {
-        val result = MutableList(this.cols) { MutableList(this.rows) { 0.0 } }
-        for (j in 0 until this.cols) {
-            for (i in 0 until this.rows) {
-                result[j][i] = this.data[i][j]
+        val result = MutableList(cols) { MutableList(rows) { 0.0 } }
+        for (j in 0 until cols) {
+            for (i in 0 until rows) {
+                result[j][i] = data[i][j]
             }
         }
         return Matrix(result)
     }
 
     fun multiply(other: Matrix): Matrix {
-        if (this.cols != other.rows) {
+        if (cols != other.rows) {
             throw IllegalArgumentException("Matrix dimensions do not match for multiplication")
         }
-        val result = MutableList(this.rows) { MutableList(other.cols) { 0.0 } }
-        for (i in 0 until this.rows) {
+        val result = MutableList(rows) { MutableList(other.cols) { 0.0 } }
+        for (i in 0 until rows) {
             for (j in 0 until other.cols) {
                 var sum = 0.0
-                for (k in 0 until this.cols) {
-                    sum += this.data[i][k] * other.data[k][j]
+                for (k in 0 until cols) {
+                    sum += data[i][k] * other.data[k][j]
                 }
                 result[i][j] = sum
             }
@@ -34,15 +34,15 @@ class Matrix(val data: List<List<Double>>) {
     }
 
     fun inverse(): Matrix {
-        if (this.rows != this.cols) {
+        if (rows != cols) {
             throw IllegalArgumentException("Only square matrices can be inverted")
         }
-        val n = this.rows
+        val n = rows
         val augmented = Array(n) { DoubleArray(2 * n) }
 
         for (i in 0 until n) {
             for (j in 0 until n) {
-                augmented[i][j] = this.data[i][j]
+                augmented[i][j] = data[i][j]
             }
             for (j in 0 until n) {
                 augmented[i][j + n] = if (i == j) 1.0 else 0.0

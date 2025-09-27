@@ -1,25 +1,25 @@
 package net.sbo.mod.diana
 
 import net.sbo.mod.overlays.DianaLoot
-import net.sbo.mod.utils.data.SboDataObject
-import net.sbo.mod.utils.chat.Chat
-import net.sbo.mod.utils.Helper
-import net.sbo.mod.utils.data.DianaTracker
-import java.util.concurrent.TimeUnit
 import net.sbo.mod.settings.categories.Diana
+import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.SboTimerManager
+import net.sbo.mod.utils.chat.Chat
+import net.sbo.mod.utils.data.DianaTracker
+import net.sbo.mod.utils.data.SboDataObject
 import net.sbo.mod.utils.events.Register
-import java.util.regex.Pattern
 import java.util.Locale
+import java.util.concurrent.TimeUnit
+import java.util.regex.Pattern
 
 object DianaStats {
-    val STATS_PATTERN = Pattern.compile(
+    val STATS_PATTERN: Pattern = Pattern.compile(
         "§9Party §8> (.*?)§f: Playtime: (.*?) - Profit: (.*?) - (.*?) - Burrows: (.*?) \\((.*?)\\) - Mobs: (.*?) \\((.*?)\\) - Inquisitors: (.*?) \\((.*?)\\) - LS Inqs: (.*?) - Chimeras: (.*?) \\((.*?)\\) - LS: (.*?) \\((.*?)\\) - Sticks: (.*?) \\((.*?)\\) - Relics: (.*?) \\((.*?)\\)(.*?)",
         Pattern.DOTALL
     )
 
     fun registerReplaceStatsMessage() {
-        Register.onChatMessageCancable(
+        Register.onChatMessageCancelable(
             STATS_PATTERN
         ) { message, matcher ->
             val statsMessage = ArrayList<String>()
@@ -28,7 +28,13 @@ object DianaStats {
             statsMessage.add("§aBurrows: §b${matcher.group(5)} §7(${matcher.group(6)}/h)")
             statsMessage.add("§aMobs: §b${matcher.group(7)} §7(${matcher.group(8)}/h)")
             statsMessage.add("§dInquisitors: §b${matcher.group(9)} §7(${matcher.group(10)}) §6LS: §b${matcher.group(11)}")
-            statsMessage.add("§dChimeras: §b${matcher.group(12)} §7(${matcher.group(13)}) §6LS: §b${matcher.group(14)} §7(${matcher.group(15)})")
+            statsMessage.add(
+                "§dChimeras: §b${matcher.group(12)} §7(${matcher.group(13)}) §6LS: §b${matcher.group(14)} §7(${
+                    matcher.group(
+                        15
+                    )
+                })"
+            )
             statsMessage.add("§6Sticks: §b${matcher.group(16)} §7(${matcher.group(17)})")
             statsMessage.add("§5Relics: §b${matcher.group(18)} §7(${matcher.group(19)})")
             statsMessage.add("§6Profit: §b${matcher.group(3)} §7(${matcher.group(4)})")
@@ -66,7 +72,12 @@ object DianaStats {
             chimeraDrops = tracker.items.CHIMERA,
             chimeraDropRate = "${Helper.calcPercentOne(tracker.items, tracker.mobs, "CHIMERA", "MINOS_INQUISITOR")}%",
             chimeraLSDrops = tracker.items.CHIMERA_LS,
-            chimeraLSDropRate = "${"%.2f".format(Locale.US, if (tracker.mobs.MINOS_INQUISITOR_LS > 0) tracker.items.CHIMERA_LS.toDouble() / tracker.mobs.MINOS_INQUISITOR_LS.toDouble() * 100.0 else 0.0)}%",
+            chimeraLSDropRate = "${
+                "%.2f".format(
+                    Locale.US,
+                    if (tracker.mobs.MINOS_INQUISITOR_LS > 0) tracker.items.CHIMERA_LS.toDouble() / tracker.mobs.MINOS_INQUISITOR_LS.toDouble() * 100.0 else 0.0
+                )
+            }%",
             sticksDropped = tracker.items.DAEDALUS_STICK,
             stickDropRate = "${Helper.calcPercentOne(tracker.items, tracker.mobs, "DAEDALUS_STICK", "MINOTAUR")}%",
             relicsDropped = tracker.items.MINOS_RELIC,

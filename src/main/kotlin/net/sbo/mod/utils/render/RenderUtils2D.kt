@@ -30,8 +30,8 @@ object RenderUtils2D {
         val textWidth = textRenderer.getWidth(text)
         val textHeight = textRenderer.fontHeight
 
-        val rectX1 = (x/scale).toInt()
-        val rectY1 = (y/scale).toInt()
+        val rectX1 = (x / scale).toInt()
+        val rectY1 = (y / scale).toInt()
 
         val backgroundColor = 0x80404040.toInt() // Semi-transparent gray
         val borderColor = 0x80202020.toInt() // Semi-transparent dark gray

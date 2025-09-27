@@ -4,8 +4,6 @@ import gg.essential.elementa.UIComponent
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonPrimitive
-import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.world.World
 
 @Serializable
 data class GetAllParties(

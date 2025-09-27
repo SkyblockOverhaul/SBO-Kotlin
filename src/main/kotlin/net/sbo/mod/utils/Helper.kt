@@ -48,7 +48,7 @@ object Helper {
     private var priceDataBazaar: HypixelBazaarResponse? = null
 
     fun init() {
-        Register.onChatMessageCancable(Pattern.compile("^§e§lLOOT SHARE §fYou received loot for assisting (.*?)$", Pattern.DOTALL)) { message, matchResult ->
+        Register.onChatMessageCancelable(Pattern.compile("^§e§lLOOT SHARE §fYou received loot for assisting (.*?)$", Pattern.DOTALL)) { message, matchResult ->
             onLootshare()
             lastLootShare = System.currentTimeMillis()
             true
@@ -120,7 +120,7 @@ object Helper {
         name = name.replace(Regex("[^a-zA-Z0-9_]"), "")
         return name.trim()
     }
-    
+
     /**
      * Calculate percentage of one property to another.
      * If [mobName] is provided, it calculates the percentage of [propertyName] from [items] to [mobName] from [mobs].
@@ -196,7 +196,7 @@ object Helper {
     }
 
     fun String.removeFormatting(): String {
-        return this.replace(Regex("§."), "")
+        return replace(Regex("§."), "")
     }
 
     fun matchLvlToColor(lvl: Int): String {

@@ -1,8 +1,8 @@
 package net.sbo.mod.utils.chat
 
 import net.minecraft.text.Style
-import net.minecraft.text.TextColor
 import net.minecraft.text.Text
+import net.minecraft.text.TextColor
 import net.minecraft.util.Formatting
 import java.util.*
 
@@ -29,7 +29,7 @@ object ChatUtils {
     fun Text.formattedString(): String {
         val builder = StringBuilder()
 
-        this.visit(
+        visit(
             { style, content ->
                 builder.append(style.getFormatCodes())
                 builder.append(content)

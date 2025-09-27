@@ -16,7 +16,7 @@ interface DianaTracker {
     }
 
     fun save(): DianaTracker {
-        when(this) {
+        when (this) {
             is DianaTrackerTotalData -> SboDataObject.save("DianaTrackerTotalData")
             is DianaTrackerSessionData -> SboDataObject.save("DianaTrackerSessionData")
             is DianaTrackerMayorData -> SboDataObject.save("DianaTrackerMayorData")
@@ -131,8 +131,8 @@ data class DianaItemsData(
     @SerializedName("ENCHANTED_GOLD") var ENCHANTED_GOLD: Int = 0,
     @SerializedName("ENCHANTED_IRON") var ENCHANTED_IRON: Int = 0,
     @SerializedName("Total Burrows") var TOTAL_BURROWS: Int = 0,
-    @SerializedName("scavengerCoins") var SCAVENGER_COINS: Long  = 0,
-    @SerializedName("fishCoins") var FISH_COINS: Long  = 0,
+    @SerializedName("scavengerCoins") var SCAVENGER_COINS: Long = 0,
+    @SerializedName("fishCoins") var FISH_COINS: Long = 0,
     @SerializedName("time") var TIME: Long = 0
 )
 

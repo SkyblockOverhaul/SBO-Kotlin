@@ -66,7 +66,7 @@ object SboTimerManager {
         var running: Boolean = false
         private var startedOnce: Boolean = false
         private var lastActivityTime: Long = System.currentTimeMillis()
-        private val INACTIVITY_LIMIT: Long = (inactiveTimeLimit * 60 * 1000).toLong()
+        private val inactivityLimit: Long = (inactiveTimeLimit * 60 * 1000).toLong()
         private var inactivityFlag: Boolean = false
 
         init {
@@ -136,12 +136,12 @@ object SboTimerManager {
         fun tick() {
             if (!running) return
             updateElapsedTime()
-            if (System.currentTimeMillis() - lastActivityTime > INACTIVITY_LIMIT) {
+            if (System.currentTimeMillis() - lastActivityTime > inactivityLimit) {
                 pause()
                 if (!inactivityFlag) {
                     val target = getTargetObject() ?: return
                     val currentTime = getLongField(target, dataFieldName)
-                    setLongField(target, dataFieldName, currentTime - INACTIVITY_LIMIT)
+                    setLongField(target, dataFieldName, currentTime - inactivityLimit)
                     inactivityFlag = true
                 }
             }
@@ -175,7 +175,7 @@ object SboTimerManager {
         fun continueTimer() {
             if (running) return
             if (inactivityFlag) {
-                elapsedTime -= INACTIVITY_LIMIT
+                elapsedTime -= inactivityLimit
             }
             startTime = System.currentTimeMillis()
             running = true
@@ -209,8 +209,8 @@ object SboTimerManager {
          * Updates the last activity time to the current time.
          */
         fun updateActivity() {
-            this.start()
-            this.continueTimer()
+            start()
+            continueTimer()
             lastActivityTime = System.currentTimeMillis()
         }
 

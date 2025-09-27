@@ -15,18 +15,18 @@ object General : CategoryKt("General") {
 
     init {
         separator {
-            this.title = "Overlays"
+            title = "Overlays"
         }
     }
 
     var bobberOverlay by boolean(false) {
-        this.name = Translated("Bobber Overlay")
-        this.description = Translated("Tracks the number of bobbers near you /sboguis to move the overlay")
+        name = Translated("Bobber Overlay")
+        description = Translated("Tracks the number of bobbers near you /sboguis to move the overlay")
     }
 
     var legionOverlay by boolean(false) {
-        this.name = Translated("Legion Overlay")
-        this.description = Translated("Tracks the players near you for legion buff /sboguis to move the overlay")
+        name = Translated("Legion Overlay")
+        description = Translated("Tracks the players near you for legion buff /sboguis to move the overlay")
     }
 
     init {
@@ -42,18 +42,18 @@ object General : CategoryKt("General") {
         }
 
         separator {
-            this.title = "Waypoints"
+            title = "Waypoints"
         }
     }
 
     var hideOwnWaypoints by select<HideOwnWaypoints> {
-        this.name = Translated("Hide Own Waypoints")
-        this.description = Translated("Hides waypoints you created")
+        name = Translated("Hide Own Waypoints")
+        description = Translated("Hides waypoints you created")
     }
 
     var patcherWaypoints by boolean(true) {
-        this.name = Translated("Waypoints From Chat")
-        this.description = Translated("Creates waypoints from chat messages (format: x: 20, y: 60, z: 80)")
+        name = Translated("Waypoints From Chat")
+        description = Translated("Creates waypoints from chat messages (format: x: 20, y: 60, z: 80)")
     }
 
 //    var test1 by boolean(false) {

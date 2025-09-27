@@ -17,7 +17,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
-import kotlin.collections.iterator
 import kotlin.concurrent.thread
 import kotlin.reflect.KMutableProperty1
 
@@ -132,7 +131,7 @@ object SboDataObject {
 
                 loadedData
             }
-        } catch (e: JsonSyntaxException) {
+        } catch (_: JsonSyntaxException) {
             SBOKotlin.logger.error("[$modName] Error parsing JSON in $fileName, resetting to default data.")
             save(modName, defaultData, fileName)
             defaultData
@@ -186,7 +185,7 @@ object SboDataObject {
                     Int::class -> value.toIntOrNull()
                     String::class -> value
                     else -> {
-                        SBOKotlin.logger.warn("[$key] hasn an Unsupported type: ${prop.returnType.classifier}")
+                        SBOKotlin.logger.warn("[$key] has an unsupported type: ${prop.returnType.classifier}")
                         null
                     }
                 }
@@ -269,7 +268,17 @@ object SboDataObject {
         val partyFinderConfigState = load(modName, "partyFinderConfigState.json", PartyFinderConfigState(), PartyFinderConfigState::class.java)
         val partyFinderData = load(modName, "partyFinderData.json", PartyFinderData(), PartyFinderData::class.java)
         val overlayData = load(modName, "overlayData.json", OverlayData(), OverlayData::class.java)
-        return SboConfigBundle(sboData, achievementsData, pastDianaEventsData, dianaTrackerTotalData, dianaTrackerSessionData, dianaTrackerMayorData, partyFinderConfigState, partyFinderData, overlayData)
+        return SboConfigBundle(
+            sboData,
+            achievementsData,
+            pastDianaEventsData,
+            dianaTrackerTotalData,
+            dianaTrackerSessionData,
+            dianaTrackerMayorData,
+            partyFinderConfigState,
+            partyFinderData,
+            overlayData
+        )
     }
 
     private fun zipFolder(folderToZip: File, zipFilePath: File) {
@@ -327,13 +336,25 @@ object SboDataObject {
         }
     }
 
-    val configMapforSave = mapOf(
+    val configMapForSave = mapOf(
         "SboData" to Pair({ save("SBO", sboData, "SboData.json") }, sboData),
         "AchievementsData" to Pair({ save("SBO", achievementsData, "sbo_achievements.json") }, achievementsData),
-        "PastDianaEventsData" to Pair({ save("SBO", pastDianaEventsData, "pastDianaEvents.json") }, pastDianaEventsData),
-        "DianaTrackerTotalData" to Pair({ save("SBO", dianaTrackerTotal, "dianaTrackerTotal.json") }, dianaTrackerTotal),
-        "DianaTrackerSessionData" to Pair({ save("SBO", dianaTrackerSession, "dianaTrackerSession.json") }, dianaTrackerSession),
-        "DianaTrackerMayorData" to Pair({ save("SBO", dianaTrackerMayor, "dianaTrackerMayor.json") }, dianaTrackerMayor),
+        "PastDianaEventsData" to Pair(
+            { save("SBO", pastDianaEventsData, "pastDianaEvents.json") },
+            pastDianaEventsData
+        ),
+        "DianaTrackerTotalData" to Pair(
+            { save("SBO", dianaTrackerTotal, "dianaTrackerTotal.json") },
+            dianaTrackerTotal
+        ),
+        "DianaTrackerSessionData" to Pair(
+            { save("SBO", dianaTrackerSession, "dianaTrackerSession.json") },
+            dianaTrackerSession
+        ),
+        "DianaTrackerMayorData" to Pair(
+            { save("SBO", dianaTrackerMayor, "dianaTrackerMayor.json") },
+            dianaTrackerMayor
+        ),
         "PartyFinderConfigState" to Pair({ save("SBO", pfConfigState, "partyFinderConfigState.json") }, pfConfigState),
         "PartyFinderData" to Pair({ save("SBO", partyFinderData, "partyFinderData.json") }, partyFinderData),
         "OverlayData" to Pair({ save("SBO", overlayData, "overlayData.json") }, overlayData)
@@ -346,7 +367,7 @@ object SboDataObject {
     }
 
     private fun saveAllData() {
-        configMapforSave.forEach { (configName, configData) ->
+        configMapForSave.forEach { (_, configData) ->
             configData.first.invoke()
         }
     }
@@ -402,7 +423,7 @@ object SboDataObject {
      * @param configName The name of the config to save.
      */
     fun save(configName: String) {
-        configMapforSave[configName]?.first?.invoke()
+        configMapForSave[configName]?.first?.invoke()
             ?: SBOKotlin.logger.warn("[$configName] is not a valid config name. Please use a valid config name")
     }
 

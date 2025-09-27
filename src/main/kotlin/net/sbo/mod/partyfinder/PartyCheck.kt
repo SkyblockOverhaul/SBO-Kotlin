@@ -2,13 +2,13 @@ package net.sbo.mod.partyfinder
 
 import net.sbo.mod.SBOKotlin.API_URL
 import net.sbo.mod.diana.achievements.AchievementManager.trackWithCheckPlayer
-import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.HypixelModApi
 import net.sbo.mod.utils.Player
-import net.sbo.mod.utils.events.Register
+import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.data.PartyInfo
 import net.sbo.mod.utils.data.PartyPlayerStats
+import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.http.Http
 
 object PartyCheck {
@@ -29,7 +29,7 @@ object PartyCheck {
                 Chat.chat("§6[SBO] §eChecking party members...")
                 HypixelModApi.sendPartyInfoPacket()
             } else {
-                Chat.chat("§6[SBO] §ePlease wait 30 seconds before checking party members again.");
+                Chat.chat("§6[SBO] §ePlease wait 30 seconds before checking party members again.")
             }
         }
 
@@ -47,7 +47,7 @@ object PartyCheck {
         playerName: String,
         noMessage: Boolean = false,
         readCache: Boolean = true,
-        onComplete: ((PartyPlayerStats)-> Unit)? = null
+        onComplete: ((PartyPlayerStats) -> Unit)? = null
     ) {
         if (!noMessage) Chat.chat("§6[SBO] §eChecking player: §b$playerName")
         Http.sendGetRequest("$API_URL/partyInfo?party=$playerName&readCache=$readCache")
@@ -95,10 +95,14 @@ object PartyCheck {
         partyInfo.forEach { player ->
             Chat.chat(
                 "§6[SBO] §eName: §b${player.name} §9│ §eLvL: §6${player.sbLvl} " +
-                "§9│ §eEman 9: §f${if (player.eman9) "§a✓" else "§4✗"} §9│ §eL5 Daxe: ${if (player.looting5daxe) "§a✓" else "§4✗"} " +
-                "§9│ §eKills: §6${Helper.formatNumber(player.mythosKills)}"
+                        "§9│ §eEman 9: §f${if (player.eman9) "§a✓" else "§4✗"} §9│ §eL5 Daxe: ${if (player.looting5daxe) "§a✓" else "§4✗"} " +
+                        "§9│ §eKills: §6${Helper.formatNumber(player.mythosKills)}"
             )
-            if (inviteButton) Chat.clickableChat("§7[§eClick to invite§7]", "/p ${player.name}", "/p invite ${player.name}")
+            if (inviteButton) Chat.clickableChat(
+                "§7[§eClick to invite§7]",
+                "/p ${player.name}",
+                "/p invite ${player.name}"
+            )
         }
     }
 }

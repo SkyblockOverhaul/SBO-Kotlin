@@ -17,7 +17,13 @@ import net.sbo.mod.utils.overlay.Overlay
 import net.sbo.mod.utils.overlay.OverlayTextLine
 
 object InquisLoot {
-    val overlay = Overlay("Inquis", 10f, 10f, 1f, listOf("Chat screen", "Crafting")).setCondition { (Diana.inquisTracker != Diana.Tracker.OFF && Helper.checkDiana()) || Helper.hasSpade}
+    val overlay = Overlay(
+        "Inquis",
+        10f,
+        10f,
+        1f,
+        listOf("Chat screen", "Crafting")
+    ).setCondition { (Diana.inquisTracker != Diana.Tracker.OFF && Helper.checkDiana()) || Helper.hasSpade }
     val changeView: OverlayTextLine = OverlayTextLine("${YELLOW}Change View")
         .onClick {
             Diana.inquisTracker = Diana.inquisTracker.next()
@@ -47,7 +53,7 @@ object InquisLoot {
         }
     }
 
-    fun createLine(name: String, formattedText: String) : OverlayTextLine {
+    fun createLine(name: String, formattedText: String): OverlayTextLine {
         val line = OverlayTextLine(formattedText).onClick {
             if (mc.currentScreen?.title?.string != "Crafting") return@onClick
             if (SBOConfigBundle.sboData.hideTrackerLines.contains(name)) {
@@ -57,7 +63,11 @@ object InquisLoot {
             }
             updateLines()
         }
-            .setCondition { !(mc.currentScreen?.title?.string != "Crafting" && SBOConfigBundle.sboData.hideTrackerLines.contains(name)) }
+            .setCondition {
+                !(mc.currentScreen?.title?.string != "Crafting" && SBOConfigBundle.sboData.hideTrackerLines.contains(
+                    name
+                ))
+            }
         if (SBOConfigBundle.sboData.hideTrackerLines.contains(name)) {
             line.text = "$GRAY$STRIKETHROUGH${formattedText.removeFormatting()}"
         }
@@ -84,12 +94,30 @@ object InquisLoot {
 
         lines.addAll(
             listOf(
-                createLine("INQ_TURTLE_SHELMET", "$GRAY - ${LIGHT_PURPLE}Turtle Shelmet: $AQUA${tracker.inquis.DWARF_TURTLE_SHELMET}"),
-                createLine("INQ_CROCHET_TIGER_PLUSHIE", "$GRAY - ${LIGHT_PURPLE}Tiger Plushie: $AQUA${tracker.inquis.CROCHET_TIGER_PLUSHIE}"),
-                createLine("INQ_ANTIQUE_REMEDIES", "$GRAY - ${LIGHT_PURPLE}Antique Remedie: $AQUA${tracker.inquis.ANTIQUE_REMEDIES}"),
-                createLine("INQ_TURTLE_SHELMET_LS", "$GRAY - ${LIGHT_PURPLE}Turtle Shelmets $GRAY[${AQUA}LS$GRAY]: $AQUA${tracker.inquis.DWARF_TURTLE_SHELMET_LS}"),
-                createLine("INQ_CROCHET_TIGER_PLUSHIE_LS", "$GRAY - ${LIGHT_PURPLE}Tiger Plushie $GRAY[${AQUA}LS$GRAY]: $AQUA${tracker.inquis.CROCHET_TIGER_PLUSHIE_LS}"),
-                createLine("INQ_ANTIQUE_REMEDIES_LS", "$GRAY - ${LIGHT_PURPLE}Antique Remedie $GRAY[${AQUA}LS$GRAY]: $AQUA${tracker.inquis.ANTIQUE_REMEDIES_LS}"),
+                createLine(
+                    "INQ_TURTLE_SHELMET",
+                    "$GRAY - ${LIGHT_PURPLE}Turtle Shelmet: $AQUA${tracker.inquis.DWARF_TURTLE_SHELMET}"
+                ),
+                createLine(
+                    "INQ_CROCHET_TIGER_PLUSHIE",
+                    "$GRAY - ${LIGHT_PURPLE}Tiger Plushie: $AQUA${tracker.inquis.CROCHET_TIGER_PLUSHIE}"
+                ),
+                createLine(
+                    "INQ_ANTIQUE_REMEDIES",
+                    "$GRAY - ${LIGHT_PURPLE}Antique Remedie: $AQUA${tracker.inquis.ANTIQUE_REMEDIES}"
+                ),
+                createLine(
+                    "INQ_TURTLE_SHELMET_LS",
+                    "$GRAY - ${LIGHT_PURPLE}Turtle Shelmets $GRAY[${AQUA}LS$GRAY]: $AQUA${tracker.inquis.DWARF_TURTLE_SHELMET_LS}"
+                ),
+                createLine(
+                    "INQ_CROCHET_TIGER_PLUSHIE_LS",
+                    "$GRAY - ${LIGHT_PURPLE}Tiger Plushie $GRAY[${AQUA}LS$GRAY]: $AQUA${tracker.inquis.CROCHET_TIGER_PLUSHIE_LS}"
+                ),
+                createLine(
+                    "INQ_ANTIQUE_REMEDIES_LS",
+                    "$GRAY - ${LIGHT_PURPLE}Antique Remedie $GRAY[${AQUA}LS$GRAY]: $AQUA${tracker.inquis.ANTIQUE_REMEDIES_LS}"
+                ),
             )
         )
         overlay.setLines(lines)

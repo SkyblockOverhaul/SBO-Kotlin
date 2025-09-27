@@ -127,7 +127,7 @@ object Register {
      * @param regex The regular expression to filter messages with.
      * @param action The action to execute. It receives the message and the `Matcher`.
      */
-    fun onChatMessageCancable(
+    fun onChatMessageCancelable(
         regex: Pattern,
         action: (message: Text, matchResult: Matcher) -> Boolean
     ) {

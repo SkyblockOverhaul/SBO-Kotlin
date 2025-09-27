@@ -3,7 +3,6 @@ package net.sbo.mod.settings.categories
 import com.teamresourceful.resourcefulconfigkt.api.CategoryKt
 import net.minecraft.util.Util
 
-
 object Credits : CategoryKt("Credits") {
     init {
         button {

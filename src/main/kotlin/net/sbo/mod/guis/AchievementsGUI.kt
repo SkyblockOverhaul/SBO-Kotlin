@@ -35,7 +35,7 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
 
     private lateinit var contentPanel: UIComponent
     private lateinit var scrollComponent: ScrollComponent
-    private lateinit var titleText : UIText
+    private lateinit var titleText: UIText
     private lateinit var unlockedCountText: UIText
     private lateinit var filterText: UIText
     private lateinit var filterButtonOutline: UIRoundedRectangle
@@ -98,11 +98,12 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
         val unlockedAchievements = AchievementManager.achievements.values.count { it.isUnlocked() }
         val totalAchievements = AchievementManager.achievements.values.count()
         val unlockedPercentage = (unlockedAchievements.toFloat() / totalAchievements * 100).toFixed(2)
-        unlockedCountText = UIText("Unlocked: ${AchievementManager.achievementsUnlocked}/${totalAchievements} ($unlockedPercentage%)").constrain {
-            x = CenterConstraint()
-            y = SiblingConstraint(5f)
-            textScale = 1.2.pixels
-        } childOf window
+        unlockedCountText =
+            UIText("Unlocked: ${AchievementManager.achievementsUnlocked}/${totalAchievements} ($unlockedPercentage%)").constrain {
+                x = CenterConstraint()
+                y = SiblingConstraint(5f)
+                textScale = 1.2.pixels
+            } childOf window
         unlockedCountText.setColor(Color(0, 255, 35, 224))
 
         scrollComponent = ScrollComponent().constrain {
@@ -244,7 +245,7 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
     private fun loadFilterFromSboData() {
         filterType = try {
             AchievementFilter.valueOf(sboData.achievementFilter.uppercase())
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             AchievementFilter.DEFAULT
         }
     }

@@ -8,7 +8,6 @@ import net.minecraft.util.Formatting
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.events.Register
-import kotlin.math.roundToInt
 
 object HelpCommand {
     val commands = arrayOf(
@@ -18,18 +17,36 @@ object HelpCommand {
         mapOf("cmd" to "sboclearburrows", "desc" to "Clear all burrow waypoints (or: /sbocb)"),
         mapOf("cmd" to "sbocheck <player>", "desc" to "Check a player (or: /sboc <player>)"),
         mapOf("cmd" to "sbocheckp", "desc" to "Check your party (alias /sbocp)"),
-        mapOf("cmd" to "sboimporttracker <profilename>", "desc" to "Import skyhanni tracker"), //todo: add sboimporttracker command
-        mapOf("cmd" to "sboimporttrackerundo", "desc" to "Undo the tracker import"), // todo: add sboimporttrackerundo command
+        mapOf(
+            "cmd" to "sboimporttracker <profilename>",
+            "desc" to "Import skyhanni tracker"
+        ), //todo: add sboimporttracker command
+        mapOf(
+            "cmd" to "sboimporttrackerundo",
+            "desc" to "Undo the tracker import"
+        ), // todo: add sboimporttrackerundo command
         mapOf("cmd" to "sbodc", "desc" to "Diana dropchances"),
-        mapOf("cmd" to "sbopartyblacklist", "desc" to "Party commands blacklisting"), // todo: add sbopartyblacklist command
+        mapOf(
+            "cmd" to "sbopartyblacklist",
+            "desc" to "Party commands blacklisting"
+        ), // todo: add sbopartyblacklist command
         mapOf("cmd" to "sbobacktrackachievements", "desc" to "Backtrack achievements"),
         mapOf("cmd" to "sboachievements", "desc" to "Opens the achievements GUI"),
         mapOf("cmd" to "sbolockachievements", "desc" to "Locks all Achievements (needs confirmation)"),
         mapOf("cmd" to "sbopde", "desc" to "Opens the Past Diana Events GUI"),
-        mapOf("cmd" to "sboactiveuser", "desc" to "Shows the active user of the mod"), // todo: add sboactiveuser command
+        mapOf(
+            "cmd" to "sboactiveuser",
+            "desc" to "Shows the active user of the mod"
+        ), // todo: add sboactiveuser command
         mapOf("cmd" to "sbopf", "desc" to "Opens the PartyFinder GUI"),
-        mapOf("cmd" to "sbopartycommands", "desc" to "Displays all diana partycommands"), // todo: add sbopartycommands command
-        mapOf("cmd" to "sboresetavgmftracker", "desc" to "Resets the avg mf tracker"), // todo: add sboresetavgmftracker command
+        mapOf(
+            "cmd" to "sbopartycommands",
+            "desc" to "Displays all diana partycommands"
+        ), // todo: add sbopartycommands command
+        mapOf(
+            "cmd" to "sboresetavgmftracker",
+            "desc" to "Resets the avg mf tracker"
+        ), // todo: add sboresetavgmftracker command
         mapOf("cmd" to "sboresetstatstracker", "desc" to "Resets the stats tracker"),
         mapOf("cmd" to "sboKey", "desc" to "Set your sbokey"),
         mapOf("cmd" to "sboClearKey", "desc" to "Reset your sbokey")
@@ -90,7 +107,8 @@ object HelpCommand {
 
             (listOf(false, true)).forEach { isLs ->
                 val chances = if (isLs) lsChances else normalChances
-                val labelFunc: (String) -> String = if (isLs) { _ -> "§7[MF:$mf]" } else { _ -> Helper.getMagicFindAndLooting(mf, looting) }
+                val labelFunc: (String) -> String =
+                    if (isLs) { _ -> "§7[MF:$mf]" } else { _ -> Helper.getMagicFindAndLooting(mf, looting) }
 
                 items.forEach { (name, key) ->
                     val chance = chances[key] ?: 0.0

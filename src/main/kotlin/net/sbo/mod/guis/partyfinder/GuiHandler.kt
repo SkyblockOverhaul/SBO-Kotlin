@@ -6,11 +6,7 @@ import gg.essential.elementa.components.UIRoundedRectangle
 import gg.essential.elementa.components.UIText
 import gg.essential.elementa.components.UIWrappedText
 import gg.essential.elementa.components.input.UITextInput
-import gg.essential.elementa.constraints.CenterConstraint
-import gg.essential.elementa.constraints.ChildBasedSizeConstraint
-import gg.essential.elementa.constraints.PositionConstraint
-import gg.essential.elementa.constraints.SiblingConstraint
-import gg.essential.elementa.constraints.SizeConstraint
+import gg.essential.elementa.constraints.*
 import gg.essential.elementa.dsl.childOf
 import gg.essential.elementa.dsl.constrain
 import gg.essential.elementa.dsl.pixels
@@ -51,10 +47,10 @@ object GuiHandler {
         private val y: PositionConstraint,
         private val width: SizeConstraint,
         private val height: SizeConstraint,
-        private val color: Color,
-        private val parent: UIComponent? = null,
-        private val rounded: Boolean = false,
-        private val roundness: Float = 5f
+        color: Color,
+        parent: UIComponent? = null,
+        rounded: Boolean = false,
+        roundness: Float = 5f
     ) {
         val uiObject: UIComponent = if (rounded) UIRoundedRectangle(roundness) else UIBlock()
 
@@ -62,10 +58,10 @@ object GuiHandler {
 
         init {
             uiObject.constrain {
-                this.x = this@UILine.x
-                this.y = this@UILine.y
-                this.width = this@UILine.width
-                this.height = this@UILine.height
+                x = this@UILine.x
+                y = this@UILine.y
+                width = this@UILine.width
+                height = this@UILine.height
             }.setColor(color)
 
             parent?.let { uiObject.childOf(it) }
@@ -73,17 +69,17 @@ object GuiHandler {
     }
 
     class Button(
-        private val text: String,
+        text: String,
         private val x: PositionConstraint,
         private val y: PositionConstraint,
         private val width: SizeConstraint,
         private val height: SizeConstraint,
         private val color: Color,
         private val textColor: Color? = null,
-        private val outline: Effect? = null,
-        private val parent: UIComponent? = null,
-        private val rounded: Boolean = false,
-        private val wrapped: Boolean = false,
+        outline: Effect? = null,
+        parent: UIComponent? = null,
+        rounded: Boolean = false,
+        wrapped: Boolean = false,
     ) {
         val uiObject: UIComponent = if (rounded) UIRoundedRectangle(10f) else UIBlock()
         val textObject: UIComponent = if (wrapped) UIWrappedText(text) else UIText(text)
@@ -123,17 +119,17 @@ object GuiHandler {
 
         init {
             uiObject.constrain {
-                this.x = this@Button.x
-                this.y = this@Button.y
-                this.width = this@Button.width
-                this.height = this@Button.height
+                x = this@Button.x
+                y = this@Button.y
+                width = this@Button.width
+                height = this@Button.height
             }.setColor(color)
 
             outline?.let { uiObject.enableEffect(it) }
             parent?.let { uiObject.childOf(it) }
             textObject.constrain {
-                this.x = CenterConstraint()
-                this.y = CenterConstraint()
+                x = CenterConstraint()
+                y = CenterConstraint()
             }.childOf(uiObject)
 
             textColor?.let { textObject.setColor(it) }
@@ -150,8 +146,8 @@ object GuiHandler {
         private val color: Color,
         private val checkedColor: Color,
         private val text: String = "",
-        private val rounded: Boolean = false,
-        private val roundness: Float = 10f,
+        rounded: Boolean = false,
+        roundness: Float = 10f,
         private val filter: Boolean = false
     ) {
         private lateinit var onClick: () -> Unit
@@ -217,10 +213,10 @@ object GuiHandler {
 
         fun create(): UIComponent {
             bgbox.constrain {
-                this.x = this@Checkbox.x
-                this.y = this@Checkbox.y
-                this.width = this@Checkbox.width
-                this.height = this@Checkbox.height
+                x = this@Checkbox.x
+                y = this@Checkbox.y
+                width = this@Checkbox.width
+                height = this@Checkbox.height
             }.setColor(Color(0, 0, 0, 0))
 
             val groupContainer = UIBlock().constrain {
@@ -266,8 +262,8 @@ object GuiHandler {
         private val inputWidth: SizeConstraint,
         private val color: Color,
         private val textColor: Color,
-        private val rounded: Boolean = false,
-        private val roundness: Float = 5f
+        rounded: Boolean = false,
+        roundness: Float = 5f
     ) {
         internal var onlyNumbers = false
         internal var onlyText = false
@@ -291,6 +287,7 @@ object GuiHandler {
                         else -> ""
                     }
                 }
+
                 "diana" -> {
                     val diana = pfConfigState.inputs.diana
                     when (key) {
@@ -300,6 +297,7 @@ object GuiHandler {
                         else -> ""
                     }
                 }
+
                 else -> ""
             }
         }
@@ -325,10 +323,8 @@ object GuiHandler {
 
             textInput.onMouseClick {
                 if (!textSet) {
-                    if (getValue().isEmpty()) {
-                        text = textInputText.getText()
-                    } else {
-                        text = getValue()
+                    text = getValue().ifEmpty {
+                        textInputText.getText()
                     }
                     textInputText.setText(text)
                     textSet = true
@@ -339,10 +335,8 @@ object GuiHandler {
 
             textInputText.onMouseClick {
                 if (!textSet) {
-                    if (getValue().isEmpty()) {
-                        text = textInputText.getText()
-                    } else {
-                        text = getValue()
+                    text = getValue().ifEmpty {
+                        textInputText.getText()
                     }
                     textInputText.setText(text)
                     textSet = true
