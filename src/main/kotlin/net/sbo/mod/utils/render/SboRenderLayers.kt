@@ -2,14 +2,13 @@ package net.sbo.mod.utils.render
 
 import com.mojang.blaze3d.pipeline.BlendFunction
 import com.mojang.blaze3d.pipeline.RenderPipeline
-import com.mojang.blaze3d.platform.DepthTestFunction;
-import com.mojang.blaze3d.vertex.VertexFormat.DrawMode;
-
+import com.mojang.blaze3d.platform.DepthTestFunction
+import com.mojang.blaze3d.vertex.VertexFormat.DrawMode
 import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.RenderPhase
-import net.minecraft.client.render.VertexFormats;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.render.VertexFormats
+import net.minecraft.util.Identifier
 import java.util.OptionalDouble
 
 object SboRenderPipelines {

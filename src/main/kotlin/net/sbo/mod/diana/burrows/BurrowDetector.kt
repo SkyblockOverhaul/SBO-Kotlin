@@ -3,26 +3,25 @@ package net.sbo.mod.diana.burrows
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket
 import net.minecraft.util.math.BlockPos
-import net.sbo.mod.settings.categories.Diana
-import net.sbo.mod.utils.events.Register
 import net.sbo.mod.settings.categories.Customization
+import net.sbo.mod.settings.categories.Diana
 import net.sbo.mod.utils.Player
 import net.sbo.mod.utils.chat.Chat
+import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.PacketReceiveEvent
 import net.sbo.mod.utils.events.impl.PacketSendEvent
 import net.sbo.mod.utils.events.impl.PlayerInteractEvent
-import net.minecraft.particle.ParticleTypes as MCParticleTypes
-import net.sbo.mod.utils.waypoint.Waypoint
-import java.awt.Color
-import net.sbo.mod.utils.waypoint.WaypointManager
-import net.sbo.mod.utils.math.SboVec
-import net.sbo.mod.utils.waypoint.WaypointManager.getGuessWaypoints
 import net.sbo.mod.utils.game.World
+import net.sbo.mod.utils.math.SboVec
+import net.sbo.mod.utils.waypoint.Waypoint
+import net.sbo.mod.utils.waypoint.WaypointManager
+import net.sbo.mod.utils.waypoint.WaypointManager.getGuessWaypoints
 import net.sbo.mod.utils.waypoint.WaypointManager.guessWp
 import net.sbo.mod.utils.waypoint.WaypointManager.removeWaypoint
-import net.sbo.mod.utils.waypoint.WaypointManager.waypoints
+import java.awt.Color
 import java.util.regex.Pattern
+import net.minecraft.particle.ParticleTypes as MCParticleTypes
 
 object BurrowDetector {
     internal var lastInteractedPos: BlockPos? = null
@@ -41,15 +40,20 @@ object BurrowDetector {
             Chat.chat("§6[SBO] §4Burrow Waypoints Cleared!")
         }
 
-        Register.onChatMessageCancable(Pattern.compile("^§eYou (.*?) Griffin [Bb]urrow(.*?)$", Pattern.DOTALL)) { message, matchResult ->
-            if (!Diana.dianaBurrowDetect) return@onChatMessageCancable true
+        Register.onChatMessageCancelable(
+            Pattern.compile(
+                "^§eYou (.*?) Griffin [Bb]urrow(.*?)$",
+                Pattern.DOTALL
+            )
+        ) { message, matchResult ->
+            if (!Diana.dianaBurrowDetect) return@onChatMessageCancelable true
             refreshBurrows()
             true
         }
 
 
-        Register.onChatMessageCancable(Pattern.compile("^ ☠ You (.*?)$", Pattern.DOTALL)) { message, matchResult ->
-            if (World.getWorld() != "Hub") return@onChatMessageCancable true
+        Register.onChatMessageCancelable(Pattern.compile("^ ☠ You (.*?)$", Pattern.DOTALL)) { message, matchResult ->
+            if (World.getWorld() != "Hub") return@onChatMessageCancelable true
             refreshBurrows()
             true
         }
@@ -161,10 +165,10 @@ object BurrowDetector {
             guessWp?.hide()
         }
 
-        if(!Diana.dianaMultiBurrowGuess) return
+        if (!Diana.dianaMultiBurrowGuess) return
         val removedGuesses = mutableListOf<Waypoint>()
         getGuessWaypoints().forEach { waypoint ->
-            if(waypoint.pos.distanceTo(playerPos) < 4) {
+            if (waypoint.pos.distanceTo(playerPos) < 4) {
                 removedGuesses.add(waypoint)
                 guessWp?.hide()
             }

@@ -10,9 +10,9 @@ import java.util.regex.Pattern
 object ChatHandler {
 
     private val messageHandlers = mutableListOf<ChatRule>()
-    private val spammyPattern = Regex("§[0-9a-fk-or].+[0-9,]+\\/[0-9,]+❤.*")
+    private val spammyPattern = Regex("§[0-9a-fk-or].+[0-9,]+/[0-9,]+❤.*")
 
-    fun init () {
+    fun init() {
         ClientReceiveMessageEvents.ALLOW_GAME.register { message, overlay ->
             if (spammyPattern.matches(message.string)) return@register true
             processMessage(message)

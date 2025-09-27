@@ -1,15 +1,16 @@
 package net.sbo.mod.utils.render
 
-import net.fabricmc.fabric.api.client.rendering.v1.*
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.minecraft.client.font.TextRenderer
-import net.minecraft.client.render.*
+import net.minecraft.client.render.VertexRendering
 import net.minecraft.util.math.RotationAxis
 import net.minecraft.util.math.Vec3d
 import net.sbo.mod.SBOKotlin.mc
-import net.sbo.mod.utils.waypoint.WaypointManager
 import net.sbo.mod.mixin.accessor.BeaconBlockEntityRendererInvoker
 import net.sbo.mod.settings.categories.Customization
 import net.sbo.mod.utils.math.SboVec
+import net.sbo.mod.utils.waypoint.WaypointManager
 import java.awt.Color
 import kotlin.math.max
 
@@ -72,7 +73,7 @@ object RenderUtil {
                 text,
                 hexColor,
                 Customization.waypointTextShadow,
-                Customization.waypointTextScale/100.0,
+                Customization.waypointTextScale / 100.0,
                 throughWalls
             )
         }
@@ -160,7 +161,7 @@ object RenderUtil {
         val distance = cameraPos.distanceTo(textWorldPos)
         val dynamicScale = max(distance, 2.5) * scale
 
-        matrices.translate(pos.x + 0.5 - cameraPos.x, pos.y + yOffset + - cameraPos.y, pos.z + 0.5 - cameraPos.z)
+        matrices.translate(pos.x + 0.5 - cameraPos.x, pos.y + yOffset + -cameraPos.y, pos.z + 0.5 - cameraPos.z)
 
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-cameraYaw))
         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(cameraPitch))
@@ -196,7 +197,8 @@ object RenderUtil {
      * @param pos The position in the world where the beacon beam should be rendered.
      * @param colorComponents The RGB color components as a FloatArray (0.0 to
      */
-    fun renderBeaconBeam( // todo: add through walls option
+    fun renderBeaconBeam(
+        // todo: add through walls option
         context: WorldRenderContext,
         pos: SboVec,
         yOffset: Int,

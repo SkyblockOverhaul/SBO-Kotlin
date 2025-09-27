@@ -30,19 +30,19 @@ object WaypointManager {
     val waypoints = mutableMapOf<String, MutableList<Waypoint>>()
     var closestBurrow: Pair<Waypoint?, Double> = null to 1000.0
     var closestGuess: Pair<Waypoint?, Double> = null to 1000.0
-    var focusedGuess : Waypoint? = null
+    var focusedGuess: Waypoint? = null
     private val angleThreshold = Math.toRadians(4.0)
     private val cosThreshold = cos(angleThreshold)
 
     fun init() {
         if (guessWp == null) {
-            guessWp = Waypoint("Guess", 100.0, 100.0, 100.0, 0.0f, 0.964f, 1.0f, 0,"guess")
+            guessWp = Waypoint("Guess", 100.0, 100.0, 100.0, 0.0f, 0.964f, 1.0f, 0, "guess")
         }
 
         Register.command("sboraitestguess") {
             val pos = Player.getLastPosition()
             guessWp = createGuessWaypoint(pos.plus(SboVec(10.0, 2.0, 10.0)))
-            if (guessWp == null) return@command;
+            if (guessWp == null) return@command
 
             addWaypoint(guessWp!!)
         }
@@ -82,10 +82,34 @@ object WaypointManager {
                     if (hideOwnWaypoints.contains(HideOwnWaypoints.INQ) && player.contains(playername)) return@onChatMessage
                     Helper.showTitle("§r§6§l<§b§l§kO§6§l> §b§lINQUISITOR! §6§l<§b§l§kO§6§l>", player, 0, 90, 20)
                     playCustomSound(Customization.inqSound[0], Customization.inqVolume)
-                    addWaypoint(Waypoint(player, x.toDouble(), y.toDouble(), z.toDouble(), 1.0f, 0.84f, 0.0f, 45, type = "inq"))
+                    addWaypoint(
+                        Waypoint(
+                            player,
+                            x.toDouble(),
+                            y.toDouble(),
+                            z.toDouble(),
+                            1.0f,
+                            0.84f,
+                            0.0f,
+                            45,
+                            type = "inq"
+                        )
+                    )
                 } else if (patcherWaypoints) {
                     if (hideOwnWaypoints.contains(HideOwnWaypoints.NORMAL) && player.contains(playername)) return@onChatMessage
-                    addWaypoint(Waypoint(player, x.toDouble(), y.toDouble(), z.toDouble(), 0.0f, 0.2f, 1.0f, 30, type = "world"))
+                    addWaypoint(
+                        Waypoint(
+                            player,
+                            x.toDouble(),
+                            y.toDouble(),
+                            z.toDouble(),
+                            0.0f,
+                            0.2f,
+                            1.0f,
+                            30,
+                            type = "world"
+                        )
+                    )
                 }
             }
         }
@@ -96,12 +120,13 @@ object WaypointManager {
 
             val inqWps = getWaypointsOfType("inq")
 
-            this.forEachWaypoint { waypoint ->
+            forEachWaypoint { waypoint ->
                 if (waypoint.ttl > 0 && waypoint.creation + waypoint.ttl * 1000 < System.currentTimeMillis()) {
                     removeWaypoint(waypoint)
                 }
 
-                waypoint.line = closestBurrow.first == waypoint && Diana.burrowLine && closestBurrow.second <= 60 && inqWps.isEmpty()
+                waypoint.line =
+                    closestBurrow.first == waypoint && Diana.burrowLine && closestBurrow.second <= 60 && inqWps.isEmpty()
 
                 waypoint.format(inqWps, closestBurrow.second)
             }
@@ -121,15 +146,11 @@ object WaypointManager {
             val eyeLocation = player.eyePos
             val lookVec = player.rotationVector.normalize()
             var maxDot = -1.0
-            var bestGuess: Waypoint? = null
 
-            for (waypoint in getGuessWaypoints()) {
+            val bestGuess = getGuessWaypoints().minByOrNull { waypoint ->
                 val dirToWaypoint = waypoint.pos.center().toVec3d().subtract(eyeLocation).normalize()
-                val dot = lookVec.dotProduct(dirToWaypoint)
-
-                if (dot > maxDot) {
-                    maxDot = dot
-                    bestGuess = waypoint
+                lookVec.dotProduct(dirToWaypoint).also { dot ->
+                    if (maxDot < dot) maxDot = dot
                 }
             }
 
@@ -159,14 +180,24 @@ object WaypointManager {
         //guessWaypointsCopy.forEach { it.render(context) }
     }
 
-    fun createGuessWaypoint(pos: SboVec?) : Waypoint? {
+    fun createGuessWaypoint(pos: SboVec?): Waypoint? {
         if (pos == null) return null
         val color = Color(Customization.guessColor)
         val r = color.red.toFloat() / 255.0f
         val g = color.green.toFloat() / 255.0f
         val b = color.blue.toFloat() / 255.0f
 
-        val guess = Waypoint("Guess", pos.x, pos.y, pos.z, r,g,b, 0,"guess")
+        val guess = Waypoint(
+            "Guess",
+            pos.x,
+            pos.y,
+            pos.z,
+            r,
+            g,
+            b,
+            0,
+            "guess"
+        )
         guess.show()
         return guess
     }
@@ -177,7 +208,10 @@ object WaypointManager {
      */
     fun addWaypoint(waypoint: Waypoint) {
         waypoints.getOrPut(waypoint.type.lowercase()) { mutableListOf() }.add(waypoint)
-        if (waypoint.type.lowercase() == "burrow") playCustomSound(Customization.burrowSound[0], Customization.burrowVolume)
+        if (waypoint.type.lowercase() == "burrow") playCustomSound(
+            Customization.burrowSound[0],
+            Customization.burrowVolume
+        )
     }
 
     /**
@@ -225,14 +259,14 @@ object WaypointManager {
      * @param pos The new position for the guess waypoint.
      */
     fun updateGuess(pos: SboVec?) {
-        if(!Diana.dianaMultiBurrowGuess) {
+        if (!Diana.dianaMultiBurrowGuess) {
             guessWp?.apply {
                 val (exists, wp) = waypointExists("burrow", this.pos)
-            if (exists && wp != null) {
-                this.hidden = wp.distanceToPlayer() < 60
-            } else {
-                this.hidden = false
-            }
+                hidden = if (exists && wp != null) {
+                    wp.distanceToPlayer() < 60
+                } else {
+                    false
+                }
                 if (pos != null) {
                     this.pos = pos
                 }
@@ -264,7 +298,7 @@ object WaypointManager {
     }
 
     fun getGuessWaypoints(): MutableList<Waypoint> {
-        return waypoints.getOrPut("guess") { mutableListOf()  }
+        return waypoints.getOrPut("guess") { mutableListOf() }
     }
 
     /**

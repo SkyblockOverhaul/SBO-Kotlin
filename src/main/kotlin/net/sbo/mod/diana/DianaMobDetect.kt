@@ -2,13 +2,13 @@ package net.sbo.mod.diana
 
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.decoration.ArmorStandEntity
-import net.sbo.mod.utils.events.Register
 import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.settings.categories.Diana
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.Player
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.chat.ChatUtils.formattedString
+import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.overlay.Overlay
 import net.sbo.mod.utils.overlay.OverlayExamples
 import net.sbo.mod.utils.overlay.OverlayTextLine
@@ -18,7 +18,14 @@ object DianaMobDetect {
     private val trackedArmorStands = mutableMapOf<Int, String>()
     private val defeatedMobs = mutableSetOf<Int>()
     private val mobDeathListeners = mutableListOf<(String, ArmorStandEntity) -> Unit>() // <-- NEW
-    private val mobHpOverlay: Overlay = Overlay("mythosMobHp", 10f, 10f, 1f, listOf("Chat screen"), OverlayExamples.mythosMobHpExample).setCondition { Diana.mythosMobHp }
+    private val mobHpOverlay: Overlay = Overlay(
+        "mythosMobHp",
+        10f,
+        10f,
+        1f,
+        listOf("Chat screen"),
+        OverlayExamples.mythosMobHpExample
+    ).setCondition { Diana.mythosMobHp }
 
     fun init() {
         mobHpOverlay.init()

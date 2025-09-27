@@ -3,10 +3,10 @@ package net.sbo.mod.guis
 
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.WindowScreen
+import gg.essential.elementa.components.ScrollComponent
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIRoundedRectangle
 import gg.essential.elementa.components.UIText
-import gg.essential.elementa.components.ScrollComponent
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.dsl.childOf
 import gg.essential.elementa.dsl.constrain
@@ -48,14 +48,14 @@ class PastEventsGui : WindowScreen(ElementaVersion.V10) {
 
     private fun initMainUI() {
         UIBlock().constrain { width = 100.percent; height = 100.percent }
-            .setColor(Color(0,0,0,200)) childOf window
+            .setColor(Color(0, 0, 0, 200)) childOf window
 
         val background = UIBlock().constrain {
             x = CenterConstraint()
             y = 10.percent
             width = 60.percent
             height = 70.percent
-        }.setColor(Color(20,20,20,0)) childOf window
+        }.setColor(Color(20, 20, 20, 0)) childOf window
 
         val overviewOutline = UIRoundedRectangle(5f).constrain {
             x = 10.pixels; y = 10.pixels; width = 150.pixels; height = 25.pixels
@@ -65,15 +65,15 @@ class PastEventsGui : WindowScreen(ElementaVersion.V10) {
         overviewButton = UIRoundedRectangle(5f).constrain {
             x = CenterConstraint(); y = CenterConstraint(); width = 148.pixels; height = 23.pixels
         } childOf overviewOutline
-        overviewButton.setColor(Color(10,10,30))
+        overviewButton.setColor(Color(10, 10, 30))
 
         overviewButtonText = UIText("Total Overview").constrain {
             x = CenterConstraint(); y = CenterConstraint(); textScale = 1.0.pixels
         } childOf overviewButton
         overviewButtonText.setColor(Color.CYAN)
 
-        overviewButton.onMouseEnter {  overviewButton.setColor(Color(20,20,50)) }
-        overviewButton.onMouseLeave {  overviewButton.setColor(Color(10,10,30)) }
+        overviewButton.onMouseEnter { overviewButton.setColor(Color(20, 20, 50)) }
+        overviewButton.onMouseLeave { overviewButton.setColor(Color(10, 10, 30)) }
         overviewButton.onMouseClick { toggleOverlay(totalEvents, "Diana Total Overview", true) }
 
         scroll = ScrollComponent().constrain {
@@ -81,7 +81,7 @@ class PastEventsGui : WindowScreen(ElementaVersion.V10) {
             width = 100.percent
             height = SubtractiveConstraint(100.percent, 40.pixels)
         } childOf background
-        scroll.setColor(Color(0,0,0,0))
+        scroll.setColor(Color(0, 0, 0, 0))
 
         eventContainer = UIBlock().constrain {
             x = 0.pixels
@@ -89,7 +89,7 @@ class PastEventsGui : WindowScreen(ElementaVersion.V10) {
             width = FillConstraint()
             height = (events.size * 80).pixels
         } childOf scroll
-        eventContainer.setColor(Color(0,0,0,0))
+        eventContainer.setColor(Color(0, 0, 0, 0))
 
         renderEvents()
     }
@@ -104,7 +104,7 @@ class PastEventsGui : WindowScreen(ElementaVersion.V10) {
             overlayContent = UIRoundedRectangle(10f).constrain {
                 width = 320.pixels; height = 360.pixels; x = CenterConstraint(); y = CenterConstraint()
             } childOf overlayOutline!!
-            overlayContent!!.setColor(Color(25,25,40,230))
+            overlayContent!!.setColor(Color(25, 25, 40, 230))
         }
 
         if (isOverlayHidden) {
@@ -114,13 +114,13 @@ class PastEventsGui : WindowScreen(ElementaVersion.V10) {
 
             val blocksContainer = UIBlock().constrain {
                 x = CenterConstraint(); y = 50.pixels; width = 96.percent; height = 240.pixels
-            }.setColor(Color(0,0,0,0)) childOf overlayContent!!
+            }.setColor(Color(0, 0, 0, 0)) childOf overlayContent!!
 
             val lineHeight = 14
             fun createBlock(dataLines: List<String>, xStart: Int) {
                 val block = UIBlock().constrain {
                     x = xStart.percent; y = 0.pixels; width = 48.percent; height = 100.percent
-                }.setColor(Color(0,0,0,0)) childOf blocksContainer
+                }.setColor(Color(0, 0, 0, 0)) childOf blocksContainer
 
                 var yPos = 0
                 dataLines.forEach { text ->
@@ -130,28 +130,28 @@ class PastEventsGui : WindowScreen(ElementaVersion.V10) {
             }
 
             val leftPercents = mutableListOf(
-                "§7(§b${Helper.calcPercentOne(data.items, data.mobs,"CHIMERA", "MINOS_INQUISITOR")}%§7)",
-                "§7(§b${Helper.calcPercentOne(data.items, data.mobs,"CHIMERA_LS", "MINOS_INQUISITOR_LS")}%§7)",
-                "§7(§b${Helper.calcPercentOne(data.items, data.mobs,"MINOS_RELIC", "MINOS_CHAMPION")}%§7)",
-                "§7(§b${Helper.calcPercentOne(data.items, data.mobs,"DAEDALUS_STICK", "MINOTAUR")}%§7)"
+                "§7(§b${Helper.calcPercentOne(data.items, data.mobs, "CHIMERA", "MINOS_INQUISITOR")}%§7)",
+                "§7(§b${Helper.calcPercentOne(data.items, data.mobs, "CHIMERA_LS", "MINOS_INQUISITOR_LS")}%§7)",
+                "§7(§b${Helper.calcPercentOne(data.items, data.mobs, "MINOS_RELIC", "MINOS_CHAMPION")}%§7)",
+                "§7(§b${Helper.calcPercentOne(data.items, data.mobs, "DAEDALUS_STICK", "MINOTAUR")}%§7)"
             )
 
             val leftData = mutableListOf(
-                "§dChimeras: ${Helper.formatNumber(data.items.CHIMERA,true)} ${leftPercents[0]}",
-                "§dChimeras (LS): ${Helper.formatNumber(data.items.CHIMERA_LS,true)} ${leftPercents[1]}",
-                "§5Relics: ${Helper.formatNumber(data.items.MINOS_RELIC,true)} ${leftPercents[2]}",
-                "§6Sticks: ${Helper.formatNumber(data.items.DAEDALUS_STICK,true)} ${leftPercents[3]}",
+                "§dChimeras: ${Helper.formatNumber(data.items.CHIMERA, true)} ${leftPercents[0]}",
+                "§dChimeras (LS): ${Helper.formatNumber(data.items.CHIMERA_LS, true)} ${leftPercents[1]}",
+                "§5Relics: ${Helper.formatNumber(data.items.MINOS_RELIC, true)} ${leftPercents[2]}",
+                "§6Sticks: ${Helper.formatNumber(data.items.DAEDALUS_STICK, true)} ${leftPercents[3]}",
                 "§6Treasure: ${Helper.formatNumber(data.items.COINS - (data.items.FISH_COINS + data.items.SCAVENGER_COINS))}",
-                "§6Fish Coins: ${ Helper.formatNumber(data.items.FISH_COINS)}",
-                "§6Scavenger: ${ Helper.formatNumber(data.items.SCAVENGER_COINS)}",
+                "§6Fish Coins: ${Helper.formatNumber(data.items.FISH_COINS)}",
+                "§6Scavenger: ${Helper.formatNumber(data.items.SCAVENGER_COINS)}",
                 "§6Feathers: ${Helper.formatNumber(data.items.GRIFFIN_FEATHER)}",
-                "§6Crowns: ${Helper.formatNumber(data.items.CROWN_OF_GREED,true)}",
-                "§6Souvenirs: ${Helper.formatNumber(data.items.WASHED_UP_SOUVENIR,true)}",
-                "§2Shelmets: ${Helper.formatNumber(data.items.DWARF_TURTLE_SHELMET,true)}",
-                "§2Remedies: ${Helper.formatNumber(data.items.ANTIQUE_REMEDIES,true)}",
-                "§2Plushies: ${Helper.formatNumber(data.items.CROCHET_TIGER_PLUSHIE,true)}",
+                "§6Crowns: ${Helper.formatNumber(data.items.CROWN_OF_GREED, true)}",
+                "§6Souvenirs: ${Helper.formatNumber(data.items.WASHED_UP_SOUVENIR, true)}",
+                "§2Shelmets: ${Helper.formatNumber(data.items.DWARF_TURTLE_SHELMET, true)}",
+                "§2Remedies: ${Helper.formatNumber(data.items.ANTIQUE_REMEDIES, true)}",
+                "§2Plushies: ${Helper.formatNumber(data.items.CROCHET_TIGER_PLUSHIE, true)}",
                 "§7Claws: ${Helper.formatNumber(data.items.ANCIENT_CLAW)}",
-                "§7Ench. Claws: ${Helper.formatNumber(data.items.ENCHANTED_ANCIENT_CLAW,true)}",
+                "§7Ench. Claws: ${Helper.formatNumber(data.items.ENCHANTED_ANCIENT_CLAW, true)}",
                 "§7Ench. Iron: ${Helper.formatNumber(data.items.ENCHANTED_IRON)}",
                 "§7Ench. Gold: ${Helper.formatNumber(data.items.ENCHANTED_GOLD)}",
                 "§eBurrows: ${Helper.formatNumber(data.items.TOTAL_BURROWS)}",
@@ -164,23 +164,23 @@ class PastEventsGui : WindowScreen(ElementaVersion.V10) {
             createBlock(leftData, 0)
 
             val rightPercents = mutableListOf(
-                "§7(§b${Helper.calcPercentOne(data.items, data.mobs,"MINOS_INQUISITOR")}%§7)",
-                "§7(§b${Helper.calcPercentOne(data.items, data.mobs,"MINOS_INQUISITOR_LS")}%§7)",
-                "§7(§b${Helper.calcPercentOne(data.items, data.mobs,"MINOS_CHAMPION")}%§7)",
-                "§7(§b${Helper.calcPercentOne(data.items, data.mobs,"MINOTAUR")}%§7)",
-                "§7(§b${Helper.calcPercentOne(data.items, data.mobs,"GAIA_CONSTRUCT")}%§7)",
-                "§7(§b${Helper.calcPercentOne(data.items, data.mobs,"SIAMESE_LYNXES")}%§7)",
-                "§7(§b${Helper.calcPercentOne(data.items, data.mobs,"MINOS_HUNTER")}%§7)"
+                "§7(§b${Helper.calcPercentOne(data.items, data.mobs, "MINOS_INQUISITOR")}%§7)",
+                "§7(§b${Helper.calcPercentOne(data.items, data.mobs, "MINOS_INQUISITOR_LS")}%§7)",
+                "§7(§b${Helper.calcPercentOne(data.items, data.mobs, "MINOS_CHAMPION")}%§7)",
+                "§7(§b${Helper.calcPercentOne(data.items, data.mobs, "MINOTAUR")}%§7)",
+                "§7(§b${Helper.calcPercentOne(data.items, data.mobs, "GAIA_CONSTRUCT")}%§7)",
+                "§7(§b${Helper.calcPercentOne(data.items, data.mobs, "SIAMESE_LYNXES")}%§7)",
+                "§7(§b${Helper.calcPercentOne(data.items, data.mobs, "MINOS_HUNTER")}%§7)"
             )
 
             val rightData = mutableListOf(
-                "§dInquisitors: ${Helper.formatNumber(data.mobs.MINOS_INQUISITOR,true)} ${rightPercents[0]}",
-                "§dInquisitors (LS): ${Helper.formatNumber(data.mobs.MINOS_INQUISITOR_LS,true)} ${rightPercents[1]}",
-                "§5Champions: ${Helper.formatNumber(data.mobs.MINOS_CHAMPION,true)} ${rightPercents[2]}",
-                "§6Minotaurs: ${Helper.formatNumber(data.mobs.MINOTAUR,true)} ${rightPercents[3]}",
-                "§2Gaias: ${Helper.formatNumber(data.mobs.GAIA_CONSTRUCT,true)} ${rightPercents[4]}",
-                "§2Siamese: ${Helper.formatNumber(data.mobs.SIAMESE_LYNXES,true)} ${rightPercents[5]}",
-                "§2Hunters: ${Helper.formatNumber(data.mobs.MINOS_HUNTER,true)} ${rightPercents[6]}",
+                "§dInquisitors: ${Helper.formatNumber(data.mobs.MINOS_INQUISITOR, true)} ${rightPercents[0]}",
+                "§dInquisitors (LS): ${Helper.formatNumber(data.mobs.MINOS_INQUISITOR_LS, true)} ${rightPercents[1]}",
+                "§5Champions: ${Helper.formatNumber(data.mobs.MINOS_CHAMPION, true)} ${rightPercents[2]}",
+                "§6Minotaurs: ${Helper.formatNumber(data.mobs.MINOTAUR, true)} ${rightPercents[3]}",
+                "§2Gaias: ${Helper.formatNumber(data.mobs.GAIA_CONSTRUCT, true)} ${rightPercents[4]}",
+                "§2Siamese: ${Helper.formatNumber(data.mobs.SIAMESE_LYNXES, true)} ${rightPercents[5]}",
+                "§2Hunters: ${Helper.formatNumber(data.mobs.MINOS_HUNTER, true)} ${rightPercents[6]}",
                 "§eTotal Mobs: ${Helper.formatNumber(data.mobs.TOTAL_MOBS)}"
             )
             createBlock(rightData, 52)
@@ -209,30 +209,44 @@ class PastEventsGui : WindowScreen(ElementaVersion.V10) {
 
         events.forEachIndexed { index, event ->
             val outline = UIRoundedRectangle(6f).constrain {
-                x = 0.pixels; y = (index*80).pixels; width = 100.percent; height = 60.pixels
+                x = 0.pixels; y = (index * 80).pixels; width = 100.percent; height = 60.pixels
             } childOf eventContainer
             outline.setColor(Color.WHITE)
 
             val eventBlock = UIRoundedRectangle(6f).constrain {
-                x = 1.pixels; y = 1.pixels; width = SubtractiveConstraint(FillConstraint(),2.pixels); height = SubtractiveConstraint(FillConstraint(),2.pixels)
+                x = 1.pixels; y = 1.pixels; width = SubtractiveConstraint(FillConstraint(), 2.pixels); height =
+                SubtractiveConstraint(FillConstraint(), 2.pixels)
             } childOf outline
-            eventBlock.setColor(Color(10,10,10,255))
+            eventBlock.setColor(Color(10, 10, 10, 255))
 
             val leftText = UIBlock().constrain {
-                x = 10.pixels; y = 10.pixels; width = SubtractiveConstraint(ChildBasedSizeConstraint(), 40.pixels); height = ChildBasedSizeConstraint()
-            }.setColor(Color(0,0,0,0)) childOf eventBlock
+                x = 10.pixels; y = 10.pixels; width =
+                SubtractiveConstraint(ChildBasedSizeConstraint(), 40.pixels); height = ChildBasedSizeConstraint()
+            }.setColor(Color(0, 0, 0, 0)) childOf eventBlock
 
             val rightText = UIBlock().constrain {
-                x = (leftText.getRight()).pixels; y = 10.pixels; width = ChildBasedSizeConstraint(); height = ChildBasedSizeConstraint()
-            }.setColor(Color(0,0,0,0)) childOf eventBlock
+                x = (leftText.getRight()).pixels; y = 10.pixels; width = ChildBasedSizeConstraint(); height =
+                ChildBasedSizeConstraint()
+            }.setColor(Color(0, 0, 0, 0)) childOf eventBlock
 
-            UIText("§aYear: ${event.year}").constrain { x=0.pixels;y=0.pixels;textScale=1.0.pixels }.setColor(Color.WHITE) childOf leftText
-            UIText("§ePlaytime: ${Helper.formatTime(event.items.TIME)}").constrain { x=0.pixels;y=SiblingConstraint(3f);textScale=0.9.pixels }.setColor(Color.YELLOW) childOf leftText
-            UIText("§6Total Profit: ${Helper.formatNumber(DianaLoot.totalProfit(event))}").constrain { x=0.pixels;y=SiblingConstraint(3f);textScale=0.9.pixels }.setColor(Color.ORANGE) childOf leftText
+            UIText("§aYear: ${event.year}").constrain { x = 0.pixels;y = 0.pixels;textScale = 1.0.pixels }
+                .setColor(Color.WHITE) childOf leftText
+            UIText("§ePlaytime: ${Helper.formatTime(event.items.TIME)}").constrain {
+                x = 0.pixels;y = SiblingConstraint(3f);textScale = 0.9.pixels
+            }.setColor(Color.YELLOW) childOf leftText
+            UIText("§6Total Profit: ${Helper.formatNumber(DianaLoot.totalProfit(event))}").constrain {
+                x = 0.pixels;y = SiblingConstraint(3f);textScale = 0.9.pixels
+            }.setColor(Color.ORANGE) childOf leftText
 
-            UIText("§dChimeras: ${(event.items.CHIMERA + event.items.CHIMERA_LS)}").constrain { x=0.pixels;y=0.pixels;textScale=0.9.pixels }.setColor(Color.CYAN) childOf rightText
-            UIText("§7Burrows: ${Helper.formatNumber(event.items.TOTAL_BURROWS)}").constrain { x=0.pixels;y=SiblingConstraint(3f);textScale=0.9.pixels }.setColor(Color.LIGHT_GRAY) childOf rightText
-            UIText("§7Mobs: ${Helper.formatNumber(event.mobs.TOTAL_MOBS)}").constrain { x=0.pixels;y=SiblingConstraint(3f);textScale=0.9.pixels }.setColor(Color.LIGHT_GRAY) childOf rightText
+            UIText("§dChimeras: ${(event.items.CHIMERA + event.items.CHIMERA_LS)}").constrain {
+                x = 0.pixels;y = 0.pixels;textScale = 0.9.pixels
+            }.setColor(Color.CYAN) childOf rightText
+            UIText("§7Burrows: ${Helper.formatNumber(event.items.TOTAL_BURROWS)}").constrain {
+                x = 0.pixels;y = SiblingConstraint(3f);textScale = 0.9.pixels
+            }.setColor(Color.LIGHT_GRAY) childOf rightText
+            UIText("§7Mobs: ${Helper.formatNumber(event.mobs.TOTAL_MOBS)}").constrain {
+                x = 0.pixels;y = SiblingConstraint(3f);textScale = 0.9.pixels
+            }.setColor(Color.LIGHT_GRAY) childOf rightText
 
             val detailsOutline = UIRoundedRectangle(5f).constrain {
                 x = SubtractiveConstraint(100.percent, 230.pixels)
@@ -248,12 +262,13 @@ class PastEventsGui : WindowScreen(ElementaVersion.V10) {
                 width = 96.pixels
                 height = 28.pixels
             } childOf detailsOutline
-            detailsButton.setColor(Color(0,0,40))
+            detailsButton.setColor(Color(0, 0, 40))
 
-            UIText("Details").constrain { x=CenterConstraint(); y=CenterConstraint(); textScale=1.2.pixels }.setColor(Color.CYAN) childOf detailsButton
+            UIText("Details").constrain { x = CenterConstraint(); y = CenterConstraint(); textScale = 1.2.pixels }
+                .setColor(Color.CYAN) childOf detailsButton
 
-            detailsButton.onMouseEnter { detailsButton.setColor(Color(0,0,60)) }
-            detailsButton.onMouseLeave { detailsButton.setColor(Color(0,0,40)) }
+            detailsButton.onMouseEnter { detailsButton.setColor(Color(0, 0, 60)) }
+            detailsButton.onMouseLeave { detailsButton.setColor(Color(0, 0, 40)) }
             detailsButton.onMouseClick {
                 toggleOverlay(event, "Event Details: ${event.year}")
             }
@@ -272,12 +287,13 @@ class PastEventsGui : WindowScreen(ElementaVersion.V10) {
                 width = 96.pixels
                 height = 28.pixels
             } childOf deleteOutline
-            deleteButton.setColor(Color(40,0,0))
+            deleteButton.setColor(Color(40, 0, 0))
 
-            UIText("Delete").constrain { x=CenterConstraint(); y=CenterConstraint(); textScale=1.2.pixels }.setColor(Color.RED) childOf deleteButton
+            UIText("Delete").constrain { x = CenterConstraint(); y = CenterConstraint(); textScale = 1.2.pixels }
+                .setColor(Color.RED) childOf deleteButton
 
-            deleteButton.onMouseEnter { deleteButton.setColor(Color(60,0,0)) }
-            deleteButton.onMouseLeave { deleteButton.setColor(Color(40,0,0)) }
+            deleteButton.onMouseEnter { deleteButton.setColor(Color(60, 0, 0)) }
+            deleteButton.onMouseLeave { deleteButton.setColor(Color(40, 0, 0)) }
             deleteButton.onMouseClick {
                 val confirmOverlayOutline = UIRoundedRectangle(8f).constrain {
                     width = 204.pixels
@@ -307,7 +323,7 @@ class PastEventsGui : WindowScreen(ElementaVersion.V10) {
                     width = 70.pixels
                     height = 30.pixels
                 } childOf confirmOverlay
-                confirmButton.setColor(Color(0,100,0))
+                confirmButton.setColor(Color(0, 100, 0))
 
                 UIText("Yes").constrain { x = CenterConstraint(); y = CenterConstraint(); textScale = 1.0.pixels }
                     .setColor(Color.WHITE) childOf confirmButton
@@ -318,13 +334,13 @@ class PastEventsGui : WindowScreen(ElementaVersion.V10) {
                     width = 70.pixels
                     height = 30.pixels
                 } childOf confirmOverlay
-                cancelButton.setColor(Color(100,0,0))
+                cancelButton.setColor(Color(100, 0, 0))
 
                 UIText("No").constrain { x = CenterConstraint(); y = CenterConstraint(); textScale = 1.0.pixels }
                     .setColor(Color.WHITE) childOf cancelButton
 
-                confirmButton.onMouseEnter { confirmButton.setColor(Color(0,150,0)) }
-                confirmButton.onMouseLeave { confirmButton.setColor(Color(0,100,0)) }
+                confirmButton.onMouseEnter { confirmButton.setColor(Color(0, 150, 0)) }
+                confirmButton.onMouseLeave { confirmButton.setColor(Color(0, 100, 0)) }
                 confirmButton.onMouseClick {
                     pastDianaEventsData.events = pastDianaEventsData.events.filterNot { it.year == event.year }
                     renderEvents()
@@ -332,8 +348,8 @@ class PastEventsGui : WindowScreen(ElementaVersion.V10) {
                     confirmOverlayOutline.hide()
                 }
 
-                cancelButton.onMouseEnter { cancelButton.setColor(Color(150,0,0)) }
-                cancelButton.onMouseLeave { cancelButton.setColor(Color(100,0,0)) }
+                cancelButton.onMouseEnter { cancelButton.setColor(Color(150, 0, 0)) }
+                cancelButton.onMouseLeave { cancelButton.setColor(Color(100, 0, 0)) }
                 cancelButton.onMouseClick {
                     confirmOverlayOutline.hide()
                 }

@@ -5,17 +5,8 @@ import com.teamresourceful.resourcefulconfig.api.client.ResourcefulConfigScreen
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.WindowScreen
-import gg.essential.elementa.components.ScrollComponent
-import gg.essential.elementa.components.UIBlock
-import gg.essential.elementa.components.UIRoundedRectangle
-import gg.essential.elementa.components.UIText
-import gg.essential.elementa.components.UIWrappedText
-import gg.essential.elementa.components.Window
-import gg.essential.elementa.constraints.CenterConstraint
-import gg.essential.elementa.constraints.FillConstraint
-import gg.essential.elementa.constraints.PixelConstraint
-import gg.essential.elementa.constraints.PositionConstraint
-import gg.essential.elementa.constraints.SiblingConstraint
+import gg.essential.elementa.components.*
+import gg.essential.elementa.constraints.*
 import gg.essential.elementa.dsl.childOf
 import gg.essential.elementa.dsl.constrain
 import gg.essential.elementa.dsl.percent
@@ -36,8 +27,8 @@ import net.sbo.mod.partyfinder.PartyFinderManager.removePartyFromQueue
 import net.sbo.mod.partyfinder.PartyFinderManager.sendJoinRequest
 import net.sbo.mod.partyfinder.PartyPlayer.getPartyPlayerStats
 import net.sbo.mod.settings.categories.PartyFinder
-import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.Helper
+import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.data.HighlightElement
 import net.sbo.mod.utils.data.Party
 import net.sbo.mod.utils.data.PartyPlayerStats
@@ -67,10 +58,10 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
     private val helpPage = Help(this)
 
     internal lateinit var filterBackground: UIComponent
-    internal lateinit var filterWindow : UIComponent
-    internal lateinit var partyInfoWindow : UIComponent
-    internal lateinit var cpWindow : UIComponent
-    internal lateinit var base : UIComponent
+    internal lateinit var filterWindow: UIComponent
+    internal lateinit var partyInfoWindow: UIComponent
+    internal lateinit var cpWindow: UIComponent
+    internal lateinit var base: UIComponent
     internal lateinit var onlineUserBlock: UIComponent
     internal lateinit var onlineUserText: UIText
     internal lateinit var titleBlock: UIComponent
@@ -78,8 +69,8 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
     internal lateinit var contentBlock: UIComponent
     internal lateinit var playerNameBase: UIComponent
     internal lateinit var partyListContainer: UIComponent
-    internal lateinit var noParties : UIComponent
-    internal lateinit var partyShowType : UIComponent
+    internal lateinit var noParties: UIComponent
+    internal lateinit var partyShowType: UIComponent
     internal lateinit var reqsBox: UIComponent
     internal lateinit var createBox: UIComponent
     internal lateinit var filterBox: UIComponent
@@ -171,10 +162,10 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
 
     private fun getMemberColor(members: Int, patySize: Int): Color {
         val ratio = members.toFloat() / patySize.toFloat()
-        return if (ratio < 0.5f)  {
-            Color(0,255,0,255)
+        return if (ratio < 0.5f) {
+            Color(0, 255, 0, 255)
         } else {
-            Color(255,165,0,255)
+            Color(255, 165, 0, 255)
         }
     }
 
@@ -201,6 +192,7 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
                         return true
                     }
                 }
+
                 "Custom" -> {
                     val isEman9 = pfConfigState.filters.custom.eman9Filter
                     val canIJoin = pfConfigState.filters.custom.canIjoinFilter
@@ -217,6 +209,7 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
                         return true
                     }
                 }
+
                 else -> null
             }
             callback(filter)
@@ -224,7 +217,7 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
     }
 
 
-    private fun getPartyInfo(type: String, list: PartyPlayerStats) : String {
+    private fun getPartyInfo(type: String, list: PartyPlayerStats): String {
         return when (type) {
             "Diana" -> dianaPage.getPartyInfo(list)
             "Custom" -> customPage.getPartyInfo(list)
@@ -382,22 +375,28 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
         if (filterWindowOpened) {
             filterWindowOpened = false
             return
-        }
-        else openFilterWindow()
+        } else openFilterWindow()
 
         when (listName) {
             "Diana Party List" -> {
-                dianaPage.addDianaFilter(x,y)
+                dianaPage.addDianaFilter(x, y)
             }
 
             "Custom Party List" -> {
                 customPage.addCustomFilter(x, y)
             }
+
             else -> return
         }
     }
 
-    private fun addPage(pageTitle: String, pageContent: () -> Unit, isSubPage: Boolean = false, y1: PositionConstraint? = null, isClickable: Boolean = false) {
+    private fun addPage(
+        pageTitle: String,
+        pageContent: () -> Unit,
+        isSubPage: Boolean = false,
+        y1: PositionConstraint? = null,
+        isClickable: Boolean = false
+    ) {
         pages[pageTitle] = pageContent
         val finalY = y1 ?: if (isSubPage) SiblingConstraint(0f, true) else SiblingConstraint()
 
@@ -437,13 +436,15 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
             }
 
         categoryBlock.addChild(block)
-            .addChild(GuiHandler.UILine(
-                x = CenterConstraint(),
-                y = if (isSubPage) SiblingConstraint(0f, true) else SiblingConstraint(),
-                width = 75.percent(),
-                height = 0.3f.percent(),
-                color = Color(0, 110, 250, 255)
-            ).get())
+            .addChild(
+                GuiHandler.UILine(
+                    x = CenterConstraint(),
+                    y = if (isSubPage) SiblingConstraint(0f, true) else SiblingConstraint(),
+                    width = 75.percent(),
+                    height = 0.3f.percent(),
+                    color = Color(0, 110, 250, 255)
+                ).get()
+            )
 
         elementToHighlight.add(HighlightElement(pageTitle, text, "pageTitle"))
         elementToHighlight.add(HighlightElement(pageTitle, block, "pageBlock"))
@@ -467,24 +468,27 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
             height = 22.percent()
         }.setColor(Color(0, 0, 0, 150))
             .enableEffect(OutlineEffect(Color(0, 110, 250, 255), 1f))
-            .addChild(UIBlock().constrain {
-                width = 20.percent()
-                height = 100.percent()
-            }.setColor(Color(0, 0, 0, 0))
-                .addChild(UIText(party.leaderName).constrain {
-                    x = CenterConstraint()
-                    y = CenterConstraint()
-                    textScale = getTextScale(1f)
-                }.setColor(Color(85, 255, 255, 255)))
+            .addChild(
+                UIBlock().constrain {
+                    width = 20.percent()
+                    height = 100.percent()
+                }.setColor(Color(0, 0, 0, 0))
+                    .addChild(UIText(party.leaderName).constrain {
+                        x = CenterConstraint()
+                        y = CenterConstraint()
+                        textScale = getTextScale(1f)
+                    }.setColor(Color(85, 255, 255, 255)))
             )
-            .addChild(GuiHandler.UILine(
-                x = SiblingConstraint(),
-                y = CenterConstraint(),
-                width = 0.3f.percent(),
-                height = 80.percent(),
-                color = Color(0, 110, 250, 255),
-                rounded = true
-            ).get())
+            .addChild(
+                GuiHandler.UILine(
+                    x = SiblingConstraint(),
+                    y = CenterConstraint(),
+                    width = 0.3f.percent(),
+                    height = 80.percent(),
+                    color = Color(0, 110, 250, 255),
+                    rounded = true
+                ).get()
+            )
 
         val reqsNote = UIBlock().constrain {
             x = SiblingConstraint()
@@ -492,76 +496,85 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
             width = 50.percent()
             height = 100.percent()
         }.setColor(Color(0, 0, 0, 0))
-            .addChild(UIBlock().constrain {
-                x = CenterConstraint()
-                y = 0.pixels
-                width = 100.percent()
-                height = 50.percent()
-            }.setColor(Color(0, 0, 0, 0))
-                .addChild(UIBlock().constrain {
+            .addChild(
+                UIBlock().constrain {
+                    x = CenterConstraint()
+                    y = 0.pixels
+                    width = 100.percent()
+                    height = 50.percent()
+                }.setColor(Color(0, 0, 0, 0))
+                    .addChild(
+                        UIBlock().constrain {
+                            x = CenterConstraint()
+                            y = SiblingConstraint()
+                            width = 90.percent()
+                            height = 100.percent()
+                        }.setColor(Color(0, 0, 0, 0))
+                            .addChild(UIWrappedText(reqsString).constrain {
+                                x = 0.pixels
+                                y = CenterConstraint()
+                                width = 100.percent()
+                                textScale = getTextScale(1f)
+                            }.setColor(Color(255, 255, 255, 255)))
+                    )
+            )
+            .addChild(
+                UIBlock().constrain {
                     x = CenterConstraint()
                     y = SiblingConstraint()
-                    width = 90.percent()
-                    height = 100.percent()
+                    width = 100.percent()
+                    height = 50.percent()
                 }.setColor(Color(0, 0, 0, 0))
-                    .addChild(UIWrappedText(reqsString).constrain {
-                        x = 0.pixels
-                        y = CenterConstraint()
-                        width = 100.percent()
-                        textScale = getTextScale(1f)
-                    }.setColor(Color(255, 255, 255, 255)))
-                )
-            )
-            .addChild(UIBlock().constrain {
-                x = CenterConstraint()
-                y = SiblingConstraint()
-                width = 100.percent()
-                height = 50.percent()
-            }.setColor(Color(0, 0, 0, 0))
-                .addChild(UIBlock().constrain {
-                    x = CenterConstraint()
-                    y = CenterConstraint()
-                    width = 90.percent()
-                    height = 100.percent()
-                }.setColor(Color(0, 0, 0, 0))
-                    .addChild(UIWrappedText("&bNote: &7" + party.note).constrain {
-                        x = 0.pixels
-                        y = CenterConstraint()
-                        width = 100.percent()
-                        textScale = getTextScale(1f)
-                    }.setColor(Color(255, 255, 255, 255)))
-                )
+                    .addChild(
+                        UIBlock().constrain {
+                            x = CenterConstraint()
+                            y = CenterConstraint()
+                            width = 90.percent()
+                            height = 100.percent()
+                        }.setColor(Color(0, 0, 0, 0))
+                            .addChild(UIWrappedText("&bNote: &7" + party.note).constrain {
+                                x = 0.pixels
+                                y = CenterConstraint()
+                                width = 100.percent()
+                                textScale = getTextScale(1f)
+                            }.setColor(Color(255, 255, 255, 255)))
+                    )
             )
 
         partyBlock.addChild(reqsNote)
-            .addChild(GuiHandler.UILine(
-                x = SiblingConstraint(),
-                y = CenterConstraint(),
-                width = 0.3f.percent(),
-                height = 80.percent(),
-                color = Color(0, 110, 250, 255),
-                rounded = true
-            ).get())
-            .addChild(UIBlock().constrain {
-                x = SiblingConstraint()
-                y = CenterConstraint()
-                width = 10.percent()
-                height = 100.percent()
-            }.setColor(Color(0, 0, 0, 0))
-                .addChild(UIText("${party.partyMembersCount}/${party.partySize}").constrain {
-                    x = CenterConstraint()
-                    y = CenterConstraint()
-                    textScale = getTextScale(1f)
-                }.setColor(getMemberColor(party.partyMembersCount, party.partySize)))
+            .addChild(
+                GuiHandler.UILine(
+                    x = SiblingConstraint(),
+                    y = CenterConstraint(),
+                    width = 0.3f.percent(),
+                    height = 80.percent(),
+                    color = Color(0, 110, 250, 255),
+                    rounded = true
+                ).get()
             )
-            .addChild(GuiHandler.UILine(
-                x = SiblingConstraint(),
-                y = CenterConstraint(),
-                width = 0.3f.percent(),
-                height = 80.percent(),
-                color = Color(0, 110, 250, 255),
-                rounded = true
-            ).get())
+            .addChild(
+                UIBlock().constrain {
+                    x = SiblingConstraint()
+                    y = CenterConstraint()
+                    width = 10.percent()
+                    height = 100.percent()
+                }.setColor(Color(0, 0, 0, 0))
+                    .addChild(UIText("${party.partyMembersCount}/${party.partySize}").constrain {
+                        x = CenterConstraint()
+                        y = CenterConstraint()
+                        textScale = getTextScale(1f)
+                    }.setColor(getMemberColor(party.partyMembersCount, party.partySize)))
+            )
+            .addChild(
+                GuiHandler.UILine(
+                    x = SiblingConstraint(),
+                    y = CenterConstraint(),
+                    width = 0.3f.percent(),
+                    height = 80.percent(),
+                    color = Color(0, 110, 250, 255),
+                    rounded = true
+                ).get()
+            )
 
         val joinBlock = UIBlock().constrain {
             x = SiblingConstraint()
@@ -629,10 +642,12 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
                     val partyBlock = createPartyBlock(party, reqsString)
                     partyListContainer.addChild(partyBlock)
                 }
+
                 "Custom" -> customPage.getReqsString(party.reqs) { reqsString ->
                     val partyBlock = createPartyBlock(party, reqsString)
                     partyListContainer.addChild(partyBlock)
                 }
+
                 else -> {
                     val partyBlock = createPartyBlock(party, "No requirements available.")
                     partyListContainer.addChild(partyBlock)
@@ -698,13 +713,14 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
             playerBlock.onMouseLeave {
                 playerBlock.setColor(Color(0, 0, 0, 200))
             }
-            playerNameBase.addChild(UIBlock().constrain {
-                x = 0.percent()
-                y = SiblingConstraint(0f)
-                width = 100.percent()
-                height = objheight.pixels()
-            }.setColor(Color(0, 0, 0, 0))
-                .addChild(playerBlock)
+            playerNameBase.addChild(
+                UIBlock().constrain {
+                    x = 0.percent()
+                    y = SiblingConstraint(0f)
+                    width = 100.percent()
+                    height = objheight.pixels()
+                }.setColor(Color(0, 0, 0, 0))
+                    .addChild(playerBlock)
             )
         }
 
@@ -836,47 +852,50 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
         }
         // maybe add svgfix if needed
         contentBlock.addChild(line)
-        contentBlock.addChild(UIBlock().constrain {
-            width = 100.percent()
-            height = 7.percent()
-        }.setColor(Color(0, 0, 0, 0))
-            .addChild(UIBlock().constrain {
-                x = 1.percent()
-                y = CenterConstraint()
-                width = 20.percent()
-                height = 70.percent()
+        contentBlock.addChild(
+            UIBlock().constrain {
+                width = 100.percent()
+                height = 7.percent()
             }.setColor(Color(0, 0, 0, 0))
+                .addChild(
+                    UIBlock().constrain {
+                        x = 1.percent()
+                        y = CenterConstraint()
+                        width = 20.percent()
+                        height = 70.percent()
+                    }.setColor(Color(0, 0, 0, 0))
 //                .addChild(SVGComponent.ofResource("/assets/sbo-kotlin/svgs/users-group.svg").constrain {
 //                    x = CenterConstraint()
 //                    y = CenterConstraint()
 //                    width = getIconScale()
 //                    height = getIconScale()
 //                }.setColor(Color(0, 110, 250, 255)))
-                .addChild(partyCount)
-            )
+                        .addChild(partyCount)
+                )
 
-            .addChild(UIBlock().constrain {
-                x = SiblingConstraint()
-                y = CenterConstraint()
-                width = 42.percent()
-                height = 100.percent()
-            }.setColor(Color(0, 0, 0, 0))
-                .addChild(UIText(listName).constrain {
-                    x = CenterConstraint()
-                    y = CenterConstraint()
-                    textScale = getTextScale(1.5f)
-                }.setColor(Color(255, 255, 255, 255)))
-            )
-            .addChild(filterBlock)
-            .addChild(refreshBlock)
-            .addChild(unqueuePartyBlock)
-            .addChild(createPartyBlock)
+                .addChild(
+                    UIBlock().constrain {
+                        x = SiblingConstraint()
+                        y = CenterConstraint()
+                        width = 42.percent()
+                        height = 100.percent()
+                    }.setColor(Color(0, 0, 0, 0))
+                        .addChild(UIText(listName).constrain {
+                            x = CenterConstraint()
+                            y = CenterConstraint()
+                            textScale = getTextScale(1.5f)
+                        }.setColor(Color(255, 255, 255, 255)))
+                )
+                .addChild(filterBlock)
+                .addChild(refreshBlock)
+                .addChild(unqueuePartyBlock)
+                .addChild(createPartyBlock)
             // add svgfix here if needed
         )
     }
 
     private fun settings() {
-        mc.send{
+        mc.send {
             displayScreen(ResourcefulConfigScreen.getFactory("sbo").apply(null))
         }
     }
@@ -900,7 +919,8 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
             x = CenterConstraint()
             y = CenterConstraint()
         }.setColor(Color(30, 30, 30, 240))
-            .addChild(UIBlock().constrain {
+            .addChild(
+                UIBlock().constrain {
                 width = 100.percent()
                 height = 12.percent()
             }.setColor(Color(0, 0, 0, 0))
@@ -908,14 +928,17 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
                     x = CenterConstraint()
                     y = CenterConstraint()
                     textScale = getTextScale(1.5f)
-                }.setColor(Color(255, 255, 255, 255))))
-            .addChild(GuiHandler.UILine(
-                x = 0.percent(),
-                y = SiblingConstraint(),
-                width = 100.percent(),
-                height = 1f.percent(),
-                color = Color(0, 110, 250, 255)
-            ).get())
+                }.setColor(Color(255, 255, 255, 255)))
+            )
+            .addChild(
+                GuiHandler.UILine(
+                    x = 0.percent(),
+                    y = SiblingConstraint(),
+                    width = 100.percent(),
+                    height = 1f.percent(),
+                    color = Color(0, 110, 250, 255)
+                ).get()
+            )
 
         window.addChild(cpWindow)
         cpWindow.hide()
@@ -953,25 +976,29 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
             height = 5.percent()
         }.setColor(Color(0, 0, 0, 0))
             .setChildOf(base)
-            .addChild(UIBlock().constrain {
-                width = 25.percent()
-                height = 100.percent()
-                x = SiblingConstraint()
-                y = CenterConstraint()
-            }.setColor(Color(0, 0, 0, 0))
-                .addChild(onlineUserBlock))
-            .addChild(UIBlock().constrain {
-                width = 35.percent()
-                height = 100.percent()
-                x = CenterConstraint()
-                y = CenterConstraint()
-            }.setColor(Color(0, 0, 0, 0))
-                .addChild(
-                UIText("SBO Party Finder").constrain {
+            .addChild(
+                UIBlock().constrain {
+                    width = 25.percent()
+                    height = 100.percent()
+                    x = SiblingConstraint()
+                    y = CenterConstraint()
+                }.setColor(Color(0, 0, 0, 0))
+                    .addChild(onlineUserBlock)
+            )
+            .addChild(
+                UIBlock().constrain {
+                    width = 35.percent()
+                    height = 100.percent()
                     x = CenterConstraint()
                     y = CenterConstraint()
-                    textScale = getTextScale(1f)
-                }.setColor(Color(255, 255, 255, 255)))
+                }.setColor(Color(0, 0, 0, 0))
+                    .addChild(
+                        UIText("SBO Party Finder").constrain {
+                            x = CenterConstraint()
+                            y = CenterConstraint()
+                            textScale = getTextScale(1f)
+                        }.setColor(Color(255, 255, 255, 255))
+                    )
             )
         val discordBlock = UIBlock().constrain {
             width = 11.percent()
@@ -989,18 +1016,20 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
             textColor = Color(255, 255, 255, 255),
             parent = discordBlock
         )
-            .textHoverEffect(Color(255,255,255,255), Color(50, 50, 255, 200))
-            .setTextOnClick() {
+            .textHoverEffect(Color(255, 255, 255, 255), Color(50, 50, 255, 200))
+            .setTextOnClick {
                 Util.getOperatingSystem().open("https://discord.gg/QvM6b9jsJD")
             }
         discord.textObject.setTextScale(getTextScale())
-        discord.uiObject.addChild(GuiHandler.UILine(
-            x = CenterConstraint(),
-            y = 100.percent(),
-            (discord.textObject.getWidth() + 10).pixels(),
-            10.percent(),
-            Color(0, 110, 250, 255)
-        ).get())
+        discord.uiObject.addChild(
+            GuiHandler.UILine(
+                x = CenterConstraint(),
+                y = 100.percent(),
+                (discord.textObject.getWidth() + 10).pixels(),
+                10.percent(),
+                Color(0, 110, 250, 255)
+            ).get()
+        )
 
         val githubBlock = UIBlock().constrain {
             width = 11.percent()
@@ -1018,18 +1047,20 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
             textColor = Color(255, 255, 255, 255),
             parent = githubBlock
         )
-            .textHoverEffect(Color(255,255,255,255), Color(50, 50, 255, 200))
-            .setTextOnClick() {
+            .textHoverEffect(Color(255, 255, 255, 255), Color(50, 50, 255, 200))
+            .setTextOnClick {
                 Util.getOperatingSystem().open("https://github.com/SkyblockOverhaul/SBO-Kotlin")
             }
         github.textObject.setTextScale(getTextScale())
-        github.uiObject.addChild(GuiHandler.UILine(
-            x = CenterConstraint(),
-            y = 100.percent(),
-            (github.textObject.getWidth() + 10).pixels(),
-            10.percent(),
-            Color(0, 110, 250, 255)
-        ).get())
+        github.uiObject.addChild(
+            GuiHandler.UILine(
+                x = CenterConstraint(),
+                y = 100.percent(),
+                (github.textObject.getWidth() + 10).pixels(),
+                10.percent(),
+                Color(0, 110, 250, 255)
+            ).get()
+        )
 
         val patreonBlock = UIBlock().constrain {
             width = 11.percent()
@@ -1047,18 +1078,20 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
             textColor = Color(255, 255, 255, 255),
             parent = patreonBlock
         )
-            .textHoverEffect(Color(255,255,255,255), Color(50, 50, 255, 200))
-            .setTextOnClick() {
+            .textHoverEffect(Color(255, 255, 255, 255), Color(50, 50, 255, 200))
+            .setTextOnClick {
                 Util.getOperatingSystem().open("https://www.patreon.com/Skyblock_Overhaul")
             }
         patreon.textObject.setTextScale(getTextScale())
-        patreon.uiObject.addChild(GuiHandler.UILine(
-            x = CenterConstraint(),
-            y = 100.percent(),
-            (patreon.textObject.getWidth() + 10).pixels(),
-            10.percent(),
-            Color(0, 110, 250, 255)
-        ).get())
+        patreon.uiObject.addChild(
+            GuiHandler.UILine(
+                x = CenterConstraint(),
+                y = 100.percent(),
+                (patreon.textObject.getWidth() + 10).pixels(),
+                10.percent(),
+                Color(0, 110, 250, 255)
+            ).get()
+        )
         //-----------------End Title Block-----------------
         //-----------------Category Block-----------------
         GuiHandler.UILine(
@@ -1112,25 +1145,29 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
             x = 0.percent()
             y = 0.percent()
         }.setColor(Color(0, 0, 0, 150))
-            .addChild(UIBlock().constrain {
-                width = 20.percent()
-                height = 100.percent()
-            }.setColor(Color(0, 0, 0, 0))
-                .addChild(UIText("Leader").constrain {
-                    x = CenterConstraint()
-                    y = CenterConstraint()
-                    textScale = getTextScale(1f)
-                }.setColor(Color(85, 255, 255, 255)))
+            .addChild(
+                UIBlock().constrain {
+                    width = 20.percent()
+                    height = 100.percent()
+                }.setColor(Color(0, 0, 0, 0))
+                    .addChild(UIText("Leader").constrain {
+                        x = CenterConstraint()
+                        y = CenterConstraint()
+                        textScale = getTextScale(1f)
+                    }.setColor(Color(85, 255, 255, 255)))
             )
-            .addChild(GuiHandler.UILine(
-                x = SiblingConstraint(),
-                y = CenterConstraint(),
-                width = 0.3f.percent(),
-                height = 80.percent(),
-                color = Color(0, 110, 250, 255),
-                rounded = true,
-                ).get())
-            .addChild(UIBlock().constrain {
+            .addChild(
+                GuiHandler.UILine(
+                    x = SiblingConstraint(),
+                    y = CenterConstraint(),
+                    width = 0.3f.percent(),
+                    height = 80.percent(),
+                    color = Color(0, 110, 250, 255),
+                    rounded = true,
+                ).get()
+            )
+            .addChild(
+                UIBlock().constrain {
                 x = SiblingConstraint()
                 y = CenterConstraint()
                 width = 50.percent()
@@ -1140,16 +1177,20 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
                     x = CenterConstraint()
                     y = CenterConstraint()
                     textScale = getTextScale(1f)
-                }.setColor(Color(85, 255, 255, 255))))
-            .addChild(GuiHandler.UILine(
-                x = SiblingConstraint(),
-                y = CenterConstraint(),
-                width = 0.3f.percent(),
-                height = 80.percent(),
-                color = Color(0, 110, 250, 255),
-                rounded = true,
-            ).get())
-            .addChild(UIBlock().constrain {
+                }.setColor(Color(85, 255, 255, 255)))
+            )
+            .addChild(
+                GuiHandler.UILine(
+                    x = SiblingConstraint(),
+                    y = CenterConstraint(),
+                    width = 0.3f.percent(),
+                    height = 80.percent(),
+                    color = Color(0, 110, 250, 255),
+                    rounded = true,
+                ).get()
+            )
+            .addChild(
+                UIBlock().constrain {
                 x = SiblingConstraint()
                 y = CenterConstraint()
                 width = 10.percent()
@@ -1159,26 +1200,30 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
                     x = CenterConstraint()
                     y = CenterConstraint()
                     textScale = getTextScale(1f)
-                }.setColor(Color(85, 255, 255, 255))))
-            .addChild(GuiHandler.UILine(
-                x = SiblingConstraint(),
-                y = CenterConstraint(),
-                width = 0.3f.percent(),
-                height = 80.percent(),
-                color = Color(0, 110, 250, 255),
-                rounded = true,
-            ).get())
-            .addChild(UIBlock().constrain {
-                x = SiblingConstraint()
-                y = CenterConstraint()
-                width = FillConstraint()
-                height = 100.percent()
-            }.setColor(Color(0, 0, 0, 0))
-                .addChild(UIText("Button").constrain {
-                    x = CenterConstraint()
-                    y = CenterConstraint()
-                    textScale = getTextScale(1f)
                 }.setColor(Color(85, 255, 255, 255)))
+            )
+            .addChild(
+                GuiHandler.UILine(
+                    x = SiblingConstraint(),
+                    y = CenterConstraint(),
+                    width = 0.3f.percent(),
+                    height = 80.percent(),
+                    color = Color(0, 110, 250, 255),
+                    rounded = true,
+                ).get()
+            )
+            .addChild(
+                UIBlock().constrain {
+                    x = SiblingConstraint()
+                    y = CenterConstraint()
+                    width = FillConstraint()
+                    height = 100.percent()
+                }.setColor(Color(0, 0, 0, 0))
+                    .addChild(UIText("Button").constrain {
+                        x = CenterConstraint()
+                        y = CenterConstraint()
+                        textScale = getTextScale(1f)
+                    }.setColor(Color(85, 255, 255, 255)))
             )
         //-----------------Pages-----------------
         addPage("Home", homePage::render, isSubPage = true, y1 = 93.percent())

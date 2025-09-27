@@ -1,13 +1,15 @@
 package net.sbo.mod.utils.game
 
+import net.minecraft.scoreboard.ScoreboardDisplaySlot
+import net.minecraft.scoreboard.ScoreboardEntry
+import net.minecraft.scoreboard.Team
 import net.sbo.mod.SBOKotlin
-import net.minecraft.scoreboard.*
 import java.lang.String.CASE_INSENSITIVE_ORDER
 
 object ScoreBoard {
     private val COMPARATOR: Comparator<ScoreboardEntry> = Comparator.comparing { obj: ScoreboardEntry -> obj.value() }
         .reversed()
-        .thenComparing({ obj: ScoreboardEntry -> obj.owner() }, CASE_INSENSITIVE_ORDER);
+        .thenComparing({ obj: ScoreboardEntry -> obj.owner() }, CASE_INSENSITIVE_ORDER)
 
     /**
      * Retrieves the lines from the scoreboard sidebar.

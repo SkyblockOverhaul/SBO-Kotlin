@@ -23,9 +23,7 @@ public class PlayerInteractMixin {
     @Inject(method = "interactItem", at = @At("HEAD"), cancellable = true)
     private void onInteractItem(CallbackInfoReturnable<ActionResult> cir) {
         if (client.player != null) {
-            PlayerInteractEvent event = new PlayerInteractEvent(
-                    "useItem", null, client.player, client.player.getWorld(), false
-            );
+            PlayerInteractEvent event = new PlayerInteractEvent("useItem", null, client.player, client.player.getWorld(), false);
             SBOEvent.INSTANCE.emit(event);
 
             if (event.isCanceled()) {
@@ -38,9 +36,7 @@ public class PlayerInteractMixin {
     @Inject(method = "interactBlock", at = @At("HEAD"), cancellable = true)
     private void onInteractBlock(ClientPlayerEntity player, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
         if (hand == Hand.MAIN_HAND) {
-            PlayerInteractEvent event = new PlayerInteractEvent(
-                    "useBlock", hitResult.getBlockPos(), player, player.getWorld(), false
-            );
+            PlayerInteractEvent event = new PlayerInteractEvent("useBlock", hitResult.getBlockPos(), player, player.getWorld(), false);
             SBOEvent.INSTANCE.emit(event);
 
             if (event.isCanceled()) {

@@ -5,8 +5,8 @@ import net.sbo.mod.SBOKotlin
 import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.guis.partyfinder.PartyFinderGUI
 import net.sbo.mod.utils.chat.Chat
-import net.sbo.mod.utils.events.SBOEvent
 import net.sbo.mod.utils.events.Register
+import net.sbo.mod.utils.events.SBOEvent
 import net.sbo.mod.utils.events.impl.PartyFinderOpenEvent
 import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.http.Http
@@ -15,7 +15,7 @@ object Guis {
     private var partyFinderGui: PartyFinderGUI? = null
     private var pastEventsGui: PastEventsGui? = null
     internal var achievementsGui: AchievementsGUI? = null
-//    private var vexelGui: VexelTest? = null
+    // private var vexelGui: VexelTest? = null
     private var updating = false
     private var lastUpdate = 0L
     private const val UPDATE_INTERVAL = 300_000L // 5 minutes in ms

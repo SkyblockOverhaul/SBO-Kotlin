@@ -15,8 +15,8 @@ import gg.essential.elementa.dsl.pixels
 import net.sbo.mod.guis.partyfinder.GuiHandler
 import net.sbo.mod.guis.partyfinder.PartyFinderGUI
 import net.sbo.mod.partyfinder.PartyPlayer.getPartyPlayerStats
-import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.Helper
+import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.data.PartyPlayerStats
 import net.sbo.mod.utils.data.Reqs
 import net.sbo.mod.utils.data.SboDataObject.pfConfigState
@@ -310,7 +310,7 @@ class DianaPage(private val parent: PartyFinderGUI) {
             y = 0.percent()
             width = 100.percent()
             height = 100.percent()
-        }.setColor(Color(50,50,50,255)) childOf parent.filterWindow
+        }.setColor(Color(50, 50, 50, 255)) childOf parent.filterWindow
         parent.filterBox.grabWindowFocus()
         parent.filterBox.onMouseClick {
             this.grabWindowFocus()

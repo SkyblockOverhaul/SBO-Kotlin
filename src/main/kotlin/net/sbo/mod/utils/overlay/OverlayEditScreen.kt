@@ -58,7 +58,12 @@ class OverlayEditScreen : Screen(Text.literal("SBO_Overlay_Editor")) {
         return super.mouseReleased(mouseX, mouseY, button)
     }
 
-    override fun mouseScrolled(mouseX: Double, mouseY: Double, horizontalAmount: Double, verticalAmount: Double): Boolean {
+    override fun mouseScrolled(
+        mouseX: Double,
+        mouseY: Double,
+        horizontalAmount: Double,
+        verticalAmount: Double
+    ): Boolean {
         selectedOverlay?.let {
             it.scale = (it.scale + verticalAmount * 0.1f).coerceIn(0.5, 5.0).toFloat()
             overlayData.overlays[it.name]?.scale = it.scale
@@ -75,18 +80,22 @@ class OverlayEditScreen : Screen(Text.literal("SBO_Overlay_Editor")) {
                     it.y -= step
                     overlayData.overlays[it.name]?.y = it.y
                 }
+
                 GLFW.GLFW_KEY_DOWN -> {
                     it.y += step
                     overlayData.overlays[it.name]?.y = it.y
                 }
+
                 GLFW.GLFW_KEY_LEFT -> {
                     it.x -= step
                     overlayData.overlays[it.name]?.x = it.x
                 }
+
                 GLFW.GLFW_KEY_RIGHT -> {
                     it.x += step
                     overlayData.overlays[it.name]?.x = it.x
                 }
+
                 else -> return super.keyPressed(keyCode, scanCode, modifiers)
             }
             return true

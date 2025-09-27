@@ -19,21 +19,21 @@ public abstract class ScreenMixin {
     @Inject(method = "render", at = @At("HEAD"))
     public void onRender(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         MinecraftClient client = MinecraftClient.getInstance();
-        Screen screen = (Screen)(Object)this;
+        Screen screen = (Screen) (Object) this;
         SBOEvent.INSTANCE.emit(new GuiRenderEvent(client, screen, context, mouseX, mouseY, delta));
     }
 
     @Inject(method = "render", at = @At("RETURN"))
     public void onPostRender(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         MinecraftClient client = MinecraftClient.getInstance();
-        Screen screen = (Screen)(Object)this;
+        Screen screen = (Screen) (Object) this;
         SBOEvent.INSTANCE.emit(new GuiPostRenderEvent(client, screen, context, mouseX, mouseY, delta));
     }
 
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
     public void onKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
         MinecraftClient client = MinecraftClient.getInstance();
-        Screen screen = (Screen)(Object)this;
+        Screen screen = (Screen) (Object) this;
         SBOEvent.INSTANCE.emit(new GuiKeyEvent(client, screen, keyCode, cir));
     }
 }

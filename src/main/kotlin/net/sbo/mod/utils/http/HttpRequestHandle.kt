@@ -22,9 +22,7 @@ class ResponseBody(private val inputStream: InputStream?) {
  * @param body A [ResponseBody] object for accessing the response content.
  */
 data class HttpResponse(
-    val code: Int,
-    val message: String,
-    val body: ResponseBody?
+    val code: Int, val message: String, val body: ResponseBody?
 ) {
     /** Returns true if the HTTP code is in the success range (200-299). */
     val isSuccessful: Boolean get() = code in 200..299
@@ -60,8 +58,7 @@ class HttpRequestHandle {
      * @param onSuccess The callback to execute with the parsed data object.
      */
     inline fun <reified T> toJson(
-        ignoreUnknownKeys: Boolean = false,
-        crossinline onSuccess: (T) -> Unit
+        ignoreUnknownKeys: Boolean = false, crossinline onSuccess: (T) -> Unit
     ): HttpRequestHandle {
         this.onResult = { response ->
             if (response.isSuccessful) {

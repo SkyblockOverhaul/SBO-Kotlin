@@ -1,8 +1,7 @@
 package net.sbo.mod.utils.overlay
 
-import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.font.TextRenderer
-
+import net.minecraft.client.gui.DrawContext
 import java.awt.Color
 
 class OverlayTextLine(
@@ -88,14 +87,29 @@ class OverlayTextLine(
         }
     }
 
-    private fun isMouseOver(mouseX: Double, mouseY: Double, x: Float, y: Float, textRenderer: TextRenderer, scale: Float): Boolean {
+    private fun isMouseOver(
+        mouseX: Double,
+        mouseY: Double,
+        x: Float,
+        y: Float,
+        textRenderer: TextRenderer,
+        scale: Float
+    ): Boolean {
         val textWidth = textRenderer.getWidth(text) * scale
         val textHeight = (textRenderer.fontHeight + 1) * scale - 1
 
         return mouseX >= x && mouseX <= x + textWidth && mouseY >= y && mouseY <= y + textHeight
     }
 
-    fun updateMouseInteraction(mouseX: Double, mouseY: Double, x: Float, y: Float, textRenderer: TextRenderer, scale: Float, drawContext: DrawContext) {
+    fun updateMouseInteraction(
+        mouseX: Double,
+        mouseY: Double,
+        x: Float,
+        y: Float,
+        textRenderer: TextRenderer,
+        scale: Float,
+        drawContext: DrawContext
+    ) {
         if (text.isEmpty()) return
         if (mouseEnterAction == null && mouseLeaveAction == null && hoverAction == null) {
             return

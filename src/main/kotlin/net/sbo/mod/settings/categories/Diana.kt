@@ -2,16 +2,12 @@ package net.sbo.mod.settings.categories
 
 import com.teamresourceful.resourcefulconfigkt.api.CategoryKt
 import com.teamresourceful.resourcefulconfigkt.api.ObservableEntry
-import net.sbo.mod.SBOKotlin.mc
-import net.sbo.mod.diana.DianaTracker.announceLootToParty
 import net.sbo.mod.overlays.DianaLoot
 import net.sbo.mod.overlays.DianaMobs
 import net.sbo.mod.overlays.InquisLoot
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.chat.Chat
-import net.sbo.mod.utils.overlay.OverlayEditScreen
 import net.sbo.mod.utils.waypoint.AdditionalHubWarps
-
 
 
 object Diana : CategoryKt("Diana") {
@@ -48,12 +44,14 @@ object Diana : CategoryKt("Diana") {
 
     var dianaBurrowGuess by boolean(true) {
         this.name = Translated("Diana Burrow Guess")
-        this.description = Translated("Guess the burrow location. Needs Driping Lava Partciles and set /particlequality to Extreme for more accuracy")
+        this.description =
+            Translated("Guess the burrow location. Needs Driping Lava Partciles and set /particlequality to Extreme for more accuracy")
     }
 
     var dianaMultiBurrowGuess by boolean(false) {
         this.name = Translated("Diana Multi Burrow Guess")
-        this.description = Translated("Multi guess the burrow location. Needs Driping Lava Partciles and set /particlequality to Extreme for more accuracy")
+        this.description =
+            Translated("Multi guess the burrow location. Needs Driping Lava Partciles and set /particlequality to Extreme for more accuracy")
     }
 
     var dianaBurrowDetect by boolean(true) {
@@ -74,19 +72,22 @@ object Diana : CategoryKt("Diana") {
 
     var allowedWarps by select(AdditionalHubWarps.WIZARD, AdditionalHubWarps.DA, AdditionalHubWarps.CASTLE) {
         this.name = Translated("Add Warps")
-        this.description = Translated("Select the warps you want to be able to warp to with the guess and inquisitor warp keys.")
+        this.description =
+            Translated("Select the warps you want to be able to warp to with the guess and inquisitor warp keys.")
     }
 
     var dontWarpIfBurrowClose by boolean(true) {
         this.name = Translated("Don't Warp If a Burrow is nearby")
-        this.description = Translated("If enabled, the warp key will not warp you if you are within 60 blocks of a burrow")
+        this.description =
+            Translated("If enabled, the warp key will not warp you if you are within 60 blocks of a burrow")
     }
 
     var warpDiff by int(10) {
         this.range = 0..60
         this.slider = true
         this.name = Translated("Warp Block Difference")
-        this.description = Translated("The additional block difference to consider when warping to a waypoint. (0 to disable)")
+        this.description =
+            Translated("The additional block difference to consider when warping to a waypoint. (0 to disable)")
     }
 
     var warpDelay by int(0) {
@@ -115,10 +116,10 @@ object Diana : CategoryKt("Diana") {
         }
     }
 
-    var lootTracker by ObservableEntry( enum(Tracker.OFF) {
-            this.name = Translated("Loot Tracker")
-            this.description = Translated("Shows your Diana loot, /sboguis to move the overlay")
-        }
+    var lootTracker by ObservableEntry(enum(Tracker.OFF) {
+        this.name = Translated("Loot Tracker")
+        this.description = Translated("Shows your Diana loot, /sboguis to move the overlay")
+    }
     ) { old, new ->
         if (old != new) {
             if (new != Tracker.OFF) {
@@ -127,10 +128,10 @@ object Diana : CategoryKt("Diana") {
         }
     }
 
-    var inquisTracker by ObservableEntry( enum(Tracker.OFF) {
-            this.name = Translated("Inquis Loot Tracker")
-            this.description = Translated("Shows your Inquisitor Loot so you see how lucky/unlucky you are (Shelmet/Plushie/Remedies), /sboguis to move the overlay")
-        }
+    var inquisTracker by ObservableEntry(enum(Tracker.OFF) {
+        this.name = Translated("Inquis Loot Tracker")
+        this.description = Translated("Shows your Inquisitor Loot so you see how lucky/unlucky you are (Shelmet/Plushie/Remedies), /sboguis to move the overlay")
+    }
     ) { old, new ->
         if (old != new) {
             if (new != Tracker.OFF) {
@@ -181,9 +182,9 @@ object Diana : CategoryKt("Diana") {
     }
 
     var lootAnnouncerPrice by ObservableEntry(boolean(true) {
-            this.name = Translated("Show Price Title")
-            this.description = Translated("Shows chimera/stick/relic price as a subtitle on screen")
-        }
+        this.name = Translated("Show Price Title")
+        this.description = Translated("Shows chimera/stick/relic price as a subtitle on screen")
+    }
     ) { old, new ->
         if (old != new) {
             if (new) {

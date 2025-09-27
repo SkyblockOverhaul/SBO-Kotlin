@@ -4,11 +4,9 @@ package net.sbo.mod.overlays
 * I will do it in the future, but for now it works and I don't want to break it.
 * If you want to refactor it, feel free to do so, but please keep the functionality intact.
 */
-import net.sbo.mod.settings.categories.Diana
-import net.sbo.mod.utils.overlay.Overlay
-import net.sbo.mod.utils.overlay.OverlayTextLine
 import net.minecraft.util.Formatting.*
 import net.sbo.mod.SBOKotlin.mc
+import net.sbo.mod.settings.categories.Diana
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.Helper.calcPercentOne
 import net.sbo.mod.utils.Helper.removeFormatting
@@ -16,12 +14,20 @@ import net.sbo.mod.utils.data.SboDataObject.SBOConfigBundle
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.GuiOpenEvent
+import net.sbo.mod.utils.overlay.Overlay
+import net.sbo.mod.utils.overlay.OverlayTextLine
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.concurrent.TimeUnit
 
 object DianaMobs {
-    val overlay = Overlay("Diana Mobs", 10f, 10f, 1f, listOf("Chat screen", "Crafting")).setCondition { (Diana.mobTracker != Diana.Tracker.OFF && Helper.checkDiana()) || Helper.hasSpade }
+    val overlay = Overlay(
+        "Diana Mobs",
+        10f,
+        10f,
+        1f,
+        listOf("Chat screen", "Crafting")
+    ).setCondition { (Diana.mobTracker != Diana.Tracker.OFF && Helper.checkDiana()) || Helper.hasSpade }
     val changeView: OverlayTextLine = OverlayTextLine("${YELLOW}Change View")
         .onClick {
             Diana.mobTracker = Diana.mobTracker.next()
@@ -51,7 +57,7 @@ object DianaMobs {
         }
     }
 
-    fun createLine(name: String, formattedText: String) : OverlayTextLine {
+    fun createLine(name: String, formattedText: String): OverlayTextLine {
         val line = OverlayTextLine(formattedText).onClick {
             if (mc.currentScreen?.title?.string != "Crafting") return@onClick
             if (SBOConfigBundle.sboData.hideTrackerLines.contains(name)) {
@@ -61,7 +67,11 @@ object DianaMobs {
             }
             updateLines()
         }
-            .setCondition { !(mc.currentScreen?.title?.string != "Crafting" && SBOConfigBundle.sboData.hideTrackerLines.contains(name)) }
+            .setCondition {
+                !(mc.currentScreen?.title?.string != "Crafting" && SBOConfigBundle.sboData.hideTrackerLines.contains(
+                    name
+                ))
+            }
         if (SBOConfigBundle.sboData.hideTrackerLines.contains(name)) {
             line.text = "$GRAY$STRIKETHROUGH${formattedText.removeFormatting()}"
         }
@@ -99,13 +109,73 @@ object DianaMobs {
 
         lines.addAll(
             listOf(
-                createLine("INQUISITOR","$GRAY - ${LIGHT_PURPLE}Inquisitor: $AQUA${Helper.formatNumber(tracker.mobs.MINOS_INQUISITOR, true)} $GRAY($AQUA${inqPercent}%$GRAY) [${AQUA}LS$GRAY:$AQUA${Helper.formatNumber(tracker.mobs.MINOS_INQUISITOR_LS, true)}$GRAY]"),
-                createLine("CHAMPION","$GRAY - ${DARK_PURPLE}Champion: $AQUA${Helper.formatNumber(tracker.mobs.MINOS_CHAMPION, true)} $GRAY($AQUA${champPercent}%$GRAY)"),
-                createLine("MINOTAUR","$GRAY - ${GOLD}Minotaur: $AQUA${Helper.formatNumber(tracker.mobs.MINOTAUR, true)} $GRAY($AQUA${minotaurPercent}%$GRAY)"),
-                createLine("GAIA_CONSTRUCT","$GRAY - ${GREEN}Gaia Construct: $AQUA${Helper.formatNumber(tracker.mobs.GAIA_CONSTRUCT, true)} $GRAY($AQUA${gaiaPercent}%$GRAY)"),
-                createLine("SIAMESE_LYNXES","$GRAY - ${GREEN}Siamese Lynxes: $AQUA${Helper.formatNumber(tracker.mobs.SIAMESE_LYNXES, true)} $GRAY($AQUA${lynxPercent}%$GRAY)"),
-                createLine("MINOS_HUNTER","$GRAY - ${GREEN}Minos Hunter: $AQUA${Helper.formatNumber(tracker.mobs.MINOS_HUNTER, true)} $GRAY($AQUA${hunterPercent}%$GRAY)"),
-                OverlayTextLine("$GRAY - ${GRAY}Total Mobs: $AQUA${Helper.formatNumber(tracker.mobs.TOTAL_MOBS, true)} $GRAY[$AQUA$mobsPerHr$GRAY/${AQUA}hr$GRAY]")
+                createLine(
+                    "INQUISITOR",
+                    "$GRAY - ${LIGHT_PURPLE}Inquisitor: $AQUA${
+                        Helper.formatNumber(
+                            tracker.mobs.MINOS_INQUISITOR,
+                            true
+                        )
+                    } $GRAY($AQUA${inqPercent}%$GRAY) [${AQUA}LS$GRAY:$AQUA${
+                        Helper.formatNumber(
+                            tracker.mobs.MINOS_INQUISITOR_LS,
+                            true
+                        )
+                    }$GRAY]"
+                ),
+                createLine(
+                    "CHAMPION",
+                    "$GRAY - ${DARK_PURPLE}Champion: $AQUA${
+                        Helper.formatNumber(
+                            tracker.mobs.MINOS_CHAMPION,
+                            true
+                        )
+                    } $GRAY($AQUA${champPercent}%$GRAY)"
+                ),
+                createLine(
+                    "MINOTAUR",
+                    "$GRAY - ${GOLD}Minotaur: $AQUA${
+                        Helper.formatNumber(
+                            tracker.mobs.MINOTAUR,
+                            true
+                        )
+                    } $GRAY($AQUA${minotaurPercent}%$GRAY)"
+                ),
+                createLine(
+                    "GAIA_CONSTRUCT",
+                    "$GRAY - ${GREEN}Gaia Construct: $AQUA${
+                        Helper.formatNumber(
+                            tracker.mobs.GAIA_CONSTRUCT,
+                            true
+                        )
+                    } $GRAY($AQUA${gaiaPercent}%$GRAY)"
+                ),
+                createLine(
+                    "SIAMESE_LYNXES",
+                    "$GRAY - ${GREEN}Siamese Lynxes: $AQUA${
+                        Helper.formatNumber(
+                            tracker.mobs.SIAMESE_LYNXES,
+                            true
+                        )
+                    } $GRAY($AQUA${lynxPercent}%$GRAY)"
+                ),
+                createLine(
+                    "MINOS_HUNTER",
+                    "$GRAY - ${GREEN}Minos Hunter: $AQUA${
+                        Helper.formatNumber(
+                            tracker.mobs.MINOS_HUNTER,
+                            true
+                        )
+                    } $GRAY($AQUA${hunterPercent}%$GRAY)"
+                ),
+                OverlayTextLine(
+                    "$GRAY - ${GRAY}Total Mobs: $AQUA${
+                        Helper.formatNumber(
+                            tracker.mobs.TOTAL_MOBS,
+                            true
+                        )
+                    } $GRAY[$AQUA$mobsPerHr$GRAY/${AQUA}hr$GRAY]"
+                )
             )
         )
         overlay.setLines(lines)

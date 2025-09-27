@@ -5,11 +5,11 @@ import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.diana.DianaTracker
 import net.sbo.mod.settings.categories.QOL
 import net.sbo.mod.utils.Helper
-import net.sbo.mod.utils.events.Register
-import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.data.Item
+import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.InventorySlotUpdateEvent
+import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.overlay.Overlay
 import net.sbo.mod.utils.overlay.OverlayExamples
 import net.sbo.mod.utils.overlay.OverlayTextLine
@@ -24,7 +24,7 @@ object Pickuplog {
     private var oldInventory = mutableMapOf<String, Item>()
     private var newInventory = mutableMapOf<String, Item>()
 
-    private val regex = Regex("""\+([\d,]+) ([^\(]+)""")
+    private val regex = Regex("""\+([\d,]+) ([^(]+)""")
 
     private val overlay: Overlay = Overlay("pickuplog", 5f, 5f, 1f, listOf("Chat screen", "Crafting"), OverlayExamples.pickupLogExample)
 
@@ -35,7 +35,12 @@ object Pickuplog {
         overlay.init()
         overlay.setCondition { QOL.pickuplogOverlay }
 
-        Register.onChatMessageCancable(Pattern.compile("(.*?) item(.*?) (.*?)", Pattern.DOTALL)) { message, matchResult ->
+        Register.onChatMessageCancelable(
+            Pattern.compile(
+                "(.*?) item(.*?) (.*?)",
+                Pattern.DOTALL
+            )
+        ) { message, matchResult ->
             var cancel = true
             if (World.isInSkyblock() && matchResult.group(1).contains("Sacks")) {
                 message.siblings.forEach { part ->
@@ -150,7 +155,7 @@ object Pickuplog {
 
         val newAddedList = mutableListOf<MutableMap<String, OverlayLineData>>()
         itemsShowAdded.forEach { map ->
-            val (itemId, data) = map.entries.first()
+            val (_, data) = map.entries.first()
             if (currentTime - data.modified <= 6000) {
                 newAddedList.add(map)
                 lines.add(OverlayTextLine("§a+ ${data.amount}x §r${data.name}"))
@@ -161,7 +166,7 @@ object Pickuplog {
 
         val newRemovedList = mutableListOf<MutableMap<String, OverlayLineData>>()
         itemsShowRemoved.forEach { map ->
-            val (itemId, data) = map.entries.first()
+            val (_, data) = map.entries.first()
             if (currentTime - data.modified <= 6000) {
                 newRemovedList.add(map)
                 lines.add(OverlayTextLine("§c- ${-data.amount}x §r${data.name}"))

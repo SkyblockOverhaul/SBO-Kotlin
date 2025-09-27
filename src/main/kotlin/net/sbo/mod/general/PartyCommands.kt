@@ -1,32 +1,32 @@
 package net.sbo.mod.general
 
-import net.sbo.mod.utils.events.Register
-import net.sbo.mod.settings.categories.PartyCommands
-import net.sbo.mod.utils.chat.Chat
-import net.sbo.mod.utils.data.SboDataObject.sboData
-import net.sbo.mod.utils.data.SboDataObject.dianaTrackerMayor
-import net.sbo.mod.utils.Helper.sleep
-import net.sbo.mod.utils.Helper.getPlayerName
-import net.sbo.mod.utils.Helper.calcPercentOne
-import net.sbo.mod.utils.Helper.formatNumber
-import net.sbo.mod.utils.Helper.formatTime
 import net.sbo.mod.diana.DianaStats
 import net.sbo.mod.overlays.DianaLoot
 import net.sbo.mod.settings.categories.Diana
+import net.sbo.mod.settings.categories.PartyCommands
 import net.sbo.mod.utils.Helper
+import net.sbo.mod.utils.Helper.calcPercentOne
+import net.sbo.mod.utils.Helper.formatNumber
+import net.sbo.mod.utils.Helper.formatTime
+import net.sbo.mod.utils.Helper.getPlayerName
 import net.sbo.mod.utils.Helper.removeFormatting
+import net.sbo.mod.utils.Helper.sleep
 import net.sbo.mod.utils.Player
 import net.sbo.mod.utils.SboTimerManager
+import net.sbo.mod.utils.chat.Chat
+import net.sbo.mod.utils.data.SboDataObject.dianaTrackerMayor
+import net.sbo.mod.utils.data.SboDataObject.sboData
+import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.game.ServerStats
-import java.util.concurrent.TimeUnit
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 object PartyCommands {
 
-    val commandRegex = Regex("^§[0-9a-fk-or]Party §[0-9a-fk-or]> (.*?)§[0-9a-fk-or]*: ?(.*)\$")
+    val commandRegex = Regex("^§[0-9a-fk-or]Party §[0-9a-fk-or]> (.*?)§[0-9a-fk-or]*: ?(.*)$")
 
     val settings = PartyCommands
     val carrot = listOf(
@@ -92,18 +92,21 @@ object PartyCommands {
                         Chat.command("p warp")
                     }
                 }
+
                 "!allinv", "!allinvite" -> {
                     if (!settings.allinviteCommand) return@onChatMessage
                     sleep(200) {
                         Chat.command("p setting allinvite")
                     }
                 }
+
                 "!ptme", "!transfer" -> {
                     if (!settings.transferCommand) return@onChatMessage
                     sleep(200) {
                         Chat.command("p transfer $playerName")
                     }
                 }
+
                 "!demote" -> {
                     if (!settings.moteCommand) return@onChatMessage
                     val targetPlayer = secondArg ?: playerName
@@ -111,6 +114,7 @@ object PartyCommands {
                         Chat.command("p demote $targetPlayer")
                     }
                 }
+
                 "!promote" -> {
                     if (!settings.moteCommand) return@onChatMessage
                     val targetPlayer = secondArg ?: playerName
@@ -118,6 +122,7 @@ object PartyCommands {
                         Chat.command("p promote $targetPlayer")
                     }
                 }
+
                 "!c", "!carrot" -> {
                     if (!settings.carrotCommand) return@onChatMessage
                     val randomIndex = (carrot.indices).random()
@@ -126,6 +131,7 @@ object PartyCommands {
                         Chat.command("pc $response")
                     }
                 }
+
                 "!time" -> {
                     if (!settings.timeCommand) return@onChatMessage
                     sleep(200) {
@@ -133,6 +139,7 @@ object PartyCommands {
                         Chat.command("pc $currentTime")
                     }
                 }
+
                 "!tps" -> {
                     if (!settings.tpsCommand) return@onChatMessage
                     sleep(200) {
@@ -140,21 +147,25 @@ object PartyCommands {
                         Chat.command("pc ${"%.2f".format(tps)} TPS")
                     }
                 }
+
                 "!chim", "!chimera", "!chims", "!chimeras", "!book", "!books" -> {
                     if (!settings.dianaPartyCommands) return@onChatMessage
                     val chimeraCount = dianaTrackerMayor.items.CHIMERA
                     val chimeraLsCount = dianaTrackerMayor.items.CHIMERA_LS
-                    val percent = calcPercentOne(dianaTrackerMayor.items, dianaTrackerMayor.mobs, "CHIMERA", "MINOS_INQUISITOR")
+                    val percent =
+                        calcPercentOne(dianaTrackerMayor.items, dianaTrackerMayor.mobs, "CHIMERA", "MINOS_INQUISITOR")
                     sleep(200) {
                         Chat.command("pc Chimera: $chimeraCount ($percent%) +$chimeraLsCount LS")
                     }
                 }
+
                 "!inqsls", "!inquisitorls", "!inquisls", "!lsinq", "!lsinqs", "!lsinquisitor", "!lsinquis" -> {
                     if (!settings.dianaPartyCommands) return@onChatMessage
                     sleep(200) {
                         Chat.command("pc Inquisitor LS: ${dianaTrackerMayor.mobs.MINOS_INQUISITOR_LS}")
                     }
                 }
+
                 "!inq", "!inqs", "!inquisitor", "!inquis" -> {
                     if (!settings.dianaPartyCommands) return@onChatMessage
                     val inquisCount = dianaTrackerMayor.mobs.MINOS_INQUISITOR
@@ -163,6 +174,7 @@ object PartyCommands {
                         Chat.command("pc Inquisitor: $inquisCount ($percent%)")
                     }
                 }
+
                 "!burrows", "!burrow" -> {
                     if (!settings.dianaPartyCommands) return@onChatMessage
                     val burrows = dianaTrackerMayor.items.TOTAL_BURROWS
@@ -172,30 +184,41 @@ object PartyCommands {
                         Chat.command("pc Burrows: $burrows ($burrowsPerHr/h)")
                     }
                 }
+
                 "!relic", "!relics" -> {
                     if (!settings.dianaPartyCommands) return@onChatMessage
                     val relicCount = dianaTrackerMayor.items.MINOS_RELIC
-                    val percent = calcPercentOne(dianaTrackerMayor.items, dianaTrackerMayor.mobs, "MINOS_RELIC", "MINOS_CHAMPION")
+                    val percent =
+                        calcPercentOne(dianaTrackerMayor.items, dianaTrackerMayor.mobs, "MINOS_RELIC", "MINOS_CHAMPION")
                     sleep(200) {
                         Chat.command("pc Relics: $relicCount ($percent%)")
                     }
                 }
+
                 "!chimls", "!chimerals", "!bookls", "!lschim", "!lsbook", "!lootsharechim", "!lschimera" -> {
                     if (!settings.dianaPartyCommands) return@onChatMessage
                     val chimsLs = dianaTrackerMayor.items.CHIMERA_LS
-                    val percent = calcPercentOne(dianaTrackerMayor.items, dianaTrackerMayor.mobs, "CHIMERALS", "MINOS_INQUISITOR_LS")
+                    val percent = calcPercentOne(
+                        dianaTrackerMayor.items,
+                        dianaTrackerMayor.mobs,
+                        "CHIMERALS",
+                        "MINOS_INQUISITOR_LS"
+                    )
                     sleep(200) {
                         Chat.command("pc Chimera LS: $chimsLs ($percent%)")
                     }
                 }
+
                 "!sticks", "!stick" -> {
                     if (!settings.dianaPartyCommands) return@onChatMessage
                     val stickCount = dianaTrackerMayor.items.DAEDALUS_STICK
-                    val percent = calcPercentOne(dianaTrackerMayor.items, dianaTrackerMayor.mobs, "DAEDALUS_STICK", "MINOTAUR")
+                    val percent =
+                        calcPercentOne(dianaTrackerMayor.items, dianaTrackerMayor.mobs, "DAEDALUS_STICK", "MINOTAUR")
                     sleep(200) {
                         Chat.command("pc Sticks: $stickCount ($percent%)")
                     }
                 }
+
                 "!feathers", "!feather" -> {
                     if (!settings.dianaPartyCommands) return@onChatMessage
                     val featherCount = dianaTrackerMayor.items.GRIFFIN_FEATHER
@@ -203,12 +226,14 @@ object PartyCommands {
                         Chat.command("pc Feathers: $featherCount")
                     }
                 }
+
                 "!coins", "!coin" -> {
                     if (!settings.dianaPartyCommands) return@onChatMessage
                     sleep(200) {
                         Chat.command("pc Coins: ${formatNumber(dianaTrackerMayor.items.COINS, withCommas = true)}")
                     }
                 }
+
                 "!mobs", "!mob" -> {
                     if (!settings.dianaPartyCommands) return@onChatMessage
                     val totalMobs = dianaTrackerMayor.mobs.TOTAL_MOBS
@@ -221,18 +246,21 @@ object PartyCommands {
                         Chat.command("pc Mobs: $totalMobs ($mobsPerHr/h)")
                     }
                 }
+
                 "!mf", "!magicfind" -> {
                     if (!settings.dianaPartyCommands) return@onChatMessage
                     sleep(200) {
                         Chat.command("pc Chims (${sboData.highestChimMagicFind}% ✯) Sticks (${sboData.highestStickMagicFind}% ✯)")
                     }
                 }
+
                 "!playtime" -> {
                     if (!settings.dianaPartyCommands) return@onChatMessage
                     sleep(200) {
                         Chat.command("pc Playtime: ${formatTime(dianaTrackerMayor.items.TIME)}")
                     }
                 }
+
                 "!profits", "!profit" -> {
                     if (!settings.dianaPartyCommands) return@onChatMessage
                     val playtime = dianaTrackerMayor.items.TIME
@@ -241,9 +269,16 @@ object PartyCommands {
                         val profit = DianaLoot.totalProfit(dianaTrackerMayor)
                         val offerType = Diana.bazaarSettingDiana.toString()
                         val profitHour = profit / playTimeHrs
-                        Chat.command("pc Profit: ${formatNumber(profit)} (${Helper.toTitleCase(offerType)}) ${formatNumber(profitHour)}/h")
+                        Chat.command(
+                            "pc Profit: ${formatNumber(profit)} (${Helper.toTitleCase(offerType)}) ${
+                                formatNumber(
+                                    profitHour
+                                )
+                            }/h"
+                        )
                     }
                 }
+
                 "!stats", "!stat" -> {
                     if (!settings.dianaPartyCommands) return@onChatMessage
                     if (secondArg?.lowercase() == user.lowercase()) {
@@ -252,6 +287,7 @@ object PartyCommands {
                         }
                     }
                 }
+
                 "!totalstats", "!totalstat" -> {
                     if (!settings.dianaPartyCommands) return@onChatMessage
                     if (secondArg?.lowercase() == user.lowercase()) {
@@ -260,21 +296,26 @@ object PartyCommands {
                         }
                     }
                 }
+
                 "!since" -> {
                     val secondArg = messageParts.getOrNull(1)?.lowercase()
                     when (secondArg) {
                         "chimera", "chim", "chims", "chimeras", "book", "books" -> sleep(200) {
                             Chat.command("pc Inqs since chim: ${sboData.inqsSinceChim}")
                         }
+
                         "stick", "sticks" -> sleep(200) {
                             Chat.command("pc Minos since stick: ${sboData.minotaursSinceStick}")
                         }
+
                         "relic", "relics" -> sleep(200) {
                             Chat.command("pc Champs since relic: ${sboData.champsSinceRelic}")
                         }
+
                         "inq", "inqs", "inquisitor", "inquisitors", "inquis" -> sleep(200) {
                             Chat.command("pc Mobs since inq: ${sboData.mobsSinceInq}")
                         }
+
                         "lschim", "chimls", "lschimera", "chimerals", "lsbook", "bookls", "lootsharechim" -> sleep(200) {
                             Chat.command("pc Inqs since lootshare chim: ${sboData.inqsSinceLsChim}")
                         }

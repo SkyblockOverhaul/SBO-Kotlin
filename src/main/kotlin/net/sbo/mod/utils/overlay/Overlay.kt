@@ -3,9 +3,9 @@ package net.sbo.mod.utils.overlay
 import net.minecraft.client.gui.DrawContext
 import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.utils.Helper
-import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.data.OverlayValues
 import net.sbo.mod.utils.data.SboDataObject.overlayData
+import net.sbo.mod.utils.game.World
 import java.awt.Color
 
 /**
@@ -89,15 +89,15 @@ class Overlay(
         val textRenderer = mc.textRenderer ?: return
         if (!isOverOverlay(mouseX, mouseY)) return
 
-        var currentY = y/this.scale
-        var currentX = x/this.scale
+        var currentY = y / this.scale
+        var currentX = x / this.scale
 
         for (line in getLines()) {
             line.lineClicked(mouseX, mouseY, currentX * this.scale, currentY * this.scale, textRenderer, this.scale)
 
             if (line.linebreak) {
                 currentY += textRenderer.fontHeight + 1
-                currentX = x/this.scale
+                currentX = x / this.scale
             } else {
                 currentX += textRenderer.getWidth(line.text) / this.scale
             }
@@ -158,16 +158,37 @@ class Overlay(
 
         if (selected) {
             drawDebugBox(drawContext, currentX.toInt(), currentY.toInt(), totalWidth, totalHeight)
-            drawContext.drawText(textRenderer, "X: ${x.toInt()} Y: ${y.toInt()} Scale: ${String.format("%.1f", scale)}", (currentX).toInt(), (currentY - textRenderer.fontHeight - 1).toInt(), Color(255, 255, 255, 200).rgb, true)
+            drawContext.drawText(
+                textRenderer,
+                "X: ${x.toInt()} Y: ${y.toInt()} Scale: ${String.format("%.1f", scale)}",
+                (currentX).toInt(),
+                (currentY - textRenderer.fontHeight - 1).toInt(),
+                Color(255, 255, 255, 200).rgb,
+                true
+            )
         }
 
         if (isOverOverlay(mouseX, mouseY) && Helper.currentScreen is OverlayEditScreen) {
-            drawContext.fill(currentX.toInt(), currentY.toInt(), (currentX + totalWidth).toInt(), (currentY + totalHeight).toInt(), Color(0, 0, 0, 100).rgb)
+            drawContext.fill(
+                currentX.toInt(),
+                currentY.toInt(),
+                (currentX + totalWidth).toInt(),
+                (currentY + totalHeight).toInt(),
+                Color(0, 0, 0, 100).rgb
+            )
         }
 
         for (line in getLines()) {
             if (!line.checkCondition()) continue
-            if (Helper.getGuiName() in allowedGuis) line.updateMouseInteraction(mouseX, mouseY, currentX*this.scale, currentY*this.scale, textRenderer, this.scale, drawContext)
+            if (Helper.getGuiName() in allowedGuis) line.updateMouseInteraction(
+                mouseX,
+                mouseY,
+                currentX * this.scale,
+                currentY * this.scale,
+                textRenderer,
+                this.scale,
+                drawContext
+            )
 
             line.draw(drawContext, currentX.toInt(), currentY.toInt(), textRenderer)
             if (line.linebreak) {

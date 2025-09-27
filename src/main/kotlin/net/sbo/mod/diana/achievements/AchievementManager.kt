@@ -59,7 +59,15 @@ object AchievementManager {
         addAllAchievements()
     }
 
-    fun addAchievement(id: Int, name: String, description: String, rarity: String, previousId: Int? = null, timeout: Int = 1, hidden: Boolean = false) {
+    fun addAchievement(
+        id: Int,
+        name: String,
+        description: String,
+        rarity: String,
+        previousId: Int? = null,
+        timeout: Int = 1,
+        hidden: Boolean = false
+    ) {
         if (achievements.containsKey(id)) {
             throw RuntimeException("Duplicate achievement ID detected: $id. Achievement with this ID already exists: ${achievements[id]?.name}")
         }
@@ -150,7 +158,7 @@ object AchievementManager {
 
         if (time >= 18000000L) { // 5 hours
             val timer = SboTimerManager.timerMayor
-            val burrowsPerHour = Helper.getBurrowsPerHr(tracker,timer)
+            val burrowsPerHour = Helper.getBurrowsPerHr(tracker, timer)
             when {
                 burrowsPerHour >= 600 -> unlockAchievement(72)
                 burrowsPerHour >= 500 -> unlockAchievement(71)
@@ -206,12 +214,13 @@ object AchievementManager {
         }
     }
 
-    fun trackBeKills(gaiaKills: Int, champKills: Int, hunterKills: Int, inqKills: Int, minoKills: Int, catKills: Int) { // todo: add this
+    fun trackBeKills(
+        gaiaKills: Int, champKills: Int, hunterKills: Int, inqKills: Int, minoKills: Int, catKills: Int
+    ) { // todo: add this
         if (isOnHypixel) return
 
         val allMaxed = listOf(
-            gaiaKills to 50, inqKills to 45, minoKills to 46,
-            champKills to 47, hunterKills to 48, catKills to 49
+            gaiaKills to 50, inqKills to 45, minoKills to 46, champKills to 47, hunterKills to 48, catKills to 49
         ).all { (kills, id) ->
             val isMaxed = when (id) {
                 45 -> kills >= 500
