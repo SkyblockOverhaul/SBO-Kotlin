@@ -6,6 +6,7 @@ import net.sbo.mod.settings.categories.Diana
 import net.sbo.mod.utils.Player
 import net.sbo.mod.utils.math.SboVec
 import net.sbo.mod.utils.render.RenderUtil
+import net.sbo.mod.utils.waypoint.WaypointManager.closestGuess
 import net.sbo.mod.utils.waypoint.WaypointManager.focusedGuess
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -74,7 +75,7 @@ class Waypoint(
         this.distanceText = if (this.distance) " §b[${this.distanceRaw.roundToInt()}m]" else ""
 
         if (this.type == "guess") {
-            this.line = Diana.guessLine && (closestBurrowDistance > 60) && inqWaypoints.isEmpty()
+            this.line = Diana.guessLine && (closestBurrowDistance > 60) && inqWaypoints.isEmpty() && (closestGuess.first == this)
             this.color = Color(Customization.guessColor)
 
             if (focusedGuess == this) {
