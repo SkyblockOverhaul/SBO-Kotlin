@@ -23,6 +23,7 @@ object PreciseGuessBurrow {
     private var particleLocations = mutableListOf<SboVec>()
     private var guessPoint: SboVec? = null
     private var lastLavaParticle: Long = 0
+    private var newBurrow: Boolean = true
 
     var finalLocation: SboVec? = null
     var lastGuessTime: Long = 0
@@ -33,6 +34,7 @@ object PreciseGuessBurrow {
         this.guessPoint = null
         this.particleLocations.clear()
         finalLocation = null
+        newBurrow = true
     }
 
     @SboEvent
@@ -58,7 +60,8 @@ object PreciseGuessBurrow {
         if (guessPosition == null) return
         finalLocation = guessPosition.down(0.5).roundLocationToBlock()
         finalLocation = guessPosition.down(0.5).roundLocationToBlock();
-        WaypointManager.updateGuess(finalLocation);
+        WaypointManager.updateGuess(finalLocation, newBurrow)
+        newBurrow = false
     }
 
     @SboEvent
@@ -76,6 +79,7 @@ object PreciseGuessBurrow {
         }
         this.particleLocations.clear()
         lastGuessTime = System.currentTimeMillis()
+        newBurrow = true
     }
 
     fun guessBurrowLocation(): SboVec? {

@@ -35,6 +35,7 @@ object WaypointManager {
     var focusedGuess : Waypoint? = null
     private val angleThreshold = Math.toRadians(4.0)
     private val cosThreshold = cos(angleThreshold)
+    private var lastMultiGuessWp: Waypoint? = null
 
     fun init() {
         if (guessWp == null) {
@@ -220,26 +221,31 @@ object WaypointManager {
     /**
      * Updates the guess waypoint position.
      * @param pos The new position for the guess waypoint.
+     * @param isNewGuess Indicates if this is the start of a new guess attempt.
      */
-    fun updateGuess(pos: SboVec?) {
+    fun updateGuess(pos: SboVec?, isNewGuess: Boolean) {
+        if (pos == null) return
         if (!Diana.dianaMultiBurrowGuess) {
             guessWp?.apply {
                 val (exists, wp) = waypointExists("burrow", this.pos)
-            if (exists && wp != null) {
-                this.hidden = wp.distanceToPlayer() < 60
-            } else {
-                this.hidden = false
-            }
-                if (pos != null) {
-                    this.pos = pos
+                if (exists && wp != null) {
+                    this.hidden = wp.distanceToPlayer() < 60
+                } else {
+                    this.hidden = false
                 }
+                this.pos = pos
             }
             return
         }
-        if (pos == null) return
-        val waypoint = createGuessWaypoint(pos) ?: return
-        addWaypoint(waypoint)
+        if (isNewGuess || lastMultiGuessWp == null) {
+            val waypoint = createGuessWaypoint(pos) ?: return
+            addWaypoint(waypoint)
+            lastMultiGuessWp = waypoint
+        } else {
+            lastMultiGuessWp?.pos = pos
+        }
     }
+
 
     /**
      * Checks if a waypoint of a specific type exists at a given position.
