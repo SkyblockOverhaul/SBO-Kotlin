@@ -16,8 +16,6 @@ base {
 repositories {
 	maven { url = "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1" }
 	maven {url = "https://repo.essential.gg/repository/maven-public"}
-	// todo: polyfrost maven below
-	// maven {url = "https://repo.polyfrost.org/releases"}
 	maven {
 		name = "Team Resourceful Maven"
 		url = "https://maven.teamresourceful.com/repository/maven-public/"
@@ -46,14 +44,12 @@ dependencies {
 	ksp "dev.zacsweers.autoservice:auto-service-ksp:1.1.0"
 	implementation project(":event-processor")
 
-
+//	modImplementation(include("xyz.meowing:vexel-1.21.5-fabric:${project.vexel_version}"))
 	modImplementation(include("gg.essential:universalcraft-${project.minecraft_version}-fabric:${project.ucraft_version}"))
 	modImplementation(include("gg.essential:elementa:${project.elementa_version}"))
 	modImplementation(include("com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-${project.minecraft_version}:${project.rconfig_version}"))
 	modImplementation(include("com.teamresourceful.resourcefulconfigkt:resourcefulconfigkt-fabric-${project.minecraft_version}:${project.rconfig_version}"))
 	modImplementation(include("net.azureaaron:hm-api:1.0.1+1.21.2"))
-	// todo: polyfrost implementation below
-	// modImplementation(include("org.polyfrost:polyui:${project.polyui_version}"))
 	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"

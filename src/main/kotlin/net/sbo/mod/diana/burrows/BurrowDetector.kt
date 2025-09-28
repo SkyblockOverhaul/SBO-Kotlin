@@ -12,13 +12,17 @@ import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.PacketReceiveEvent
 import net.sbo.mod.utils.events.impl.PacketSendEvent
 import net.sbo.mod.utils.events.impl.PlayerInteractEvent
+import net.sbo.mod.utils.events.impl.WorldChangeEvent
 import net.minecraft.particle.ParticleTypes as MCParticleTypes
 import net.sbo.mod.utils.waypoint.Waypoint
 import java.awt.Color
 import net.sbo.mod.utils.waypoint.WaypointManager
 import net.sbo.mod.utils.math.SboVec
+import net.sbo.mod.utils.waypoint.WaypointManager.getGuessWaypoints
 import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.waypoint.WaypointManager.guessWp
+import net.sbo.mod.utils.waypoint.WaypointManager.removeWaypoint
+import net.sbo.mod.utils.waypoint.WaypointManager.waypoints
 import java.util.regex.Pattern
 
 object BurrowDetector {
@@ -28,11 +32,6 @@ object BurrowDetector {
     internal val burrowsHistory = EvictingQueue<String>(2)
 
     fun init() {
-        Register.onWorldChange {
-            if (!Diana.dianaBurrowDetect) return@onWorldChange
-            resetBurrows()
-        }
-
         Register.command("sboclearburrows", "sbocb") {
             resetBurrows()
             Chat.chat("§6[SBO] §4Burrow Waypoints Cleared!")
@@ -50,6 +49,12 @@ object BurrowDetector {
             refreshBurrows()
             true
         }
+    }
+
+    @SboEvent
+    fun onWorldChange(event: WorldChangeEvent) {
+        if (!Diana.dianaBurrowDetect) return
+        resetBurrows()
     }
 
     @SboEvent
@@ -139,6 +144,17 @@ object BurrowDetector {
                 type = "burrow"
             )
             WaypointManager.addWaypoint(burrow.waypoint!!)
+            if (Diana.dianaMultiBurrowGuess) {
+                val toRemove = getGuessWaypoints()
+                    .filter { waypoint -> waypoint.pos.distanceTo(pos) < 2 }
+                    .toMutableList()
+
+                toRemove.forEach { waypoint ->
+                    waypoint.hide()
+                    removeWaypoint(waypoint)
+                    getGuessWaypoints().remove(waypoint)
+                }
+            }
         }
     }
 
@@ -148,10 +164,22 @@ object BurrowDetector {
         if (guessWp != null && guessWp!!.pos.distanceTo(playerPos) < 4) {
             guessWp?.hide()
         }
+
+        if(!Diana.dianaMultiBurrowGuess) return
+        val removedGuesses = getGuessWaypoints().filter { waypoint ->
+            waypoint.pos.distanceTo(playerPos) < 4
+        }
+
+        removedGuesses.forEach { waypoint ->
+            removeWaypoint(waypoint)
+        }
+
+        getGuessWaypoints().removeAll(removedGuesses)
     }
 
     fun resetBurrows() {
         WaypointManager.removeAllOfType("burrow")
+        WaypointManager.removeAllOfType("guess")
         burrows.clear()
         burrowsHistory.clear()
     }

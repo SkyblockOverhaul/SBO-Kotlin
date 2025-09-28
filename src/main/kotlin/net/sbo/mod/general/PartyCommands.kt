@@ -17,6 +17,7 @@ import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.Helper.removeFormatting
 import net.sbo.mod.utils.Player
 import net.sbo.mod.utils.SboTimerManager
+import net.sbo.mod.utils.game.ServerStats
 import java.util.concurrent.TimeUnit
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -48,6 +49,28 @@ object PartyCommands {
         "Outlook not so Carrot",
         "Very Carrot"
     )
+
+    fun init() {
+        registerPartyChatListeners()
+        partyCommands()
+    }
+
+    fun partyCommands() {
+        Register.command("sbopartycommands", "sbopcom") {
+            Chat.chat("§6[SBO] §eDiana party commands:")
+            Chat.chat("§7> §a!chim")
+            Chat.chat("§7> §a!chimls")
+            Chat.chat("§7> §a!stick")
+            Chat.chat("§7> §a!relic")
+            Chat.chat("§7> §a!feathers")
+            Chat.chat("§7> §a!profit")
+            Chat.chat("§7> §a!playtime")
+            Chat.chat("§7> §a!mobs")
+            Chat.chat("§7> §a!burrows")
+            Chat.chat("§7> §a!stats <playername>")
+            Chat.chat("§7> §a!since (chim, chimls, relic, stick, inq)")
+        }
+    }
 
     fun registerPartyChatListeners() {
         DianaStats.registerReplaceStatsMessage()
@@ -113,7 +136,8 @@ object PartyCommands {
                 "!tps" -> {
                     if (!settings.tpsCommand) return@onChatMessage
                     sleep(200) {
-                        // todo: tpsCommand(player)
+                        val tps = ServerStats.getTps()
+                        Chat.command("pc ${"%.2f".format(tps)} TPS")
                     }
                 }
                 "!chim", "!chimera", "!chims", "!chimeras", "!book", "!books" -> {

@@ -1,15 +1,17 @@
 package net.sbo.mod.utils.waypoint
 
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
-import net.sbo.mod.utils.render.RenderUtil
 import net.sbo.mod.settings.categories.Customization
 import net.sbo.mod.settings.categories.Diana
-import java.awt.Color
-import net.sbo.mod.utils.math.SboVec
 import net.sbo.mod.utils.Player
-import kotlin.math.sqrt
+import net.sbo.mod.utils.math.SboVec
+import net.sbo.mod.utils.render.RenderUtil
+import net.sbo.mod.utils.waypoint.WaypointManager.closestGuess
+import net.sbo.mod.utils.waypoint.WaypointManager.focusedGuess
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlin.math.sqrt
+import java.awt.Color
 
 /**
  * @class Waypoint
@@ -32,9 +34,9 @@ class Waypoint(
     val x: Double,
     val y: Double,
     val z: Double,
-    val r: Float,
-    val g: Float,
-    val b: Float,
+    var r: Float,
+    var g: Float,
+    var b: Float,
     val ttl: Int = 0,
     val type: String = "normal",
     var line: Boolean = false,
@@ -53,57 +55,91 @@ class Waypoint(
     var formattedText: String = ""
     var warp: String? = null
 
-    fun distanceToPlayer(): Double { // works
+    fun distanceToPlayer(): Double {
         val playerPos = Player.getLastPosition()
         return sqrt((playerPos.x - this.pos.x).pow(2) + (playerPos.y - this.pos.y).pow(2) + (playerPos.z - this.pos.z).pow(2))
     }
 
     private fun setWarpText() {
         this.warp = WaypointManager.getClosestWarp(this.pos)
-        this.formattedText = this.warp?.let { "$text§7 (warp $it)${this.distanceText}" } ?: "${this.text}${this.distanceText}"
+        this.formattedText = this.warp?.let {
+            "$text§7 (warp $it)${this.distanceText}"
+        } ?: "${this.text}${this.distanceText}"
     }
 
     fun format(
         inqWaypoints: List<Waypoint>,
         closestBurrowDistance: Double
     ) {
-        this.distanceRaw = this.distanceToPlayer()
-        this.distanceText = if (this.distance) " §b[${this.distanceRaw.roundToInt()}m]" else ""
+        this.distanceRaw = distanceToPlayer()
+        this.distanceText = if (distance) " §b[${distanceRaw.roundToInt()}m]" else ""
 
-        if (this.type == "guess") {
-            this.line =  Diana.guessLine && (closestBurrowDistance > 60) && inqWaypoints.isEmpty()
-            this.color =  Color(Customization.guessColor)
-            this.hexCode = color.rgb
+        when (this.type) {
+            "guess" -> {
+                val isMultiGuessActive = Diana.dianaMultiBurrowGuess
+                val isLineVisibleBase = Diana.guessLine && closestBurrowDistance > 60 && inqWaypoints.isEmpty()
+                var shouldShowWarpText: Boolean
 
-            val (exists, wp) = WaypointManager.waypointExists("burrow", this.pos)
-            if (exists && wp != null) {
-                this.hidden = wp.distanceToPlayer() < 60
+                if (isMultiGuessActive) {
+                    val isFocused = Diana.focusedWarp && focusedGuess == this
+                    val isClosest = !Diana.focusedWarp && closestGuess.first == this
+                    shouldShowWarpText = isFocused || isClosest
+                } else {
+                    shouldShowWarpText = true
+                }
+
+                this.color = if (focusedGuess == this) Color(Customization.focusedColor)
+                else Color(Customization.guessColor)
+
+                this.line = if (focusedGuess == this) {
+                    isLineVisibleBase
+                } else if (!isMultiGuessActive) {
+                    isLineVisibleBase
+                } else {
+                    isLineVisibleBase && closestGuess.first == this
+                }
+
+                this.r = color.red / 255f
+                this.g = color.green / 255f
+                this.b = color.blue / 255f
+                this.hexCode = color.rgb
+
+                WaypointManager.waypointExists("burrow", this.pos).let { (exists, wp) ->
+                    if (exists && wp != null) this.hidden = wp.distanceToPlayer() < 60
+                }
+
+                if (shouldShowWarpText) {
+                    setWarpText()
+                } else {
+                    this.formattedText = "${this.text}${this.distanceText}"
+                    this.warp = null
+                }
             }
-
-            this.setWarpText()
-        } else if (this.type == "inq" && inqWaypoints.lastOrNull() == this) {
-            this.setWarpText()
-            this.line = Diana.inqLine
-        } else {
-            this.formattedText = "${this.text}${this.distanceText}"
+            "inq" -> {
+                if (inqWaypoints.lastOrNull() == this) {
+                    setWarpText()
+                    this.line = Diana.inqLine
+                }
+            }
+            else -> {
+                this.formattedText = "$text$distanceText"
+            }
         }
-
-        this.formatted = true
+        formatted = true
     }
 
-    fun hide(): Waypoint { // works
+    fun hide(): Waypoint {
         this.hidden = true
         return this
     }
 
-    fun show(): Waypoint { // works
+    fun show(): Waypoint {
         this.hidden = false
         return this
     }
 
     fun render(context: WorldRenderContext) {
         if (!this.formatted || this.hidden) return
-
         if (this.type == "guess" && this.distanceRaw <= Diana.removeGuessDistance) return
 
         RenderUtil.renderWaypoint(

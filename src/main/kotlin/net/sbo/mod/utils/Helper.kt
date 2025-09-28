@@ -30,6 +30,7 @@ import kotlin.reflect.full.memberProperties
 import java.text.DecimalFormat
 import java.util.Locale
 import java.util.regex.Pattern
+import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
 object Helper {
@@ -119,10 +120,15 @@ object Helper {
         name = name.replace(Regex("[^a-zA-Z0-9_]"), "")
         return name.trim()
     }
-
-    fun calcPercentOne(items: DianaItemsData, mobs: DianaMobsData, itemName: String, mobName: String? = null): String {
+    
+    /**
+     * Calculate percentage of one property to another.
+     * If [mobName] is provided, it calculates the percentage of [propertyName] from [items] to [mobName] from [mobs].
+     * If [mobName] is null, it calculates the percentage of [propertyName] from [mobs] to total mobs.
+     */
+    fun calcPercentOne(items: DianaItemsData, mobs: DianaMobsData, propertyName: String, mobName: String? = null): String {
         val result: Double = if (mobName != null) {
-            val itemCount = items::class.memberProperties.firstOrNull { it.name == itemName }
+            val itemCount = items::class.memberProperties.firstOrNull { it.name == propertyName }
                 ?.call(items) as? Int ?: 0
             val mobCount = mobs::class.memberProperties.firstOrNull { it.name == mobName }
                 ?.call(mobs) as? Int ?: 0
@@ -130,7 +136,7 @@ object Helper {
             if (mobCount <= 0) 0.0
             else (itemCount.toDouble() / mobCount.toDouble() * 100)
         } else {
-            val mobCount = mobs::class.memberProperties.firstOrNull { it.name == itemName }
+            val mobCount = mobs::class.memberProperties.firstOrNull { it.name == propertyName }
                 ?.call(mobs) as? Int ?: 0
             val totalMobsCount = mobs.TOTAL_MOBS
 
@@ -464,6 +470,27 @@ object Helper {
         val totalBurrows = tracker.items.TOTAL_BURROWS.toDouble()
         val burrowsPerHr = totalBurrows / hours
         return BigDecimal(burrowsPerHr).setScale(2, RoundingMode.HALF_UP).toDouble()
+    }
+
+    fun getChance(mf: Int, looting: Int, lootshare: Boolean = false): Map<String, Double> {
+        val baseChances = mapOf("chim" to 0.01, "stick" to 0.0008, "relic" to 0.0002)
+        val multiplier = 1 + mf / 100.0
+        if (lootshare) {
+            val factor = multiplier / 5
+            return baseChances.mapValues { it.value * factor }
+        }
+        val lootingMultiplier = 1 + looting * 0.15
+        return baseChances.mapValues { it.value * multiplier * lootingMultiplier }
+    }
+
+    fun formatChances(chance: Double, label: String): String {
+        val percent = String.format("%.2f", chance * 100)
+        val fraction = " §7(§b1/${(1 / chance).roundToInt()}§7)"
+        return "§eChance: §b$percent%$fraction $label"
+    }
+
+    fun getMagicFindAndLooting(mf: Int, looting: Int): String {
+        return " §7[MF:$mf] [L:$looting]"
     }
 }
 

@@ -75,16 +75,6 @@ object Register {
     }
 
     /**
-     * Registers an event that listens for the client disconnecting from the server.
-     * The action is executed when the client disconnects.
-     */
-    fun onDisconnect(action: () -> Unit) {
-        ClientPlayConnectionEvents.DISCONNECT.register { handler, client ->
-            action()
-        }
-    }
-
-    /**
      * Registers an event that listens for chat messages.
      * The action receives the message as a `Text` object.
      */
@@ -132,16 +122,6 @@ object Register {
         action: (message: Text, matchResult: Matcher) -> Boolean
     ) {
         ChatHandler.registerHandler(regex, action)
-    }
-
-    /**
-     * Registers an event that listens for world load events and executes an action.
-     * @param action The action to execute when a world is loaded.
-     */
-    fun onWorldChange(action: (client: MinecraftClient) -> Unit) {
-        ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register { _, _ ->
-            action(mc)
-        }
     }
 
     /**
