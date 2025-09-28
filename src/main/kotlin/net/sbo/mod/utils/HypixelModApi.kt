@@ -10,6 +10,8 @@ import net.azureaaron.hmapi.network.packet.v2.s2c.PartyInfoS2CPacket
 import net.sbo.mod.partyfinder.PartyFinderManager
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.events.Register
+import net.sbo.mod.utils.events.annotations.SboEvent
+import net.sbo.mod.utils.events.impl.DisconnectEvent
 
 object HypixelModApi {
     var isOnHypixel: Boolean = false
@@ -28,15 +30,16 @@ object HypixelModApi {
         HypixelPacketEvents.HELLO.register(::handlePacket)
         HypixelPacketEvents.PARTY_INFO.register(::handlePacket)
         HypixelPacketEvents.LOCATION_UPDATE.register(::handlePacket)
+    }
 
-        Register.onDisconnect {
-            isOnHypixel = false
-            isOnSkyblock = false
-            isLeader = false
-            isInParty = false
-            partyMembers = emptyList()
-            mode = ""
-        }
+    @SboEvent
+    fun onDisconnect(event: DisconnectEvent) {
+        isOnHypixel = false
+        isOnSkyblock = false
+        isLeader = false
+        isInParty = false
+        partyMembers = emptyList()
+        mode = ""
     }
 
     private fun handlePacket(packet: HypixelS2CPacket) {

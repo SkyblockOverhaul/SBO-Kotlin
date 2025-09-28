@@ -1,6 +1,8 @@
 package net.sbo.mod.utils.events
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
+import net.sbo.mod.utils.events.impl.DisconnectEvent
 import net.sbo.mod.utils.events.impl.WorldChangeEvent
 import kotlin.reflect.KClass
 
@@ -10,6 +12,9 @@ object SBOEvent {
     fun init () {
         ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register { mc, world ->
             emit(WorldChangeEvent(mc, world))
+        }
+        ClientPlayConnectionEvents.DISCONNECT.register { handler, client ->
+            emit(DisconnectEvent(handler, client))
         }
     }
 

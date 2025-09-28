@@ -75,16 +75,6 @@ object Register {
     }
 
     /**
-     * Registers an event that listens for the client disconnecting from the server.
-     * The action is executed when the client disconnects.
-     */
-    fun onDisconnect(action: () -> Unit) {
-        ClientPlayConnectionEvents.DISCONNECT.register { handler, client ->
-            action()
-        }
-    }
-
-    /**
      * Registers an event that listens for chat messages.
      * The action receives the message as a `Text` object.
      */

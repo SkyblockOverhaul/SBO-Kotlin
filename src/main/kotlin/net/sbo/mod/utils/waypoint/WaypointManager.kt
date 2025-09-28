@@ -81,7 +81,7 @@ object WaypointManager {
 
             if (Diana.dianaMultiBurrowGuess) {
                 val guessesToRemove = getGuessWaypoints()
-                    .filter { waypoint -> waypoint.distanceToPlayer() < 5.0 }
+                    .filter { waypoint -> waypoint.distanceToPlayer() < 5.0 || waypoint.pos.y <= 62.0 }
                     .toList()
 
                 guessesToRemove.forEach { waypoint ->
@@ -101,6 +101,7 @@ object WaypointManager {
 
             guessWp?.format(inqWps, closestBurrow.second)
         }
+
         Register.onTick(1) { _ ->
             if (!Diana.dianaMultiBurrowGuess) return@onTick
             if (!Diana.focusedWarp) {

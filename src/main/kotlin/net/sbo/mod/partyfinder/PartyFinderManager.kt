@@ -23,6 +23,8 @@ import net.sbo.mod.utils.data.Party
 import net.sbo.mod.utils.data.PartyAddResponse
 import net.sbo.mod.utils.data.PartyUpdateResponse
 import net.sbo.mod.utils.data.Reqs
+import net.sbo.mod.utils.events.annotations.SboEvent
+import net.sbo.mod.utils.events.impl.DisconnectEvent
 import net.sbo.mod.utils.events.impl.PartyFinderRefreshListEvent
 import net.sbo.mod.utils.http.Http.getInt
 import java.util.UUID
@@ -165,12 +167,6 @@ object PartyFinderManager {
             }
         }
 
-        Register.onDisconnect {
-            if (inQueue) {
-                removePartyFromQueue()
-            }
-        }
-
         HypixelModApi.onPartyInfo{ isInParty, isLeader, members ->
             this.isInParty = isInParty
             this.isLeader = isLeader
@@ -185,6 +181,13 @@ object PartyFinderManager {
                 creatingParty
                 updateBool = false
             }
+        }
+    }
+
+    @SboEvent
+    fun onDisconnect(event: DisconnectEvent) {
+        if (inQueue) {
+            removePartyFromQueue()
         }
     }
 
