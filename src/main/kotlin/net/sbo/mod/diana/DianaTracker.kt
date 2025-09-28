@@ -115,7 +115,7 @@ object DianaTracker {
 
                 if (Diana.lootAnnouncerScreen) {
                     val subTitle = if (Diana.lootAnnouncerPrice) "§6${Helper.getItemPriceFormatted(item.itemId)} coins" else ""
-                    Helper.showTitle("§d§lMinos Relic!", subTitle, 0, 25, 35)
+                    Helper.showTitle("§5§lMinos Relic!", subTitle, 0, 25, 35)
                 }
 
                 announceLootToParty(item.itemId)
@@ -309,7 +309,7 @@ object DianaTracker {
                     playCustomSound(Customization.stickSound[0], Customization.stickVolume)
                     if (Diana.lootAnnouncerScreen) {
                         val subTitle = if (Diana.lootAnnouncerPrice) "§6${Helper.getItemPriceFormatted("DAEDALUS_STICK")} coins" else ""
-                        Helper.showTitle("§d§lDaedalus Stick!", subTitle, 0, 25, 35)
+                        Helper.showTitle("§6§lDaedalus Stick!", subTitle, 0, 25, 35)
                     }
 
                     if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.minotaursSinceStick} §eMinotaurs to get a Daedalus Stick!")
