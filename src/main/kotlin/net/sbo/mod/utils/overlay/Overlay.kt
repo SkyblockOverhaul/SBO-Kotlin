@@ -3,9 +3,10 @@ package net.sbo.mod.utils.overlay
 import net.minecraft.client.gui.DrawContext
 import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.utils.Helper
-import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.data.OverlayValues
 import net.sbo.mod.utils.data.SboDataObject.overlayData
+import net.sbo.mod.utils.game.World
+import net.sbo.mod.utils.render.RenderUtils2D.pushPop
 import java.awt.Color
 
 /**
@@ -89,17 +90,17 @@ class Overlay(
         val textRenderer = mc.textRenderer ?: return
         if (!isOverOverlay(mouseX, mouseY)) return
 
-        var currentY = y/this.scale
-        var currentX = x/this.scale
+        var currentY = y / scale
+        var currentX = x / scale
 
         for (line in getLines()) {
-            line.lineClicked(mouseX, mouseY, currentX * this.scale, currentY * this.scale, textRenderer, this.scale)
+            line.lineClicked(mouseX, mouseY, currentX * scale, currentY * scale, textRenderer, scale)
 
             if (line.linebreak) {
                 currentY += textRenderer.fontHeight + 1
-                currentX = x/this.scale
+                currentX = x / scale
             } else {
-                currentX += textRenderer.getWidth(line.text) / this.scale
+                currentX += textRenderer.getWidth(line.text) / scale
             }
         }
     }
@@ -137,8 +138,8 @@ class Overlay(
 
     fun isOverOverlay(mouseX: Double, mouseY: Double): Boolean {
         if (!condition()) return false
-        val totalWidth = getTotalWidth() * this.scale
-        val totalHeight = getTotalHeight() * this.scale
+        val totalWidth = getTotalWidth() * scale
+        val totalHeight = getTotalHeight() * scale
 
         return mouseX >= x && mouseX <= x + totalWidth && mouseY >= y && mouseY <= y + totalHeight
     }
@@ -147,38 +148,58 @@ class Overlay(
         if (!condition()) return
         val textRenderer = mc.textRenderer ?: return
 
-        drawContext.matrices.push()
-        drawContext.matrices.scale(this.scale, this.scale, 1.0f)
+        drawContext.pushPop {
+            drawContext.matrices.scale(scale, scale)
 
-        var currentY = (y / this.scale)
-        var currentX = (x / this.scale)
+            var currentY = (y / scale)
+            var currentX = (x / scale)
 
-        val totalWidth = getTotalWidth()
-        val totalHeight = getTotalHeight()
+            val totalWidth = getTotalWidth()
+            val totalHeight = getTotalHeight()
 
-        if (selected) {
-            drawDebugBox(drawContext, currentX.toInt(), currentY.toInt(), totalWidth, totalHeight)
-            drawContext.drawText(textRenderer, "X: ${x.toInt()} Y: ${y.toInt()} Scale: ${String.format("%.1f", scale)}", (currentX).toInt(), (currentY - textRenderer.fontHeight - 1).toInt(), Color(255, 255, 255, 200).rgb, true)
-        }
+            if (selected) {
+                drawDebugBox(drawContext, currentX.toInt(), currentY.toInt(), totalWidth, totalHeight)
+                drawContext.drawText(
+                    textRenderer,
+                    "X: ${x.toInt()} Y: ${y.toInt()} Scale: ${String.format("%.1f", scale)}",
+                    (currentX).toInt(),
+                    (currentY - textRenderer.fontHeight - 1).toInt(),
+                    Color(255, 255, 255, 200).rgb,
+                    true
+                )
+            }
 
-        if (isOverOverlay(mouseX, mouseY) && Helper.currentScreen is OverlayEditScreen) {
-            drawContext.fill(currentX.toInt(), currentY.toInt(), (currentX + totalWidth).toInt(), (currentY + totalHeight).toInt(), Color(0, 0, 0, 100).rgb)
-        }
+            if (isOverOverlay(mouseX, mouseY) && Helper.currentScreen is OverlayEditScreen) {
+                drawContext.fill(
+                    currentX.toInt(),
+                    currentY.toInt(),
+                    (currentX + totalWidth).toInt(),
+                    (currentY + totalHeight).toInt(),
+                    Color(0, 0, 0, 100).rgb
+                )
+            }
 
-        for (line in getLines()) {
-            if (!line.checkCondition()) continue
-            if (Helper.getGuiName() in allowedGuis) line.updateMouseInteraction(mouseX, mouseY, currentX*this.scale, currentY*this.scale, textRenderer, this.scale, drawContext)
+            for (line in getLines()) {
+                if (!line.checkCondition()) continue
+                if (Helper.getGuiName() in allowedGuis) line.updateMouseInteraction(
+                    mouseX,
+                    mouseY,
+                    currentX * scale,
+                    currentY * scale,
+                    textRenderer,
+                    scale,
+                    drawContext
+                )
 
-            line.draw(drawContext, currentX.toInt(), currentY.toInt(), textRenderer)
-            if (line.linebreak) {
-                currentY += textRenderer.fontHeight + 1
-                currentX = (x / this.scale)
-            } else {
-                currentX += textRenderer.getWidth(line.text)
+                line.draw(drawContext, currentX.toInt(), currentY.toInt(), textRenderer)
+                if (line.linebreak) {
+                    currentY += textRenderer.fontHeight + 1
+                    currentX = (x / scale)
+                } else {
+                    currentX += textRenderer.getWidth(line.text)
+                }
             }
         }
-
-        drawContext.matrices.pop()
     }
 
     private fun drawDebugBox(drawContext: DrawContext, x: Int, y: Int, width: Int, height: Int) {

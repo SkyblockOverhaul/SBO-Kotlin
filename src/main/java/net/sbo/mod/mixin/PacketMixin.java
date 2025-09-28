@@ -1,8 +1,8 @@
 package net.sbo.mod.mixin;
 
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.PacketCallbacks;
 import net.minecraft.network.packet.Packet;
 import net.sbo.mod.utils.events.SBOEvent;
 import net.sbo.mod.utils.events.impl.PacketReceiveEvent;
@@ -21,8 +21,8 @@ public class PacketMixin {
     }
 
     // sended C2S packets
-    @Inject(method = "send(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/PacketCallbacks;)V", at = @At("HEAD"))
-    private void onPacketSend(Packet<?> packet, PacketCallbacks callbacks, CallbackInfo ci) {
+    @Inject(method = "send(Lnet/minecraft/network/packet/Packet;Lio/netty/channel/ChannelFutureListener;)V", at = @At("HEAD"))
+    private void onPacketSend(Packet<?> packet, ChannelFutureListener channelFutureListener, CallbackInfo ci) {
         SBOEvent.INSTANCE.emit(new PacketSendEvent(packet));
     }
 }

@@ -37,11 +37,14 @@ object RenderUtils2D {
         val borderColor = 0x80202020.toInt() // Semi-transparent dark gray
         val textLines = text.split("\n").map { Text.of(it) }
 
-        drawContext.matrices.push()
-        drawContext.matrices.translate(0.0, 0.0, 400.0)
+        drawContext.pushPop {
+            drawContext.drawTooltip(textRenderer, textLines, x.toInt(), y.toInt())
+        }
+    }
 
-        drawContext.drawTooltip(textRenderer, textLines, x.toInt(), y.toInt())
-
-        drawContext.matrices.pop()
+    fun DrawContext.pushPop(action: DrawContext.()->Unit) {
+        matrices.pushMatrix()
+        action()
+        matrices.popMatrix()
     }
 }
