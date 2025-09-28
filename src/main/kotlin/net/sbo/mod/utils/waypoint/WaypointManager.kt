@@ -89,10 +89,21 @@ object WaypointManager {
         }
 
         Register.onTick(5) { _ ->
-            closestBurrow = getClosestWaypoint(Player.getLastPosition(), "burrow") ?: (null to 1000.0)
-            closestGuess = getClosestWaypoint(Player.getLastPosition(), "guess") ?: (null to 1000.0)
+            val playerPos = Player.getLastPosition()
+            closestBurrow = getClosestWaypoint(playerPos, "burrow") ?: (null to 1000.0)
+            closestGuess = getClosestWaypoint(playerPos, "guess") ?: (null to 1000.0)
 
             val inqWps = getWaypointsOfType("inq")
+
+            if (Diana.dianaMultiBurrowGuess) {
+                val guessesToRemove = getGuessWaypoints()
+                    .filter { waypoint -> waypoint.distanceToPlayer() < 5.0 }
+                    .toList()
+
+                guessesToRemove.forEach { waypoint ->
+                    removeWaypoint(waypoint)
+                }
+            }
 
             this.forEachWaypoint { waypoint ->
                 if (waypoint.ttl > 0 && waypoint.creation + waypoint.ttl * 1000 < System.currentTimeMillis()) {
@@ -106,7 +117,6 @@ object WaypointManager {
 
             guessWp?.format(inqWps, closestBurrow.second)
         }
-
         Register.onTick(1) { _ ->
             if (!Diana.dianaMultiBurrowGuess) return@onTick
             if (!Diana.focusedWarp) {

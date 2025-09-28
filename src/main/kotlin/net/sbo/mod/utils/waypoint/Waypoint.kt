@@ -78,6 +78,15 @@ class Waypoint(
             "guess" -> {
                 val isMultiGuessActive = Diana.dianaMultiBurrowGuess
                 val isLineVisibleBase = Diana.guessLine && closestBurrowDistance > 60 && inqWaypoints.isEmpty()
+                var shouldShowWarpText: Boolean
+
+                if (isMultiGuessActive) {
+                    val isFocused = Diana.focusedWarp && focusedGuess == this
+                    val isClosest = !Diana.focusedWarp && closestGuess.first == this
+                    shouldShowWarpText = isFocused || isClosest
+                } else {
+                    shouldShowWarpText = true
+                }
 
                 this.color = if (focusedGuess == this) Color(Customization.focusedColor)
                 else Color(Customization.guessColor)
@@ -98,7 +107,13 @@ class Waypoint(
                 WaypointManager.waypointExists("burrow", this.pos).let { (exists, wp) ->
                     if (exists && wp != null) this.hidden = wp.distanceToPlayer() < 60
                 }
-                setWarpText()
+
+                if (shouldShowWarpText) {
+                    setWarpText()
+                } else {
+                    this.formattedText = "${this.text}${this.distanceText}"
+                    this.warp = null
+                }
             }
             "inq" -> {
                 if (inqWaypoints.lastOrNull() == this) {
