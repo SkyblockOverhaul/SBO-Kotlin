@@ -42,22 +42,6 @@ object WaypointManager {
             guessWp = Waypoint("Guess", 100.0, 100.0, 100.0, 0.0f, 0.964f, 1.0f, 0,"guess")
         }
 
-        Register.command("sboraitestguess") {
-            val pos = Player.getLastPosition()
-            guessWp = createGuessWaypoint(pos.plus(SboVec(10.0, 2.0, 10.0)))
-            if (guessWp == null) return@command;
-
-            addWaypoint(guessWp!!)
-        }
-
-        Register.command("sboraitestresetguess") {
-            getGuessWaypoints().clear()
-        }
-
-        Register.command("raitestrefreshguess") {
-            refreshBurrows()
-        }
-
         Register.command("sbosendinq") {
             val playerPos = Player.getLastPosition()
             Chat.command("pc x: ${playerPos.x.roundToInt()}, y: ${playerPos.y.roundToInt() - 1}, z: ${playerPos.z.roundToInt()}")
