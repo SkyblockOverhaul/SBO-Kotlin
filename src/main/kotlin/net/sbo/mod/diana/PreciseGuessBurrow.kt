@@ -4,7 +4,6 @@ import net.minecraft.network.packet.s2c.play.ParticleS2CPacket
 import net.minecraft.particle.ParticleTypes
 import net.sbo.mod.SBOKotlin
 import net.sbo.mod.settings.categories.Diana
-import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.PacketReceiveEvent
 import net.sbo.mod.utils.events.impl.PlayerInteractEvent

@@ -104,7 +104,6 @@ object WaypointManager {
             }
 
             guessWp?.format(inqWps, closestBurrow.second)
-            refreshBurrows()
         }
 
         Register.onTick(1) { _ ->
@@ -154,12 +153,7 @@ object WaypointManager {
         this.forEachWaypoint { waypoint ->
             waypoint.render(context)
         }
-
-        //this.guessWp?.render(context)
-
-        // Create a copy of the list to avoid ConcurrentModificationException
-        //val guessWaypointsCopy = this.guessWaypoints.toList()
-        //guessWaypointsCopy.forEach { it.render(context) }
+        this.guessWp?.render(context)
     }
 
     fun createGuessWaypoint(pos: SboVec?) : Waypoint? {
@@ -228,7 +222,7 @@ object WaypointManager {
      * @param pos The new position for the guess waypoint.
      */
     fun updateGuess(pos: SboVec?) {
-        if(!Diana.dianaMultiBurrowGuess) {
+        if (!Diana.dianaMultiBurrowGuess) {
             guessWp?.apply {
                 val (exists, wp) = waypointExists("burrow", this.pos)
             if (exists && wp != null) {

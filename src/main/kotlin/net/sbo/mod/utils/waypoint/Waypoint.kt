@@ -76,13 +76,19 @@ class Waypoint(
 
         when (this.type) {
             "guess" -> {
-                val isGuessLineVisible = Diana.guessLine && closestBurrowDistance > 60 && inqWaypoints.isEmpty()
+                val isMultiGuessActive = Diana.dianaMultiBurrowGuess
+                val isLineVisibleBase = Diana.guessLine && closestBurrowDistance > 60 && inqWaypoints.isEmpty()
 
                 this.color = if (focusedGuess == this) Color(Customization.focusedColor)
                 else Color(Customization.guessColor)
 
-                this.line = if (focusedGuess == this) isGuessLineVisible
-                else isGuessLineVisible && closestGuess.first == this
+                this.line = if (focusedGuess == this) {
+                    isLineVisibleBase
+                } else if (!isMultiGuessActive) {
+                    isLineVisibleBase
+                } else {
+                    isLineVisibleBase && closestGuess.first == this
+                }
 
                 this.r = color.red / 255f
                 this.g = color.green / 255f
