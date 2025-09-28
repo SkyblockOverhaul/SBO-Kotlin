@@ -128,9 +128,9 @@ object DianaTracker {
                 Chat.chat("§6[SBO] §6§lRARE DROP! ${rareDrops[item.itemId]}$msg")
             }
 
-            if (Helper.getSecondsPassed(lastInqDeath) > 2 || item.itemId == "MINOS_RELIC") {
-                trackItem(item.itemId, item.count)
-            } else {
+            trackItem(item.itemId, item.count)
+
+            if (Helper.getSecondsPassed(lastInqDeath) <= 2) {
                 announceLootToParty(item.itemId)
                 if (!isLootShare)
                     trackItem(item.itemId, item.count, true)
