@@ -17,6 +17,7 @@ import net.sbo.mod.utils.data.DianaTracker
 import net.sbo.mod.utils.data.SboDataObject.SBOConfigBundle
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
+import net.sbo.mod.utils.events.impl.GuiCloseEvent
 import net.sbo.mod.utils.events.impl.GuiOpenEvent
 import net.sbo.mod.utils.render.RenderUtils2D
 import java.util.concurrent.TimeUnit
@@ -72,16 +73,18 @@ object DianaLoot {
         overlay.init()
         updateLines()
         updateTimerText()
-        Register.onGuiClose { screen ->
-            if (screen.title.string == "Crafting") {
-                overlay.removeLine(changeView)
-                overlay.removeLine(delimiter)
-                overlay.removeLine(changeSellType)
-                overlay.removeLine(resetSession)
-            }
-        }
         Register.onTick(1) {
             updateTimerText()
+        }
+    }
+
+    @SboEvent
+    fun onGuiClose(event: GuiCloseEvent) {
+        if (event.screen.title.string == "Crafting") {
+            overlay.removeLine(changeView)
+            overlay.removeLine(delimiter)
+            overlay.removeLine(changeSellType)
+            overlay.removeLine(resetSession)
         }
     }
 
