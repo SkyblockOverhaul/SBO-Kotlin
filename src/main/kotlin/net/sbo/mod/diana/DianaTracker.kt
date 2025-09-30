@@ -154,8 +154,9 @@ object DianaTracker {
     fun trackWithSacksMessage(itemName: String, amount: Int) {
         if (!allowSackTracking) return
         if (!checkDiana()) return
-        if (sackDrops.contains(itemName)) {
-            trackItem(itemName, amount)
+        val item = itemName.replace("Ingot", "").trim()
+        if (sackDrops.contains(item)) {
+            trackItem(item, amount)
         }
     }
 
@@ -163,7 +164,7 @@ object DianaTracker {
         if (amount <= 0) return
         if (!dianaMobDiedRecently(4) && !gotLootShareRecently(4)) return
         if (!checkDiana()) return
-        if (amount in forbiddenCoins) return
+        if (amount in forbiddenCoins || amount > 65000) return
         trackItem("SCAVENGER_COINS", amount.toInt())
         trackItem("COINS", amount.toInt())
     }
