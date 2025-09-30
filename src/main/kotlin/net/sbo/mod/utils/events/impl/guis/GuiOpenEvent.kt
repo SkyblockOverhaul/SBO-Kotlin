@@ -1,4 +1,4 @@
-package net.sbo.mod.utils.events.impl
+package net.sbo.mod.utils.events.impl.guis
 
 import net.minecraft.client.gui.screen.Screen
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo

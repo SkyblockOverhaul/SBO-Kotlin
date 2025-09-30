@@ -9,8 +9,8 @@ import net.fabricmc.loader.api.FabricLoader
 import net.sbo.mod.SBOKotlin
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
-import net.sbo.mod.utils.events.impl.DisconnectEvent
-import net.sbo.mod.utils.events.impl.GameCloseEvent
+import net.sbo.mod.utils.events.impl.game.DisconnectEvent
+import net.sbo.mod.utils.events.impl.game.GameCloseEvent
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter

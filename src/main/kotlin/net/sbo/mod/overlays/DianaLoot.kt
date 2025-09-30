@@ -17,8 +17,8 @@ import net.sbo.mod.utils.data.DianaTracker
 import net.sbo.mod.utils.data.SboDataObject.SBOConfigBundle
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
-import net.sbo.mod.utils.events.impl.GuiCloseEvent
-import net.sbo.mod.utils.events.impl.GuiOpenEvent
+import net.sbo.mod.utils.events.impl.guis.GuiCloseEvent
+import net.sbo.mod.utils.events.impl.guis.GuiOpenEvent
 import net.sbo.mod.utils.render.RenderUtils2D
 import java.util.concurrent.TimeUnit
 

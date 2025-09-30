@@ -4,7 +4,7 @@ import net.sbo.mod.SBOKotlin
 import net.sbo.mod.utils.data.SboDataObject
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
-import net.sbo.mod.utils.events.impl.DisconnectEvent
+import net.sbo.mod.utils.events.impl.game.DisconnectEvent
 import java.lang.reflect.Field
 import java.util.Locale
 

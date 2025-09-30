@@ -1,4 +1,4 @@
-package net.sbo.mod.utils.events.impl
+package net.sbo.mod.utils.events.impl.packets
 
 import net.minecraft.network.packet.Packet
 

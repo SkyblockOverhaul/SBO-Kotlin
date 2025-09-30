@@ -4,8 +4,6 @@ import net.minecraft.client.gui.screen.Screen
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.item.ItemStack
 import net.sbo.mod.SBOKotlin.mc
-import net.sbo.mod.diana.DianaMobDetect
-import net.sbo.mod.diana.DianaTracker
 import net.sbo.mod.utils.data.DianaTracker as DianaTrackerDataClass
 import net.sbo.mod.overlays.DianaLoot
 import net.sbo.mod.settings.categories.Debug
@@ -18,8 +16,8 @@ import net.sbo.mod.utils.data.HypixelBazaarResponse
 import net.sbo.mod.utils.data.Item
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
-import net.sbo.mod.utils.events.impl.GuiCloseEvent
-import net.sbo.mod.utils.events.impl.GuiOpenEvent
+import net.sbo.mod.utils.events.impl.guis.GuiCloseEvent
+import net.sbo.mod.utils.events.impl.guis.GuiOpenEvent
 import net.sbo.mod.utils.game.Mayor
 import net.sbo.mod.utils.game.ScoreBoard
 import net.sbo.mod.utils.game.World
@@ -64,23 +62,23 @@ object Helper {
         }
         updateItemPriceInfo()
 
-        DianaMobDetect.onMobDeath { name, entity ->
-            val dist = entity.distanceTo(mc.player)
-            if (name.contains("Minos Inquisitor")) {
-                if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedInq) {
-                    hasTrackedInq = true
-                    DianaTracker.trackItem("MINOS_INQUISITOR_LS", 1)
-                    sleep(2000) {
-                        hasTrackedInq = false
-                    }
-                }
-                lastInqDeath = System.currentTimeMillis()
-            }
-            if (dist <= 30) {
-                allowSackTracking = true
-                lastDianaMobDeath = System.currentTimeMillis()
-            }
-        }
+//        DianaMobDetect.onMobDeath { name, entity ->
+//            val dist = entity.distanceTo(mc.player)
+//            if (name.contains("Minos Inquisitor")) {
+//                if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedInq) {
+//                    hasTrackedInq = true
+//                    DianaTracker.trackItem("MINOS_INQUISITOR_LS", 1)
+//                    sleep(2000) {
+//                        hasTrackedInq = false
+//                    }
+//                }
+//                lastInqDeath = System.currentTimeMillis()
+//            }
+//            if (dist <= 30) {
+//                allowSackTracking = true
+//                lastDianaMobDeath = System.currentTimeMillis()
+//            }
+//        }
     }
 
     @SboEvent

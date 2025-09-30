@@ -1,4 +1,4 @@
-package net.sbo.mod.utils.events.impl
+package net.sbo.mod.utils.events.impl.entity
 
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.Entity

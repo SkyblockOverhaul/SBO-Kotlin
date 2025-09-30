@@ -5,12 +5,12 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
-import net.sbo.mod.utils.events.impl.DisconnectEvent
-import net.sbo.mod.utils.events.impl.EntityLoadEvent
-import net.sbo.mod.utils.events.impl.EntityUnloadEvent
-import net.sbo.mod.utils.events.impl.GameCloseEvent
-import net.sbo.mod.utils.events.impl.GuiCloseEvent
-import net.sbo.mod.utils.events.impl.WorldChangeEvent
+import net.sbo.mod.utils.events.impl.entity.EntityLoadEvent
+import net.sbo.mod.utils.events.impl.entity.EntityUnloadEvent
+import net.sbo.mod.utils.events.impl.game.DisconnectEvent
+import net.sbo.mod.utils.events.impl.game.GameCloseEvent
+import net.sbo.mod.utils.events.impl.game.WorldChangeEvent
+import net.sbo.mod.utils.events.impl.guis.GuiCloseEvent
 import kotlin.reflect.KClass
 
 object SBOEvent {

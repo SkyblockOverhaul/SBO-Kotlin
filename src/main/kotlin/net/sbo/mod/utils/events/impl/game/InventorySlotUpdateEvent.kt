@@ -1,4 +1,4 @@
-package net.sbo.mod.utils.events.impl
+package net.sbo.mod.utils.events.impl.game
 
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket
 

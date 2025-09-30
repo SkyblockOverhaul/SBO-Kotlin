@@ -24,7 +24,7 @@ import net.sbo.mod.utils.data.PartyAddResponse
 import net.sbo.mod.utils.data.PartyUpdateResponse
 import net.sbo.mod.utils.data.Reqs
 import net.sbo.mod.utils.events.annotations.SboEvent
-import net.sbo.mod.utils.events.impl.DisconnectEvent
+import net.sbo.mod.utils.events.impl.game.DisconnectEvent
 import net.sbo.mod.utils.events.impl.PartyFinderRefreshListEvent
 import net.sbo.mod.utils.http.Http.getInt
 import java.util.UUID
