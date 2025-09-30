@@ -46,7 +46,6 @@ object DianaMobDetect {
                     val health = extractHealth(name)
                     if (health != null && health <= 0 && id !in defeated) {
                         defeated.add(id)
-                        println("Mob defeated: $name")
                         SBOEvent.emit(DianaMobDeathEvent(name, armorStand))
                     }
                     overlayLines.add(OverlayTextLine(name))
