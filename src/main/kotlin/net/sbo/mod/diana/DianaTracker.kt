@@ -127,9 +127,9 @@ object DianaTracker {
             if (Diana.lootAnnouncerChat) {
                 Chat.chat("§6[SBO] §6§lRARE DROP! ${rareDrops[item.itemId]}$msg")
             }
-            sleep (1000) {
-                trackItem(item.itemId, item.count)
+            trackItem(item.itemId, item.count)
 
+            sleep (1000) {
                 if (Helper.getSecondsPassed(lastInqDeath) <= 3) {
                     announceLootToParty(item.itemId)
                     if (!isLootShare)
