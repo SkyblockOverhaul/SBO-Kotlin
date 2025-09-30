@@ -25,7 +25,6 @@ import net.sbo.mod.diana.burrows.BurrowDetector
 import net.sbo.mod.diana.DianaMobDetect
 import net.sbo.mod.diana.achievements.AchievementManager
 import net.sbo.mod.diana.achievements.AchievementManager.unlockAchievement
-import net.sbo.mod.diana.PreciseGuessBurrow
 import net.sbo.mod.general.HelpCommand
 import net.sbo.mod.overlays.Bobber
 import net.sbo.mod.overlays.DianaLoot
@@ -42,9 +41,6 @@ import net.sbo.mod.utils.chat.ChatHandler
 import net.sbo.mod.utils.events.SBOEvent
 import net.sbo.mod.utils.overlay.OverlayManager
 import net.sbo.mod.utils.events.SboEventGeneratedRegistry
-import net.sbo.mod.utils.events.annotations.SboEvent
-import net.sbo.mod.utils.events.impl.GameCloseEvent
-import net.sbo.mod.utils.game.ServerStats
 
 object SBOKotlin {
 	@JvmField
@@ -60,11 +56,6 @@ object SBOKotlin {
 	val settings = Settings.register(configurator)
 
 	lateinit var version: String
-
-	@SboEvent
-	fun onGameClose(event: GameCloseEvent) {
-		logger.info("Client stopping, emitting GameCloseEvent")
-	}
 
 	@JvmStatic
 	fun onInitializeClient() {
