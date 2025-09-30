@@ -1,6 +1,15 @@
 package net.sbo.mod.utils.events
 
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
+import net.sbo.mod.utils.events.impl.DisconnectEvent
+import net.sbo.mod.utils.events.impl.EntityLoadEvent
+import net.sbo.mod.utils.events.impl.EntityUnloadEvent
+import net.sbo.mod.utils.events.impl.GameCloseEvent
+import net.sbo.mod.utils.events.impl.GuiCloseEvent
 import net.sbo.mod.utils.events.impl.WorldChangeEvent
 import kotlin.reflect.KClass
 
@@ -10,6 +19,23 @@ object SBOEvent {
     fun init () {
         ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register { mc, world ->
             emit(WorldChangeEvent(mc, world))
+        }
+        ClientPlayConnectionEvents.DISCONNECT.register { handler, client ->
+            emit(DisconnectEvent(handler, client))
+        }
+        ClientLifecycleEvents.CLIENT_STOPPING.register { client ->
+            emit(GameCloseEvent(client))
+        }
+        ClientEntityEvents.ENTITY_LOAD.register { entity, world ->
+            emit(EntityLoadEvent(entity, world))
+        }
+        ClientEntityEvents.ENTITY_UNLOAD.register { entity, world ->
+            emit(EntityUnloadEvent(entity, world))
+        }
+        ScreenEvents.AFTER_INIT.register { client, screen, scaledWidth, scaledHeight ->
+            ScreenEvents.remove(screen).register {
+                emit(GuiCloseEvent(client, screen, scaledWidth, scaledHeight))
+            }
         }
     }
 

@@ -104,7 +104,7 @@ object DianaTracker {
                 playCustomSound(Customization.relicSound[0], Customization.relicVolume)
                 if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.champsSinceRelic} §eChampions to get a Minos Relic!")
                 if (sboData.champsSinceRelic == 1) {
-                    Chat.chat("&6[SBO] &cb2b Minos Relic!")
+                    Chat.chat("§6[SBO] §cb2b Minos Relic!")
                     unlockAchievement(5) // b2b relic
                 }
                 if (isLootShare) {
@@ -115,7 +115,7 @@ object DianaTracker {
 
                 if (Diana.lootAnnouncerScreen) {
                     val subTitle = if (Diana.lootAnnouncerPrice) "§6${Helper.getItemPriceFormatted(item.itemId)} coins" else ""
-                    Helper.showTitle("§d§lMinos Relic!", subTitle, 0, 25, 35)
+                    Helper.showTitle("§5§lMinos Relic!", subTitle, 0, 25, 35)
                 }
 
                 announceLootToParty(item.itemId)
@@ -266,11 +266,11 @@ object DianaTracker {
 
                         trackItem("CHIMERA", 1)
                         if (sboData.b2bChim && sboData.inqsSinceChim == 1) {
-                            Chat.chat("&6[SBO] &cb2b2b Chimera!")
+                            Chat.chat("§6[SBO] §cb2b2b Chimera!")
                             unlockAchievement(2) // b2b2b chim
                         }
                         if (sboData.inqsSinceChim == 1 && !sboData.b2bChim) {
-                            Chat.chat("&6[SBO] &cb2b Chimera!")
+                            Chat.chat("§6[SBO] §cb2b Chimera!")
                             sboData.b2bChim = true
                             unlockAchievement(1) // b2b chim
                         }
@@ -286,11 +286,11 @@ object DianaTracker {
 
                         sleep(200) {
                             if (sboData.b2bChimLs && sboData.inqsSinceLsChim == 1) {
-                                Chat.chat("&6[SBO] &cb2b2b Lootshare Chimera!")
+                                Chat.chat("§6[SBO] §cb2b2b Lootshare Chimera!")
                                 unlockAchievement(67) // b2b2b chim ls
                             }
                             if (sboData.inqsSinceLsChim == 1 && !sboData.b2bChimLs) {
-                                Chat.chat("&6[SBO] &cb2b Lootshare Chimera!")
+                                Chat.chat("§6[SBO] §cb2b Lootshare Chimera!")
                                 sboData.b2bChimLs = true
                                 unlockAchievement(65) // b2b chim ls
                             }
@@ -310,7 +310,7 @@ object DianaTracker {
                     playCustomSound(Customization.stickSound[0], Customization.stickVolume)
                     if (Diana.lootAnnouncerScreen) {
                         val subTitle = if (Diana.lootAnnouncerPrice) "§6${Helper.getItemPriceFormatted("DAEDALUS_STICK")} coins" else ""
-                        Helper.showTitle("§d§lDaedalus Stick!", subTitle, 0, 25, 35)
+                        Helper.showTitle("§6§lDaedalus Stick!", subTitle, 0, 25, 35)
                     }
 
                     if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.minotaursSinceStick} §eMinotaurs to get a Daedalus Stick!")
@@ -326,11 +326,11 @@ object DianaTracker {
 
                     trackItem("DAEDALUS_STICK", 1)
                     if (sboData.b2bStick && sboData.minotaursSinceStick == 1) {
-                        Chat.chat("&6[SBO] &cb2b2b Daedalus Stick!")
+                        Chat.chat("§6[SBO] §cb2b2b Daedalus Stick!")
                         unlockAchievement(4) // b2b2b stick
                     }
                     if (sboData.minotaursSinceStick == 1 && !sboData.b2bStick) {
-                        Chat.chat("&6[SBO] &cb2b Daedalus Stick!")
+                        Chat.chat("§6[SBO] §cb2b Daedalus Stick!")
                         sboData.b2bStick = true
                         unlockAchievement(3) // b2b stick
                     }

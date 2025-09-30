@@ -79,14 +79,16 @@ object WaypointManager {
 
             val inqWps = getWaypointsOfType("inq")
 
-            if (Diana.dianaMultiBurrowGuess) {
-                val guessesToRemove = getGuessWaypoints()
-                    .filter { waypoint -> waypoint.distanceToPlayer() < 5.0 }
-                    .toList()
-
-                guessesToRemove.forEach { waypoint ->
-                    removeWaypoint(waypoint)
+            val posP = SboVec(playerPos.x, playerPos.y, playerPos.z).roundLocationToBlock()
+            val guessesToRemove = getGuessWaypoints()
+                .filter { waypoint ->
+                    waypoint.distanceToPlayer() < 3.0 ||
+                    (waypoint.pos.x == posP.x && waypoint.pos.z == posP.z)
                 }
+                .toList()
+
+            guessesToRemove.forEach { waypoint ->
+                removeWaypoint(waypoint)
             }
 
             this.forEachWaypoint { waypoint ->
@@ -101,6 +103,7 @@ object WaypointManager {
 
             guessWp?.format(inqWps, closestBurrow.second)
         }
+
         Register.onTick(1) { _ ->
             if (!Diana.dianaMultiBurrowGuess) return@onTick
             if (!Diana.focusedWarp) {

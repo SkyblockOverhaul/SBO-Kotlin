@@ -18,6 +18,7 @@ import net.sbo.mod.utils.data.HypixelBazaarResponse
 import net.sbo.mod.utils.data.Item
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
+import net.sbo.mod.utils.events.impl.GuiCloseEvent
 import net.sbo.mod.utils.events.impl.GuiOpenEvent
 import net.sbo.mod.utils.game.Mayor
 import net.sbo.mod.utils.game.ScoreBoard
@@ -54,12 +55,6 @@ object Helper {
             true
         }
 
-        Register.onGuiClose { screen ->
-            sleep(200) {
-                currentScreen = null
-            }
-        }
-
         Register.onTick(20) { // maybe better way to register this
             hasSpade = playerHasItem("ANCESTRAL_SPADE")
         }
@@ -85,6 +80,13 @@ object Helper {
                 allowSackTracking = true
                 lastDianaMobDeath = System.currentTimeMillis()
             }
+        }
+    }
+
+    @SboEvent
+    fun onGuiClose(event: GuiCloseEvent) {
+        sleep(200) {
+            currentScreen = null
         }
     }
 
