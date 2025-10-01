@@ -85,7 +85,6 @@ object DianaMobDetect {
             if (health != null && health <= 0 && id !in defeated) {
                 defeated.add(id)
                 SBOEvent.emit(DianaMobDeathEvent(name, entity))
-                println("Diana Mob Defeated: $name")
             }
             return OverlayTextLine(name)
         }
