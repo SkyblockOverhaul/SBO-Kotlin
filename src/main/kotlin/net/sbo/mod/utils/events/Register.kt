@@ -68,18 +68,6 @@ object Register {
     }
 
     /**
-     * Registers an event that listens for chat messages.
-     * The action receives the message as a `Text` object.
-     */
-    fun onChatMessage(
-        action: (message: Text) -> Unit
-    ) {
-        ClientReceiveMessageEvents.GAME.register { message, _ ->
-            action(message)
-        }
-    }
-
-    /**
      * Registers an event that listens for chat messages that match a regex.
      * The action receives both the message and the regex match result for easy value extraction.
      *
