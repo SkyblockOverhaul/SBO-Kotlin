@@ -5,6 +5,7 @@ import net.sbo.mod.utils.events.Register
 import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.settings.categories.Diana
 import net.sbo.mod.utils.Helper
+import net.sbo.mod.utils.Helper.checkCocoon
 import net.sbo.mod.utils.Player
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.chat.ChatUtils.formattedString
@@ -39,9 +40,10 @@ object DianaMobDetect {
                     continue
                 }
 
+                checkCocoon(armorStand)
+
                 val name = armorStand.customName?.formattedString() ?: armorStand.name.formattedString()
                 if (name.isEmpty() || name == "Armor Stand") continue
-
                 if (name.contains("§2✿", ignoreCase = true)) {
                     val health = extractHealth(name)
                     if (health != null && health <= 0 && id !in defeated) {
