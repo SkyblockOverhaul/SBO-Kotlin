@@ -42,15 +42,9 @@ object DianaMobDetect {
 
                 checkCocoon(armorStand)
 
-                val name = armorStand.customName?.formattedString() ?: armorStand.name.formattedString()
-                if (name.isEmpty() || name == "Armor Stand") continue
-                if (name.contains("§2✿", ignoreCase = true)) {
-                    val health = extractHealth(name)
-                    if (health != null && health <= 0 && id !in defeated) {
-                        defeated.add(id)
-                        SBOEvent.emit(DianaMobDeathEvent(name, armorStand))
-                    }
-                    overlayLines.add(OverlayTextLine(name))
+                val line = checkDianaMob(armorStand, id)
+                if (line != null) {
+                    overlayLines.add(line)
                 }
             }
             mobHpOverlay.setLines(overlayLines)
@@ -81,6 +75,21 @@ object DianaMobDetect {
             value.endsWith("K") -> value.dropLast(1).toDoubleOrNull()?.times(1_000)
             else -> value.toDoubleOrNull()
         }
+    }
+
+    private fun checkDianaMob(entity: ArmorStandEntity, id: Int) : OverlayTextLine? {
+        val name = entity.customName?.formattedString() ?: entity.name.formattedString()
+        if (name.isEmpty() || name == "Armor Stand") return null
+        if (name.contains("§2✿", ignoreCase = true)) {
+            val health = extractHealth(name)
+            if (health != null && health <= 0 && id !in defeated) {
+                defeated.add(id)
+                SBOEvent.emit(DianaMobDeathEvent(name, entity))
+                println("Diana Mob Defeated: $name")
+            }
+            return OverlayTextLine(name)
+        }
+        return null
     }
 
     fun onInqSpawn() {
