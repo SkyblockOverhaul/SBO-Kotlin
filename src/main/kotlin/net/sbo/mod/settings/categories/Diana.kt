@@ -282,6 +282,16 @@ object Diana : CategoryKt("Diana") {
         this.description = Translated("Sends a text on inq spawn 5 seconds after spawn, use {since} for mobs since inq, {chance} for inq chance")
     }
 
+    var announceCocoon by boolean(false) {
+        this.name = Translated("Send Text On Inq Cocoon")
+        this.description = Translated("Sends a text on inq cocoon")
+    }
+
+    var cocoonTitle by boolean(false) {
+        this.name = Translated("Show Title On Inq Cocoon")
+        this.description = Translated("Shows a title on inq cocoon")
+    }
+
     init {
         button {
             title = "Send Test Inq Message"
