@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.sbo.mod.utils.events.impl.entity.EntityLoadEvent
 import net.sbo.mod.utils.events.impl.entity.EntityUnloadEvent
+import net.sbo.mod.utils.events.impl.game.ChatMessageAllowEvent
 import net.sbo.mod.utils.events.impl.game.ChatMessageEvent
 import net.sbo.mod.utils.events.impl.game.DisconnectEvent
 import net.sbo.mod.utils.events.impl.game.GameCloseEvent
@@ -56,11 +57,22 @@ object SBOEvent {
         }
         /**
          * Chat Message Event
-         * Fired when a chat message is received by the client.
+         * Fired when a chat message is received.
          */
         ClientReceiveMessageEvents.GAME.register { message, signed ->
             emit(ChatMessageEvent(message, signed))
         }
+        /**
+         * Chat Message Allow Event
+         * Fired to determine if a chat message should be displayed.
+         * Allows for filtering of spammy messages.
+         */
+        ClientReceiveMessageEvents.ALLOW_GAME.register { message, signed ->
+            val event = ChatMessageAllowEvent(message, signed, true)
+            emit(event)
+            event.isAllowed
+        }
+
         /**
          * GUI Close Event
          * Fired when a GUI screen is closed.

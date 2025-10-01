@@ -113,8 +113,6 @@ object SBOKotlin {
 		InquisLoot.init()
 		AchievementManager.init()
 		MessageHider.init()
-		ChatHandler.init()
-
 
 		Register.onTick(100) { unregister ->
 			if (mc.player != null && World.isInSkyblock()) {

@@ -514,18 +514,18 @@ object Helper {
         if (!lastInq) return false
 
         val head: ItemStack = entity.getEquippedStack(EquipmentSlot.HEAD)
-        if(!head.isEmpty && head.item.toString().equals("minecraft:player_head")){
+        if (!head.isEmpty && head.item.toString() == "minecraft:player_head"){
             val profile: ProfileComponent? = head.get(DataComponentTypes.PROFILE)
             val textures : Property? = profile?.properties?.get("textures")?.first()
             val texture = textures?.value
-            if(texture.equals(cocoonTexture) && lastCocoon + 10000 < System.currentTimeMillis()){
+            if (texture.equals(cocoonTexture) && lastCocoon + 10000 < System.currentTimeMillis()){
                 lastCocoon = System.currentTimeMillis()
-                if(Diana.announceCocoon){
+                if (Diana.announceCocoon){
                     sleep(200) {
                         Chat.command("pc Cocoon!")
                     }
                 }
-                if(Diana.cocoonTitle){
+                if (Diana.cocoonTitle){
                     showTitle("§r§6§l<§b§l§kO§6§l> §b§lCOCOON! §6§l<§b§l§kO§6§l>", null, 10, 40, 10)
                     playCustomSound(Customization.inqSound[0], Customization.inqVolume)
                 }
