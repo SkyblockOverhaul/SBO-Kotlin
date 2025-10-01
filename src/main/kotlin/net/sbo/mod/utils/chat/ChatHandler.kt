@@ -14,14 +14,6 @@ object ChatHandler {
     private val messageHandlers = mutableListOf<ChatRule>()
     private val spammyPattern = Regex("§[0-9a-fk-or].+[0-9,]+\\/[0-9,]+❤.*")
 
-//    fun init () {
-//        ClientReceiveMessageEvents.ALLOW_GAME.register { message, overlay ->
-//            if (spammyPattern.matches(message.string)) return@register true
-//            processMessage(message)
-//        }
-//    }
-
-    // todo: needs testing when im home
     @SboEvent
     fun onAllowMessage(event: ChatMessageAllowEvent) {
         if (spammyPattern.matches(event.message.string)) {
