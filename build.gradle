@@ -48,7 +48,7 @@ dependencies {
 	modImplementation(include("gg.essential:universalcraft-${project.minecraft_version}-fabric:${project.ucraft_version}"))
 	modImplementation(include("gg.essential:elementa:${project.elementa_version}"))
 	modImplementation(include("com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-${project.minecraft_version}:${project.rconfig_version}"))
-	modImplementation(include("com.teamresourceful.resourcefulconfigkt:resourcefulconfigkt-fabric-${project.minecraft_version}:${project.rconfig_version}"))
+	modImplementation(include("com.teamresourceful.resourcefulconfigkt:resourcefulconfigkt-fabric-${project.rconfig_kt_version}"))
 	modImplementation(include("net.azureaaron:hm-api:1.0.1+1.21.2"))
 	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
