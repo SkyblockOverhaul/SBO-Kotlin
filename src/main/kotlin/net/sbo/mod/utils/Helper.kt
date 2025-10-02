@@ -1,14 +1,24 @@
 package net.sbo.mod.utils
 
+import com.mojang.authlib.properties.Property
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.component.DataComponentTypes
+import net.minecraft.component.type.ProfileComponent
+import net.minecraft.entity.Entity
+import net.minecraft.entity.EquipmentSlot
+import net.minecraft.entity.decoration.ArmorStandEntity
 import net.minecraft.item.ItemStack
+import net.minecraft.item.PlayerHeadItem
 import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.diana.DianaTracker
 import net.sbo.mod.utils.data.DianaTracker as DianaTrackerDataClass
 import net.sbo.mod.overlays.DianaLoot
+import net.sbo.mod.settings.categories.Customization
 import net.sbo.mod.settings.categories.Debug
 import net.sbo.mod.settings.categories.Diana
+import net.sbo.mod.utils.SoundHandler.playCustomSound
+import net.sbo.mod.utils.chat.Chat
+import net.sbo.mod.utils.chat.ChatUtils.formattedString
 import net.sbo.mod.utils.data.SboDataObject
 import kotlin.concurrent.thread
 import net.sbo.mod.utils.data.DianaItemsData
@@ -24,6 +34,7 @@ import net.sbo.mod.utils.game.Mayor
 import net.sbo.mod.utils.game.ScoreBoard
 import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.http.Http
+import net.sbo.mod.utils.math.SboVec
 import net.sbo.mod.utils.waypoint.WaypointManager.onLootshare
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -41,6 +52,7 @@ object Helper {
     var lastDianaMobDeath: Long = 0L
     var lastInqDeath: Long = 0L
     var currentScreen: Screen? = null
+    var lastCocoon: Long = 0L
 
     private var hasTrackedInq: Boolean = false
     private var prevInv = mutableMapOf<String, Item>()
@@ -494,6 +506,33 @@ object Helper {
 
     fun getMagicFindAndLooting(mf: Int, looting: Int): String {
         return " §7[MF:$mf] [L:$looting]"
+    }
+
+    private val cocoonTexture = "eyJ0aW1lc3RhbXAiOjE1ODMxMjMyODkwNTMsInByb2ZpbGVJZCI6IjkxZjA0ZmU5MGYzNjQzYjU4ZjIwZTMzNzVmODZkMzllIiwicHJvZmlsZU5hbWUiOiJTdG9ybVN0b3JteSIsInNpZ25hdHVyZVJlcXVpcmVkIjp0cnVlLCJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGNlYjBlZDhmYzIyNzJiM2QzZDgyMDY3NmQ1MmEzOGU3YjJlOGRhOGM2ODdhMjMzZTBkYWJhYTE2YzBlOTZkZiJ9fX0="
+    fun checkCocoon(entity: ArmorStandEntity): Boolean {
+        val lastInq = getSecondsPassed(lastInqDeath) < 5
+        if (!lastInq) return false
+
+        val head: ItemStack = entity.getEquippedStack(EquipmentSlot.HEAD)
+        if (!head.isEmpty && head.item.toString() == "minecraft:player_head"){
+            val profile: ProfileComponent? = head.get(DataComponentTypes.PROFILE)
+            val textures : Property? = profile?.properties?.get("textures")?.first()
+            val texture = textures?.value
+            if (texture.equals(cocoonTexture) && lastCocoon + 10000 < System.currentTimeMillis()){
+                lastCocoon = System.currentTimeMillis()
+                if (Diana.announceCocoon){
+                    sleep(200) {
+                        Chat.command("pc Cocoon!")
+                    }
+                }
+                if (Diana.cocoonTitle){
+                    showTitle("§r§6§l<§b§l§kO§6§l> §b§lCOCOON! §6§l<§b§l§kO§6§l>", null, 10, 40, 10)
+                    playCustomSound(Customization.inqSound[0], Customization.inqVolume)
+                }
+                return true
+            }
+        }
+        return false
     }
 }
 

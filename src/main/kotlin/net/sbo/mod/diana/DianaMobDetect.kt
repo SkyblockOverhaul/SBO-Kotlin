@@ -5,6 +5,7 @@ import net.sbo.mod.utils.events.Register
 import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.settings.categories.Diana
 import net.sbo.mod.utils.Helper
+import net.sbo.mod.utils.Helper.checkCocoon
 import net.sbo.mod.utils.Player
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.chat.ChatUtils.formattedString
@@ -39,16 +40,11 @@ object DianaMobDetect {
                     continue
                 }
 
-                val name = armorStand.customName?.formattedString() ?: armorStand.name.formattedString()
-                if (name.isEmpty() || name == "Armor Stand") continue
+                checkCocoon(armorStand)
 
-                if (name.contains("§2✿", ignoreCase = true)) {
-                    val health = extractHealth(name)
-                    if (health != null && health <= 0 && id !in defeated) {
-                        defeated.add(id)
-                        SBOEvent.emit(DianaMobDeathEvent(name, armorStand))
-                    }
-                    overlayLines.add(OverlayTextLine(name))
+                val line = checkDianaMob(armorStand, id)
+                if (line != null) {
+                    overlayLines.add(line)
                 }
             }
             mobHpOverlay.setLines(overlayLines)
@@ -79,6 +75,20 @@ object DianaMobDetect {
             value.endsWith("K") -> value.dropLast(1).toDoubleOrNull()?.times(1_000)
             else -> value.toDoubleOrNull()
         }
+    }
+
+    private fun checkDianaMob(entity: ArmorStandEntity, id: Int) : OverlayTextLine? {
+        val name = entity.customName?.formattedString() ?: entity.name.formattedString()
+        if (name.isEmpty() || name == "Armor Stand") return null
+        if (name.contains("§2✿", ignoreCase = true)) {
+            val health = extractHealth(name)
+            if (health != null && health <= 0 && id !in defeated) {
+                defeated.add(id)
+                SBOEvent.emit(DianaMobDeathEvent(name, entity))
+            }
+            return OverlayTextLine(name)
+        }
+        return null
     }
 
     fun onInqSpawn() {

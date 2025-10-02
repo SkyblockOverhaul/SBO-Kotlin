@@ -82,6 +82,7 @@ object WaypointManager {
             val guessesToRemove = getGuessWaypoints()
                 .filter { waypoint ->
                     waypoint.distanceToPlayer() < 3.0 ||
+                    waypoint.pos.y < 60 ||
                     (waypoint.pos.x == posP.x && waypoint.pos.z == posP.z)
                 }
                 .toList()

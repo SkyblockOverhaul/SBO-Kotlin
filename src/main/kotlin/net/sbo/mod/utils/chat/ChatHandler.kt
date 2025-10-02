@@ -4,6 +4,8 @@ import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.text.Text
 import net.sbo.mod.settings.categories.Debug
 import net.sbo.mod.utils.chat.ChatUtils.formattedString
+import net.sbo.mod.utils.events.annotations.SboEvent
+import net.sbo.mod.utils.events.impl.game.ChatMessageAllowEvent
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -12,11 +14,13 @@ object ChatHandler {
     private val messageHandlers = mutableListOf<ChatRule>()
     private val spammyPattern = Regex("§[0-9a-fk-or].+[0-9,]+\\/[0-9,]+❤.*")
 
-    fun init () {
-        ClientReceiveMessageEvents.ALLOW_GAME.register { message, overlay ->
-            if (spammyPattern.matches(message.string)) return@register true
-            processMessage(message)
+    @SboEvent
+    fun onAllowMessage(event: ChatMessageAllowEvent) {
+        if (spammyPattern.matches(event.message.string)) {
+            event.isAllowed = false
+            return
         }
+        event.isAllowed = processMessage(event.message)
     }
 
     fun registerHandler(pattern: Pattern, action: (Text, Matcher) -> Boolean) {
