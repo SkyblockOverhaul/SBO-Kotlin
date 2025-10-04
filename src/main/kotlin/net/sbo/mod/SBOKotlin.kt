@@ -37,7 +37,6 @@ import net.sbo.mod.qol.MessageHider
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.SboTimerManager
 import net.sbo.mod.utils.SoundHandler
-import net.sbo.mod.utils.chat.ChatHandler
 import net.sbo.mod.utils.events.SBOEvent
 import net.sbo.mod.utils.overlay.OverlayManager
 import net.sbo.mod.utils.events.SboEventGeneratedRegistry

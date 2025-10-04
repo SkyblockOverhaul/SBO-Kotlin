@@ -142,7 +142,7 @@ object SboDataObject {
 
                 loadedData
             }
-        } catch (e: JsonSyntaxException) {
+        } catch (_: JsonSyntaxException) {
             SBOKotlin.logger.error("[$modName] Error parsing JSON in $fileName, resetting to default data.")
             save(modName, defaultData, fileName)
             defaultData
@@ -356,7 +356,7 @@ object SboDataObject {
     }
 
     private fun saveAllData() {
-        configMapforSave.forEach { (configName, configData) ->
+        configMapforSave.forEach { (_, configData) ->
             configData.first.invoke()
         }
     }

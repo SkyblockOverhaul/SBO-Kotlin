@@ -38,7 +38,6 @@ object PartyFinderManager {
     private var updateBool = false
     private var requeue = false
     private var ghostParty = false
-    private var requestSend = false
     private var usedPf = false
 
     private var partySize = 0
@@ -250,7 +249,7 @@ object PartyFinderManager {
                     Chat.chat("§6[SBO] §4Unexpected error while creating party: ${error.message}")
                 }
 
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 return
             }
         } else {

@@ -123,7 +123,7 @@ object HypixelModApi {
                 PartyFinderManager.creatingParty = false
                 Chat.chat("§6[SBO] §eYou are not on Hypixel. You can only use this feature on Hypixel.")
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             PartyFinderManager.creatingParty = false
         }
     }
