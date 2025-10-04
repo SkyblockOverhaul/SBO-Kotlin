@@ -1,6 +1,5 @@
 package net.sbo.mod.utils.chat
 
-import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.text.Text
 import net.sbo.mod.settings.categories.Debug
 import net.sbo.mod.utils.chat.ChatUtils.formattedString
@@ -12,7 +11,7 @@ import java.util.regex.Pattern
 object ChatHandler {
 
     private val messageHandlers = mutableListOf<ChatRule>()
-    private val spammyPattern = Regex("§[0-9a-fk-or].+[0-9,]+\\/[0-9,]+❤.*")
+    private val spammyPattern = Regex("§[0-9a-fk-or].+[0-9,]+/[0-9,]+❤.*")
 
     @SboEvent
     fun onAllowMessage(event: ChatMessageAllowEvent) {

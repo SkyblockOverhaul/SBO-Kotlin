@@ -1,12 +1,22 @@
 package net.sbo.mod.diana
 
+import com.mojang.authlib.properties.Property
+import net.minecraft.component.DataComponentTypes
+import net.minecraft.component.type.ProfileComponent
+import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.decoration.ArmorStandEntity
+import net.minecraft.item.ItemStack
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.SBOKotlin.mc
+import net.sbo.mod.settings.categories.Customization
 import net.sbo.mod.settings.categories.Diana
-import net.sbo.mod.utils.Helper
-import net.sbo.mod.utils.Helper.checkCocoon
+import net.sbo.mod.utils.Helper.getSecondsPassed
+import net.sbo.mod.utils.Helper.lastCocoon
+import net.sbo.mod.utils.Helper.lastInqDeath
+import net.sbo.mod.utils.Helper.showTitle
+import net.sbo.mod.utils.Helper.sleep
 import net.sbo.mod.utils.Player
+import net.sbo.mod.utils.SoundHandler.playCustomSound
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.chat.ChatUtils.formattedString
 import net.sbo.mod.utils.events.SBOEvent
@@ -17,6 +27,7 @@ import net.sbo.mod.utils.events.impl.entity.EntityUnloadEvent
 import net.sbo.mod.utils.overlay.Overlay
 import net.sbo.mod.utils.overlay.OverlayExamples
 import net.sbo.mod.utils.overlay.OverlayTextLine
+import kotlin.collections.first
 import kotlin.math.roundToInt
 
 object DianaMobDetect {
@@ -91,6 +102,33 @@ object DianaMobDetect {
         return null
     }
 
+    private fun checkCocoon(entity: ArmorStandEntity): Boolean {
+        val cocoonTexture = "eyJ0aW1lc3RhbXAiOjE1ODMxMjMyODkwNTMsInByb2ZpbGVJZCI6IjkxZjA0ZmU5MGYzNjQzYjU4ZjIwZTMzNzVmODZkMzllIiwicHJvZmlsZU5hbWUiOiJTdG9ybVN0b3JteSIsInNpZ25hdHVyZVJlcXVpcmVkIjp0cnVlLCJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGNlYjBlZDhmYzIyNzJiM2QzZDgyMDY3NmQ1MmEzOGU3YjJlOGRhOGM2ODdhMjMzZTBkYWJhYTE2YzBlOTZkZiJ9fX0="
+        val lastInq = getSecondsPassed(lastInqDeath) < 5
+        if (!lastInq) return false
+
+        val head: ItemStack = entity.getEquippedStack(EquipmentSlot.HEAD)
+        if (!head.isEmpty && head.item.toString() == "minecraft:player_head"){
+            val profile: ProfileComponent? = head.get(DataComponentTypes.PROFILE)
+            val textures : Property? = profile?.properties?.get("textures")?.first()
+            val texture = textures?.value
+            if (texture.equals(cocoonTexture) && lastCocoon + 10000 < System.currentTimeMillis()){
+                lastCocoon = System.currentTimeMillis()
+                if (Diana.announceCocoon){
+                    sleep(200) {
+                        Chat.command("pc Cocoon!")
+                    }
+                }
+                if (Diana.cocoonTitle){
+                    showTitle("§r§6§l<§b§l§kO§6§l> §b§lCOCOON! §6§l<§b§l§kO§6§l>", null, 10, 40, 10)
+                    playCustomSound(Customization.inqSound[0], Customization.inqVolume)
+                }
+                return true
+            }
+        }
+        return false
+    }
+
     fun onInqSpawn() {
         if (Diana.shareInq) {
             val playerPos = Player.getLastPosition()
@@ -99,7 +137,7 @@ object DianaMobDetect {
 
         Diana.announceKilltext.firstOrNull()?.let { killText ->
             if (killText.isNotBlank()) {
-                Helper.sleep(5000) {
+                sleep(5000) {
                     Chat.command("pc " + Diana.announceKilltext[0])
                 }
             }

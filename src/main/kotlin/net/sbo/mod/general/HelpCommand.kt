@@ -8,7 +8,6 @@ import net.minecraft.util.Formatting
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.events.Register
-import kotlin.math.roundToInt
 
 object HelpCommand {
     val commands = arrayOf(

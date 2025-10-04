@@ -59,7 +59,7 @@ object PreciseGuessBurrow {
         val guessPosition = this.guessBurrowLocation()
         if (guessPosition == null) return
         finalLocation = guessPosition.down(0.5).roundLocationToBlock()
-        finalLocation = guessPosition.down(0.5).roundLocationToBlock();
+        finalLocation = guessPosition.down(0.5).roundLocationToBlock()
         WaypointManager.updateGuess(finalLocation, newBurrow)
         newBurrow = false
     }

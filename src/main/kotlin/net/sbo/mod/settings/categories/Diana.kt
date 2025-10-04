@@ -2,14 +2,11 @@ package net.sbo.mod.settings.categories
 
 import com.teamresourceful.resourcefulconfigkt.api.CategoryKt
 import com.teamresourceful.resourcefulconfigkt.api.ObservableEntry
-import net.sbo.mod.SBOKotlin.mc
-import net.sbo.mod.diana.DianaTracker.announceLootToParty
 import net.sbo.mod.overlays.DianaLoot
 import net.sbo.mod.overlays.DianaMobs
 import net.sbo.mod.overlays.InquisLoot
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.chat.Chat
-import net.sbo.mod.utils.overlay.OverlayEditScreen
 import net.sbo.mod.utils.waypoint.AdditionalHubWarps
 
 

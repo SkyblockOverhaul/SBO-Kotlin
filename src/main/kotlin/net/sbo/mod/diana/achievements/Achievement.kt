@@ -3,7 +3,6 @@ package net.sbo.mod.diana.achievements
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.sbo.mod.SBOKotlin.mc
-import net.sbo.mod.diana.achievements.AchievementManager.getAchievement
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.chat.Chat.textComponent
