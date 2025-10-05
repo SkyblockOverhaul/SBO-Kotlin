@@ -412,7 +412,7 @@ object DianaTracker {
             }
         }
         if (!allZero) {
-            pastDianaEventsData.events += dianaTrackerMayor
+            pastDianaEventsData.events += dianaTrackerMayor.snapshot()
             SboDataObject.save("PastDianaEventsData")
         }
         dianaTrackerMayor.reset()
