@@ -3,17 +3,8 @@ package net.sbo.mod.utils.events
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
-import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.world.ClientWorld
-import net.minecraft.entity.Entity
 import net.minecraft.text.Text
-import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.utils.Helper.removeFormatting
 import net.sbo.mod.utils.chat.ChatHandler
 import net.sbo.mod.utils.chat.ChatUtils.formattedString
@@ -75,28 +66,6 @@ object Register {
     }
 
     /**
-     * Registers an event that listens for the client disconnecting from the server.
-     * The action is executed when the client disconnects.
-     */
-    fun onDisconnect(action: () -> Unit) {
-        ClientPlayConnectionEvents.DISCONNECT.register { handler, client ->
-            action()
-        }
-    }
-
-    /**
-     * Registers an event that listens for chat messages.
-     * The action receives the message as a `Text` object.
-     */
-    fun onChatMessage(
-        action: (message: Text) -> Unit
-    ) {
-        ClientReceiveMessageEvents.GAME.register { message, _ ->
-            action(message)
-        }
-    }
-
-    /**
      * Registers an event that listens for chat messages that match a regex.
      * The action receives both the message and the regex match result for easy value extraction.
      *
@@ -132,35 +101,5 @@ object Register {
         action: (message: Text, matchResult: Matcher) -> Boolean
     ) {
         ChatHandler.registerHandler(regex, action)
-    }
-
-    /**
-     * Registers an event that listens for world load events and executes an action.
-     * @param action The action to execute when a world is loaded.
-     */
-    fun onWorldChange(action: (client: MinecraftClient) -> Unit) {
-        ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register { _, _ ->
-            action(mc)
-        }
-    }
-
-    /**
-     * Registers an event that listens for GUI close events and executes an action.
-     * @param action The action to execute when a GUI is closed.
-     */
-    fun onGuiClose(action: (screen: Screen) -> Unit) {
-        ScreenEvents.AFTER_INIT.register { _, screen, _, _ ->
-            ScreenEvents.remove(screen).register {
-                action(screen)
-            }
-        }
-    }
-
-    fun onEntityLoad(action: (entity: Entity, clientWorld: ClientWorld) -> Unit) {
-        ClientEntityEvents.ENTITY_LOAD.register(action)
-    }
-
-    fun onEntityUnload(action: (entity: Entity, clientWorld: ClientWorld) -> Unit) {
-        ClientEntityEvents.ENTITY_UNLOAD.register(action)
     }
 }

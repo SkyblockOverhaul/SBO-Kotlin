@@ -2,14 +2,11 @@ package net.sbo.mod.settings.categories
 
 import com.teamresourceful.resourcefulconfigkt.api.CategoryKt
 import com.teamresourceful.resourcefulconfigkt.api.ObservableEntry
-import net.sbo.mod.SBOKotlin.mc
-import net.sbo.mod.diana.DianaTracker.announceLootToParty
 import net.sbo.mod.overlays.DianaLoot
 import net.sbo.mod.overlays.DianaMobs
 import net.sbo.mod.overlays.InquisLoot
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.chat.Chat
-import net.sbo.mod.utils.overlay.OverlayEditScreen
 import net.sbo.mod.utils.waypoint.AdditionalHubWarps
 
 
@@ -280,6 +277,16 @@ object Diana : CategoryKt("Diana") {
     var announceKilltext by strings("") {
         this.name = Translated("Send Text On Inq Spawn")
         this.description = Translated("Sends a text on inq spawn 5 seconds after spawn, use {since} for mobs since inq, {chance} for inq chance")
+    }
+
+    var announceCocoon by boolean(false) {
+        this.name = Translated("Send Text On Inq Cocoon")
+        this.description = Translated("Sends a text on inq cocoon")
+    }
+
+    var cocoonTitle by boolean(false) {
+        this.name = Translated("Show Title On Inq Cocoon")
+        this.description = Translated("Shows a title on inq cocoon")
     }
 
     init {

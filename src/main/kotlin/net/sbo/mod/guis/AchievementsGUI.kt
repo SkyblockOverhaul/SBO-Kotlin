@@ -244,7 +244,7 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
     private fun loadFilterFromSboData() {
         filterType = try {
             AchievementFilter.valueOf(sboData.achievementFilter.uppercase())
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             AchievementFilter.DEFAULT
         }
     }

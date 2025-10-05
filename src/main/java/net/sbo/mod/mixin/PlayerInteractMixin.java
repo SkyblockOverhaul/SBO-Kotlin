@@ -7,7 +7,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.sbo.mod.utils.events.SBOEvent;
-import net.sbo.mod.utils.events.impl.PlayerInteractEvent;
+import net.sbo.mod.utils.events.impl.game.PlayerInteractEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;

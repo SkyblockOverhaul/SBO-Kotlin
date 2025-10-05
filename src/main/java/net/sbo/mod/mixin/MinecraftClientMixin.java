@@ -3,7 +3,7 @@ package net.sbo.mod.mixin;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.sbo.mod.utils.events.SBOEvent;
-import net.sbo.mod.utils.events.impl.GuiOpenEvent;
+import net.sbo.mod.utils.events.impl.guis.GuiOpenEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

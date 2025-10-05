@@ -8,6 +8,9 @@ import com.google.gson.reflect.TypeToken
 import net.fabricmc.loader.api.FabricLoader
 import net.sbo.mod.SBOKotlin
 import net.sbo.mod.utils.events.Register
+import net.sbo.mod.utils.events.annotations.SboEvent
+import net.sbo.mod.utils.events.impl.game.DisconnectEvent
+import net.sbo.mod.utils.events.impl.game.GameCloseEvent
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
@@ -66,9 +69,16 @@ object SboDataObject {
         overlayData = SBOConfigBundle.overlayData
         saveAllDataThreaded("SBO")
         savePeriodically(5)
-        Register.onDisconnect {
-            saveAndBackupAllDataThreaded("SBO")
-        }
+    }
+
+    @SboEvent
+    fun onDisconnect(event: DisconnectEvent) {
+        saveAndBackupAllDataThreaded("SBO")
+    }
+
+    @SboEvent
+    fun onGameClose(event: GameCloseEvent) {
+        saveAndBackupAllDataThreaded("SBO")
     }
 
     fun <T> load(modName: String, fileName: String, defaultData: T, type: Class<T>): T {
@@ -132,7 +142,7 @@ object SboDataObject {
 
                 loadedData
             }
-        } catch (e: JsonSyntaxException) {
+        } catch (_: JsonSyntaxException) {
             SBOKotlin.logger.error("[$modName] Error parsing JSON in $fileName, resetting to default data.")
             save(modName, defaultData, fileName)
             defaultData
@@ -346,7 +356,7 @@ object SboDataObject {
     }
 
     private fun saveAllData() {
-        configMapforSave.forEach { (configName, configData) ->
+        configMapforSave.forEach { (_, configData) ->
             configData.first.invoke()
         }
     }

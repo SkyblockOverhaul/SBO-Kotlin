@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.sbo.mod.diana.PreciseGuessBurrow
 import net.minecraft.client.MinecraftClient
-import net.sbo.mod.diana.burrows.BurrowDetector.refreshBurrows
 import net.sbo.mod.settings.categories.Customization
 import net.sbo.mod.utils.render.WaypointRenderer
 import net.sbo.mod.settings.categories.Diana
@@ -18,6 +17,8 @@ import net.sbo.mod.utils.Helper.sleep
 import net.sbo.mod.utils.Player
 import net.sbo.mod.utils.SoundHandler.playCustomSound
 import net.sbo.mod.utils.events.Register
+import net.sbo.mod.utils.events.annotations.SboEvent
+import net.sbo.mod.utils.events.impl.game.WorldChangeEvent
 import net.sbo.mod.utils.math.SboVec
 import java.awt.Color
 import kotlin.collections.iterator
@@ -33,36 +34,16 @@ object WaypointManager {
     var focusedGuess : Waypoint? = null
     private val angleThreshold = Math.toRadians(4.0)
     private val cosThreshold = cos(angleThreshold)
+    private var lastMultiGuessWp: Waypoint? = null
 
     fun init() {
         if (guessWp == null) {
             guessWp = Waypoint("Guess", 100.0, 100.0, 100.0, 0.0f, 0.964f, 1.0f, 0,"guess")
         }
 
-        Register.command("sboraitestguess") {
-            val pos = Player.getLastPosition()
-            guessWp = createGuessWaypoint(pos.plus(SboVec(10.0, 2.0, 10.0)))
-            if (guessWp == null) return@command;
-
-            addWaypoint(guessWp!!)
-        }
-
-        Register.command("sboraitestresetguess") {
-            getGuessWaypoints().clear()
-        }
-
-        Register.command("raitestrefreshguess") {
-            refreshBurrows()
-        }
-
         Register.command("sbosendinq") {
             val playerPos = Player.getLastPosition()
             Chat.command("pc x: ${playerPos.x.roundToInt()}, y: ${playerPos.y.roundToInt() - 1}, z: ${playerPos.z.roundToInt()}")
-        }
-
-        Register.onWorldChange {
-            guessWp?.hide()
-            removeAllOfType("world")
         }
 
         Register.onChatMessage(
@@ -91,10 +72,24 @@ object WaypointManager {
         }
 
         Register.onTick(5) { _ ->
-            closestBurrow = getClosestWaypoint(Player.getLastPosition(), "burrow") ?: (null to 1000.0)
-            closestGuess = getClosestWaypoint(Player.getLastPosition(), "guess") ?: (null to 1000.0)
+            val playerPos = Player.getLastPosition()
+            closestBurrow = getClosestWaypoint(playerPos, "burrow") ?: (null to 1000.0)
+            closestGuess = getClosestWaypoint(playerPos, "guess") ?: (null to 1000.0)
 
             val inqWps = getWaypointsOfType("inq")
+
+            val posP = SboVec(playerPos.x, playerPos.y, playerPos.z).roundLocationToBlock()
+            val guessesToRemove = getGuessWaypoints()
+                .filter { waypoint ->
+                    waypoint.distanceToPlayer() < 3.0 ||
+                    waypoint.pos.y < 60 ||
+                    (waypoint.pos.x == posP.x && waypoint.pos.z == posP.z)
+                }
+                .toList()
+
+            guessesToRemove.forEach { waypoint ->
+                removeWaypoint(waypoint)
+            }
 
             this.forEachWaypoint { waypoint ->
                 if (waypoint.ttl > 0 && waypoint.creation + waypoint.ttl * 1000 < System.currentTimeMillis()) {
@@ -107,7 +102,6 @@ object WaypointManager {
             }
 
             guessWp?.format(inqWps, closestBurrow.second)
-            refreshBurrows()
         }
 
         Register.onTick(1) { _ ->
@@ -139,6 +133,12 @@ object WaypointManager {
         WorldRenderEvents.AFTER_TRANSLUCENT.register(WaypointRenderer)
     }
 
+    @SboEvent
+    fun onWorldChange(event: WorldChangeEvent) {
+        guessWp?.hide()
+        removeAllOfType("world")
+    }
+
     fun onLootshare() {
         removeWithinDistance("inq", 30)
     }
@@ -151,12 +151,7 @@ object WaypointManager {
         this.forEachWaypoint { waypoint ->
             waypoint.render(context)
         }
-
-        //this.guessWp?.render(context)
-
-        // Create a copy of the list to avoid ConcurrentModificationException
-        //val guessWaypointsCopy = this.guessWaypoints.toList()
-        //guessWaypointsCopy.forEach { it.render(context) }
+        this.guessWp?.render(context)
     }
 
     fun createGuessWaypoint(pos: SboVec?) : Waypoint? {
@@ -223,26 +218,31 @@ object WaypointManager {
     /**
      * Updates the guess waypoint position.
      * @param pos The new position for the guess waypoint.
+     * @param isNewGuess Indicates if this is the start of a new guess attempt.
      */
-    fun updateGuess(pos: SboVec?) {
-        if(!Diana.dianaMultiBurrowGuess) {
+    fun updateGuess(pos: SboVec?, isNewGuess: Boolean) {
+        if (pos == null) return
+        if (!Diana.dianaMultiBurrowGuess) {
             guessWp?.apply {
                 val (exists, wp) = waypointExists("burrow", this.pos)
-            if (exists && wp != null) {
-                this.hidden = wp.distanceToPlayer() < 60
-            } else {
-                this.hidden = false
-            }
-                if (pos != null) {
-                    this.pos = pos
+                if (exists && wp != null) {
+                    this.hidden = wp.distanceToPlayer() < 60
+                } else {
+                    this.hidden = false
                 }
+                this.pos = pos
             }
             return
         }
-        if (pos == null) return
-        val waypoint = createGuessWaypoint(pos) ?: return
-        addWaypoint(waypoint)
+        if (isNewGuess || lastMultiGuessWp == null) {
+            val waypoint = createGuessWaypoint(pos) ?: return
+            addWaypoint(waypoint)
+            lastMultiGuessWp = waypoint
+        } else {
+            lastMultiGuessWp?.pos = pos
+        }
     }
+
 
     /**
      * Checks if a waypoint of a specific type exists at a given position.
