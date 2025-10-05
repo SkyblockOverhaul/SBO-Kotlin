@@ -39,7 +39,7 @@ object SoundHandler {
     private fun currentResourcePackFormat(): Int {
         return try {
             SharedConstants.getGameVersion().getResourceVersion(ResourceType.CLIENT_RESOURCES)
-        } catch (t: Throwable) {
+        } catch (_: Throwable) {
             48
         }
     }

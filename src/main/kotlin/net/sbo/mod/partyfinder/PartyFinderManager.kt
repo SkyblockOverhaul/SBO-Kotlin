@@ -16,13 +16,10 @@ import net.sbo.mod.utils.data.PartyAddResponse
 import net.sbo.mod.utils.data.PartyPlayerStats
 import net.sbo.mod.utils.data.PartyUpdateResponse
 import net.sbo.mod.utils.data.Reqs
-import net.sbo.mod.utils.data.SboDataObject
-import net.sbo.mod.utils.data.SboDataObject.sboData
-import net.sbo.mod.utils.events.Register
-import net.sbo.mod.utils.events.SBOEvent
+import net.sbo.mod.utils.events.annotations.SboEvent
+import net.sbo.mod.utils.events.impl.game.DisconnectEvent
 import net.sbo.mod.utils.events.impl.PartyFinderRefreshListEvent
-import net.sbo.mod.utils.http.Http
-import net.sbo.mod.utils.http.Http.getBoolean
+import net.sbo.mod.utils.events.impl.game.ChatMessageEvent
 import net.sbo.mod.utils.http.Http.getInt
 import net.sbo.mod.utils.http.Http.getString
 import java.util.UUID
@@ -34,7 +31,6 @@ object PartyFinderManager {
     private var updateBool = false
     private var requeue = false
     private var ghostParty = false
-    private var requestSend = false
     private var usedPf = false
 
     private var partySize = 0
@@ -76,8 +72,6 @@ object PartyFinderManager {
     )
 
     fun init() {
-        trackMemberRegister()
-
         Register.command("sborequeue") {
             if (!inQueue) {
                 Chat.chat("§6[SBO] §eRequeuing party with last used requirements...")
@@ -164,13 +158,7 @@ object PartyFinderManager {
             }
         }
 
-        Register.onDisconnect {
-            if (inQueue) {
-                removePartyFromQueue()
-            }
-        }
-
-        HypixelModApi.onPartyInfo { isInParty, isLeader, members ->
+        HypixelModApi.onPartyInfo{ isInParty, isLeader, members ->
             this.isInParty = isInParty
             this.isLeader = isLeader
             partyMember = members
@@ -184,6 +172,13 @@ object PartyFinderManager {
                 creatingParty
                 updateBool = false
             }
+        }
+    }
+
+    @SboEvent
+    fun onDisconnect(event: DisconnectEvent) {
+        if (inQueue) {
+            removePartyFromQueue()
         }
     }
 
@@ -379,45 +374,44 @@ object PartyFinderManager {
         }
     }
 
-    fun trackMemberRegister() {
-        Register.onChatMessage { message ->
-            val text = message.toFormattedString()
-            var match = false
-            leaderChangeRegexes.forEach {
-                if (it.matches(text)) {
-                    match = true
-                    isInParty = true
-                    isLeader = false
-                    removePartyFromQueue()
-                }
+    @SboEvent
+    fun trackMemberRegister(event: ChatMessageEvent) {
+        val text = event.message.toFormattedString()
+        var match = false
+        leaderChangeRegexes.forEach {
+            if (it.matches(text)) {
+                match = true
+                isInParty = true
+                isLeader = false
+                removePartyFromQueue()
             }
-            partyDisbandRegexes.forEach {
-                if (it.matches(text)) {
-                    creatingParty = false
-                    partyMemberCount = 1
-                    match = true
-                    isInParty = false
-                    removePartyFromQueue()
-                }
-            }
-            partyJoinRegexes.forEach {
-                if (it.matches(text)) {
-                    updateBool = true
-                    partyMemberCount += 1
-                    match = true
-                    isInParty = true
-                }
-            }
-            partyLeaveRegexes.forEach {
-                if (it.matches(text)) {
-                    updateBool = true
-                    partyMemberCount -= 1
-                    match = true
-                    isInParty = partyMemberCount > 1
-                }
-            }
-            if (match) trackMemberCount()
         }
+        partyDisbandRegexes.forEach {
+            if (it.matches(text)) {
+                creatingParty = false
+                partyMemberCount = 1
+                match = true
+                isInParty = false
+                removePartyFromQueue()
+            }
+        }
+        partyJoinRegexes.forEach {
+            if (it.matches(text)) {
+                updateBool = true
+                partyMemberCount += 1
+                match = true
+                isInParty = true
+            }
+        }
+        partyLeaveRegexes.forEach {
+            if (it.matches(text)) {
+                updateBool = true
+                partyMemberCount -= 1
+                match = true
+                isInParty = partyMemberCount > 1
+            }
+        }
+        if (match) trackMemberCount()
     }
 
     fun trackMemberCount() {

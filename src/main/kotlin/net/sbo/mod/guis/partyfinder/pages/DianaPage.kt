@@ -117,7 +117,7 @@ class DianaPage(private val parent: PartyFinderGUI) {
             width = 100.percent()
             height = 23.percent()
         }.setColor(Color(0, 0, 0, 0)) childOf parent.reqsBox
-        val lvlText = UIText("SbLvL").constrain {
+        UIText("SbLvL").constrain {
             x = 5.percent()
             y = SiblingConstraint(5f)
             textScale = parent.getTextScale()
@@ -148,7 +148,7 @@ class DianaPage(private val parent: PartyFinderGUI) {
             width = 100.percent()
             height = 23.percent()
         }.setColor(Color(0, 0, 0, 0)) childOf parent.reqsBox
-        val killsText = UIText("Kills").constrain {
+        UIText("Kills").constrain {
             x = 5.percent()
             y = SiblingConstraint(5f)
             textScale = parent.getTextScale(1f)
@@ -179,7 +179,7 @@ class DianaPage(private val parent: PartyFinderGUI) {
             width = 100.percent()
             height = 23.percent()
         }.setColor(Color(0, 0, 0, 0)) childOf parent.reqsBox
-        val noteText = UIText("Note ").constrain {
+        UIText("Note ").constrain {
             x = 5.percent()
             y = SiblingConstraint(5f)
             textScale = parent.getTextScale()

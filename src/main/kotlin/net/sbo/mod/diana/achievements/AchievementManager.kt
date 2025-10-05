@@ -20,7 +20,7 @@ import net.sbo.mod.utils.data.SboDataObject.pastDianaEventsData
 import net.sbo.mod.utils.data.SboDataObject.sboData
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
-import net.sbo.mod.utils.events.impl.WorldChangeEvent
+import net.sbo.mod.utils.events.impl.game.WorldChangeEvent
 import java.lang.Thread.sleep
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean

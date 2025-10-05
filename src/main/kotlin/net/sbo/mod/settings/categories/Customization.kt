@@ -47,11 +47,10 @@ object Customization : CategoryKt("Customization") {
     }
 
     var focusedColor by color(
-        Color(0.6f, 0.964f, 0.6f).rgb
-    ) {
-        name = Translated("Focused Color")
-        description = Translated("Pick a color for your focused guess")
-        allowAlpha = true
+        Color(0.6f, 0.2f, 0.8f).rgb) {
+        this.name = Translated("Focused Color")
+        this.description = Translated("Pick a color for your focused guess")
+        this.allowAlpha = true
     }
 
     var MobColor by color(

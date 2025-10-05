@@ -50,7 +50,6 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
     internal var cpWindowOpened: Boolean = false
     internal var filterWindowOpened: Boolean = false
     internal var partyInfoOpened: Boolean = false
-    internal var dequeued: Boolean = false
 
     private val dianaPage = DianaPage(this)
     private val customPage = CustomPage(this)
@@ -1016,7 +1015,7 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
             textColor = Color(255, 255, 255, 255),
             parent = discordBlock
         )
-            .textHoverEffect(Color(255, 255, 255, 255), Color(50, 50, 255, 200))
+            .textHoverEffect(Color(255,255,255,255), Color(50, 50, 255, 200))
             .setTextOnClick {
                 Util.getOperatingSystem().open("https://discord.gg/QvM6b9jsJD")
             }
@@ -1047,7 +1046,7 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
             textColor = Color(255, 255, 255, 255),
             parent = githubBlock
         )
-            .textHoverEffect(Color(255, 255, 255, 255), Color(50, 50, 255, 200))
+            .textHoverEffect(Color(255,255,255,255), Color(50, 50, 255, 200))
             .setTextOnClick {
                 Util.getOperatingSystem().open("https://github.com/SkyblockOverhaul/SBO-Kotlin")
             }
@@ -1078,7 +1077,7 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
             textColor = Color(255, 255, 255, 255),
             parent = patreonBlock
         )
-            .textHoverEffect(Color(255, 255, 255, 255), Color(50, 50, 255, 200))
+            .textHoverEffect(Color(255,255,255,255), Color(50, 50, 255, 200))
             .setTextOnClick {
                 Util.getOperatingSystem().open("https://www.patreon.com/Skyblock_Overhaul")
             }

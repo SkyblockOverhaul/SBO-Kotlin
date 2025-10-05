@@ -103,7 +103,7 @@ class CustomPage(private val parent: PartyFinderGUI) {
             width = 100.percent()
             height = 18.percent()
         }.setColor(Color(0, 0, 0, 0)) childOf parent.reqsBox
-        val lvltext = UIText("SbLvL").constrain {
+        UIText("SbLvL").constrain {
             x = 5.percent()
             y = SiblingConstraint(5f)
             textScale = parent.getTextScale()
@@ -133,7 +133,7 @@ class CustomPage(private val parent: PartyFinderGUI) {
             width = 100.percent()
             height = 18.percent()
         }.setColor(Color(0, 0, 0, 0)) childOf parent.reqsBox
-        val mptext = UIText("Mp").constrain {
+        UIText("Mp").constrain {
             x = 5.percent()
             y = SiblingConstraint(5f)
             textScale = parent.getTextScale()
@@ -163,7 +163,7 @@ class CustomPage(private val parent: PartyFinderGUI) {
             width = 100.percent()
             height = 18.percent()
         }.setColor(Color(0, 0, 0, 0)) childOf parent.reqsBox
-        val partySizeText = UIText("Party Size").constrain {
+        UIText("Party Size").constrain {
             x = 5.percent()
             y = SiblingConstraint(5f)
             textScale = parent.getTextScale()
@@ -193,7 +193,7 @@ class CustomPage(private val parent: PartyFinderGUI) {
             width = 100.percent()
             height = 18.percent()
         }.setColor(Color(0, 0, 0, 0)) childOf parent.reqsBox
-        val noteText = UIText("Note").constrain {
+        UIText("Note").constrain {
             x = 5.percent()
             y = SiblingConstraint(5f)
             textScale = parent.getTextScale()

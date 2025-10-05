@@ -71,36 +71,60 @@ class Waypoint(
         inqWaypoints: List<Waypoint>,
         closestBurrowDistance: Double
     ) {
-        distanceRaw = distanceToPlayer()
-        distanceText = if (distance) " §b[${distanceRaw.roundToInt()}m]" else ""
+        this.distanceRaw = distanceToPlayer()
+        this.distanceText = if (distance) " §b[${distanceRaw.roundToInt()}m]" else ""
 
-        if (type == "guess") {
-            line = Diana.guessLine && (closestBurrowDistance > 60) && inqWaypoints.isEmpty() && (closestGuess.first == this)
-            color = Color(Customization.guessColor)
+        when (this.type) {
+            "guess" -> {
+                val isMultiGuessActive = Diana.dianaMultiBurrowGuess
+                val isLineVisibleBase = Diana.guessLine && closestBurrowDistance > 60 && inqWaypoints.isEmpty()
+                var shouldShowWarpText: Boolean
 
-            if (focusedGuess == this) {
-                color = Color(Customization.focusedColor)
-                line = Diana.guessLine && (closestBurrowDistance > 60) && inqWaypoints.isEmpty()
+                if (isMultiGuessActive) {
+                    val isFocused = Diana.focusedWarp && focusedGuess == this
+                    val isClosest = !Diana.focusedWarp && closestGuess.first == this
+                    shouldShowWarpText = isFocused || isClosest
+                } else {
+                    shouldShowWarpText = true
+                }
+
+                this.color = if (focusedGuess == this) Color(Customization.focusedColor)
+                else Color(Customization.guessColor)
+
+                this.line = if (focusedGuess == this) {
+                    isLineVisibleBase
+                } else if (!isMultiGuessActive) {
+                    isLineVisibleBase
+                } else {
+                    isLineVisibleBase && closestGuess.first == this
+                }
+
+                this.r = color.red / 255f
+                this.g = color.green / 255f
+                this.b = color.blue / 255f
+                this.hexCode = color.rgb
+
+                WaypointManager.waypointExists("burrow", this.pos).let { (exists, wp) ->
+                    if (exists && wp != null) this.hidden = wp.distanceToPlayer() < 60
+                }
+
+                if (shouldShowWarpText) {
+                    setWarpText()
+                } else {
+                    this.formattedText = "${this.text}${this.distanceText}"
+                    this.warp = null
+                }
             }
-
-            r = color.red.toFloat() / 255.0f
-            g = color.green.toFloat() / 255.0f
-            b = color.blue.toFloat() / 255.0f
-            hexCode = color.rgb
-
-            val (exists, wp) = WaypointManager.waypointExists("burrow", pos)
-            if (exists && wp != null) {
-                hidden = wp.distanceToPlayer() < 60
+            "inq" -> {
+                if (inqWaypoints.lastOrNull() == this) {
+                    setWarpText()
+                    this.line = Diana.inqLine
+                }
             }
-
-            setWarpText()
-        } else if (type == "inq" && inqWaypoints.lastOrNull() == this) {
-            setWarpText()
-            line = Diana.inqLine
-        } else {
-            formattedText = "$text$distanceText}"
+            else -> {
+                this.formattedText = "$text$distanceText"
+            }
         }
-
         formatted = true
     }
 

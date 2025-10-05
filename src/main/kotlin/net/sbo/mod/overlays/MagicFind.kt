@@ -8,12 +8,7 @@ import net.sbo.mod.utils.overlay.Overlay
 import net.sbo.mod.utils.overlay.OverlayTextLine
 
 object MagicFind {
-    val overlay = Overlay(
-        "Diana MagicFind",
-        10f,
-        10f,
-        1f
-    ).setCondition { (Diana.magicFindTracker && Helper.checkDiana()) || Helper.hasSpade }
+    val overlay = Overlay("Diana MagicFind", 10f, 10f, 1f).setCondition { Diana.magicFindTracker && (Helper.checkDiana() || Helper.hasSpade) }
 
     fun init() {
         overlay.init()

@@ -15,22 +15,15 @@ import net.sbo.mod.utils.data.DianaTracker
 import net.sbo.mod.utils.data.SboDataObject.SBOConfigBundle
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
-import net.sbo.mod.utils.events.impl.GuiOpenEvent
-import net.sbo.mod.utils.overlay.Overlay
-import net.sbo.mod.utils.overlay.OverlayTextLine
+import net.sbo.mod.utils.events.impl.guis.GuiCloseEvent
+import net.sbo.mod.utils.events.impl.guis.GuiOpenEvent
 import net.sbo.mod.utils.render.RenderUtils2D
 import java.util.concurrent.TimeUnit
 
 object DianaLoot {
     private var isSellTypeHovered = false
     val timerLine: OverlayTextLine = OverlayTextLine("")
-    val overlay = Overlay(
-        "Diana Loot",
-        10f,
-        10f,
-        1f,
-        listOf("Chat screen", "Crafting")
-    ).setCondition { (Diana.lootTracker != Diana.Tracker.OFF && Helper.checkDiana()) || Helper.hasSpade }
+    val overlay = Overlay("Diana Loot", 10f, 10f, 1f, listOf("Chat screen", "Crafting")).setCondition { Diana.lootTracker != Diana.Tracker.OFF && (Helper.checkDiana() || Helper.hasSpade) }
     val changeView: OverlayTextLine = OverlayTextLine("${YELLOW}Change View", linebreak = false)
         .onClick {
             Diana.lootTracker = Diana.lootTracker.next()
@@ -78,16 +71,18 @@ object DianaLoot {
         overlay.init()
         updateLines()
         updateTimerText()
-        Register.onGuiClose { screen ->
-            if (screen.title.string == "Crafting") {
-                overlay.removeLine(changeView)
-                overlay.removeLine(delimiter)
-                overlay.removeLine(changeSellType)
-                overlay.removeLine(resetSession)
-            }
-        }
         Register.onTick(1) {
             updateTimerText()
+        }
+    }
+
+    @SboEvent
+    fun onGuiClose(event: GuiCloseEvent) {
+        if (event.screen.title.string == "Crafting") {
+            overlay.removeLine(changeView)
+            overlay.removeLine(delimiter)
+            overlay.removeLine(changeSellType)
+            overlay.removeLine(resetSession)
         }
     }
 
@@ -187,120 +182,21 @@ object DianaLoot {
 
         lines.addAll(
             listOf(
-                createLine(
-                    "CHIMERA",
-                    "$GOLD$chimPrice $GRAY|$LIGHT_PURPLE Chimera: $AQUA${
-                        Helper.formatNumber(
-                            tracker.items.CHIMERA,
-                            true
-                        )
-                    } $GRAY($AQUA${chimPercent}%$GRAY)"
-                ),
-                createLine(
-                    "CHIMERA_LS",
-                    "$GOLD$chimLsPrice $GRAY|$LIGHT_PURPLE Chimera $GRAY[${AQUA}LS$GRAY]: $AQUA${
-                        Helper.formatNumber(
-                            tracker.items.CHIMERA_LS,
-                            true
-                        )
-                    } $GRAY($AQUA${chimLsPercent}%$GRAY)"
-                ),
-                createLine(
-                    "MINOS_RELIC",
-                    "$GOLD$relicPrice $GRAY|$DARK_PURPLE Minos Relic: $AQUA${
-                        Helper.formatNumber(
-                            tracker.items.MINOS_RELIC,
-                            true
-                        )
-                    } $GRAY($AQUA${relicPercent}%$GRAY)"
-                ),
-                createLine(
-                    "DAEDALUS_STICK",
-                    "$GOLD$stickPrice $GRAY|$GOLD Daedalus Stick: $AQUA${
-                        Helper.formatNumber(
-                            tracker.items.DAEDALUS_STICK,
-                            true
-                        )
-                    } $GRAY($AQUA${stickPercent}%$GRAY)"
-                ),
-                createLine(
-                    "CROWN_OF_GREED",
-                    "$GOLD$crownPrice $GRAY|$GOLD Crown of Greed: $AQUA${
-                        Helper.formatNumber(
-                            tracker.items.CROWN_OF_GREED,
-                            true
-                        )
-                    }"
-                ),
-                createLine(
-                    "WASHED_UP_SOUVENIR",
-                    "$GOLD$sovenirPrice $GRAY|$GOLD Washed-up Souvenir: $AQUA${
-                        Helper.formatNumber(
-                            tracker.items.WASHED_UP_SOUVENIR,
-                            true
-                        )
-                    }"
-                ),
-                createLine(
-                    "GRIFFIN_FEATHER",
-                    "$GOLD$featherPrice $GRAY|$GOLD Griffin Feather: $AQUA${
-                        Helper.formatNumber(
-                            tracker.items.GRIFFIN_FEATHER,
-                            true
-                        )
-                    }"
-                ),
-                createLine(
-                    "DWARF_TURTLE_SHELMET",
-                    "$GOLD$shelmetPrice $GRAY|$DARK_GREEN Dwarf Turtle Helmet: $AQUA${
-                        Helper.formatNumber(
-                            tracker.items.DWARF_TURTLE_SHELMET,
-                            true
-                        )
-                    }"
-                ),
-                createLine(
-                    "CROCHET_TIGER_PLUSHIE",
-                    "$GOLD$plushiePrice $GRAY|$DARK_GREEN Crochet Tiger Plushie: $AQUA${
-                        Helper.formatNumber(
-                            tracker.items.CROCHET_TIGER_PLUSHIE,
-                            true
-                        )
-                    }"
-                ),
-                createLine(
-                    "ANTIQUE_REMEDIES",
-                    "$GOLD$remediesPrice $GRAY|$DARK_GREEN Antique Remedies: $AQUA${
-                        Helper.formatNumber(
-                            tracker.items.ANTIQUE_REMEDIES,
-                            true
-                        )
-                    }"
-                ),
-                createLine(
-                    "ANCIENT_CLAW",
-                    "$GOLD$clawPrice $GRAY|$BLUE Ancient Claw: $AQUA${Helper.formatNumber(tracker.items.ANCIENT_CLAW)}"
-                ),
-                createLine(
-                    "ENCHANTED_ANCIENT_CLAW",
-                    "$GOLD$echClawPrice $GRAY|$BLUE Enchanted Ancient Claw: $AQUA${Helper.formatNumber(tracker.items.ENCHANTED_ANCIENT_CLAW)}"
-                ),
-                createLine(
-                    "ENCHANTED_GOLD",
-                    "$GOLD$echGoldPrice $GRAY|$BLUE Enchanted Gold: $AQUA${Helper.formatNumber(tracker.items.ENCHANTED_GOLD)}"
-                ),
-                createLine(
-                    "ENCHANTED_IRON",
-                    "$GOLD$echIronPrice $GRAY|$BLUE Enchanted Iron: $AQUA${Helper.formatNumber(tracker.items.ENCHANTED_IRON)}"
-                ),
-                OverlayTextLine(
-                    "${GRAY}Total Burrows: $AQUA${
-                        Helper.formatNumber(
-                            tracker.items.TOTAL_BURROWS,
-                            true
-                        )
-                    }$bphText"
-                ),
+                createLine("CHIMERA", "$GOLD$chimPrice $GRAY|$LIGHT_PURPLE Chimera: $AQUA${Helper.formatNumber(tracker.items.CHIMERA, true)} $GRAY($AQUA${chimPercent}%$GRAY)"),
+                createLine("CHIMERA_LS", "$GOLD$chimLsPrice $GRAY|$LIGHT_PURPLE Chimera $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.CHIMERA_LS, true)} $GRAY($AQUA${chimLsPercent}%$GRAY)"),
+                createLine("MINOS_RELIC", "$GOLD$relicPrice $GRAY|$DARK_PURPLE Minos Relic: $AQUA${Helper.formatNumber(tracker.items.MINOS_RELIC, true)} $GRAY($AQUA${relicPercent}%$GRAY)"),
+                createLine("DAEDALUS_STICK", "$GOLD$stickPrice $GRAY|$GOLD Daedalus Stick: $AQUA${Helper.formatNumber(tracker.items.DAEDALUS_STICK, true)} $GRAY($AQUA${stickPercent}%$GRAY)"),
+                createLine("CROWN_OF_GREED", "$GOLD$crownPrice $GRAY|$GOLD Crown of Greed: $AQUA${Helper.formatNumber(tracker.items.CROWN_OF_GREED, true)}"),
+                createLine("WASHED_UP_SOUVENIR", "$GOLD$sovenirPrice $GRAY|$GOLD Washed-up Souvenir: $AQUA${Helper.formatNumber(tracker.items.WASHED_UP_SOUVENIR, true)}"),
+                createLine("GRIFFIN_FEATHER", "$GOLD$featherPrice $GRAY|$GOLD Griffin Feather: $AQUA${Helper.formatNumber(tracker.items.GRIFFIN_FEATHER, true)}"),
+                createLine("DWARF_TURTLE_SHELMET", "$GOLD$shelmetPrice $GRAY|$DARK_GREEN Dwarf Turtle Helmet: $AQUA${Helper.formatNumber(tracker.items.DWARF_TURTLE_SHELMET, true)}"),
+                createLine("CROCHET_TIGER_PLUSHIE", "$GOLD$plushiePrice $GRAY|$DARK_GREEN Crochet Tiger Plushie: $AQUA${Helper.formatNumber(tracker.items.CROCHET_TIGER_PLUSHIE, true)}"),
+                createLine("ANTIQUE_REMEDIES", "$GOLD$remediesPrice $GRAY|$DARK_GREEN Antique Remedies: $AQUA${Helper.formatNumber(tracker.items.ANTIQUE_REMEDIES, true)}"),
+                createLine("ANCIENT_CLAW", "$GOLD$clawPrice $GRAY|$BLUE Ancient Claw: $AQUA${Helper.formatNumber(tracker.items.ANCIENT_CLAW)}"),
+                createLine("ENCHANTED_ANCIENT_CLAW", "$GOLD$echClawPrice $GRAY|$BLUE Enchanted Ancient Claw: $AQUA${Helper.formatNumber(tracker.items.ENCHANTED_ANCIENT_CLAW)}"),
+                createLine("ENCHANTED_GOLD", "$GOLD$echGoldPrice $GRAY|$BLUE Enchanted Gold: $AQUA${Helper.formatNumber(tracker.items.ENCHANTED_GOLD)}"),
+                createLine("ENCHANTED_IRON", "$GOLD$echIronPrice $GRAY|$BLUE Enchanted Iron: $AQUA${Helper.formatNumber(tracker.items.ENCHANTED_IRON)}"),
+                OverlayTextLine("${GRAY}Total Burrows: $AQUA${Helper.formatNumber(tracker.items.TOTAL_BURROWS, true)}$bphText"),
                 OverlayTextLine("${GOLD}Total Coins: $AQUA${Helper.formatNumber(tracker.items.COINS)}")
                     .onHover { drawContext, textRenderer ->
                         val scaleFactor = mc.window.scaleFactor

@@ -8,13 +8,7 @@ import net.sbo.mod.utils.overlay.Overlay
 import net.sbo.mod.utils.overlay.OverlayTextLine
 
 object DianaStats {
-    val overlay = Overlay(
-        "Diana Stats",
-        10f,
-        10f,
-        1f,
-        listOf("Chat screen")
-    ).setCondition { (Diana.statsTracker && Helper.checkDiana()) || Helper.hasSpade }
+    val overlay = Overlay("Diana Stats", 10f, 10f, 1f, listOf("Chat screen")).setCondition { Diana.statsTracker && (Helper.checkDiana() || Helper.hasSpade)}
 
     fun init() {
         overlay.init()

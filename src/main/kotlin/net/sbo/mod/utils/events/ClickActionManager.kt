@@ -15,7 +15,7 @@ object ClickActionManager {
                 try {
                     val actionId = UUID.fromString(args[0])
                     executeAction(actionId)
-                } catch (e: IllegalArgumentException) {
+                } catch (_: IllegalArgumentException) {
                 }
             }
         }

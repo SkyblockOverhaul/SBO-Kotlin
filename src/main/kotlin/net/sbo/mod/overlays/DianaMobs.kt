@@ -11,23 +11,15 @@ import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.Helper.calcPercentOne
 import net.sbo.mod.utils.Helper.removeFormatting
 import net.sbo.mod.utils.data.SboDataObject.SBOConfigBundle
-import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
-import net.sbo.mod.utils.events.impl.GuiOpenEvent
-import net.sbo.mod.utils.overlay.Overlay
-import net.sbo.mod.utils.overlay.OverlayTextLine
+import net.sbo.mod.utils.events.impl.guis.GuiCloseEvent
+import net.sbo.mod.utils.events.impl.guis.GuiOpenEvent
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.concurrent.TimeUnit
 
 object DianaMobs {
-    val overlay = Overlay(
-        "Diana Mobs",
-        10f,
-        10f,
-        1f,
-        listOf("Chat screen", "Crafting")
-    ).setCondition { (Diana.mobTracker != Diana.Tracker.OFF && Helper.checkDiana()) || Helper.hasSpade }
+    val overlay = Overlay("Diana Mobs", 10f, 10f, 1f, listOf("Chat screen", "Crafting")).setCondition { Diana.mobTracker != Diana.Tracker.OFF && (Helper.checkDiana() || Helper.hasSpade) }
     val changeView: OverlayTextLine = OverlayTextLine("${YELLOW}Change View")
         .onClick {
             Diana.mobTracker = Diana.mobTracker.next()
@@ -43,10 +35,12 @@ object DianaMobs {
     fun init() {
         overlay.init()
         updateLines()
-        Register.onGuiClose { screen ->
-            if (screen.title.string == "Crafting") {
-                overlay.removeLine(changeView)
-            }
+    }
+
+    @SboEvent
+    fun onGuiClose(event: GuiCloseEvent) {
+        if (event.screen.title.string == "Crafting") {
+            overlay.removeLine(changeView)
         }
     }
 

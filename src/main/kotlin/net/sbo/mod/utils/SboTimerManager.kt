@@ -3,6 +3,8 @@ package net.sbo.mod.utils
 import net.sbo.mod.SBOKotlin
 import net.sbo.mod.utils.data.SboDataObject
 import net.sbo.mod.utils.events.Register
+import net.sbo.mod.utils.events.annotations.SboEvent
+import net.sbo.mod.utils.events.impl.game.DisconnectEvent
 import java.lang.reflect.Field
 import java.util.Locale
 
@@ -44,6 +46,11 @@ object SboTimerManager {
 
     private fun removeTimer(timer: SBOTimer) {
         activeTimers.remove(timer)
+    }
+
+    @SboEvent
+    fun onDisconnect(event: DisconnectEvent) {
+        activeTimers.toList().forEach { it.pause() }
     }
 
     fun updateAllActivity() {
