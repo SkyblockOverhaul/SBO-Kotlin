@@ -377,7 +377,7 @@ object SboDataObject {
     }
 
     private fun saveAllData() {
-        configMapforSave.forEach { (_, configData) ->
+        configMapForSave.forEach { (_, configData) ->
             configData.first.invoke()
         }
     }

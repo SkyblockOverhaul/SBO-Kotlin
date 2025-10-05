@@ -17,6 +17,8 @@ import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.guis.GuiCloseEvent
 import net.sbo.mod.utils.events.impl.guis.GuiOpenEvent
+import net.sbo.mod.utils.overlay.Overlay
+import net.sbo.mod.utils.overlay.OverlayTextLine
 import net.sbo.mod.utils.render.RenderUtils2D
 import java.util.concurrent.TimeUnit
 

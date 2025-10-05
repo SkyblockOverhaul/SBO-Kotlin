@@ -5,8 +5,6 @@ import net.sbo.mod.utils.events.impl.packets.PacketReceiveEvent
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket
 import net.minecraft.network.packet.s2c.play.WorldTimeUpdateS2CPacket
 import net.minecraft.util.Util
-import net.sbo.mod.utils.events.annotations.SboEvent
-import net.sbo.mod.utils.events.impl.PacketReceiveEvent
 import kotlin.math.max
 
 object ServerStats {

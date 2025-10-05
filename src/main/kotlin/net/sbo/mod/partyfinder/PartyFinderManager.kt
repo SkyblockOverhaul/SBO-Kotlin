@@ -16,10 +16,16 @@ import net.sbo.mod.utils.data.PartyAddResponse
 import net.sbo.mod.utils.data.PartyPlayerStats
 import net.sbo.mod.utils.data.PartyUpdateResponse
 import net.sbo.mod.utils.data.Reqs
+import net.sbo.mod.utils.data.SboDataObject
+import net.sbo.mod.utils.data.SboDataObject.sboData
+import net.sbo.mod.utils.events.Register
+import net.sbo.mod.utils.events.SBOEvent
 import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.game.DisconnectEvent
 import net.sbo.mod.utils.events.impl.PartyFinderRefreshListEvent
 import net.sbo.mod.utils.events.impl.game.ChatMessageEvent
+import net.sbo.mod.utils.http.Http
+import net.sbo.mod.utils.http.Http.getBoolean
 import net.sbo.mod.utils.http.Http.getInt
 import net.sbo.mod.utils.http.Http.getString
 import java.util.UUID

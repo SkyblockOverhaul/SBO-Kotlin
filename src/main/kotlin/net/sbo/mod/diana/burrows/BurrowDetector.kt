@@ -13,14 +13,16 @@ import net.sbo.mod.utils.events.impl.packets.PacketReceiveEvent
 import net.sbo.mod.utils.events.impl.packets.PacketSendEvent
 import net.sbo.mod.utils.events.impl.game.PlayerInteractEvent
 import net.sbo.mod.utils.events.impl.game.WorldChangeEvent
+import net.sbo.mod.utils.game.World
+import net.sbo.mod.utils.math.SboVec
 import net.minecraft.particle.ParticleTypes as MCParticleTypes
 import net.sbo.mod.utils.waypoint.Waypoint
 import net.sbo.mod.utils.waypoint.WaypointManager
 import net.sbo.mod.utils.waypoint.WaypointManager.getGuessWaypoints
 import net.sbo.mod.utils.waypoint.WaypointManager.guessWp
 import net.sbo.mod.utils.waypoint.WaypointManager.removeWaypoint
+import java.awt.Color
 import java.util.regex.Pattern
-import net.minecraft.particle.ParticleTypes as MCParticleTypes
 
 object BurrowDetector {
     internal var lastInteractedPos: BlockPos? = null
