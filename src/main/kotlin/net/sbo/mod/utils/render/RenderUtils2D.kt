@@ -17,27 +17,20 @@ object RenderUtils2D {
     ) {
         if (text.isEmpty()) return
 
-        val mc = MinecraftClient.getInstance()
         val textLines = text.split("\n").map { Text.of(it) }
 
+        //#if MC >= 1.21.7
+        //$$ drawContext.matrices.pushMatrix()
+        //#else
         drawContext.matrices.push()
-        drawContext.matrices.translate(0.0, 0.0, 400.0)
+        //#endif
 
-        if (mc.currentScreen != null) {
-            drawContext.drawTooltip(textRenderer, textLines, x.toInt(), y.toInt())
-        } else {
-            var yOffset = 0
-            for (line in textLines) {
-                drawContext.drawTextWithShadow(
-                    textRenderer,
-                    line,
-                    (x + 8).toInt(),
-                    (y + 8 + yOffset).toInt(),
-                    0xFFFFFF
-                )
-                yOffset += textRenderer.fontHeight + padding
-            }
-        }
+        drawContext.drawTooltip(textRenderer, textLines, x.toInt(), y.toInt())
+
+        //#if MC >= 1.21.7
+        //$$ drawContext.matrices.popMatrix()
+        //#else
         drawContext.matrices.pop()
+        //#endif
     }
 }
