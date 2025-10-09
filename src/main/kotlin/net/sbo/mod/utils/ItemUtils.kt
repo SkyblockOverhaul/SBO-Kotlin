@@ -3,6 +3,7 @@ package net.sbo.mod.utils
 import gg.essential.universal.utils.toFormattedString
 import net.minecraft.component.type.NbtComponent
 import net.minecraft.item.ItemStack
+import net.sbo.mod.utils.chat.Chat
 
 object ItemUtils {
 

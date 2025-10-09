@@ -1,6 +1,7 @@
 package net.sbo.mod.diana
 
 import net.sbo.mod.SBOKotlin
+import net.sbo.mod.diana.achievements.AchievementManager
 import net.sbo.mod.diana.achievements.AchievementManager.trackMagicFind
 import net.sbo.mod.diana.achievements.AchievementManager.unlockAchievement
 import net.sbo.mod.overlays.DianaLoot
@@ -447,6 +448,8 @@ object DianaTracker {
         DianaLoot.updateLines()
         if (fromInq) InquisLoot.updateLines()
         SboTimerManager.updateAllActivity()
+        AchievementManager.trackAchievementsItem(dianaTrackerMayor)
+        AchievementManager.trackSince()
     }
 
     fun trackOne(tracker: DianaTracker, item: String, amount: Int, fromInq: Boolean = false) {

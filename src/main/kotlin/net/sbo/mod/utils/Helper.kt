@@ -2,13 +2,16 @@ package net.sbo.mod.utils
 
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.component.DataComponentTypes
+import net.minecraft.component.type.LoreComponent
 import net.minecraft.item.ItemStack
+import net.minecraft.text.Text
 import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.diana.DianaTracker
 import net.sbo.mod.utils.data.DianaTracker as DianaTrackerDataClass
 import net.sbo.mod.overlays.DianaLoot
 import net.sbo.mod.settings.categories.Debug
 import net.sbo.mod.settings.categories.Diana
+import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.data.SboDataObject
 import kotlin.concurrent.thread
 import net.sbo.mod.utils.data.DianaItemsData
@@ -494,6 +497,25 @@ object Helper {
 
     fun getMagicFindAndLooting(mf: Int, looting: Int): String {
         return " §7[MF:$mf] [L:$looting]"
+    }
+
+    fun getKillsFromLore(stack: ItemStack?): Int {
+        if (stack == null || stack.isEmpty) return 0
+
+        val linesList: List<Text> = stack.get(DataComponentTypes.LORE)?.lines ?: listOf()
+
+        for (lineText in linesList) {
+            val line = lineText.string
+            if (line.startsWith("Kills: ")) {
+                val numberString = line.substringAfter("Kills: ")
+                    .replace(",", "")
+                    .trim()
+
+                return numberString.toIntOrNull() ?: 0
+            }
+        }
+
+        return 0
     }
 }
 
