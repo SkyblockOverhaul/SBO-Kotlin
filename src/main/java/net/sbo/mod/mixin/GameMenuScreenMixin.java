@@ -25,10 +25,10 @@ public abstract class GameMenuScreenMixin extends Screen {
         GameMenuScreen self = (GameMenuScreen)(Object)this;
 
         ButtonWidget button = ButtonWidget.builder(Text.literal("SBO"), b -> SBOKotlin.mc.send (() -> {
-            if (Guis.INSTANCE.getAchievementsGui$sbo() == null) {
-                Guis.INSTANCE.setAchievementsGui$sbo(new AchievementsGUI());
+            if (Guis.INSTANCE.getAchievementsGui$SBO() == null) {
+                Guis.INSTANCE.setAchievementsGui$SBO(new AchievementsGUI());
             }
-            UScreen.displayScreen(Guis.INSTANCE.getAchievementsGui$sbo());
+            UScreen.displayScreen(Guis.INSTANCE.getAchievementsGui$SBO());
         })).dimensions(self.width / 2 + 104, self.height / 4 + 32, 30, 20).build();
 
         this.addDrawableChild(button);

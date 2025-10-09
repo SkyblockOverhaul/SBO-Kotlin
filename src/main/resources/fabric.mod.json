@@ -10,9 +10,9 @@
 		}
 	},
 	"schemaVersion": 1,
-	"id": "sbo-kotlin",
-	"version": "${version}",
-	"name": "SBO",
+	"id": "${mod_id}",
+	"version": "${mod_version}",
+	"name": "${mod_name}",
 	"description": "SBO is the ultimate diana mod for diana nons! FPS friendly, and packed with QOL features!",
 	"authors": [
 		"D4rkSwift/Saotzuri",
@@ -40,7 +40,7 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.16.14",
-		"minecraft": "~1.21.5",
+		"minecraft": "~${minor_mc_version}",
 		"java": ">=21",
 		"fabric-api": "*",
 		"fabric-language-kotlin": "*"

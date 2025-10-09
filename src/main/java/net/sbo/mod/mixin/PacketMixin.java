@@ -2,7 +2,6 @@ package net.sbo.mod.mixin;
 
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.PacketCallbacks;
 import net.minecraft.network.packet.Packet;
 import net.sbo.mod.utils.events.SBOEvent;
 import net.sbo.mod.utils.events.impl.packets.PacketReceiveEvent;
@@ -11,6 +10,12 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+//#if MC >= 1.21.7
+//$$ import io.netty.channel.ChannelFutureListener;
+//#else
+import net.minecraft.network.PacketCallbacks;
+//#endif
 
 @Mixin(ClientConnection.class)
 public class PacketMixin {
@@ -21,8 +26,13 @@ public class PacketMixin {
     }
 
     // sended C2S packets
+    //#if MC >= 1.21.7
+    //$$ @Inject(method = "send(Lnet/minecraft/network/packet/Packet;Lio/netty/channel/ChannelFutureListener;)V", at = @At("HEAD"))
+    //$$    private void onPacketSend(Packet<?> packet, ChannelFutureListener channelFutureListener, CallbackInfo ci) {
+    //#else
     @Inject(method = "send(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/PacketCallbacks;)V", at = @At("HEAD"))
     private void onPacketSend(Packet<?> packet, PacketCallbacks callbacks, CallbackInfo ci) {
+    //#endif
         SBOEvent.INSTANCE.emit(new PacketSendEvent(packet));
     }
 }
