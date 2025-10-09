@@ -10,7 +10,7 @@ plugins {
     id("dev.deftu.gradle.tools.shadow")
     id("dev.deftu.gradle.tools.minecraft.loom")
     id("dev.deftu.gradle.tools.minecraft.releases")
-    id("com.google.devtools.ksp") version("2.2.10-2.0.2")
+    id("com.google.devtools.ksp") version "2.2.10-2.0.2"
 }
 
 repositories {
@@ -30,30 +30,28 @@ dependencies {
     modImplementation("net.fabricmc:fabric-language-kotlin:${mcData.dependencies.fabric.fabricLanguageKotlinVersion}")
 
     ksp(project(":event-processor"))
-    ksp("dev.zacsweers.autoservice:auto-service-ksp:1.1.0")
+    ksp("dev.zacsweers.autoservice:auto-service-ksp:${property("autoservice.version")}")
 
-    modImplementation(include("gg.essential:elementa:710")!!)
-    modImplementation(include("gg.essential:universalcraft-${mcData}:430")!!)
-    modImplementation(include("com.teamresourceful.resourcefulconfigkt:resourcefulconfigkt-fabric-1.21.5:3.5.13")!!)
-    modImplementation(include("net.azureaaron:hm-api:1.0.1+1.21.2")!!)
+    modImplementation(include("gg.essential:elementa:${property("elementa.version")}")!!)
+    modImplementation(include("gg.essential:universalcraft-$mcData:${property("uc.version")}")!!)
+    modImplementation(include("net.azureaaron:hm-api:${property("hmapi.version")}")!!)
 
-    // modImplementation(include("xyz.meowing:vexel-${mcData}:100")!!)
+    // modImplementation(include("xyz.meowing:vexel-${mcData}:${property("vexel.version")}")!!)
 
     when (mcData.version) {
         MinecraftVersions.VERSION_1_21_7 -> {
-            modImplementation("com.terraformersmc:modmenu:15.0.0-beta.3")
-            modImplementation(include("com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-${mcData.version}:3.7.2")!!)
+            modImplementation("com.terraformersmc:modmenu:${property("modmenu.version.1.21.7")}")
+            modImplementation(include("com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-${mcData.version}:${property("rconfig.version.1.21.7")}")!!)
         }
         MinecraftVersions.VERSION_1_21_5 -> {
-            modImplementation("com.terraformersmc:modmenu:14.0.0-rc.2")
-            modImplementation(include("com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-${mcData.version}:3.5.13")!!)
+            modImplementation("com.terraformersmc:modmenu:${property("modmenu.version.1.21.5")}")
+            modImplementation(include("com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-${mcData.version}:${property("rconfig.version.1.21.5")}")!!)
         }
         else -> {}
     }
 
     implementation(project(":event-processor"))
-
-    runtimeOnly("me.djtheredstoner:DevAuth-fabric:1.2.1")
+    runtimeOnly("me.djtheredstoner:DevAuth-fabric:${property("devauth.version")}")
 }
 
 tasks.findByName("preprocessCode")?.dependsOn(":1.21.5-fabric:kspKotlin")
