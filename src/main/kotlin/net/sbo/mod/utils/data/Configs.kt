@@ -99,7 +99,16 @@ data class DianaTrackerMayorData(
     override var items: DianaItemsData = DianaItemsData(),
     override var mobs: DianaMobsData = DianaMobsData(),
     override var inquis: DianaInquisData = DianaInquisData()
-) : DianaTracker
+) : DianaTracker {
+    fun snapshot(): DianaTrackerMayorData {
+        return DianaTrackerMayorData(
+            year = this.year,
+            items = this.items.copy(),
+            mobs = this.mobs.copy(),
+            inquis = this.inquis.copy()
+        )
+    }
+}
 
 data class PartyFinderConfigState(
     var checkboxes: Checkboxes = Checkboxes(),

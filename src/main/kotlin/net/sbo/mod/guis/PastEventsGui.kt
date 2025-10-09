@@ -199,6 +199,7 @@ class PastEventsGui : WindowScreen(ElementaVersion.V10) {
 
     private fun renderEvents() {
         eventContainer.clearChildren()
+        val events = pastDianaEventsData.events.reversed()
 
         if (events.isEmpty()) {
             UIText("No Events Recorded").constrain {
