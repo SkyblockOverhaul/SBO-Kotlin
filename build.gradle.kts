@@ -35,6 +35,7 @@ dependencies {
     modImplementation(include("gg.essential:elementa:${property("elementa.version")}")!!)
     modImplementation(include("gg.essential:universalcraft-$mcData:${property("uc.version")}")!!)
     modImplementation(include("net.azureaaron:hm-api:${property("hmapi.version")}")!!)
+    modImplementation(include("com.teamresourceful.resourcefulconfigkt:resourcefulconfigkt-fabric-1.21.5:${property("rconfig.version.1.21.5")}")!!)
 
     // modImplementation(include("xyz.meowing:vexel-${mcData}:${property("vexel.version")}")!!)
 
