@@ -3,6 +3,7 @@ import dev.deftu.gradle.utils.version.MinecraftVersions
 plugins {
     java
     kotlin("jvm")
+    kotlin("plugin.serialization") version "2.2.10"
     id("dev.deftu.gradle.multiversion")
     id("dev.deftu.gradle.tools")
     id("dev.deftu.gradle.tools.resources")
