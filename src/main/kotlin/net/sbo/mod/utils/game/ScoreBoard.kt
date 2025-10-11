@@ -7,7 +7,7 @@ import java.lang.String.CASE_INSENSITIVE_ORDER
 object ScoreBoard {
     private val COMPARATOR: Comparator<ScoreboardEntry> = Comparator.comparing { obj: ScoreboardEntry -> obj.value() }
         .reversed()
-        .thenComparing({ obj: ScoreboardEntry -> obj.owner() }, CASE_INSENSITIVE_ORDER);
+        .thenComparing({ obj: ScoreboardEntry -> obj.owner() }, CASE_INSENSITIVE_ORDER)
 
     /**
      * Retrieves the lines from the scoreboard sidebar.

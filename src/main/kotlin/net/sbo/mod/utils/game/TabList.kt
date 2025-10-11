@@ -13,7 +13,7 @@ object TabList {
         val client = mc
         return try {
             client.player?.networkHandler?.playerList?.toList() ?: emptyList()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             emptyList()
         }
     }

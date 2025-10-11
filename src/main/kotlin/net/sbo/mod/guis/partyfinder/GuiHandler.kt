@@ -34,18 +34,6 @@ object GuiHandler {
         }
     }
 
-    fun addTextHoverEffect(
-        textObject: UIComponent,
-        baseColor: Color,
-        hoverColor: Color = Color(50, 50, 50, 200)
-    ) {
-        textObject.onMouseEnter {
-            textObject.setColor(hoverColor)
-        }.onMouseLeave {
-            textObject.setColor(baseColor)
-        }
-    }
-
     class UILine(
         private val x: PositionConstraint,
         private val y: PositionConstraint,

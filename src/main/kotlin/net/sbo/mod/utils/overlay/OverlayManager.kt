@@ -1,16 +1,23 @@
 package net.sbo.mod.utils.overlay
 
-import net.minecraft.util.Identifier
-import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback
-import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
+import net.minecraft.util.Identifier
 import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.game.World
+import net.sbo.mod.utils.events.annotations.SboEvent
+import net.sbo.mod.utils.events.impl.render.RenderEvent
+
+//#if MC >= 1.21.7
+//$$ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
+//#else
+import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback
+import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer
+//#endif
 
 object OverlayManager {
     val overlays = mutableListOf<Overlay>()
@@ -66,13 +73,11 @@ object OverlayManager {
                 }
             }
         }
-        HudLayerRegistrationCallback.EVENT.register(HudLayerRegistrationCallback { layeredDrawer ->
-            layeredDrawer.attachLayerAfter(IdentifiedLayer.MISC_OVERLAYS, Identifier.of("sbo-kotlin", "overlay_renderer")) { context, tickCounter ->
-                if (Helper.currentScreen is OverlayEditScreen) return@attachLayerAfter
-                val renderScreen = mc.currentScreen?.title?.string ?: ""
-                render(context, renderScreen)
-            }
-        })
+    }
+
+    @SboEvent
+    fun onRender(event: RenderEvent) {
+        render(event.context,  mc.currentScreen?.title?.string ?: "")
     }
 
     fun registerMouseLeftClick() {

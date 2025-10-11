@@ -13,7 +13,7 @@ import java.util.regex.Pattern
 import java.util.Locale
 
 object DianaStats {
-    val STATS_PATTERN = Pattern.compile(
+    val STATS_PATTERN: Pattern = Pattern.compile(
         "§9Party §8> (.*?)§f: Playtime: (.*?) - Profit: (.*?) - (.*?) - Burrows: (.*?) \\((.*?)\\) - Mobs: (.*?) \\((.*?)\\) - Inquisitors: (.*?) \\((.*?)\\) - LS Inqs: (.*?) - Chimeras: (.*?) \\((.*?)\\) - LS: (.*?) \\((.*?)\\) - Sticks: (.*?) \\((.*?)\\) - Relics: (.*?) \\((.*?)\\)(.*?)",
         Pattern.DOTALL
     )

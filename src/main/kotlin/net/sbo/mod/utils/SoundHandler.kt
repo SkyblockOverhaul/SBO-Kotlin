@@ -38,8 +38,12 @@ object SoundHandler {
 
     private fun currentResourcePackFormat(): Int {
         return try {
+            //#if MC >= 1.21.7
+            //$$ SharedConstants.getGameVersion().packVersion(ResourceType.CLIENT_RESOURCES)
+            //#else
             SharedConstants.getGameVersion().getResourceVersion(ResourceType.CLIENT_RESOURCES)
-        } catch (t: Throwable) {
+            //#endif
+        } catch (_: Throwable) {
             48
         }
     }

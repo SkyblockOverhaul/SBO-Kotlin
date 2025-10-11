@@ -9,9 +9,8 @@ import net.azureaaron.hmapi.network.packet.v1.s2c.LocationUpdateS2CPacket
 import net.azureaaron.hmapi.network.packet.v2.s2c.PartyInfoS2CPacket
 import net.sbo.mod.partyfinder.PartyFinderManager
 import net.sbo.mod.utils.chat.Chat
-import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
-import net.sbo.mod.utils.events.impl.DisconnectEvent
+import net.sbo.mod.utils.events.impl.game.DisconnectEvent
 
 object HypixelModApi {
     var isOnHypixel: Boolean = false
@@ -124,7 +123,7 @@ object HypixelModApi {
                 PartyFinderManager.creatingParty = false
                 Chat.chat("§6[SBO] §eYou are not on Hypixel. You can only use this feature on Hypixel.")
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             PartyFinderManager.creatingParty = false
         }
     }

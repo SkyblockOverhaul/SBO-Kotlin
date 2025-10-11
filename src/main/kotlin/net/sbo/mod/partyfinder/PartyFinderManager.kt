@@ -24,8 +24,9 @@ import net.sbo.mod.utils.data.PartyAddResponse
 import net.sbo.mod.utils.data.PartyUpdateResponse
 import net.sbo.mod.utils.data.Reqs
 import net.sbo.mod.utils.events.annotations.SboEvent
-import net.sbo.mod.utils.events.impl.DisconnectEvent
+import net.sbo.mod.utils.events.impl.game.DisconnectEvent
 import net.sbo.mod.utils.events.impl.PartyFinderRefreshListEvent
+import net.sbo.mod.utils.events.impl.game.ChatMessageEvent
 import net.sbo.mod.utils.http.Http.getInt
 import java.util.UUID
 import java.util.regex.Pattern
@@ -37,7 +38,6 @@ object PartyFinderManager {
     private var updateBool = false
     private var requeue = false
     private var ghostParty = false
-    private var requestSend = false
     private var usedPf = false
 
     private var partySize = 0
@@ -79,8 +79,6 @@ object PartyFinderManager {
     )
 
     fun init() {
-        trackMemberRegister()
-
         Register.command("sborequeue") {
             if (!inQueue) {
                 Chat.chat("§6[SBO] §eRequeuing party with last used requirements...")
@@ -251,7 +249,7 @@ object PartyFinderManager {
                     Chat.chat("§6[SBO] §4Unexpected error while creating party: ${error.message}")
                 }
 
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 return
             }
         } else {
@@ -383,45 +381,44 @@ object PartyFinderManager {
         }
     }
 
-    fun trackMemberRegister() {
-        Register.onChatMessage { message ->
-            val text = message.toFormattedString()
-            var match = false
-            leaderChangeRegexes.forEach {
-                if (it.matches(text)) {
-                    match = true
-                    isInParty = true
-                    isLeader = false
-                    removePartyFromQueue()
-                }
+    @SboEvent
+    fun trackMemberRegister(event: ChatMessageEvent) {
+        val text = event.message.toFormattedString()
+        var match = false
+        leaderChangeRegexes.forEach {
+            if (it.matches(text)) {
+                match = true
+                isInParty = true
+                isLeader = false
+                removePartyFromQueue()
             }
-            partyDisbandRegexes.forEach {
-                if (it.matches(text)) {
-                    creatingParty = false
-                    partyMemberCount = 1
-                    match = true
-                    isInParty = false
-                    removePartyFromQueue()
-                }
-            }
-            partyJoinRegexes.forEach {
-                if (it.matches(text)) {
-                    updateBool = true
-                    partyMemberCount += 1
-                    match = true
-                    isInParty = true
-                }
-            }
-            partyLeaveRegexes.forEach {
-                if (it.matches(text)) {
-                    updateBool = true
-                    partyMemberCount -= 1
-                    match = true
-                    isInParty = partyMemberCount > 1
-                }
-            }
-            if (match) trackMemberCount()
         }
+        partyDisbandRegexes.forEach {
+            if (it.matches(text)) {
+                creatingParty = false
+                partyMemberCount = 1
+                match = true
+                isInParty = false
+                removePartyFromQueue()
+            }
+        }
+        partyJoinRegexes.forEach {
+            if (it.matches(text)) {
+                updateBool = true
+                partyMemberCount += 1
+                match = true
+                isInParty = true
+            }
+        }
+        partyLeaveRegexes.forEach {
+            if (it.matches(text)) {
+                updateBool = true
+                partyMemberCount -= 1
+                match = true
+                isInParty = partyMemberCount > 1
+            }
+        }
+        if (match) trackMemberCount()
     }
 
     fun trackMemberCount() {

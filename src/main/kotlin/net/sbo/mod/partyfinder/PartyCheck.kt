@@ -29,7 +29,7 @@ object PartyCheck {
                 Chat.chat("§6[SBO] §eChecking party members...")
                 HypixelModApi.sendPartyInfoPacket()
             } else {
-                Chat.chat("§6[SBO] §ePlease wait 30 seconds before checking party members again.");
+                Chat.chat("§6[SBO] §ePlease wait 30 seconds before checking party members again.")
             }
         }
 

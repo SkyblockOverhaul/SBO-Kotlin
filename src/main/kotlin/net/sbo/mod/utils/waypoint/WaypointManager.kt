@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.sbo.mod.diana.PreciseGuessBurrow
 import net.minecraft.client.MinecraftClient
-import net.sbo.mod.diana.burrows.BurrowDetector.refreshBurrows
 import net.sbo.mod.settings.categories.Customization
 import net.sbo.mod.utils.render.WaypointRenderer
 import net.sbo.mod.settings.categories.Diana
@@ -19,7 +18,7 @@ import net.sbo.mod.utils.Player
 import net.sbo.mod.utils.SoundHandler.playCustomSound
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
-import net.sbo.mod.utils.events.impl.WorldChangeEvent
+import net.sbo.mod.utils.events.impl.game.WorldChangeEvent
 import net.sbo.mod.utils.math.SboVec
 import java.awt.Color
 import kotlin.collections.iterator
@@ -79,14 +78,17 @@ object WaypointManager {
 
             val inqWps = getWaypointsOfType("inq")
 
-            if (Diana.dianaMultiBurrowGuess) {
-                val guessesToRemove = getGuessWaypoints()
-                    .filter { waypoint -> waypoint.distanceToPlayer() < 5.0 || waypoint.pos.y <= 62.0 }
-                    .toList()
-
-                guessesToRemove.forEach { waypoint ->
-                    removeWaypoint(waypoint)
+            val posP = SboVec(playerPos.x, playerPos.y, playerPos.z).roundLocationToBlock()
+            val guessesToRemove = getGuessWaypoints()
+                .filter { waypoint ->
+                    waypoint.distanceToPlayer() < 3.0 ||
+                    waypoint.pos.y < 60 ||
+                    (waypoint.pos.x == posP.x && waypoint.pos.z == posP.z)
                 }
+                .toList()
+
+            guessesToRemove.forEach { waypoint ->
+                removeWaypoint(waypoint)
             }
 
             this.forEachWaypoint { waypoint ->

@@ -3,7 +3,6 @@ package net.sbo.mod.utils.math
 import net.minecraft.util.math.Vec3d
 import kotlin.math.floor
 import kotlin.math.pow
-import kotlin.math.round
 import kotlin.math.sqrt
 
 data class SboVec(var x: Double, var y: Double, var z: Double) {

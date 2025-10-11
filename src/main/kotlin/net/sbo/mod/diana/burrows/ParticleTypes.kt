@@ -4,8 +4,6 @@ import net.minecraft.network.packet.s2c.play.ParticleS2CPacket
 import net.minecraft.particle.ParticleTypes as MCParticleTypes
 
 internal object ParticleTypes {
-    private const val FLOAT_EPSILON = 0.001f
-
     internal val PARTICLE_CHECKS = mutableMapOf(
         "ENCHANT" to ParticleCheck { packet ->
             packet.parameters.type == MCParticleTypes.ENCHANT &&

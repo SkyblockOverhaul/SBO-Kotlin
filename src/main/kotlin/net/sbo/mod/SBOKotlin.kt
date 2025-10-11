@@ -25,7 +25,6 @@ import net.sbo.mod.diana.burrows.BurrowDetector
 import net.sbo.mod.diana.DianaMobDetect
 import net.sbo.mod.diana.achievements.AchievementManager
 import net.sbo.mod.diana.achievements.AchievementManager.unlockAchievement
-import net.sbo.mod.diana.PreciseGuessBurrow
 import net.sbo.mod.general.HelpCommand
 import net.sbo.mod.overlays.Bobber
 import net.sbo.mod.overlays.DianaLoot
@@ -38,11 +37,9 @@ import net.sbo.mod.qol.MessageHider
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.SboTimerManager
 import net.sbo.mod.utils.SoundHandler
-import net.sbo.mod.utils.chat.ChatHandler
 import net.sbo.mod.utils.events.SBOEvent
 import net.sbo.mod.utils.overlay.OverlayManager
 import net.sbo.mod.utils.events.SboEventGeneratedRegistry
-import net.sbo.mod.utils.game.ServerStats
 
 object SBOKotlin {
 	@JvmField
@@ -115,8 +112,6 @@ object SBOKotlin {
 		InquisLoot.init()
 		AchievementManager.init()
 		MessageHider.init()
-		ChatHandler.init()
-
 
 		Register.onTick(100) { unregister ->
 			if (mc.player != null && World.isInSkyblock()) {

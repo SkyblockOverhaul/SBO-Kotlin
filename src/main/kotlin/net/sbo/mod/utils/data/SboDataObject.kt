@@ -9,7 +9,8 @@ import net.fabricmc.loader.api.FabricLoader
 import net.sbo.mod.SBOKotlin
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
-import net.sbo.mod.utils.events.impl.DisconnectEvent
+import net.sbo.mod.utils.events.impl.game.DisconnectEvent
+import net.sbo.mod.utils.events.impl.game.GameCloseEvent
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
@@ -75,6 +76,11 @@ object SboDataObject {
         saveAndBackupAllDataThreaded("SBO")
     }
 
+    @SboEvent
+    fun onGameClose(event: GameCloseEvent) {
+        saveAndBackupAllDataThreaded("SBO")
+    }
+
     fun <T> load(modName: String, fileName: String, defaultData: T, type: Class<T>): T {
         val modConfigDir = File(FabricLoader.getInstance().configDir.toFile(), modName)
         if (!modConfigDir.exists()) {
@@ -136,7 +142,7 @@ object SboDataObject {
 
                 loadedData
             }
-        } catch (e: JsonSyntaxException) {
+        } catch (_: JsonSyntaxException) {
             SBOKotlin.logger.error("[$modName] Error parsing JSON in $fileName, resetting to default data.")
             save(modName, defaultData, fileName)
             defaultData
@@ -350,7 +356,7 @@ object SboDataObject {
     }
 
     private fun saveAllData() {
-        configMapforSave.forEach { (configName, configData) ->
+        configMapforSave.forEach { (_, configData) ->
             configData.first.invoke()
         }
     }

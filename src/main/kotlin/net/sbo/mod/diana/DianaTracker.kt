@@ -1,5 +1,7 @@
 package net.sbo.mod.diana
 
+import net.sbo.mod.SBOKotlin
+import net.sbo.mod.diana.achievements.AchievementManager
 import net.sbo.mod.diana.achievements.AchievementManager.trackMagicFind
 import net.sbo.mod.diana.achievements.AchievementManager.unlockAchievement
 import net.sbo.mod.overlays.DianaLoot
@@ -95,54 +97,58 @@ object DianaTracker {
     }
 
     fun trackWithPickuplog(item: Item) {
+        SBOKotlin.logger.info("debug trackWithPickuplog: itemid: |${item.itemId}|, count: |${item.count}|, timestamp now ${System.currentTimeMillis()}, timestamp of item: |${item.creation}|, item age (senconds): |${Helper.getSecondsPassed(item.creation)}|s")
         val isLootShare = gotLootShareRecently(2)
-        if (Helper.getSecondsPassed(item.creation) > 2) return
-        if (!checkDiana()) return
-        if (item.itemId in rareDrops.keys) {
-            val msg = Helper.toTitleCase(item.itemId.replace("_", " "))
-            if (item.itemId == "MINOS_RELIC") {
-                playCustomSound(Customization.relicSound[0], Customization.relicVolume)
-                if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.champsSinceRelic} §eChampions to get a Minos Relic!")
-                if (sboData.champsSinceRelic == 1) {
-                    Chat.chat("§6[SBO] §cb2b Minos Relic!")
-                    unlockAchievement(5) // b2b relic
+        sleep (1000) {
+            if (Helper.getSecondsPassed(item.creation) > 3 && item.itemId != "MINOS_RELIC") return@sleep
+            if (!dianaMobDiedRecently(3) && item.itemId == "MINOS_RELIC") return@sleep
+            if (!checkDiana()) return@sleep
+            if (item.itemId in rareDrops.keys) {
+                val msg = Helper.toTitleCase(item.itemId.replace("_", " "))
+                if (item.itemId == "MINOS_RELIC") {
+                    playCustomSound(Customization.relicSound[0], Customization.relicVolume)
+                    if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.champsSinceRelic} §eChampions to get a Minos Relic!")
+                    if (sboData.champsSinceRelic == 1) {
+                        Chat.chat("§6[SBO] §cb2b Minos Relic!")
+                        unlockAchievement(5) // b2b relic
+                    }
+                    if (isLootShare) {
+                        Chat.chat("§6[SBO] §cLootshared a Minos Relic!")
+                        unlockAchievement(17) // relic ls
+                    }
+                    sboData.champsSinceRelic = 0
+
+                    if (Diana.lootAnnouncerScreen) {
+                        val subTitle = if (Diana.lootAnnouncerPrice) "§6${Helper.getItemPriceFormatted(item.itemId)} coins" else ""
+                        Helper.showTitle("§5§lMinos Relic!", subTitle, 0, 25, 35)
+                    }
+
+                    announceLootToParty(item.itemId)
+                    SboDataObject.save("SboData")
+                } else {
+                    playCustomSound(Customization.sprSound[0], Customization.sprVolume)
                 }
-                if (isLootShare) {
-                    Chat.chat("§6[SBO] §cLootshared a Minos Relic!")
-                    unlockAchievement(17) // relic ls
-                }
-                sboData.champsSinceRelic = 0
 
-                if (Diana.lootAnnouncerScreen) {
-                    val subTitle = if (Diana.lootAnnouncerPrice) "§6${Helper.getItemPriceFormatted(item.itemId)} coins" else ""
-                    Helper.showTitle("§5§lMinos Relic!", subTitle, 0, 25, 35)
+                if (Diana.lootAnnouncerChat) {
+                    Chat.chat("§6[SBO] §6§lRARE DROP! ${rareDrops[item.itemId]}$msg")
                 }
 
-                announceLootToParty(item.itemId)
-                SboDataObject.save("SboData")
-            } else {
-                playCustomSound(Customization.sprSound[0], Customization.sprVolume)
-            }
+                trackItem(item.itemId, item.count)
 
-            if (Diana.lootAnnouncerChat) {
-                Chat.chat("§6[SBO] §6§lRARE DROP! ${rareDrops[item.itemId]}$msg")
-            }
-
-            trackItem(item.itemId, item.count)
-
-            if (Helper.getSecondsPassed(lastInqDeath) <= 2) {
-                announceLootToParty(item.itemId)
-                if (!isLootShare)
-                    trackItem(item.itemId, item.count, true)
-                else
-                    trackItem(item.itemId + "_LS", item.count, true)
+                if (Helper.getSecondsPassed(lastInqDeath) <= 3) {
+                    announceLootToParty(item.itemId)
+                    if (!isLootShare)
+                        trackItem(item.itemId, item.count, true)
+                    else
+                        trackItem(item.itemId + "_LS", item.count, true)
+                }
             }
         }
     }
 
     fun trackWithPickuplogStackable(item: Item, amount: Int) {
         sleep (1000) {
-            if (!dianaMobDiedRecently(3) && gotLootShareRecently(3)) return@sleep
+            if (!dianaMobDiedRecently(3) && !gotLootShareRecently(3)) return@sleep
             if (!checkDiana()) return@sleep
             if (item.itemId in otherDrops) {
                 trackItem(item.itemId, amount)
@@ -154,8 +160,9 @@ object DianaTracker {
     fun trackWithSacksMessage(itemName: String, amount: Int) {
         if (!allowSackTracking) return
         if (!checkDiana()) return
-        if (sackDrops.contains(itemName)) {
-            trackItem(itemName, amount)
+        val item = itemName.replace("Ingot", "").trim()
+        if (sackDrops.contains(item)) {
+            trackItem(item, amount)
         }
     }
 
@@ -163,7 +170,7 @@ object DianaTracker {
         if (amount <= 0) return
         if (!dianaMobDiedRecently(4) && !gotLootShareRecently(4)) return
         if (!checkDiana()) return
-        if (amount in forbiddenCoins) return
+        if (amount in forbiddenCoins || amount > 65000) return
         trackItem("SCAVENGER_COINS", amount.toInt())
         trackItem("COINS", amount.toInt())
     }
@@ -406,7 +413,7 @@ object DianaTracker {
             }
         }
         if (!allZero) {
-            pastDianaEventsData.events += dianaTrackerMayor
+            pastDianaEventsData.events += dianaTrackerMayor.snapshot()
             SboDataObject.save("PastDianaEventsData")
         }
         dianaTrackerMayor.reset()
@@ -441,6 +448,8 @@ object DianaTracker {
         DianaLoot.updateLines()
         if (fromInq) InquisLoot.updateLines()
         SboTimerManager.updateAllActivity()
+        AchievementManager.trackAchievementsItem(dianaTrackerMayor)
+        AchievementManager.trackSince()
     }
 
     fun trackOne(tracker: DianaTracker, item: String, amount: Int, fromInq: Boolean = false) {

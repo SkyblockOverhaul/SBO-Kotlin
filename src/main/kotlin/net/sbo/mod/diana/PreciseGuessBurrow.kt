@@ -5,9 +5,9 @@ import net.minecraft.particle.ParticleTypes
 import net.sbo.mod.SBOKotlin
 import net.sbo.mod.settings.categories.Diana
 import net.sbo.mod.utils.events.annotations.SboEvent
-import net.sbo.mod.utils.events.impl.PacketReceiveEvent
-import net.sbo.mod.utils.events.impl.PlayerInteractEvent
-import net.sbo.mod.utils.events.impl.WorldChangeEvent
+import net.sbo.mod.utils.events.impl.packets.PacketReceiveEvent
+import net.sbo.mod.utils.events.impl.game.PlayerInteractEvent
+import net.sbo.mod.utils.events.impl.game.WorldChangeEvent
 import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.math.PolynomialFitter
 import net.sbo.mod.utils.math.SboVec
@@ -59,7 +59,7 @@ object PreciseGuessBurrow {
         val guessPosition = this.guessBurrowLocation()
         if (guessPosition == null) return
         finalLocation = guessPosition.down(0.5).roundLocationToBlock()
-        finalLocation = guessPosition.down(0.5).roundLocationToBlock();
+        finalLocation = guessPosition.down(0.5).roundLocationToBlock()
         WaypointManager.updateGuess(finalLocation, newBurrow)
         newBurrow = false
     }

@@ -9,10 +9,10 @@ import net.sbo.mod.settings.categories.Customization
 import net.sbo.mod.utils.Player
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.events.annotations.SboEvent
-import net.sbo.mod.utils.events.impl.PacketReceiveEvent
-import net.sbo.mod.utils.events.impl.PacketSendEvent
-import net.sbo.mod.utils.events.impl.PlayerInteractEvent
-import net.sbo.mod.utils.events.impl.WorldChangeEvent
+import net.sbo.mod.utils.events.impl.packets.PacketReceiveEvent
+import net.sbo.mod.utils.events.impl.packets.PacketSendEvent
+import net.sbo.mod.utils.events.impl.game.PlayerInteractEvent
+import net.sbo.mod.utils.events.impl.game.WorldChangeEvent
 import net.minecraft.particle.ParticleTypes as MCParticleTypes
 import net.sbo.mod.utils.waypoint.Waypoint
 import java.awt.Color
@@ -22,7 +22,6 @@ import net.sbo.mod.utils.waypoint.WaypointManager.getGuessWaypoints
 import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.waypoint.WaypointManager.guessWp
 import net.sbo.mod.utils.waypoint.WaypointManager.removeWaypoint
-import net.sbo.mod.utils.waypoint.WaypointManager.waypoints
 import java.util.regex.Pattern
 
 object BurrowDetector {

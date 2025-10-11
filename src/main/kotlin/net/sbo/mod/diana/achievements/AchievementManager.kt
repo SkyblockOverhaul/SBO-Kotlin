@@ -3,6 +3,8 @@ package net.sbo.mod.diana.achievements
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import net.minecraft.client.gui.screen.ingame.HandledScreen
+import net.minecraft.client.gui.screen.ingame.HandledScreens
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.NbtComponent
 import net.minecraft.item.ItemStack
@@ -16,11 +18,13 @@ import net.sbo.mod.utils.data.DianaTrackerMayorData
 import net.sbo.mod.utils.data.PartyPlayerStats
 import net.sbo.mod.utils.data.SboDataObject
 import net.sbo.mod.utils.data.SboDataObject.achievementsData
+import net.sbo.mod.utils.data.SboDataObject.dianaTrackerMayor
 import net.sbo.mod.utils.data.SboDataObject.pastDianaEventsData
 import net.sbo.mod.utils.data.SboDataObject.sboData
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
-import net.sbo.mod.utils.events.impl.WorldChangeEvent
+import net.sbo.mod.utils.events.impl.game.WorldChangeEvent
+import net.sbo.mod.utils.events.impl.guis.GuiOpenEvent
 import java.lang.Thread.sleep
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
@@ -156,8 +160,8 @@ object AchievementManager {
         }
 
         if (time >= 18000000L) { // 5 hours
-            val timer = SboTimerManager.timerMayor
-            val burrowsPerHour = Helper.getBurrowsPerHr(tracker,timer)
+            val burrows = tracker.items.TOTAL_BURROWS.toDouble()
+            val burrowsPerHour = (burrows / (time.toDouble() / 3600000.0)).toInt()
             when {
                 burrowsPerHour >= 600 -> unlockAchievement(72)
                 burrowsPerHour >= 500 -> unlockAchievement(71)
@@ -171,7 +175,7 @@ object AchievementManager {
         if (daedalusStickCount >= 1 && itemsData.MINOS_RELIC >= 2) unlockAchievement(74)
     }
 
-    fun trackSinceMob() {
+    fun trackSince() {
         if (isOnHypixel) return
 
         when {
@@ -213,24 +217,36 @@ object AchievementManager {
         }
     }
 
-    fun trackBeKills(gaiaKills: Int, champKills: Int, hunterKills: Int, inqKills: Int, minoKills: Int, catKills: Int) { // todo: add this
-        if (isOnHypixel) return
+    @SboEvent
+    fun trackBeKills(event: GuiOpenEvent) {
+        Helper.sleep(200) {
+            val screen = event.screen
+            if (screen !is HandledScreen<*>) return@sleep
+            if (!event.screen.title.string.contains("Mythological Creatur", ignoreCase = true)) return@sleep
+            val slots = screen.screenHandler.slots
 
-        val allMaxed = listOf(
-            gaiaKills to 50, inqKills to 45, minoKills to 46,
-            champKills to 47, hunterKills to 48, catKills to 49
-        ).all { (kills, id) ->
-            val isMaxed = when (id) {
-                45 -> kills >= 500
-                50, 46, 49 -> kills >= 3000
-                47, 48 -> kills >= 1000
-                else -> false
+            val gaiaKills = Helper.getKillsFromLore(slots[10].stack)
+            val champKills = Helper.getKillsFromLore(slots[11].stack)
+            val hunterKills = Helper.getKillsFromLore(slots[12].stack)
+            val inqKills = Helper.getKillsFromLore(slots[13].stack)
+            val minoKills = Helper.getKillsFromLore(slots[14].stack)
+            val catKills = Helper.getKillsFromLore(slots[15].stack)
+
+            val allMaxed = listOf(
+                gaiaKills to 50, inqKills to 45, minoKills to 46,
+                champKills to 47, hunterKills to 48, catKills to 49
+            ).all { (kills, id) ->
+                val isMaxed = when (id) {
+                    45 -> kills >= 500
+                    50, 46, 49 -> kills >= 3000
+                    47, 48 -> kills >= 1000
+                    else -> false
+                }
+                if (isMaxed) unlockAchievement(id) else lockById(id)
+                isMaxed
             }
-            if (isMaxed) unlockAchievement(id) else lockById(id)
-            isMaxed
+            if (allMaxed) unlockAchievement(51) else lockById(51)
         }
-
-        if (allMaxed) unlockAchievement(51) else lockById(51)
     }
 
     fun backTrackAchievements() {
@@ -238,7 +254,7 @@ object AchievementManager {
         pastDianaEventsData.events.forEach { eventData ->
             trackAchievementsItem(eventData)
         }
-        trackSinceMob()
+        trackSince()
     }
 
     fun trackWithCheckPlayer(playerInfo: PartyPlayerStats) {
