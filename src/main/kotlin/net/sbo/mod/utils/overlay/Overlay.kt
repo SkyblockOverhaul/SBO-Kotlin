@@ -173,7 +173,6 @@ class Overlay(
         for (line in getLines()) {
             if (!line.checkCondition()) continue
             if (Helper.getGuiName() in allowedGuis) line.updateMouseInteraction(mouseX, mouseY, currentX * scale, currentY * scale, textRenderer, scale, drawContext)
-
             line.draw(drawContext, currentX.toInt(), currentY.toInt(), textRenderer)
             if (line.linebreak) {
                 currentY += textRenderer.fontHeight + 1
