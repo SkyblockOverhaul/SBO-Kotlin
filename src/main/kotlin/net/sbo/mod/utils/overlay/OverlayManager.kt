@@ -9,8 +9,6 @@ import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.game.World
-import net.sbo.mod.utils.events.annotations.SboEvent
-import net.sbo.mod.utils.events.impl.render.RenderEvent
 
 //#if MC >= 1.21.7
 //$$ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
@@ -73,11 +71,24 @@ object OverlayManager {
                 }
             }
         }
-    }
 
-    @SboEvent
-    fun onRender(event: RenderEvent) {
-        render(event.context,  mc.currentScreen?.title?.string ?: "")
+        //#if MC >= 1.21.7
+        //$$ HudElementRegistry.addLast(
+        //$$        Identifier.of("sbo-kotlin", "overlay_renderer")
+        //$$    ) { context, tickCounter ->
+        //$$        if (Helper.currentScreen is OverlayEditScreen) return@addLast
+        //$$            val renderScreen = mc.currentScreen?.title?.string ?: ""
+        //$$            render(context, renderScreen)
+        //$$     }
+        //#else
+        HudLayerRegistrationCallback.EVENT.register(HudLayerRegistrationCallback { layeredDrawer ->
+            layeredDrawer.attachLayerAfter(IdentifiedLayer.MISC_OVERLAYS, Identifier.of("sbo-kotlin", "overlay_renderer")) { context, tickCounter ->
+                if (Helper.currentScreen is OverlayEditScreen) return@attachLayerAfter
+                val renderScreen = mc.currentScreen?.title?.string ?: ""
+                render(context, renderScreen)
+            }
+        })
+        //#endif
     }
 
     fun registerMouseLeftClick() {

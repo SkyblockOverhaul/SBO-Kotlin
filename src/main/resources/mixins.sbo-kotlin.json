@@ -4,7 +4,6 @@
   "compatibilityLevel": "JAVA_21",
   "client": [
     "GameMenuScreenMixin",
-    "GameRenderMixin",
     "MinecraftClientMixin",
     "PacketMixin",
     "PlayerInteractMixin",
