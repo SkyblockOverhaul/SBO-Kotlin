@@ -127,6 +127,6 @@ class OverlayTextLine(
             drawContext.fill(x, y, x + width, y + height + 1, Color(128, 128, 128, 130).rgb)
         }
 
-        drawContext.drawText(textRenderer, text, x, y, 0xFFFFFF, shadow)
+        drawContext.drawText(textRenderer, text, x, y, -1, shadow)
     }
 }
