@@ -11,9 +11,14 @@ import java.util.regex.Pattern
 object ChatHandler {
 
     private val messageHandlers = mutableListOf<ChatRule>()
+    private val spammyPattern = Regex("§[0-9a-fk-or].+[0-9,]+/[0-9,]+❤.*")
 
     @SboEvent
     fun onAllowMessage(event: ChatMessageAllowEvent) {
+        if (spammyPattern.matches(event.message.string)) {
+            event.isAllowed = true
+            return
+        }
         event.isAllowed = processMessage(event.message)
     }
 
