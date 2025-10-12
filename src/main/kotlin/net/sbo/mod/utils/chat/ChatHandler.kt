@@ -16,7 +16,7 @@ object ChatHandler {
     @SboEvent
     fun onAllowMessage(event: ChatMessageAllowEvent) {
         if (spammyPattern.matches(event.message.string)) {
-            event.isAllowed = false
+            event.isAllowed = true
             return
         }
         event.isAllowed = processMessage(event.message)
