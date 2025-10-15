@@ -401,31 +401,32 @@ object DianaTracker {
     }
 
     fun checkMayorTracker() {
-        if (dianaTrackerMayor.year < Mayor.mayorElectedYear && dianaTrackerMayor.year != 0) {
-            var allZero = true
-            for (item in dianaTrackerMayor.mobs::class.java.declaredFields) {
-                item.isAccessible = true
-                if (item.get(dianaTrackerMayor.mobs) is Int) {
-                    if (item.getInt(dianaTrackerMayor.mobs) > 0) {
-                        allZero = false
-                        break
-                    }
+        SBOKotlin.logger.info("debug checkMayorTracker: mayorElectedYear: |${Mayor.mayorElectedYear}|, dianaTrackerMayor.year: |${dianaTrackerMayor.year}|")
+        if (dianaTrackerMayor.year == 0 || dianaTrackerMayor.year >= Mayor.mayorElectedYear) return
+        SBOKotlin.logger.info("debug checkMayorTracker: new mayor detected, resetting mayor tracker")
+        var allZero = true
+        for (item in dianaTrackerMayor.mobs::class.java.declaredFields) {
+            item.isAccessible = true
+            if (item.get(dianaTrackerMayor.mobs) is Int) {
+                if (item.getInt(dianaTrackerMayor.mobs) > 0) {
+                    allZero = false
+                    break
                 }
             }
-            if (!allZero) {
-                pastDianaEventsData.events += dianaTrackerMayor.snapshot()
-                SboDataObject.save("PastDianaEventsData")
-            }
-            dianaTrackerMayor.reset()
-            dianaTrackerMayor.year = Mayor.mayorElectedYear
-            dianaTrackerMayor.save()
-            getMayor()
-            DianaMobs.updateLines()
-            DianaLoot.updateLines()
-            InquisLoot.updateLines()
         }
+        if (!allZero) {
+            pastDianaEventsData.events += dianaTrackerMayor.snapshot()
+            SboDataObject.save("PastDianaEventsData")
+        }
+        dianaTrackerMayor.reset()
+        dianaTrackerMayor.year = Mayor.mayorElectedYear
+        dianaTrackerMayor.save()
+        getMayor()
+        DianaMobs.updateLines()
+        DianaLoot.updateLines()
+        InquisLoot.updateLines()
+        SBOKotlin.logger.info("debug checkMayorTracker: mayor tracker reset complete")
     }
-
 
     fun trackMob(item: String, amount: Int) {
         trackItem(item, amount)
