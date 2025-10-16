@@ -9,7 +9,7 @@ object TabList {
      * Returns a list of all PlayerListEntry objects from the current tab list.
      * Each PlayerListEntry object contains detailed information about a player.
      */
-    fun getTabEntries(): List<PlayerListEntry> {
+    fun getTabEntries(): List<PlayerListEntry?> {
         val client = mc
         return try {
             client.player?.networkHandler?.playerList?.toList() ?: emptyList()
@@ -25,15 +25,14 @@ object TabList {
      * @return The value associated with the key, or null if not found.
      */
     fun findInfo(key: String): String? {
-        val tabEntries = getTabEntries()
-        if (tabEntries.isEmpty()) return null
-        for (entry in tabEntries) {
-            val lineText: Text = entry.displayName ?: Text.literal(entry.profile.name)
-            val lineString = lineText.string.trim()
-            if (lineString.startsWith(key)) {
-                return lineString.substring(key.length).trim() // Return the value after the key
+        return getTabEntries()
+            .filterNotNull()
+            .mapNotNull { entry ->
+                val text = entry.displayName ?: entry.profile?.name?.let { Text.literal(it) }
+                text?.string?.trim()
             }
-        }
-        return null // Return null if the key is not found
+            .firstOrNull { it.startsWith(key) }
+            ?.substring(key.length)
+            ?.trim()
     }
 }
