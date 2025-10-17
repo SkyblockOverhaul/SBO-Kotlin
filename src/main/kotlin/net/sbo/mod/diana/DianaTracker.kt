@@ -58,6 +58,13 @@ object DianaTracker {
             InquisLoot.updateLines()
         }
 
+        Register.command("sboresetmayortracker") {
+            resetMayorTracker()
+            DianaMobs.updateLines()
+            DianaLoot.updateLines()
+            InquisLoot.updateLines()
+        }
+
         Register.command("sboresetstatstracker") {
             sboData.mobsSinceInq = 0
             sboData.inqsSinceChim = 0
@@ -414,18 +421,22 @@ object DianaTracker {
                 }
             }
         }
-        if (!allZero) {
+        resetMayorTracker(allZero)
+        SBOKotlin.logger.info("debug checkMayorTracker: mayor tracker reset complete")
+    }
+
+    internal fun resetMayorTracker(check: Boolean = false) {
+        if (!check) {
             pastDianaEventsData.events += dianaTrackerMayor.snapshot()
             SboDataObject.save("PastDianaEventsData")
         }
         dianaTrackerMayor.reset()
         dianaTrackerMayor.year = Mayor.mayorElectedYear
         dianaTrackerMayor.save()
-        getMayor()
         DianaMobs.updateLines()
         DianaLoot.updateLines()
         InquisLoot.updateLines()
-        SBOKotlin.logger.info("debug checkMayorTracker: mayor tracker reset complete")
+        Chat.chat("§6[SBO] §aDiana mayor tracker has been reset.")
     }
 
     fun trackMob(item: String, amount: Int) {
