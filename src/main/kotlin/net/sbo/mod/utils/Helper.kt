@@ -59,7 +59,7 @@ object Helper {
         }
 
         Register.onTick(20) { // maybe better way to register this
-            hasSpade = playerHasItem("ANCESTRAL_SPADE")
+            hasSpade = playerHasItem("ANCESTRAL_SPADE") || playerHasItem("ARCHAIC_SPADE") || playerHasItem("DEIFIC_SPADE")
         }
 
         Register.onTick(20 * 60 * 5) {

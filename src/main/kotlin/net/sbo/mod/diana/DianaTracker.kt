@@ -7,7 +7,6 @@ import net.sbo.mod.diana.achievements.AchievementManager.unlockAchievement
 import net.sbo.mod.overlays.DianaLoot
 import net.sbo.mod.overlays.DianaMobs
 import net.sbo.mod.overlays.DianaStats
-import net.sbo.mod.overlays.InquisLoot
 import net.sbo.mod.overlays.MagicFind
 import net.sbo.mod.settings.categories.Customization
 import net.sbo.mod.settings.categories.Diana
@@ -23,7 +22,6 @@ import net.sbo.mod.utils.Helper.lastInqDeath
 import net.sbo.mod.utils.Helper.removeFormatting
 import net.sbo.mod.utils.Helper.sleep
 import net.sbo.mod.utils.game.Mayor
-import net.sbo.mod.utils.game.Mayor.getMayor
 import net.sbo.mod.utils.Player
 import net.sbo.mod.utils.SboTimerManager
 import net.sbo.mod.utils.events.Register
@@ -42,8 +40,8 @@ import java.util.regex.Pattern
 
 object DianaTracker {
     private val rareDrops = mapOf<String, String>("DWARF_TURTLE_SHELMET" to "§9", "CROCHET_TIGER_PLUSHIE" to "§5", "ANTIQUE_REMEDIES" to "§5", "MINOS_RELIC" to "§5")
-    private val otherDrops = listOf("ENCHANTED_ANCIENT_CLAW", "ANCIENT_CLAW", "ENCHANTED_GOLD", "ENCHANTED_IRON")
-    private val sackDrops = listOf("Enchanted Gold", "Enchanted Iron", "Ancient Claw", "Enchanted Ancient Claw")
+    private val otherDrops = listOf("ENCHANTED_ANCIENT_CLAW", "ANCIENT_CLAW", "ENCHANTED_GOLD")
+    private val sackDrops = listOf("Enchanted Gold", "Ancient Claw", "Enchanted Ancient Claw")
     private val forbiddenCoins = listOf(1L, 5L, 20L, 1000L, 2000L, 3000L, 4000L, 5000L, 7500L, 8000L, 10000L, 12000L, 15000L, 20000L, 25000L, 40000L, 50000L)
 
     private val lootAnnouncerBuffer: MutableList<String> = mutableListOf()
@@ -55,14 +53,12 @@ object DianaTracker {
             Chat.chat("§6[SBO] §aDiana session tracker has been reset.")
             DianaMobs.updateLines()
             DianaLoot.updateLines()
-            InquisLoot.updateLines()
         }
 
         Register.command("sboresetmayortracker") {
             resetMayorTracker()
             DianaMobs.updateLines()
             DianaLoot.updateLines()
-            InquisLoot.updateLines()
         }
 
         Register.command("sboresetstatstracker") {
@@ -186,8 +182,16 @@ object DianaTracker {
         Register.onChatMessageCancable(Pattern.compile("(.*?) §eYou dug (.*?)§2(.*?)§e!(.*?)$", Pattern.DOTALL)) { message, matchResult ->
             val mob = matchResult.group(3)
             when (mob) {
+                "King minos" -> {
+                    DianaMobDetect.onRareSpawn(mob)
+                    trackMob(mob, 1)
+                }
+                "Manticore" -> {
+                    DianaMobDetect.onRareSpawn(mob)
+                    trackMob(mob, 1)
+                }
                 "Minos Inquisitor" -> {
-                    DianaMobDetect.onInqSpawn()
+                    DianaMobDetect.onRareSpawn(mob)
                     sboData.inqsSinceChim += 1
                     trackMob(mob, 1)
 
@@ -214,6 +218,7 @@ object DianaTracker {
 
                     sboData.mobsSinceInq = 0
                 }
+                "Sphinx" -> trackMob(mob, 1)
                 "Minos Champion" -> {
                     sboData.champsSinceRelic += 1
                     trackMob(mob, 1)
@@ -224,6 +229,9 @@ object DianaTracker {
                     trackMob(mob, 1)
                 }
                 "Gaia Construct" -> trackMob(mob, 1)
+                "Harpy" -> trackMob(mob, 1)
+                "Cretan Bull" -> trackMob(mob, 1)
+                "Stranded Nymph" -> trackMob(mob, 1)
                 "Siamese Lynxes" -> trackMob(mob, 1)
                 "Minos Hunter" -> trackMob(mob, 1)
             }
@@ -435,7 +443,6 @@ object DianaTracker {
         dianaTrackerMayor.save()
         DianaMobs.updateLines()
         DianaLoot.updateLines()
-        InquisLoot.updateLines()
         Chat.chat("§6[SBO] §aDiana mayor tracker has been reset.")
     }
 
@@ -460,7 +467,6 @@ object DianaTracker {
         MagicFind.updateLines()
         DianaMobs.updateLines()
         DianaLoot.updateLines()
-        if (fromInq) InquisLoot.updateLines()
         SboTimerManager.updateAllActivity()
         AchievementManager.trackAchievementsItem(dianaTrackerMayor)
         AchievementManager.trackSince()
@@ -483,16 +489,21 @@ object DianaTracker {
             "ANCIENT_CLAW" -> tracker.items.ANCIENT_CLAW += amount
             "MINOS_RELIC" -> tracker.items.MINOS_RELIC += amount
             "ENCHANTED_GOLD" -> tracker.items.ENCHANTED_GOLD += amount
-            "ENCHANTED_IRON" -> tracker.items.ENCHANTED_IRON += amount
             "SCAVENGER_COINS" -> tracker.items.SCAVENGER_COINS += amount
             "FISH_COINS" -> tracker.items.FISH_COINS += amount
             "TOTAL_BURROWS" -> tracker.items.TOTAL_BURROWS += amount
             // MOBS
+            "KING_MINOS" -> tracker.mobs.KING_MINOS += amount
+            "MANTICORE" -> tracker.mobs.MANTICORE += amount
             "MINOS_INQUISITOR" -> tracker.mobs.MINOS_INQUISITOR += amount
             "MINOS_INQUISITOR_LS" -> tracker.mobs.MINOS_INQUISITOR_LS += amount
+            "SPHINX" -> tracker.mobs.SPHINX += amount
             "MINOS_CHAMPION" -> tracker.mobs.MINOS_CHAMPION += amount
             "MINOTAUR" -> tracker.mobs.MINOTAUR += amount
             "GAIA_CONSTRUCT" -> tracker.mobs.GAIA_CONSTRUCT += amount
+            "HARPY" -> tracker.mobs.HARPY += amount
+            "CRETAN_BULL" -> tracker.mobs.CRETAN_BULL += amount
+            "STRANDED_NYMPH" -> tracker.mobs.STRANDED_NYMPH += amount
             "SIAMESE_LYNXES" -> tracker.mobs.SIAMESE_LYNXES += amount
             "MINOS_HUNTER" -> tracker.mobs.MINOS_HUNTER += amount
             "TOTAL_MOBS" -> tracker.mobs.TOTAL_MOBS += amount

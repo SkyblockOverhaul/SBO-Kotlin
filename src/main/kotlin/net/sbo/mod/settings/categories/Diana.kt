@@ -4,7 +4,6 @@ import com.teamresourceful.resourcefulconfigkt.api.CategoryKt
 import com.teamresourceful.resourcefulconfigkt.api.ObservableEntry
 import net.sbo.mod.overlays.DianaLoot
 import net.sbo.mod.overlays.DianaMobs
-import net.sbo.mod.overlays.InquisLoot
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.waypoint.AdditionalHubWarps
@@ -120,18 +119,6 @@ object Diana : CategoryKt("Diana") {
         if (old != new) {
             if (new != Tracker.OFF) {
                 DianaLoot.updateLines()
-            }
-        }
-    }
-
-    var inquisTracker by ObservableEntry( enum(Tracker.OFF) {
-            this.name = Translated("Inquis Loot Tracker")
-            this.description = Translated("Shows your Inquisitor Loot so you see how lucky/unlucky you are (Shelmet/Plushie/Remedies), /sboguis to move the overlay")
-        }
-    ) { old, new ->
-        if (old != new) {
-            if (new != Tracker.OFF) {
-                InquisLoot.updateLines()
             }
         }
     }

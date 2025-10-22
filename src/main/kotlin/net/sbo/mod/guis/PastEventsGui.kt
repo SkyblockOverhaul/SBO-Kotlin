@@ -152,7 +152,6 @@ class PastEventsGui : WindowScreen(ElementaVersion.V10) {
                 "§2Plushies: ${Helper.formatNumber(data.items.CROCHET_TIGER_PLUSHIE,true)}",
                 "§7Claws: ${Helper.formatNumber(data.items.ANCIENT_CLAW)}",
                 "§7Ench. Claws: ${Helper.formatNumber(data.items.ENCHANTED_ANCIENT_CLAW,true)}",
-                "§7Ench. Iron: ${Helper.formatNumber(data.items.ENCHANTED_IRON)}",
                 "§7Ench. Gold: ${Helper.formatNumber(data.items.ENCHANTED_GOLD)}",
                 "§eBurrows: ${Helper.formatNumber(data.items.TOTAL_BURROWS)}",
                 "§ePlaytime: ${Helper.formatTime(data.items.TIME)}"

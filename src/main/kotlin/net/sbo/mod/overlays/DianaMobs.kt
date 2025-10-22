@@ -82,10 +82,16 @@ object DianaMobs {
                 return
             }
         }
+        val kingPercent = calcPercentOne(tracker.items, tracker.mobs, "KING_MINOS")
+        val manticorePercent = calcPercentOne(tracker.items, tracker.mobs, "MANTICORE")
         val inqPercent = calcPercentOne(tracker.items, tracker.mobs, "MINOS_INQUISITOR")
+        val sphinxPercent = calcPercentOne(tracker.items, tracker.mobs, "SPHINX")
         val champPercent = calcPercentOne(tracker.items, tracker.mobs, "MINOS_CHAMPION")
         val minotaurPercent = calcPercentOne(tracker.items, tracker.mobs, "MINOTAUR")
         val gaiaPercent = calcPercentOne(tracker.items, tracker.mobs, "GAIA_CONSTRUCT")
+        val harpyPercent = calcPercentOne(tracker.items, tracker.mobs, "HARPY")
+        val cretanPercent = calcPercentOne(tracker.items, tracker.mobs, "CRETAN_BULL")
+        val nymphPercent = calcPercentOne(tracker.items, tracker.mobs, "STRANDED_NYMPH")
         val lynxPercent = calcPercentOne(tracker.items, tracker.mobs, "SIAMESE_LYNXES")
         val hunterPercent = calcPercentOne(tracker.items, tracker.mobs, "MINOS_HUNTER")
         val playTimeHrs = tracker.items.TIME.toDouble() / TimeUnit.HOURS.toMillis(1)
@@ -101,10 +107,16 @@ object DianaMobs {
 
         lines.addAll(
             listOf(
+                createLine("KING_MINOS","$GRAY - ${LIGHT_PURPLE}King Minos: $AQUA${Helper.formatNumber(tracker.mobs.KING_MINOS, true)} $GRAY($AQUA${kingPercent}%$GRAY) [${AQUA}LS$GRAY:$AQUA${Helper.formatNumber(tracker.mobs.KING_MINOS_LS, true)}$GRAY]"),
+                createLine("MANTICORE","$GRAY - ${LIGHT_PURPLE}Manticore: $AQUA${Helper.formatNumber(tracker.mobs.MANTICORE, true)} $GRAY($AQUA${manticorePercent}%$GRAY) [${AQUA}LS$GRAY:$AQUA${Helper.formatNumber(tracker.mobs.MANTICORE_LS, true)}$GRAY]"),
                 createLine("INQUISITOR","$GRAY - ${LIGHT_PURPLE}Inquisitor: $AQUA${Helper.formatNumber(tracker.mobs.MINOS_INQUISITOR, true)} $GRAY($AQUA${inqPercent}%$GRAY) [${AQUA}LS$GRAY:$AQUA${Helper.formatNumber(tracker.mobs.MINOS_INQUISITOR_LS, true)}$GRAY]"),
+                createLine("SPHINX","$GRAY - ${DARK_PURPLE}Sphinx: $AQUA${Helper.formatNumber(tracker.mobs.SPHINX, true)} $GRAY($AQUA${sphinxPercent}%$GRAY)"),
                 createLine("CHAMPION","$GRAY - ${DARK_PURPLE}Champion: $AQUA${Helper.formatNumber(tracker.mobs.MINOS_CHAMPION, true)} $GRAY($AQUA${champPercent}%$GRAY)"),
                 createLine("MINOTAUR","$GRAY - ${GOLD}Minotaur: $AQUA${Helper.formatNumber(tracker.mobs.MINOTAUR, true)} $GRAY($AQUA${minotaurPercent}%$GRAY)"),
                 createLine("GAIA_CONSTRUCT","$GRAY - ${GREEN}Gaia Construct: $AQUA${Helper.formatNumber(tracker.mobs.GAIA_CONSTRUCT, true)} $GRAY($AQUA${gaiaPercent}%$GRAY)"),
+                createLine("HARPY","$GRAY - ${GREEN}Harpy: $AQUA${Helper.formatNumber(tracker.mobs.HARPY, true)} $GRAY($AQUA${harpyPercent}%$GRAY)"),
+                createLine("CRETAN_BULL","$GRAY - ${GREEN}Cretan Bull: $AQUA${Helper.formatNumber(tracker.mobs.CRETAN_BULL, true)} $GRAY($AQUA${cretanPercent}%$GRAY)"),
+                createLine("STRANDED_NYMPH","$GRAY - ${GREEN}Stranded Nymph: $AQUA${Helper.formatNumber(tracker.mobs.STRANDED_NYMPH, true)} $GRAY($AQUA${nymphPercent}%$GRAY)"),
                 createLine("SIAMESE_LYNXES","$GRAY - ${GREEN}Siamese Lynxes: $AQUA${Helper.formatNumber(tracker.mobs.SIAMESE_LYNXES, true)} $GRAY($AQUA${lynxPercent}%$GRAY)"),
                 createLine("MINOS_HUNTER","$GRAY - ${GREEN}Minos Hunter: $AQUA${Helper.formatNumber(tracker.mobs.MINOS_HUNTER, true)} $GRAY($AQUA${hunterPercent}%$GRAY)"),
                 OverlayTextLine("$GRAY - ${GRAY}Total Mobs: $AQUA${Helper.formatNumber(tracker.mobs.TOTAL_MOBS, true)} $GRAY[$AQUA$mobsPerHr$GRAY/${AQUA}hr$GRAY]")

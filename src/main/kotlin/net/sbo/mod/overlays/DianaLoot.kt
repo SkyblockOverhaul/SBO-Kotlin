@@ -60,7 +60,6 @@ object DianaLoot {
             SBOConfigBundle.dianaTrackerSessionData.reset().save()
             updateLines()
             DianaMobs.updateLines()
-            InquisLoot.updateLines()
         }
         .onMouseEnter {
             resetSession.text = "$RED${UNDERLINE}Reset Session"
@@ -156,7 +155,6 @@ object DianaLoot {
         val clawPrice= Helper.getItemPriceFormatted("ANCIENT_CLAW", tracker.items.ANCIENT_CLAW)
         val echClawPrice = Helper.getItemPriceFormatted("ENCHANTED_ANCIENT_CLAW", tracker.items.ENCHANTED_ANCIENT_CLAW)
         val echGoldPrice = Helper.getItemPriceFormatted("ENCHANTED_GOLD", tracker.items.ENCHANTED_GOLD)
-        val echIronPrice = Helper.getItemPriceFormatted("ENCHANTED_IRON", tracker.items.ENCHANTED_IRON)
         val profitPerHr = if (playTimeHrs > 0) {
             Helper.formatNumber(totalProfit(tracker) / playTimeHrs)
         } else 0.0
@@ -193,7 +191,6 @@ object DianaLoot {
                 createLine("ANCIENT_CLAW", "$GOLD$clawPrice $GRAY|$BLUE Ancient Claw: $AQUA${Helper.formatNumber(tracker.items.ANCIENT_CLAW)}"),
                 createLine("ENCHANTED_ANCIENT_CLAW", "$GOLD$echClawPrice $GRAY|$BLUE Enchanted Ancient Claw: $AQUA${Helper.formatNumber(tracker.items.ENCHANTED_ANCIENT_CLAW)}"),
                 createLine("ENCHANTED_GOLD", "$GOLD$echGoldPrice $GRAY|$BLUE Enchanted Gold: $AQUA${Helper.formatNumber(tracker.items.ENCHANTED_GOLD)}"),
-                createLine("ENCHANTED_IRON", "$GOLD$echIronPrice $GRAY|$BLUE Enchanted Iron: $AQUA${Helper.formatNumber(tracker.items.ENCHANTED_IRON)}"),
                 OverlayTextLine("${GRAY}Total Burrows: $AQUA${Helper.formatNumber(tracker.items.TOTAL_BURROWS, true)}$bphText"),
                 OverlayTextLine("${GOLD}Total Coins: $AQUA${Helper.formatNumber(tracker.items.COINS)}")
                     .onHover { drawContext, textRenderer ->

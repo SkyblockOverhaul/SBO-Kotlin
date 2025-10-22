@@ -138,7 +138,6 @@ data class DianaItemsData(
     @SerializedName("ANCIENT_CLAW") var ANCIENT_CLAW: Int = 0,
     @SerializedName("MINOS_RELIC") var MINOS_RELIC: Int = 0,
     @SerializedName("ENCHANTED_GOLD") var ENCHANTED_GOLD: Int = 0,
-    @SerializedName("ENCHANTED_IRON") var ENCHANTED_IRON: Int = 0,
     @SerializedName("Total Burrows") var TOTAL_BURROWS: Int = 0,
     @SerializedName("scavengerCoins") var SCAVENGER_COINS: Long  = 0,
     @SerializedName("fishCoins") var FISH_COINS: Long  = 0,
@@ -147,14 +146,22 @@ data class DianaItemsData(
 
 @Suppress("PropertyName")
 data class DianaMobsData(
+    @SerializedName("King Minos") var KING_MINOS: Int = 0,
+    @SerializedName("Manticore") var MANTICORE: Int = 0,
     @SerializedName("Minos Inquisitor") var MINOS_INQUISITOR: Int = 0,
+    @SerializedName("Sphinx") var SPHINX: Int = 0,
     @SerializedName("Minos Champion") var MINOS_CHAMPION: Int = 0,
     @SerializedName("Minotaur") var MINOTAUR: Int = 0,
     @SerializedName("Gaia Construct") var GAIA_CONSTRUCT: Int = 0,
+    @SerializedName("Harpy") var HARPY: Int = 0,
+    @SerializedName("Cretan Bull") var CRETAN_BULL: Int = 0,
+    @SerializedName("Stranded Nymph") var STRANDED_NYMPH: Int = 0,
     @SerializedName("Siamese Lynxes") var SIAMESE_LYNXES: Int = 0,
     @SerializedName("Minos Hunter") var MINOS_HUNTER: Int = 0,
     @SerializedName("TotalMobs") var TOTAL_MOBS: Int = 0,
-    @SerializedName("Minos Inquisitor Ls") var MINOS_INQUISITOR_LS: Int = 0
+    @SerializedName("Minos Inquisitor Ls") var MINOS_INQUISITOR_LS: Int = 0,
+    @SerializedName("King Minos Ls") var KING_MINOS_LS: Int = 0,
+    @SerializedName("Manticore Ls") var MANTICORE_LS: Int = 0
 )
 
 @Suppress("PropertyName")
