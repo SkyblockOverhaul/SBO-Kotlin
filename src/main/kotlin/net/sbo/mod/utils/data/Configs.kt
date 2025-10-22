@@ -126,6 +126,7 @@ data class PartyFinderData(
 data class DianaItemsData(
     @SerializedName("coins") var COINS: Long = 0,
     @SerializedName("Griffin Feather") var GRIFFIN_FEATHER: Int = 0,
+    @SerializedName("Mythos Fragment") var MYTHOS_FRAGMENT: Int = 0,
     @SerializedName("Crown of Greed") var CROWN_OF_GREED: Int = 0,
     @SerializedName("Washed-up Souvenir") var WASHED_UP_SOUVENIR: Int = 0,
     @SerializedName("Chimera") var CHIMERA: Int = 0,

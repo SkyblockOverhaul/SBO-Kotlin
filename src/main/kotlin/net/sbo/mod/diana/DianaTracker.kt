@@ -253,8 +253,9 @@ object DianaTracker {
             val drop = matchResult.group(1).drop(2)
             when (drop) {
                 "Griffin Feather" -> trackItem(drop, 1)
-                "Crown of Greed" -> trackItem(drop, 1)
-                "Washed-up Souvenir" -> trackItem(drop, 1)
+                "Mythos Fragment" -> trackItem(drop, 1)
+                "Crown of Greed" -> trackItem(drop, 1) // todo: doesnt drop from treasure now
+                "Washed-up Souvenir" -> trackItem(drop, 1) // todo: doesnt drop from treasure now
             }
             true
         }
@@ -477,6 +478,7 @@ object DianaTracker {
             // ITEMS
             "COINS" -> tracker.items.COINS += amount
             "GRIFFIN_FEATHER" -> tracker.items.GRIFFIN_FEATHER += amount
+            "MYTHOS_FRAGMENT" -> tracker.items.MYTHOS_FRAGMENT += amount
             "CROWN_OF_GREED" -> tracker.items.CROWN_OF_GREED += amount
             "WASHED_UP_SOUVENIR" -> tracker.items.WASHED_UP_SOUVENIR += amount
             "CHIMERA" -> tracker.items.CHIMERA += amount
