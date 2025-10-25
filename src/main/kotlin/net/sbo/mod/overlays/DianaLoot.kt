@@ -131,8 +131,13 @@ object DianaLoot {
             else -> SboTimerManager.timerMayor
         }
 
+        val shimmPercent = calcPercentOne(tracker.items, tracker.mobs, "SHIMMERING_WOOL", "KING_MINOS")
+        val shimmLsPercent = calcPercentOne(tracker.items, tracker.mobs, "SHIMMERING_WOOL_LS", "KING_MINOS_LS")
+        val mantiPercent = calcPercentOne(tracker.items, tracker.mobs, "MANT_CORE", "MANTICORE")
+        val mantiLsPercent = calcPercentOne(tracker.items, tracker.mobs, "MANT_CORE_LS", "MANTICORE_LS")
         val chimPercent = calcPercentOne(tracker.items, tracker.mobs, "CHIMERA", "MINOS_INQUISITOR")
         val chimLsPercent = calcPercentOne(tracker.items, tracker.mobs, "CHIMERA_LS", "MINOS_INQUISITOR_LS")
+        val brainPercent = calcPercentOne(tracker.items, tracker.mobs, "BRAIN_FOOD", "SPHINX")
         val relicPercent = calcPercentOne(tracker.items, tracker.mobs, "MINOS_RELIC", "MINOS_CHAMPION")
         val stickPercent = calcPercentOne(tracker.items, tracker.mobs, "DAEDALUS_STICK", "MINOTAUR")
         val playTimeHrs = tracker.items.TIME.toDouble() / TimeUnit.HOURS.toMillis(1)
@@ -142,9 +147,15 @@ object DianaLoot {
         } else {
             " $GRAY[$AQUA$burrowsPerHr$GRAY/${AQUA}hr$GRAY]"
         }
+        val shimmPrice = Helper.getItemPriceFormatted("SHIMMERING_WOOL", tracker.items.SHIMMERING_WOOL)
+        val shimmLsPrice = Helper.getItemPriceFormatted("SHIMMERING_WOOL", tracker.items.SHIMMERING_WOOL_LS)
+        val mantiPrice = Helper.getItemPriceFormatted("MANTI_CORE", tracker.items.MANTI_CORE)
+        val mantiLsPrice = Helper.getItemPriceFormatted("MANTI_CORE", tracker.items.MANTI_CORE_LS)
         val chimPrice = Helper.getItemPriceFormatted("CHIMERA", tracker.items.CHIMERA)
         val chimLsPrice = Helper.getItemPriceFormatted("CHIMERA", tracker.items.CHIMERA_LS)
+        val brainPrice = Helper.getItemPriceFormatted("BRAIN_FOOD", tracker.items.BRAIN_FOOD)
         val relicPrice = Helper.getItemPriceFormatted("MINOS_RELIC", tracker.items.MINOS_RELIC)
+        val braidedPrice = Helper.getItemPriceFormatted("BRAIDED_GRIFFIN_FEATHER", tracker.items.BRAIDED_GRIFFIN_FEATHER)
         val stickPrice = Helper.getItemPriceFormatted("DAEDALUS_STICK", tracker.items.DAEDALUS_STICK)
         val crownPrice = Helper.getItemPriceFormatted("CROWN_OF_GREED", tracker.items.CROWN_OF_GREED)
         val sovenirPrice = Helper.getItemPriceFormatted("WASHED_UP_SOUVENIR", tracker.items.WASHED_UP_SOUVENIR)
@@ -179,9 +190,15 @@ object DianaLoot {
 
         lines.addAll(
             listOf(
+                createLine("SHIMMERING_WOOL", "$GOLD$shimmPrice $GRAY|$RED Shimmering Wool: $AQUA${Helper.formatNumber(tracker.items.SHIMMERING_WOOL, true)} $GRAY($AQUA${shimmPercent}%$GRAY)"),
+                createLine("SHIMMERING_WOOL_LS", "$GOLD$shimmLsPrice $GRAY|$RED Shimmering Wool $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.SHIMMERING_WOOL_LS, true)} $GRAY($AQUA${shimmLsPercent}%$GRAY)"),
+                createLine("MANTI_CORE", "$GOLD$mantiPrice $GRAY|$RED Manti-core: $AQUA${Helper.formatNumber(tracker.items.MANTI_CORE, true)} $GRAY($AQUA${mantiPercent}%$GRAY)"),
+                createLine("MANTI_CORE_LS", "$GOLD$mantiLsPrice $GRAY|$RED Manti-core $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.MANTI_CORE_LS, true)} $GRAY($AQUA${mantiLsPercent}%$GRAY)"),
                 createLine("CHIMERA", "$GOLD$chimPrice $GRAY|$LIGHT_PURPLE Chimera: $AQUA${Helper.formatNumber(tracker.items.CHIMERA, true)} $GRAY($AQUA${chimPercent}%$GRAY)"),
                 createLine("CHIMERA_LS", "$GOLD$chimLsPrice $GRAY|$LIGHT_PURPLE Chimera $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.CHIMERA_LS, true)} $GRAY($AQUA${chimLsPercent}%$GRAY)"),
+                createLine("BRAIN_FOOD", "$GOLD$brainPrice $GRAY|$DARK_PURPLE Brain Food: $AQUA${Helper.formatNumber(tracker.items.BRAIN_FOOD, true)} $GRAY($AQUA${brainPercent}%$GRAY)"),
                 createLine("MINOS_RELIC", "$GOLD$relicPrice $GRAY|$DARK_PURPLE Minos Relic: $AQUA${Helper.formatNumber(tracker.items.MINOS_RELIC, true)} $GRAY($AQUA${relicPercent}%$GRAY)"),
+                createLine("BRAIDED_GRIFFIN_FEATHER", "$GOLD$braidedPrice $GRAY|$DARK_PURPLE Braided Griffin Feather: $AQUA${Helper.formatNumber(tracker.items.BRAIDED_GRIFFIN_FEATHER, true)}"),
                 createLine("DAEDALUS_STICK", "$GOLD$stickPrice $GRAY|$GOLD Daedalus Stick: $AQUA${Helper.formatNumber(tracker.items.DAEDALUS_STICK, true)} $GRAY($AQUA${stickPercent}%$GRAY)"),
                 createLine("CROWN_OF_GREED", "$GOLD$crownPrice $GRAY|$GOLD Crown of Greed: $AQUA${Helper.formatNumber(tracker.items.CROWN_OF_GREED, true)}"),
                 createLine("WASHED_UP_SOUVENIR", "$GOLD$sovenirPrice $GRAY|$GOLD Washed-up Souvenir: $AQUA${Helper.formatNumber(tracker.items.WASHED_UP_SOUVENIR, true)}"),

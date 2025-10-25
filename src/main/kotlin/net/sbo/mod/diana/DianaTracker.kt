@@ -254,6 +254,7 @@ object DianaTracker {
             when (drop) {
                 "Griffin Feather" -> trackItem(drop, 1)
                 "Mythos Fragment" -> trackItem(drop, 1)
+                "Braided Griffin Feather" -> trackItem(drop, 1)
                 "Crown of Greed" -> trackItem(drop, 1) // todo: doesnt drop from treasure now
                 "Washed-up Souvenir" -> trackItem(drop, 1) // todo: doesnt drop from treasure now
             }
@@ -271,7 +272,13 @@ object DianaTracker {
             var mfPrefix = ""
             if (magicfind > 0) mfPrefix = " (+$magicfind ✯ Magic Find)"
             when (drop.substring(2, 16)) {
-                "Enchanted Book" -> {
+                "Manti-core" -> {
+                    //todo implement
+                }
+                "Shimmering Wool" -> {
+                    //todo implement
+                }
+                "Enchanted Book" -> { //logic might need to be moved to pickuplog as theres no drop message curently todo
                     if (!drop.contains("Chimera")) return@onChatMessageCancable true
 
                     playCustomSound(Customization.chimSound[0], Customization.chimVolume)
@@ -327,6 +334,9 @@ object DianaTracker {
                     } else {
                         announceLootToParty("Chimera!", "Chimera!$mfPrefix")
                     }
+                }
+                "Brain Food" -> {
+                    //todo implement
                 }
                 "Daedalus Stick" -> {
                     playCustomSound(Customization.stickSound[0], Customization.stickVolume)
@@ -509,18 +519,6 @@ object DianaTracker {
             "SIAMESE_LYNXES" -> tracker.mobs.SIAMESE_LYNXES += amount
             "MINOS_HUNTER" -> tracker.mobs.MINOS_HUNTER += amount
             "TOTAL_MOBS" -> tracker.mobs.TOTAL_MOBS += amount
-        }
-
-        if (fromInq) {
-            when (item) {
-                // ITEMS from inquis
-                "DWARF_TURTLE_SHELMET" -> tracker.inquis.DWARF_TURTLE_SHELMET += amount
-                "DWARF_TURTLE_SHELMET_LS" -> tracker.inquis.DWARF_TURTLE_SHELMET_LS += amount
-                "CROCHET_TIGER_PLUSHIE" -> tracker.inquis.CROCHET_TIGER_PLUSHIE += amount
-                "CROCHET_TIGER_PLUSHIE_LS" -> tracker.inquis.CROCHET_TIGER_PLUSHIE_LS += amount
-                "ANTIQUE_REMEDIES" -> tracker.inquis.ANTIQUE_REMEDIES += amount
-                "ANTIQUE_REMEDIES_LS" -> tracker.inquis.ANTIQUE_REMEDIES_LS += amount
-            }
         }
     }
 }

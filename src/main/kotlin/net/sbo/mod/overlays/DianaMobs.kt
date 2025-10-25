@@ -107,8 +107,8 @@ object DianaMobs {
 
         lines.addAll(
             listOf(
-                createLine("KING_MINOS","$GRAY - ${LIGHT_PURPLE}King Minos: $AQUA${Helper.formatNumber(tracker.mobs.KING_MINOS, true)} $GRAY($AQUA${kingPercent}%$GRAY) [${AQUA}LS$GRAY:$AQUA${Helper.formatNumber(tracker.mobs.KING_MINOS_LS, true)}$GRAY]"),
-                createLine("MANTICORE","$GRAY - ${LIGHT_PURPLE}Manticore: $AQUA${Helper.formatNumber(tracker.mobs.MANTICORE, true)} $GRAY($AQUA${manticorePercent}%$GRAY) [${AQUA}LS$GRAY:$AQUA${Helper.formatNumber(tracker.mobs.MANTICORE_LS, true)}$GRAY]"),
+                createLine("KING_MINOS","$GRAY - ${RED}King Minos: $AQUA${Helper.formatNumber(tracker.mobs.KING_MINOS, true)} $GRAY($AQUA${kingPercent}%$GRAY) [${AQUA}LS$GRAY:$AQUA${Helper.formatNumber(tracker.mobs.KING_MINOS_LS, true)}$GRAY]"),
+                createLine("MANTICORE","$GRAY - ${RED}Manticore: $AQUA${Helper.formatNumber(tracker.mobs.MANTICORE, true)} $GRAY($AQUA${manticorePercent}%$GRAY) [${AQUA}LS$GRAY:$AQUA${Helper.formatNumber(tracker.mobs.MANTICORE_LS, true)}$GRAY]"),
                 createLine("INQUISITOR","$GRAY - ${LIGHT_PURPLE}Inquisitor: $AQUA${Helper.formatNumber(tracker.mobs.MINOS_INQUISITOR, true)} $GRAY($AQUA${inqPercent}%$GRAY) [${AQUA}LS$GRAY:$AQUA${Helper.formatNumber(tracker.mobs.MINOS_INQUISITOR_LS, true)}$GRAY]"),
                 createLine("SPHINX","$GRAY - ${DARK_PURPLE}Sphinx: $AQUA${Helper.formatNumber(tracker.mobs.SPHINX, true)} $GRAY($AQUA${sphinxPercent}%$GRAY)"),
                 createLine("CHAMPION","$GRAY - ${DARK_PURPLE}Champion: $AQUA${Helper.formatNumber(tracker.mobs.MINOS_CHAMPION, true)} $GRAY($AQUA${champPercent}%$GRAY)"),

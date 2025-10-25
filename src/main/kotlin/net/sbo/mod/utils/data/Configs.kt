@@ -5,12 +5,10 @@ import com.google.gson.annotations.SerializedName
 interface DianaTracker {
     var items: DianaItemsData
     var mobs: DianaMobsData
-    var inquis: DianaInquisData
 
     fun reset(): DianaTracker {
         items = DianaItemsData()
         mobs = DianaMobsData()
-        inquis = DianaInquisData()
         if (this is DianaTrackerMayorData) year = 0
         return this
     }
@@ -85,27 +83,23 @@ data class PastDianaEventsData(
 data class DianaTrackerTotalData(
     override var items: DianaItemsData = DianaItemsData(),
     override var mobs: DianaMobsData = DianaMobsData(),
-    override var inquis: DianaInquisData = DianaInquisData(),
 ) : DianaTracker
 
 data class DianaTrackerSessionData(
     override var items: DianaItemsData = DianaItemsData(),
     override var mobs: DianaMobsData = DianaMobsData(),
-    override var inquis: DianaInquisData = DianaInquisData()
 ) : DianaTracker
 
 data class DianaTrackerMayorData(
     var year: Int = 0,
     override var items: DianaItemsData = DianaItemsData(),
     override var mobs: DianaMobsData = DianaMobsData(),
-    override var inquis: DianaInquisData = DianaInquisData()
 ) : DianaTracker {
     fun snapshot(): DianaTrackerMayorData {
         return DianaTrackerMayorData(
             year = this.year,
             items = this.items.copy(),
             mobs = this.mobs.copy(),
-            inquis = this.inquis.copy()
         )
     }
 }
@@ -129,8 +123,14 @@ data class DianaItemsData(
     @SerializedName("Mythos Fragment") var MYTHOS_FRAGMENT: Int = 0,
     @SerializedName("Crown of Greed") var CROWN_OF_GREED: Int = 0,
     @SerializedName("Washed-up Souvenir") var WASHED_UP_SOUVENIR: Int = 0,
+    @SerializedName("Shimmering Wool") var SHIMMERING_WOOL: Int = 0,
+    @SerializedName("Shimmering Wool Ls") var SHIMMERING_WOOL_LS: Int = 0,
+    @SerializedName("Manti-core") var MANTI_CORE: Int = 0,
+    @SerializedName("Manti-core Ls") var MANTI_CORE_LS: Int = 0,
     @SerializedName("Chimera") var CHIMERA: Int = 0,
     @SerializedName("ChimeraLs") var CHIMERA_LS: Int = 0,
+    @SerializedName("Brain Food") var BRAIN_FOOD: Int = 0,
+    @SerializedName("Braided Griffin Feather") var BRAIDED_GRIFFIN_FEATHER: Int = 0,
     @SerializedName("Daedalus Stick") var DAEDALUS_STICK: Int = 0,
     @SerializedName("DWARF_TURTLE_SHELMET") var DWARF_TURTLE_SHELMET: Int = 0,
     @SerializedName("ANTIQUE_REMEDIES") var ANTIQUE_REMEDIES: Int = 0,
@@ -163,16 +163,6 @@ data class DianaMobsData(
     @SerializedName("Minos Inquisitor Ls") var MINOS_INQUISITOR_LS: Int = 0,
     @SerializedName("King Minos Ls") var KING_MINOS_LS: Int = 0,
     @SerializedName("Manticore Ls") var MANTICORE_LS: Int = 0
-)
-
-@Suppress("PropertyName")
-data class DianaInquisData(
-    var DWARF_TURTLE_SHELMET: Int = 0,
-    var CROCHET_TIGER_PLUSHIE: Int = 0,
-    var ANTIQUE_REMEDIES: Int = 0,
-    var DWARF_TURTLE_SHELMET_LS: Int = 0,
-    var CROCHET_TIGER_PLUSHIE_LS: Int = 0,
-    var ANTIQUE_REMEDIES_LS: Int = 0
 )
 
 // ------ Party Finder ------
