@@ -49,13 +49,13 @@ object PreciseGuessBurrow {
         if (packet.parameters.type != ParticleTypes.DRIPPING_LAVA || packet.count != 2 || packet.speed != -0.5f) return
         val currLoc = SboVec(packet.x, packet.y, packet.z)
         this.lastLavaParticle = System.currentTimeMillis()
-        val cooldown = when {
-            playerHasItem("ANCESTRAL_SPADE") -> 3000L
-            playerHasItem("ARCHAIC_SPADE") -> 2000L
-            playerHasItem("DEIFIC_SPADE") -> 1000L
-            else -> 1000L
-        }
-        if (System.currentTimeMillis() - lastGuessTime > cooldown) return
+//        val cooldown = when {
+//            playerHasItem("ANCESTRAL_SPADE") -> 3000L
+//            playerHasItem("ARCHAIC_SPADE") -> 2000L
+//            playerHasItem("DEIFIC_SPADE") -> 1000L
+//            else -> 1000L
+//        }
+        if (System.currentTimeMillis() - lastGuessTime > 3000) return
 
         if (this.particleLocations.isEmpty()) {
             this.particleLocations.add(currLoc)
