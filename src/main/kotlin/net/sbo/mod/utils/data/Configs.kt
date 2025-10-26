@@ -129,9 +129,10 @@ data class DianaItemsData(
     @SerializedName("Manti-core Ls") var MANTI_CORE_LS: Int = 0,
     @SerializedName("Chimera") var CHIMERA: Int = 0,
     @SerializedName("ChimeraLs") var CHIMERA_LS: Int = 0,
+    @SerializedName("Brain Food") var BRAIN_FOOD: Int = 0,
+    @SerializedName("Brain Food LS") var BRAIN_FOOD_LS: Int = 0,
     @SerializedName("Fabled Stinger") var FABLED_STINGER: Int = 0,
     @SerializedName("Fabled Stinger Ls") var FABLED_STINGER_LS: Int = 0,
-    @SerializedName("Brain Food") var BRAIN_FOOD: Int = 0,
     @SerializedName("Braided Griffin Feather") var BRAIDED_GRIFFIN_FEATHER: Int = 0,
     @SerializedName("Daedalus Stick") var DAEDALUS_STICK: Int = 0,
     @SerializedName("CRETAN_URN") var CRETAN_URN: Int = 0,
@@ -166,7 +167,8 @@ data class DianaMobsData(
     @SerializedName("TotalMobs") var TOTAL_MOBS: Int = 0,
     @SerializedName("Minos Inquisitor Ls") var MINOS_INQUISITOR_LS: Int = 0,
     @SerializedName("King Minos Ls") var KING_MINOS_LS: Int = 0,
-    @SerializedName("Manticore Ls") var MANTICORE_LS: Int = 0
+    @SerializedName("Manticore Ls") var MANTICORE_LS: Int = 0,
+    @SerializedName("Sphinx Ls") var SPHINX_LS: Int = 0,
 )
 
 // ------ Party Finder ------
