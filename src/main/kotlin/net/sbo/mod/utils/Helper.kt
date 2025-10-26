@@ -43,10 +43,17 @@ object Helper {
     var hasSpade: Boolean = false
     var lastDianaMobDeath: Long = 0L
     var lastInqDeath: Long = 0L
+    var lastKingDeath: Long = 0L
+    var lastSphinxDeath: Long = 0L
+    var lastMantiDeath: Long = 0L
     var currentScreen: Screen? = null
     var lastCocoon: Long = 0L
 
     private var hasTrackedInq: Boolean = false
+    private var hasTrackedKing: Boolean = false
+    private var hasTrackedSphinx: Boolean = false
+    private var hasTrackedManti: Boolean = false
+
     private var prevInv = mutableMapOf<String, Item>()
     private var priceDataAh: Map<String, Long> = emptyMap()
     private var priceDataBazaar: HypixelBazaarResponse? = null
@@ -80,7 +87,35 @@ object Helper {
                 }
             }
             lastInqDeath = System.currentTimeMillis()
+        } else if (event.name.contains("King Minos")) {
+            if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedKing) {
+                hasTrackedKing = true
+                DianaTracker.trackItem("KING_MINOS_LS", 1)
+                sleep(2000) {
+                    hasTrackedKing = false
+                }
+            }
+            lastKingDeath = System.currentTimeMillis()
+        } else if (event.name.contains("Sphinx")) {
+            if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedSphinx) {
+                hasTrackedSphinx = true
+                DianaTracker.trackItem("SPHINX_LS", 1)
+                sleep(2000) {
+                    hasTrackedSphinx = false
+                }
+            }
+            lastSphinxDeath = System.currentTimeMillis()
+        } else if (event.name.contains("Manticore")) {
+            if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedManti) {
+                hasTrackedManti = true
+                DianaTracker.trackItem("MANTICORE_LS", 1)
+                sleep(2000) {
+                    hasTrackedManti = false
+                }
+            }
+            lastMantiDeath = System.currentTimeMillis()
         }
+
         if (dist <= 30) {
             allowSackTracking = true
             lastDianaMobDeath = System.currentTimeMillis()
