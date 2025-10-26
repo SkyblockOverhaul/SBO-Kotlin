@@ -181,7 +181,7 @@ object DianaTracker {
         Register.onChatMessageCancable(Pattern.compile("(.*?) §eYou dug (.*?)§2(.*?)§e!(.*?)$", Pattern.DOTALL)) { message, matchResult ->
             val mob = matchResult.group(3)
             when (mob) {
-                "King minos" -> {
+                "King Minos" -> {
                     DianaMobDetect.onRareSpawn(mob)
                     trackMob(mob, 1)
 
@@ -530,12 +530,12 @@ object DianaTracker {
         }
     }
 
-    fun onRareDropFromMob(item: String, title: Boolean, partyAnnounce: Boolean, trackLootshare: Boolean, magicFind: Int) {
+    fun onRareDropFromMob(item: String, title: Boolean, partyAnnounce: Boolean, trackLootshare: Boolean, magicFind: Int, amount: Int = 1) {
         val itemId = item.uppercase().replace(" ", "_").replace("-", "_")
         var mfPrefix = ""
         if (magicFind > 0) mfPrefix = " (+$magicFind ✯ Magic Find)"
         if (Diana.lootAnnouncerScreen && title) {
-            val subTitle = if (Diana.lootAnnouncerPrice) "§6${Helper.getItemPriceFormatted(itemId)} coins" else ""
+            val subTitle = if (Diana.lootAnnouncerPrice) "§6${Helper.getItemPriceFormatted(itemId, amount)} coins" else ""
             when (itemId) {
                 "MANTI_CORE", "SHIMMERING_WOOL", "KING_MINOS_SHARD" -> {
                     Helper.showTitle("§c§l$item!", subTitle, 0, 25, 35)
@@ -577,9 +577,9 @@ object DianaTracker {
         }
 
         if (trackLootshare && isLootShare) {
-            trackItem(itemId + "_LS", 1)
+            trackItem(itemId + "_LS", amount)
         } else {
-            trackItem(itemId, 1)
+            trackItem(itemId, amount)
         }
     }
 
@@ -671,9 +671,9 @@ object DianaTracker {
             val shard = matchResult.group(2).removeFormatting()
             val amount = matchResult.group(3).removeFormatting().toIntOrNull() ?: 0
             when (shard) {
-                "King Minos" -> onRareDropFromMob("King Minos Shard", true, true, false, 0)
-                "Sphinx" -> onRareDropFromMob("Sphinx Shard", true, true, false, 0)
-                "Minotaur" -> onRareDropFromMob("Minotaur Shard", true, false, false, 0)
+                "King Minos" -> onRareDropFromMob("King Minos Shard", true, true, false, 0, amount)
+                "Sphinx" -> onRareDropFromMob("Sphinx Shard", true, true, false, 0, amount)
+                "Minotaur" -> onRareDropFromMob("Minotaur Shard", true, false, false, 0, amount)
                 "Cretan Bull" -> trackItem("CRETAN_BULL_SHARD", amount)
             }
             true

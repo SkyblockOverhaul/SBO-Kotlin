@@ -115,7 +115,7 @@ class Waypoint(
                     this.warp = null
                 }
             }
-            "inq" -> {
+            "rareMob" -> {
                 if (inqWaypoints.lastOrNull() == this) {
                     setWarpText()
                     this.line = Diana.inqLine
