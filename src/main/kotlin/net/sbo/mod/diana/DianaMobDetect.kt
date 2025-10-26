@@ -10,7 +10,6 @@ import net.sbo.mod.utils.events.Register
 import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.settings.categories.Customization
 import net.sbo.mod.settings.categories.Diana
-import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.Helper.getSecondsPassed
 import net.sbo.mod.utils.Helper.lastCocoon
 import net.sbo.mod.utils.Helper.lastInqDeath
@@ -131,32 +130,15 @@ object DianaMobDetect {
     }
 
     fun onRareSpawn(mob: String) {
-        when (mob) {
-            "King Minos" -> {
-                showTitle("§r§6§l<§b§l§kO§6§l> §b§lKING MINOS! §6§l<§b§l§kO§6§l>", "", 0, 90, 20)
-                if (Diana.shareInq) {
-                    val playerPos = Player.getLastPosition()
-                    Chat.command("pc x: ${playerPos.x.roundToInt()}, y: ${playerPos.y.roundToInt() - 1}, z: ${playerPos.z.roundToInt()}")
-                }
-            }
-            "Manticore" -> {
-                showTitle("§r§6§l<§b§l§kO§6§l> §b§lMANTICORE! §6§l<§b§l§kO§6§l>", "", 0, 90, 20)
-                if (Diana.shareInq) {
-                    val playerPos = Player.getLastPosition()
-                    Chat.command("pc x: ${playerPos.x.roundToInt()}, y: ${playerPos.y.roundToInt() - 1}, z: ${playerPos.z.roundToInt()}")
-                }
-            }
-            "Minos Inquisitor" -> {
-                if (Diana.shareInq) {
-                    val playerPos = Player.getLastPosition()
-                    Chat.command("pc x: ${playerPos.x.roundToInt()}, y: ${playerPos.y.roundToInt() - 1}, z: ${playerPos.z.roundToInt()}")
-                }
-                Diana.announceKilltext.firstOrNull()?.let { killText ->
-                    if (killText.isNotBlank()) {
-                        sleep(5000) {
-                            Chat.command("pc " + Diana.announceKilltext[0])
-                        }
-                    }
+        if (Diana.shareRareMob) {
+            val playerPos = Player.getLastPosition()
+            Chat.command("pc x: ${playerPos.x.roundToInt()}, y: ${playerPos.y.roundToInt() - 1}, z: ${playerPos.z.roundToInt()} | $mob")
+        }
+
+        Diana.announceKilltext.firstOrNull()?.let { killText ->
+            if (killText.isNotBlank()) {
+                sleep(5000) {
+                    Chat.command("pc " + Diana.announceKilltext[0])
                 }
             }
         }

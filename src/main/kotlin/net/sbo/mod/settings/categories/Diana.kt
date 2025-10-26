@@ -286,7 +286,7 @@ object Diana : CategoryKt("Diana") {
         }
     }
 
-    var shareInq by boolean(true) {
+    var shareRareMob by boolean(true) {
         this.name = Translated("Share Inquisitor")
         this.description = Translated("Sends the coordinates of the inquisitor to party chat when it spawns")
     }
