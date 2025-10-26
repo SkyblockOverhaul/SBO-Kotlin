@@ -94,7 +94,7 @@ object DianaLoot {
         }
     }
 
-    fun createLine(name: String, formattedText: String) : OverlayTextLine {
+    fun createLine(name: String, formattedText: String, amount: Int) : OverlayTextLine {
         val line = OverlayTextLine(formattedText).onClick {
             if (mc.currentScreen?.title?.string != "Crafting") return@onClick
             if (SBOConfigBundle.sboData.hideTrackerLines.contains(name)) {
@@ -104,7 +104,11 @@ object DianaLoot {
             }
             updateLines()
         }
-            .setCondition { !(mc.currentScreen?.title?.string != "Crafting" && SBOConfigBundle.sboData.hideTrackerLines.contains(name)) }
+            .setCondition {
+                val meetsZeroValueCondition = amount > 0 || !Diana.hideUnobtainedItems
+                val meetsManualHideCondition = !(mc.currentScreen?.title?.string != "Crafting" && SBOConfigBundle.sboData.hideTrackerLines.contains(name))
+                meetsZeroValueCondition && meetsManualHideCondition
+            }
         if (SBOConfigBundle.sboData.hideTrackerLines.contains(name)) {
             line.text = "$GRAY$STRIKETHROUGH${formattedText.removeFormatting()}"
         }
@@ -190,26 +194,26 @@ object DianaLoot {
 
         lines.addAll(
             listOf(
-                createLine("SHIMMERING_WOOL", "$GOLD$shimmPrice $GRAY|$RED Shimmering Wool: $AQUA${Helper.formatNumber(tracker.items.SHIMMERING_WOOL, true)} $GRAY($AQUA${shimmPercent}%$GRAY)"),
-                createLine("SHIMMERING_WOOL_LS", "$GOLD$shimmLsPrice $GRAY|$RED Shimmering Wool $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.SHIMMERING_WOOL_LS, true)} $GRAY($AQUA${shimmLsPercent}%$GRAY)"),
-                createLine("MANTI_CORE", "$GOLD$mantiPrice $GRAY|$RED Manti-core: $AQUA${Helper.formatNumber(tracker.items.MANTI_CORE, true)} $GRAY($AQUA${mantiPercent}%$GRAY)"),
-                createLine("MANTI_CORE_LS", "$GOLD$mantiLsPrice $GRAY|$RED Manti-core $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.MANTI_CORE_LS, true)} $GRAY($AQUA${mantiLsPercent}%$GRAY)"),
-                createLine("CHIMERA", "$GOLD$chimPrice $GRAY|$LIGHT_PURPLE Chimera: $AQUA${Helper.formatNumber(tracker.items.CHIMERA, true)} $GRAY($AQUA${chimPercent}%$GRAY)"),
-                createLine("CHIMERA_LS", "$GOLD$chimLsPrice $GRAY|$LIGHT_PURPLE Chimera $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.CHIMERA_LS, true)} $GRAY($AQUA${chimLsPercent}%$GRAY)"),
-                createLine("BRAIN_FOOD", "$GOLD$brainPrice $GRAY|$DARK_PURPLE Brain Food: $AQUA${Helper.formatNumber(tracker.items.BRAIN_FOOD, true)} $GRAY($AQUA${brainPercent}%$GRAY)"),
-                createLine("MINOS_RELIC", "$GOLD$relicPrice $GRAY|$DARK_PURPLE Minos Relic: $AQUA${Helper.formatNumber(tracker.items.MINOS_RELIC, true)} $GRAY($AQUA${relicPercent}%$GRAY)"),
-                createLine("BRAIDED_GRIFFIN_FEATHER", "$GOLD$braidedPrice $GRAY|$DARK_PURPLE Braided Griffin Feather: $AQUA${Helper.formatNumber(tracker.items.BRAIDED_GRIFFIN_FEATHER, true)}"),
-                createLine("DAEDALUS_STICK", "$GOLD$stickPrice $GRAY|$GOLD Daedalus Stick: $AQUA${Helper.formatNumber(tracker.items.DAEDALUS_STICK, true)} $GRAY($AQUA${stickPercent}%$GRAY)"),
-                createLine("CROWN_OF_GREED", "$GOLD$crownPrice $GRAY|$GOLD Crown of Greed: $AQUA${Helper.formatNumber(tracker.items.CROWN_OF_GREED, true)}"),
-                createLine("WASHED_UP_SOUVENIR", "$GOLD$sovenirPrice $GRAY|$GOLD Washed-up Souvenir: $AQUA${Helper.formatNumber(tracker.items.WASHED_UP_SOUVENIR, true)}"),
-                createLine("GRIFFIN_FEATHER", "$GOLD$featherPrice $GRAY|$GOLD Griffin Feather: $AQUA${Helper.formatNumber(tracker.items.GRIFFIN_FEATHER, true)}"),
-                createLine("MYTHOS_FRAGMENT", "$GOLD$mythoFragPrice $GRAY|$GOLD Mytho Fragment: $AQUA${Helper.formatNumber(tracker.items.MYTHOS_FRAGMENT, true)}"),
-                createLine("DWARF_TURTLE_SHELMET", "$GOLD$shelmetPrice $GRAY|$DARK_GREEN Dwarf Turtle Helmet: $AQUA${Helper.formatNumber(tracker.items.DWARF_TURTLE_SHELMET, true)}"),
-                createLine("CROCHET_TIGER_PLUSHIE", "$GOLD$plushiePrice $GRAY|$DARK_GREEN Crochet Tiger Plushie: $AQUA${Helper.formatNumber(tracker.items.CROCHET_TIGER_PLUSHIE, true)}"),
-                createLine("ANTIQUE_REMEDIES", "$GOLD$remediesPrice $GRAY|$DARK_GREEN Antique Remedies: $AQUA${Helper.formatNumber(tracker.items.ANTIQUE_REMEDIES, true)}"),
-                createLine("ANCIENT_CLAW", "$GOLD$clawPrice $GRAY|$BLUE Ancient Claw: $AQUA${Helper.formatNumber(tracker.items.ANCIENT_CLAW)}"),
-                createLine("ENCHANTED_ANCIENT_CLAW", "$GOLD$echClawPrice $GRAY|$BLUE Enchanted Ancient Claw: $AQUA${Helper.formatNumber(tracker.items.ENCHANTED_ANCIENT_CLAW)}"),
-                createLine("ENCHANTED_GOLD", "$GOLD$echGoldPrice $GRAY|$BLUE Enchanted Gold: $AQUA${Helper.formatNumber(tracker.items.ENCHANTED_GOLD)}"),
+                createLine("SHIMMERING_WOOL", "$GOLD$shimmPrice $GRAY|$RED Shimmering Wool: $AQUA${Helper.formatNumber(tracker.items.SHIMMERING_WOOL, true)} $GRAY($AQUA${shimmPercent}%$GRAY)", tracker.items.SHIMMERING_WOOL),
+                createLine("SHIMMERING_WOOL_LS", "$GOLD$shimmLsPrice $GRAY|$RED Shimmering Wool $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.SHIMMERING_WOOL_LS, true)} $GRAY($AQUA${shimmLsPercent}%$GRAY)", tracker.items.SHIMMERING_WOOL_LS),
+                createLine("MANTI_CORE", "$GOLD$mantiPrice $GRAY|$RED Manti-core: $AQUA${Helper.formatNumber(tracker.items.MANTI_CORE, true)} $GRAY($AQUA${mantiPercent}%$GRAY)", tracker.items.MANTI_CORE),
+                createLine("MANTI_CORE_LS", "$GOLD$mantiLsPrice $GRAY|$RED Manti-core $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.MANTI_CORE_LS, true)} $GRAY($AQUA${mantiLsPercent}%$GRAY)", tracker.items.MANTI_CORE_LS),
+                createLine("CHIMERA", "$GOLD$chimPrice $GRAY|$LIGHT_PURPLE Chimera: $AQUA${Helper.formatNumber(tracker.items.CHIMERA, true)} $GRAY($AQUA${chimPercent}%$GRAY)", tracker.items.CHIMERA),
+                createLine("CHIMERA_LS", "$GOLD$chimLsPrice $GRAY|$LIGHT_PURPLE Chimera $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.CHIMERA_LS, true)} $GRAY($AQUA${chimLsPercent}%$GRAY)", tracker.items.CHIMERA_LS),
+                createLine("BRAIN_FOOD", "$GOLD$brainPrice $GRAY|$DARK_PURPLE Brain Food: $AQUA${Helper.formatNumber(tracker.items.BRAIN_FOOD, true)} $GRAY($AQUA${brainPercent}%$GRAY)", tracker.items.BRAIN_FOOD),
+                createLine("MINOS_RELIC", "$GOLD$relicPrice $GRAY|$DARK_PURPLE Minos Relic: $AQUA${Helper.formatNumber(tracker.items.MINOS_RELIC, true)} $GRAY($AQUA${relicPercent}%$GRAY)", tracker.items.MINOS_RELIC),
+                createLine("BRAIDED_GRIFFIN_FEATHER", "$GOLD$braidedPrice $GRAY|$DARK_PURPLE Braided Griffin Feather: $AQUA${Helper.formatNumber(tracker.items.BRAIDED_GRIFFIN_FEATHER, true)}", tracker.items.BRAIDED_GRIFFIN_FEATHER),
+                createLine("DAEDALUS_STICK", "$GOLD$stickPrice $GRAY|$GOLD Daedalus Stick: $AQUA${Helper.formatNumber(tracker.items.DAEDALUS_STICK, true)} $GRAY($AQUA${stickPercent}%$GRAY)", tracker.items.DAEDALUS_STICK),
+                createLine("CROWN_OF_GREED", "$GOLD$crownPrice $GRAY|$GOLD Crown of Greed: $AQUA${Helper.formatNumber(tracker.items.CROWN_OF_GREED, true)}", tracker.items.CROWN_OF_GREED),
+                createLine("WASHED_UP_SOUVENIR", "$GOLD$sovenirPrice $GRAY|$GOLD Washed-up Souvenir: $AQUA${Helper.formatNumber(tracker.items.WASHED_UP_SOUVENIR, true)}", tracker.items.WASHED_UP_SOUVENIR),
+                createLine("GRIFFIN_FEATHER", "$GOLD$featherPrice $GRAY|$GOLD Griffin Feather: $AQUA${Helper.formatNumber(tracker.items.GRIFFIN_FEATHER, true)}", tracker.items.GRIFFIN_FEATHER),
+                createLine("MYTHOS_FRAGMENT", "$GOLD$mythoFragPrice $GRAY|$GOLD Mytho Fragment: $AQUA${Helper.formatNumber(tracker.items.MYTHOS_FRAGMENT, true)}", tracker.items.MYTHOS_FRAGMENT),
+                createLine("DWARF_TURTLE_SHELMET", "$GOLD$shelmetPrice $GRAY|$DARK_GREEN Dwarf Turtle Helmet: $AQUA${Helper.formatNumber(tracker.items.DWARF_TURTLE_SHELMET, true)}", tracker.items.DWARF_TURTLE_SHELMET),
+                createLine("CROCHET_TIGER_PLUSHIE", "$GOLD$plushiePrice $GRAY|$DARK_GREEN Crochet Tiger Plushie: $AQUA${Helper.formatNumber(tracker.items.CROCHET_TIGER_PLUSHIE, true)}", tracker.items.CROCHET_TIGER_PLUSHIE),
+                createLine("ANTIQUE_REMEDIES", "$GOLD$remediesPrice $GRAY|$DARK_GREEN Antique Remedies: $AQUA${Helper.formatNumber(tracker.items.ANTIQUE_REMEDIES, true)}", tracker.items.ANTIQUE_REMEDIES),
+                createLine("ANCIENT_CLAW", "$GOLD$clawPrice $GRAY|$BLUE Ancient Claw: $AQUA${Helper.formatNumber(tracker.items.ANCIENT_CLAW)}", tracker.items.ANCIENT_CLAW),
+                createLine("ENCHANTED_ANCIENT_CLAW", "$GOLD$echClawPrice $GRAY|$BLUE Enchanted Ancient Claw: $AQUA${Helper.formatNumber(tracker.items.ENCHANTED_ANCIENT_CLAW)}", tracker.items.ENCHANTED_ANCIENT_CLAW),
+                createLine("ENCHANTED_GOLD", "$GOLD$echGoldPrice $GRAY|$BLUE Enchanted Gold: $AQUA${Helper.formatNumber(tracker.items.ENCHANTED_GOLD)}", tracker.items.ENCHANTED_GOLD),
                 OverlayTextLine("${GRAY}Total Burrows: $AQUA${Helper.formatNumber(tracker.items.TOTAL_BURROWS, true)}$bphText"),
                 OverlayTextLine("${GOLD}Total Coins: $AQUA${Helper.formatNumber(tracker.items.COINS)}")
                     .onHover { drawContext, textRenderer ->

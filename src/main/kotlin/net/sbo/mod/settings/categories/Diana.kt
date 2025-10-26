@@ -123,6 +123,11 @@ object Diana : CategoryKt("Diana") {
         }
     }
 
+    var hideUnobtainedItems by boolean(true) {
+        this.name = Translated("Hide Unobtained Items")
+        this.description = Translated("Hides any loot or mob lines that have not been tracked yet (value is 0) to reduce clutter in the overlays.")
+    }
+
     var statsTracker by boolean(false) {
         this.name = Translated("Diana Stats Tracker")
         this.description = Translated("Shows stats like Mobs since Inquisitor, Inquisitors since Chimera, /sboguis to move the overlay")
