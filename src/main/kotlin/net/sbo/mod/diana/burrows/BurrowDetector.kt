@@ -66,7 +66,7 @@ object BurrowDetector {
         if (packet.parameters.type == MCParticleTypes.LARGE_SMOKE && packet.speed == 0.01f && packet.offsetX == 0.0f && packet.offsetY == 0.0f && packet.offsetZ == 0.0f) {
             val pos = SboVec(packet.x, packet.y, packet.z).roundLocationToBlock().down(1.0)
             WaypointManager.removeWaypointAt(pos, "burrow")
-            WaypointManager.removeWaypointAt(pos, "inq")
+            WaypointManager.removeWaypointAt(pos, "rareMob")
         }
         burrowDetect(packet)
     }
