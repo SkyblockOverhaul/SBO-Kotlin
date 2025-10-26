@@ -94,16 +94,18 @@ object DianaLoot {
         }
     }
 
-    fun createLine(name: String, formattedText: String, amount: Int) : OverlayTextLine {
-        val line = OverlayTextLine(formattedText).onClick {
-            if (mc.currentScreen?.title?.string != "Crafting") return@onClick
-            if (SBOConfigBundle.sboData.hideTrackerLines.contains(name)) {
-                SBOConfigBundle.sboData.hideTrackerLines.remove(name)
-            } else {
-                SBOConfigBundle.sboData.hideTrackerLines.add(name)
-            }
-            updateLines()
+    fun hideLine(name: String) {
+        if (mc.currentScreen?.title?.string != "Crafting") return
+        if (SBOConfigBundle.sboData.hideTrackerLines.contains(name)) {
+            SBOConfigBundle.sboData.hideTrackerLines.remove(name)
+        } else {
+            SBOConfigBundle.sboData.hideTrackerLines.add(name)
         }
+        updateLines()
+    }
+
+    fun createLine(name: String, formattedText: String, amount: Int) : OverlayTextLine {
+        val line = OverlayTextLine(formattedText).onClick { hideLine(name) }
             .setCondition {
                 val meetsZeroValueCondition = amount > 0 || !Diana.hideUnobtainedItems
                 val meetsManualHideCondition = !(mc.currentScreen?.title?.string != "Crafting" && SBOConfigBundle.sboData.hideTrackerLines.contains(name))
@@ -117,16 +119,7 @@ object DianaLoot {
 
     fun createCombinedLine(nameBase: String, formattedTextBase: String, amountBase: Int, formattedTextLS: String, amountLS: Int): OverlayTextLine {
         val combinedText = "$formattedTextBase $GRAY[${AQUA}LS$GRAY:$AQUA${Helper.formatNumber(amountLS, true)}$GRAY]"
-        val line = OverlayTextLine(combinedText).onClick {
-            if (mc.currentScreen?.title?.string != "Crafting") return@onClick
-
-            if (SBOConfigBundle.sboData.hideTrackerLines.contains(nameBase)) {
-                SBOConfigBundle.sboData.hideTrackerLines.remove(nameBase)
-            } else {
-                SBOConfigBundle.sboData.hideTrackerLines.add(nameBase)
-            }
-            updateLines()
-        }
+        val line = OverlayTextLine(combinedText).onClick { hideLine(nameBase) }
             .setCondition {
                 val totalAmount = amountBase + amountLS
                 val meetsZeroValueCondition = totalAmount > 0 || !Diana.hideUnobtainedItems
@@ -266,6 +259,7 @@ object DianaLoot {
                 )
             )
         }
+
         lines.addAll(lsLines)
         lines.addAll(
             listOf(
