@@ -38,6 +38,7 @@ object WaypointManager {
     val rareMobs: List<String> = listOf(
         "minos inquisitor",
         "inquisitor",
+        "inq",
         "manticore",
         "king minos",
         "king",
@@ -75,7 +76,7 @@ object WaypointManager {
                 if ((!trailing.startsWith(" ") || rareMobs.contains(mob) || Diana.allWaypointsAreInqs) && Diana.receiveInq && checkDiana()) {
                     if (hideOwnWaypoints.contains(HideOwnWaypoints.INQ) && player.contains(playername)) return@onChatMessage
                     when (mob) { // todo: add custom sounds per mob
-                        "minos inquisitor", "inquisitor" -> {
+                        "minos inquisitor", "inquisitor", "inq" -> {
                             Helper.showTitle("§r§6§l<§b§l§kO§6§l> §b§lINQUISITOR! §6§l<§b§l§kO§6§l>", player, 0, 90, 20)
                             playCustomSound(Customization.inqSound[0], Customization.inqVolume)
                         }
