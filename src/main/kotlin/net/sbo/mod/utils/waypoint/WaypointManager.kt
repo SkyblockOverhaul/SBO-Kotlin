@@ -74,7 +74,6 @@ object WaypointManager {
             val playername = Player.getName() ?: ""
             if (!channel.contains("Guild")) {
                 if ((!trailing.startsWith(" ") || rareMobs.contains(mob) || Diana.allWaypointsAreInqs) && Diana.receiveInq && checkDiana()) {
-                    if (hideOwnWaypoints.contains(HideOwnWaypoints.INQ) && player.contains(playername)) return@onChatMessage
                     when (mob) { // todo: add custom sounds per mob
                         "minos inquisitor", "inquisitor", "inq" -> {
                             Helper.showTitle("§r§6§l<§b§l§kO§6§l> §b§lINQUISITOR! §6§l<§b§l§kO§6§l>", player, 0, 90, 20)
@@ -93,7 +92,12 @@ object WaypointManager {
                             Helper.showTitle("§r§6§l<§b§l§kO§6§l> §b§lRARE MOB! §6§l<§b§l§kO§6§l>", player, 0, 90, 20)
                         }
                     }
-                    addWaypoint(Waypoint(player, x.toDouble(), y.toDouble(), z.toDouble(), 1.0f, 0.84f, 0.0f, 45, type = "rareMob"))
+                    addRareMobWaypoint(
+                        player,
+                        SboVec(x.toDouble(), y.toDouble(), z.toDouble()),
+                        mob,
+                        playername
+                    )
                 } else if (patcherWaypoints) {
                     if (hideOwnWaypoints.contains(HideOwnWaypoints.NORMAL) && player.contains(playername)) return@onChatMessage
                     addWaypoint(Waypoint(player, x.toDouble(), y.toDouble(), z.toDouble(), 0.0f, 0.2f, 1.0f, 30, type = "world"))
@@ -167,6 +171,16 @@ object WaypointManager {
     fun onWorldChange(event: WorldChangeEvent) {
         guessWp?.hide()
         removeAllOfType("world")
+    }
+
+    fun addRareMobWaypoint(player: String, pos: SboVec, mobName: String, playername: String) {
+        when (mobName) {
+            "minos inquisitor", "inquisitor" -> if (hideOwnWaypoints.contains(HideOwnWaypoints.INQ) && player.contains(playername)) return
+            "king minos", "king" -> if (hideOwnWaypoints.contains(HideOwnWaypoints.KING) && player.contains(playername)) return
+            "manticore" -> if (hideOwnWaypoints.contains(HideOwnWaypoints.MANTICORE) && player.contains(playername)) return
+            "sphinx" -> if (hideOwnWaypoints.contains(HideOwnWaypoints.SPHINX) && player.contains(playername)) return
+        }
+        addWaypoint(Waypoint(player, pos.x, pos.y, pos.z, 1.0f, 0.84f, 0.0f, 45, type = "rareMob") )
     }
 
     fun onLootshare() {
