@@ -163,6 +163,8 @@ object DianaLoot {
             else -> SboTimerManager.timerMayor
         }
 
+        val kingShardPercent = calcPercentOne(tracker.items, tracker.mobs, "KING_MINOS_SHARD", "KING_MINOS")
+        val sphinxShardPercent = calcPercentOne(tracker.items, tracker.mobs, "SPHINX_SHARD", "SPHINX")
         val shimmPercent = calcPercentOne(tracker.items, tracker.mobs, "SHIMMERING_WOOL", "KING_MINOS")
         val shimmLsPercent = calcPercentOne(tracker.items, tracker.mobs, "SHIMMERING_WOOL_LS", "KING_MINOS_LS")
         val mantiPercent = calcPercentOne(tracker.items, tracker.mobs, "MANT_CORE", "MANTICORE")
@@ -182,6 +184,8 @@ object DianaLoot {
         } else {
             " $GRAY[$AQUA$burrowsPerHr$GRAY/${AQUA}hr$GRAY]"
         }
+        val kingShardPrice = Helper.getItemPriceFormatted("KING_MINOS_SHARD", tracker.items.KING_MINOS_SHARD)
+        val sphinxShardPrice = Helper.getItemPriceFormatted("SPHINX_SHARD", tracker.items.SPHINX_SHARD)
         val fabledStingerPrice = Helper.getItemPriceFormatted("FABLED_STINGER", tracker.items.FABLED_STINGER)
         val fabledStingerLsPrice = Helper.getItemPriceFormatted("FABLED_STINGER", tracker.items.FABLED_STINGER_LS)
         val shimmPrice = Helper.getItemPriceFormatted("SHIMMERING_WOOL", tracker.items.SHIMMERING_WOOL)
@@ -195,13 +199,16 @@ object DianaLoot {
         val relicPrice = Helper.getItemPriceFormatted("MINOS_RELIC", tracker.items.MINOS_RELIC)
         val braidedPrice = Helper.getItemPriceFormatted("BRAIDED_GRIFFIN_FEATHER", tracker.items.BRAIDED_GRIFFIN_FEATHER)
         val stickPrice = Helper.getItemPriceFormatted("DAEDALUS_STICK", tracker.items.DAEDALUS_STICK)
+        val minotaurShardPrice = Helper.getItemPriceFormatted("MINOTAUR_SHARD", tracker.items.MINOTAUR_SHARD)
         val crownPrice = Helper.getItemPriceFormatted("CROWN_OF_GREED", tracker.items.CROWN_OF_GREED)
         val sovenirPrice = Helper.getItemPriceFormatted("WASHED_UP_SOUVENIR", tracker.items.WASHED_UP_SOUVENIR)
         val mythoFragPrice = Helper.getItemPriceFormatted("MYTHOS_FRAGMENT", tracker.items.MYTHOS_FRAGMENT)
+        val urnPrice = Helper.getItemPriceFormatted("CRETAN_URN", tracker.items.CRETAN_URN)
         val featherPrice = Helper.getItemPriceFormatted("GRIFFIN_FEATHER", tracker.items.GRIFFIN_FEATHER)
         val shelmetPrice = Helper.getItemPriceFormatted("DWARF_TURTLE_SHELMET", tracker.items.DWARF_TURTLE_SHELMET)
         val plushiePrice = Helper.getItemPriceFormatted("CROCHET_TIGER_PLUSHIE", tracker.items.CROCHET_TIGER_PLUSHIE)
         val remediesPrice = Helper.getItemPriceFormatted("ANTIQUE_REMEDIES", tracker.items.ANTIQUE_REMEDIES)
+        val cretanShardPrice = Helper.getItemPriceFormatted("CRETAN_BULL_SHARD", tracker.items.CRETAN_BULL_SHARD)
         val hiltPrice = Helper.getItemPriceFormatted("HILT_OF_REVELATIONS", tracker.items.HILT_OF_REVELATIONS)
         val clawPrice= Helper.getItemPriceFormatted("ANCIENT_CLAW", tracker.items.ANCIENT_CLAW)
         val echClawPrice = Helper.getItemPriceFormatted("ENCHANTED_ANCIENT_CLAW", tracker.items.ENCHANTED_ANCIENT_CLAW)
@@ -237,6 +244,7 @@ object DianaLoot {
                 listOf(
                     createCombinedLine("SHIMMERING_WOOL", "$GOLD$shimmCombinedPrice $GRAY|$RED Shimmering Wool: $AQUA${Helper.formatNumber(tracker.items.SHIMMERING_WOOL, true)}", tracker.items.SHIMMERING_WOOL, "$GOLD$shimmLsPrice $GRAY|$RED Shimmering Wool $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.SHIMMERING_WOOL_LS, true)} $GRAY($AQUA${shimmLsPercent}%$GRAY)", tracker.items.SHIMMERING_WOOL_LS),
                     createCombinedLine("MANTI_CORE", "$GOLD$mantiCombinedPrice $GRAY|$RED Manti-core: $AQUA${Helper.formatNumber(tracker.items.MANTI_CORE, true)}", tracker.items.MANTI_CORE, "$GOLD$mantiLsPrice $GRAY|$RED Manti-core $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.MANTI_CORE_LS, true)} $GRAY($AQUA${mantiLsPercent}%$GRAY)", tracker.items.MANTI_CORE_LS),
+                    createLine("KING_MINOS_SHARD", "$GOLD$kingShardPrice $GRAY|$RED King Minos Shard: $AQUA${Helper.formatNumber(tracker.items.KING_MINOS_SHARD, true)} $GRAY($AQUA${kingShardPercent}%$GRAY)", tracker.items.KING_MINOS_SHARD),
                     createCombinedLine("FABLED_STINGER", "$GOLD$stingerCombinedPrice $GRAY|$LIGHT_PURPLE Fabled Stinger: $AQUA${Helper.formatNumber(tracker.items.FABLED_STINGER, true)}", tracker.items.FABLED_STINGER, "$GOLD$fabledStingerLsPrice $GRAY|$LIGHT_PURPLE Fabled Stinger $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.FABLED_STINGER_LS, true)} $GRAY($AQUA${stingerLsPercent}%$GRAY)", tracker.items.FABLED_STINGER_LS),
                     createCombinedLine("CHIMERA", "$GOLD$chimCombinedPrice $GRAY|$LIGHT_PURPLE Chimera: $AQUA${Helper.formatNumber(tracker.items.CHIMERA, true)}", tracker.items.CHIMERA, "$GOLD$chimLsPrice $GRAY|$LIGHT_PURPLE Chimera $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.CHIMERA_LS, true)} $GRAY($AQUA${chimLsPercent}%$GRAY)", tracker.items.CHIMERA_LS),
                     createCombinedLine("BRAIN_FOOD", "$GOLD$brainCombinedPrice $GRAY|$DARK_PURPLE Brain Food: $AQUA${Helper.formatNumber(tracker.items.BRAIN_FOOD, true)}", tracker.items.BRAIN_FOOD, "$GOLD$brainLsPrice $GRAY|$DARK_PURPLE Brain Food $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.BRAIN_FOOD_LS, true)} $GRAY($AQUA${brainLsPercent}%$GRAY)", tracker.items.BRAIN_FOOD_LS)
@@ -250,6 +258,7 @@ object DianaLoot {
                     createLine("SHIMMERING_WOOL_LS", "$GOLD$shimmLsPrice $GRAY|$RED Shimmering Wool $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.SHIMMERING_WOOL_LS, true)} $GRAY($AQUA${shimmLsPercent}%$GRAY)", tracker.items.SHIMMERING_WOOL_LS),
                     createLine("MANTI_CORE", "$GOLD$mantiPrice $GRAY|$RED Manti-core: $AQUA${Helper.formatNumber(tracker.items.MANTI_CORE, true)} $GRAY($AQUA${mantiPercent}%$GRAY)", tracker.items.MANTI_CORE),
                     createLine("MANTI_CORE_LS", "$GOLD$mantiLsPrice $GRAY|$RED Manti-core $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.MANTI_CORE_LS, true)} $GRAY($AQUA${mantiLsPercent}%$GRAY)", tracker.items.MANTI_CORE_LS),
+                    createLine("KING_MINOS_SHARD", "$GOLD$kingShardPrice $GRAY|$RED King Minos Shard: $AQUA${Helper.formatNumber(tracker.items.KING_MINOS_SHARD, true)} $GRAY($AQUA${kingShardPercent}%$GRAY)", tracker.items.KING_MINOS_SHARD),
                     createLine("FABLED_STINGER", "$GOLD$fabledStingerPrice $GRAY|$LIGHT_PURPLE Fabled Stinger: $AQUA${Helper.formatNumber(tracker.items.FABLED_STINGER, true)} $GRAY($AQUA${stingerPercent}%$GRAY)", tracker.items.FABLED_STINGER),
                     createLine("FABLED_STINGER_LS", "$GOLD$fabledStingerLsPrice $GRAY|$LIGHT_PURPLE Fabled Stinger $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.FABLED_STINGER_LS, true)} $GRAY($AQUA${stingerLsPercent}%$GRAY)", tracker.items.FABLED_STINGER_LS),
                     createLine("CHIMERA", "$GOLD$chimPrice $GRAY|$LIGHT_PURPLE Chimera: $AQUA${Helper.formatNumber(tracker.items.CHIMERA, true)} $GRAY($AQUA${chimPercent}%$GRAY)", tracker.items.CHIMERA),
@@ -264,16 +273,19 @@ object DianaLoot {
         lines.addAll(
             listOf(
                 createLine("MINOS_RELIC", "$GOLD$relicPrice $GRAY|$DARK_PURPLE Minos Relic: $AQUA${Helper.formatNumber(tracker.items.MINOS_RELIC, true)} $GRAY($AQUA${relicPercent}%$GRAY)", tracker.items.MINOS_RELIC),
+                createLine("SPHINX_SHARD", "$GOLD$sphinxShardPrice $GRAY|$DARK_PURPLE Sphinx Shard: $AQUA${Helper.formatNumber(tracker.items.SPHINX_SHARD, true)} $GRAY($AQUA${sphinxShardPercent}%$GRAY)", tracker.items.SPHINX_SHARD),
                 createLine("BRAIDED_GRIFFIN_FEATHER", "$GOLD$braidedPrice $GRAY|$DARK_PURPLE Braided Griffin Feather: $AQUA${Helper.formatNumber(tracker.items.BRAIDED_GRIFFIN_FEATHER, true)}", tracker.items.BRAIDED_GRIFFIN_FEATHER),
                 createLine("DAEDALUS_STICK", "$GOLD$stickPrice $GRAY|$GOLD Daedalus Stick: $AQUA${Helper.formatNumber(tracker.items.DAEDALUS_STICK, true)} $GRAY($AQUA${stickPercent}%$GRAY)", tracker.items.DAEDALUS_STICK),
+                createLine("MINOTAUR_SHARD", "$GOLD$minotaurShardPrice $GRAY|$GOLD Minotaur Shard: $AQUA${Helper.formatNumber(tracker.items.MINOTAUR_SHARD, true)}", tracker.items.MINOTAUR_SHARD),
                 createLine("CROWN_OF_GREED", "$GOLD$crownPrice $GRAY|$GOLD Crown of Greed: $AQUA${Helper.formatNumber(tracker.items.CROWN_OF_GREED, true)}", tracker.items.CROWN_OF_GREED),
                 createLine("WASHED_UP_SOUVENIR", "$GOLD$sovenirPrice $GRAY|$GOLD Washed-up Souvenir: $AQUA${Helper.formatNumber(tracker.items.WASHED_UP_SOUVENIR, true)}", tracker.items.WASHED_UP_SOUVENIR),
                 createLine("GRIFFIN_FEATHER", "$GOLD$featherPrice $GRAY|$GOLD Griffin Feather: $AQUA${Helper.formatNumber(tracker.items.GRIFFIN_FEATHER, true)}", tracker.items.GRIFFIN_FEATHER),
                 createLine("MYTHOS_FRAGMENT", "$GOLD$mythoFragPrice $GRAY|$GOLD Mytho Fragment: $AQUA${Helper.formatNumber(tracker.items.MYTHOS_FRAGMENT, true)}", tracker.items.MYTHOS_FRAGMENT),
-                createLine("CRETAN_URN", "$GOLD$crownPrice $GRAY|$DARK_GREEN Cretan Urn: $AQUA${Helper.formatNumber(tracker.items.CRETAN_URN, true)}", tracker.items.CRETAN_URN),
+                createLine("CRETAN_URN", "$GOLD$urnPrice $GRAY|$DARK_GREEN Cretan Urn: $AQUA${Helper.formatNumber(tracker.items.CRETAN_URN, true)}", tracker.items.CRETAN_URN),
                 createLine("DWARF_TURTLE_SHELMET", "$GOLD$shelmetPrice $GRAY|$DARK_GREEN Dwarf Turtle Helmet: $AQUA${Helper.formatNumber(tracker.items.DWARF_TURTLE_SHELMET, true)}", tracker.items.DWARF_TURTLE_SHELMET),
                 createLine("CROCHET_TIGER_PLUSHIE", "$GOLD$plushiePrice $GRAY|$DARK_GREEN Crochet Tiger Plushie: $AQUA${Helper.formatNumber(tracker.items.CROCHET_TIGER_PLUSHIE, true)}", tracker.items.CROCHET_TIGER_PLUSHIE),
                 createLine("ANTIQUE_REMEDIES", "$GOLD$remediesPrice $GRAY|$DARK_GREEN Antique Remedies: $AQUA${Helper.formatNumber(tracker.items.ANTIQUE_REMEDIES, true)}", tracker.items.ANTIQUE_REMEDIES),
+                createLine("CRETAN_BULL_SHARD", "$GOLD$cretanShardPrice $GRAY|$DARK_GREEN Cretan Bull Shard: $AQUA${Helper.formatNumber(tracker.items.CRETAN_BULL_SHARD)}", tracker.items.CRETAN_BULL_SHARD),
                 createLine("HILT_OF_REVELATIONS", "$GOLD$hiltPrice $GRAY|$BLUE Hilt of Revelations: $AQUA${Helper.formatNumber(tracker.items.HILT_OF_REVELATIONS)}", tracker.items.HILT_OF_REVELATIONS),
                 createLine("ANCIENT_CLAW", "$GOLD$clawPrice $GRAY|$BLUE Ancient Claw: $AQUA${Helper.formatNumber(tracker.items.ANCIENT_CLAW)}", tracker.items.ANCIENT_CLAW),
                 createLine("ENCHANTED_ANCIENT_CLAW", "$GOLD$echClawPrice $GRAY|$BLUE Enchanted Ancient Claw: $AQUA${Helper.formatNumber(tracker.items.ENCHANTED_ANCIENT_CLAW)}", tracker.items.ENCHANTED_ANCIENT_CLAW),
