@@ -537,20 +537,17 @@ object DianaTracker {
         if (Diana.lootAnnouncerScreen && title) {
             val subTitle = if (Diana.lootAnnouncerPrice) "§6${Helper.getItemPriceFormatted(itemId)} coins" else ""
             when (itemId) {
-                "MANTI_CORE", "SHIMMERING_WOOL" -> {
+                "MANTI_CORE", "SHIMMERING_WOOL", "KING_MINOS_SHARD" -> {
                     Helper.showTitle("§c§l$item!", subTitle, 0, 25, 35)
                 }
                 "CHIMERA", "FABLED_STINGER" -> {
                     Helper.showTitle("§d§l$item!", subTitle, 0, 25, 35)
                 }
-                "BRAIN_FOOD", "MINOS_RELIC", "BRAIDED_GRIFFIN_FEATHER" -> {
+                "BRAIN_FOOD", "MINOS_RELIC", "BRAIDED_GRIFFIN_FEATHER", "SPHINX_SHARD" -> {
                     Helper.showTitle("§5§l$item!", subTitle, 0, 25, 35)
                 }
-                "DAEDALUS_STICK", "MYTHOS_FRAGMENT" -> {
+                "DAEDALUS_STICK", "MYTHOS_FRAGMENT", "MINOTAUR_SHARD" -> {
                     Helper.showTitle("§6§l$item!", subTitle, 0, 25, 35)
-                }
-                else -> {
-                    Helper.showTitle("§e§l$item!", subTitle, 0, 25, 35)
                 }
             }
         }
@@ -674,13 +671,9 @@ object DianaTracker {
             val shard = matchResult.group(2).removeFormatting()
             val amount = matchResult.group(3).removeFormatting().toIntOrNull() ?: 0
             when (shard) {
-                "King Minos" -> {
-                    onRareDropFromMob("King Minos Shard", true, true, false, 0)
-                }
-                "Sphinx" -> {
-                    onRareDropFromMob("Sphinx Shard", true, true, false, 0)
-                }
-                "Minotaur" -> trackItem("MINOTAUR_SHARD", amount)
+                "King Minos" -> onRareDropFromMob("King Minos Shard", true, true, false, 0)
+                "Sphinx" -> onRareDropFromMob("Sphinx Shard", true, true, false, 0)
+                "Minotaur" -> onRareDropFromMob("Minotaur Shard", true, false, false, 0)
                 "Cretan Bull" -> trackItem("CRETAN_BULL_SHARD", amount)
             }
             true
