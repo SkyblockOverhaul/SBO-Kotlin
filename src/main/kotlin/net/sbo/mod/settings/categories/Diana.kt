@@ -128,6 +128,11 @@ object Diana : CategoryKt("Diana") {
         this.description = Translated("Hides any loot or mob lines that have not been tracked yet (value is 0) to reduce clutter in the overlays.")
     }
 
+    var combineLootLines by boolean(false) {
+        this.name = Translated("Combine LS Loot")
+        this.description = Translated("Combines the base item and the Loot Share (LS) variant into a single line. The individual LS count is shown on hover.")
+    }
+
     var statsTracker by boolean(false) {
         this.name = Translated("Diana Stats Tracker")
         this.description = Translated("Shows stats like Mobs since Inquisitor, Inquisitors since Chimera, /sboguis to move the overlay")
