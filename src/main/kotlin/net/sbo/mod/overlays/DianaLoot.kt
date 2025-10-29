@@ -129,7 +129,7 @@ object DianaLoot {
         val itemName = data.id
         val amount = tracker.getAmountOf(itemName)
         val formattedName = "${data.color}${data.name}: ${AQUA}${Helper.formatNumber(amount, true)}"
-        val price = Helper.getItemPriceFormatted(itemName, amount)
+        val price = Helper.getItemPriceFormatted(itemName.replace("_LS", ""), amount)
         val percent = data.dropMobId?.let { dropId ->
             calcPercentOne(tracker.items, tracker.mobs, itemName, dropId)
         }
@@ -153,7 +153,7 @@ object DianaLoot {
         val amountBase = tracker.getAmountOf(itemNameBase)
         val amountLs = tracker.getAmountOf(itemNameLs)
         val totalAmount = amountBase + amountLs
-        val priceLs = Helper.getItemPriceFormatted(itemNameLs, amountLs)
+        val priceLs = Helper.getItemPriceFormatted(itemNameLs.replace("_LS", ""), amountLs)
         val priceCombined = Helper.getItemPriceFormatted(itemNameBase, totalAmount)
         val percentLs = data.dropMobLsId?.let { dropLsId ->
             calcPercentOne(tracker.items, tracker.mobs, itemNameLs, dropLsId)
