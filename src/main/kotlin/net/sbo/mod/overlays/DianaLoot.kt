@@ -1,9 +1,5 @@
 package net.sbo.mod.overlays
-/* todo: Refactoring
-* This Code definetly needs refactoring, but I don't have the time to do it right now.
-* I will do it in the future, but for now it works and I don't want to break it.
-* If you want to refactor it, feel free to do so, but please keep the functionality intact.
-*/
+
 import net.sbo.mod.settings.categories.Diana
 import net.sbo.mod.utils.overlay.Overlay
 import net.sbo.mod.utils.overlay.OverlayTextLine
@@ -20,110 +16,157 @@ import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.guis.GuiCloseEvent
 import net.sbo.mod.utils.events.impl.guis.GuiOpenEvent
 import net.sbo.mod.utils.render.RenderUtils2D
+import net.sbo.mod.overlays.OverlayUtils.LootItemData
 import java.util.concurrent.TimeUnit
 
 object DianaLoot {
     private var isSellTypeHovered = false
     val timerLine: OverlayTextLine = OverlayTextLine("")
-    val overlay = Overlay("Diana Loot", 10f, 10f, 1f, listOf("Chat screen", "Crafting")).setCondition { Diana.lootTracker != Diana.Tracker.OFF && (Helper.checkDiana() || Helper.hasSpade) }
-    val changeView: OverlayTextLine = OverlayTextLine("${YELLOW}Change View", linebreak = false)
-        .onClick {
+    val overlay = Overlay("Diana Loot", 10f, 10f, 1f, listOf("Chat screen", "Crafting"))
+        .setCondition { Diana.lootTracker != Diana.Tracker.OFF && (Helper.checkDiana() || Helper.hasSpade) }
+
+    val changeView: OverlayTextLine = OverlayUtils.createClickableTextLine(
+        text = "${YELLOW}Change View",
+        hoverText = "$YELLOW${UNDERLINE}Change View",
+        defaultText = "${YELLOW}Change View",
+        onClick = {
             Diana.lootTracker = Diana.lootTracker.next()
             updateLines()
-        }
-        .onMouseEnter {
-            changeView.text = "$YELLOW${UNDERLINE}Change View"
-        }
-        .onMouseLeave {
-            changeView.text = "${YELLOW}Change View"
-        }
+        },
+        lineBreak = false
+    )
 
     val delimiter = OverlayTextLine(" | ", linebreak = false)
 
-    val changeSellType: OverlayTextLine = OverlayTextLine("")
-        .onClick {
+    val changeSellType: OverlayTextLine = OverlayUtils.createClickableTextLine(
+        text = "",
+        onClick = {
             Diana.bazaarSettingDiana = Diana.bazaarSettingDiana.next()
             updateLines()
-        }
-        .onMouseEnter {
+        },
+        onMouseEnter = {
             isSellTypeHovered = true
             updateLines()
-        }
-        .onMouseLeave {
+        },
+        onMouseLeave = {
             isSellTypeHovered = false
             updateLines()
         }
+    )
 
-    val resetSession : OverlayTextLine = OverlayTextLine("${RED}Reset Session")
-        .onClick {
+    val resetSession = OverlayUtils.createClickableTextLine(
+        text = "${RED}Reset Session",
+        hoverText = "$RED${UNDERLINE}Reset Session",
+        defaultText = "${RED}Reset Session",
+        onClick = {
             SboTimerManager.timerSession.reset()
             SBOConfigBundle.dianaTrackerSessionData.reset().save()
             updateLines()
             DianaMobs.updateLines()
         }
-        .onMouseEnter {
-            resetSession.text = "$RED${UNDERLINE}Reset Session"
-        }
-        .onMouseLeave {
-            resetSession.text = "${RED}Reset Session"
-        }
+    )
+
+    private val LOOT_ITEMS = listOf<LootItemData>(
+        LootItemData("SHIMMERING_WOOL", "Shimmering Wool", RED, combined = true, dropMobId = "KING_MINOS", dropMobLsId = "KING_MINOS_LS"),
+        LootItemData("MANTI_CORE", "Manti-core", RED, combined = true, dropMobId = "MANTICORE", dropMobLsId = "MANTICORE_LS"),
+        LootItemData("KING_MINOS_SHARD", "King Minos Shard", RED, isRarerDrop = true, dropMobId = "KING_MINOS"),
+        LootItemData("FABLED_STINGER", "Fabled Stinger", LIGHT_PURPLE, combined = true, dropMobId = "MANTICORE", dropMobLsId = "MANTICORE_LS"),
+        LootItemData("CHIMERA", "Chimera", LIGHT_PURPLE, combined = true, dropMobId = "MINOS_INQUISITOR", dropMobLsId = "MINOS_INQUISITOR_LS"),
+        LootItemData("BRAIN_FOOD", "Brain Food", DARK_PURPLE, combined = true, dropMobId = "SPHINX", dropMobLsId = "SPHINX_LS"),
+        LootItemData("MINOS_RELIC", "Minos Relic", DARK_PURPLE, isRarerDrop = true, dropMobId = "MINOS_CHAMPION"),
+        LootItemData("SPHINX_SHARD", "Sphinx Shard", DARK_PURPLE, isRarerDrop = true, dropMobId = "SPHINX"),
+        LootItemData("BRAIDED_GRIFFIN_FEATHER", "Braided Griffin Feather", DARK_PURPLE, isRarerDrop = true),
+        LootItemData("DAEDALUS_STICK", "Daedalus Stick", GOLD, isRarerDrop = true, dropMobId = "MINOTAUR"),
+        LootItemData("MINOTAUR_SHARD", "Minotaur Shard", GOLD, isRarerDrop = true),
+        LootItemData("CROWN_OF_GREED", "Crown of Greed", GOLD, isRarerDrop = true),
+        LootItemData("WASHED_UP_SOUVENIR", "Washed-up Souvenir", GOLD, isRarerDrop = true),
+        LootItemData("GRIFFIN_FEATHER", "Griffin Feather", GOLD),
+        LootItemData("MYTHOS_FRAGMENT", "Mytho Fragment", GOLD),
+        LootItemData("CRETAN_URN", "Cretan Urn", DARK_GREEN),
+        LootItemData("DWARF_TURTLE_SHELMET", "Dwarf Turtle Helmet", DARK_GREEN),
+        LootItemData("CROCHET_TIGER_PLUSHIE", "Crochet Tiger Plushie", DARK_GREEN),
+        LootItemData("ANTIQUE_REMEDIES", "Antique Remedies", DARK_GREEN),
+        LootItemData("CRETAN_BULL_SHARD", "Cretan Bull Shard", DARK_GREEN),
+        LootItemData("HILT_OF_REVELATIONS", "Hilt of Revelations", BLUE),
+        LootItemData("ANCIENT_CLAW", "Ancient Claw", BLUE),
+        LootItemData("ENCHANTED_ANCIENT_CLAW", "Enchanted Ancient Claw", BLUE),
+        LootItemData("ENCHANTED_GOLD", "Enchanted Gold", BLUE)
+    )
 
     fun init() {
         overlay.init()
         updateLines()
         updateTimerText()
-        Register.onTick(1) {
-            updateTimerText()
-        }
+        Register.onTick(1) { updateTimerText() }
     }
+
+    private const val CRAFTING_GUI_TITLE = "Crafting"
 
     @SboEvent
     fun onGuiClose(event: GuiCloseEvent) {
-        if (event.screen.title.string == "Crafting") {
-            overlay.removeLine(changeView)
-            overlay.removeLine(delimiter)
-            overlay.removeLine(changeSellType)
-            overlay.removeLine(resetSession)
+        if (event.screen.title.string == CRAFTING_GUI_TITLE) {
+            overlay.removeLines(listOf(changeView, delimiter, changeSellType, resetSession))
         }
     }
 
     @SboEvent
     fun onGuiOpen(event: GuiOpenEvent) {
-        if (event.screen.title.string == "Crafting") {
-            updateLines("CraftingOpen")
+        if (event.screen.title.string == CRAFTING_GUI_TITLE) {
+            updateLines(isCraftingOpen = true)
         }
     }
 
+    private fun isCraftingScreenOpen(): Boolean = mc.currentScreen?.title?.string == CRAFTING_GUI_TITLE
+
     fun hideLine(name: String) {
-        if (mc.currentScreen?.title?.string != "Crafting") return
-        if (SBOConfigBundle.sboData.hideTrackerLines.contains(name)) {
-            SBOConfigBundle.sboData.hideTrackerLines.remove(name)
-        } else {
-            SBOConfigBundle.sboData.hideTrackerLines.add(name)
-        }
+        if (isCraftingScreenOpen()) return
+        val hideList = SBOConfigBundle.sboData.hideTrackerLines
+        if (hideList.contains(name)) hideList.remove(name) else hideList.add(name)
         updateLines()
     }
 
-    fun createLine(name: String, formattedText: String, amount: Int) : OverlayTextLine {
-        val line = OverlayTextLine(formattedText).onClick { hideLine(name) }
+    fun createLootLine(data: LootItemData, tracker: DianaTracker): OverlayTextLine {
+        val itemName = data.id
+        val amount = tracker.getAmountOf(itemName)
+        val formattedName = "${data.color}${data.name}: ${AQUA}${Helper.formatNumber(amount, true)}"
+        val price = Helper.getItemPriceFormatted(itemName, amount)
+        val percent = data.dropMobId?.let { dropId ->
+            calcPercentOne(tracker.items, tracker.mobs, itemName, dropId)
+        }
+        val percentText = percent?.let { " $GRAY($AQUA${it}%$GRAY)" } ?: ""
+        val formattedText = "$GOLD$price $GRAY| $formattedName$percentText"
+        val line = OverlayTextLine(formattedText).onClick { hideLine(itemName) }
             .setCondition {
                 val meetsZeroValueCondition = amount > 0 || !Diana.hideUnobtainedItems
-                val meetsManualHideCondition = !(mc.currentScreen?.title?.string != "Crafting" && SBOConfigBundle.sboData.hideTrackerLines.contains(name))
+                val meetsManualHideCondition = !(mc.currentScreen?.title?.string != CRAFTING_GUI_TITLE && SBOConfigBundle.sboData.hideTrackerLines.contains(itemName))
                 meetsZeroValueCondition && meetsManualHideCondition
             }
-        if (SBOConfigBundle.sboData.hideTrackerLines.contains(name)) {
+        if (SBOConfigBundle.sboData.hideTrackerLines.contains(itemName)) {
             line.text = "$GRAY$STRIKETHROUGH${formattedText.removeFormatting()}"
         }
         return line
     }
 
-    fun createCombinedLine(nameBase: String, formattedTextBase: String, amountBase: Int, formattedTextLS: String, amountLS: Int): OverlayTextLine {
-        val combinedText = "$formattedTextBase $GRAY[${AQUA}LS$GRAY:$AQUA${Helper.formatNumber(amountLS, true)}$GRAY]"
-        val line = OverlayTextLine(combinedText).onClick { hideLine(nameBase) }
+    fun createCombinedLootLine(data: LootItemData, tracker: DianaTracker): OverlayTextLine {
+        val itemNameBase = data.id
+        val itemNameLs = "${data.id}_LS"
+        val amountBase = tracker.getAmountOf(itemNameBase)
+        val amountLs = tracker.getAmountOf(itemNameLs)
+        val totalAmount = amountBase + amountLs
+        val priceLs = Helper.getItemPriceFormatted(itemNameLs, amountLs)
+        val priceCombined = Helper.getItemPriceFormatted(itemNameBase, totalAmount)
+        val percentLs = data.dropMobLsId?.let { dropLsId ->
+            calcPercentOne(tracker.items, tracker.mobs, itemNameLs, dropLsId)
+        }
+        val percentLsText = percentLs?.let { " $GRAY($AQUA${it}%$GRAY)" } ?: ""
+        val baseText = "$GOLD$priceCombined $GRAY| ${data.color}${data.name}: $AQUA${Helper.formatNumber(amountBase, true)}"
+        val lsText = "$GOLD$priceLs $GRAY| ${data.color}${data.name} $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(amountLs, true)}$percentLsText"
+        val combinedText = "$baseText $GRAY[${AQUA}LS$GRAY:$AQUA${Helper.formatNumber(amountLs, true)}$GRAY]"
+
+        val line = OverlayTextLine(combinedText).onClick { hideLine(itemNameBase) }
             .setCondition {
-                val totalAmount = amountBase + amountLS
                 val meetsZeroValueCondition = totalAmount > 0 || !Diana.hideUnobtainedItems
-                val meetsManualHideCondition = !(mc.currentScreen?.title?.string != "Crafting" && SBOConfigBundle.sboData.hideTrackerLines.contains(nameBase))
+                val meetsManualHideCondition = !(mc.currentScreen?.title?.string != CRAFTING_GUI_TITLE && SBOConfigBundle.sboData.hideTrackerLines.contains(itemNameBase))
                 meetsZeroValueCondition && meetsManualHideCondition
             }
             .onHover { drawContext, textRenderer ->
@@ -131,94 +174,45 @@ object DianaLoot {
                 val mouseX = mc.mouse.x / scaleFactor
                 val mouseY = mc.mouse.y / scaleFactor
 
-                RenderUtils2D.drawHoveringString(drawContext,
-                    "$YELLOW${Helper.toTitleCase(nameBase.replace("_", " ").lowercase())} LS Details:\n" +
-                            formattedTextLS,
-                    mouseX, mouseY, textRenderer, overlay.scale)
+                RenderUtils2D.drawHoveringString(
+                    drawContext,
+                    "$YELLOW${Helper.toTitleCase(itemNameBase.replace("_", " ").lowercase())} LS Details:\n" +
+                            lsText,
+                    mouseX, mouseY, textRenderer, overlay.scale
+                )
             }
-        if (SBOConfigBundle.sboData.hideTrackerLines.contains(nameBase)) {
+        if (SBOConfigBundle.sboData.hideTrackerLines.contains(itemNameBase)) {
             line.text = "$GRAY$STRIKETHROUGH${combinedText.removeFormatting()}"
         }
         return line
     }
 
-    fun updateLines(screen: String = "") {
+    fun updateLines(isCraftingOpen: Boolean = false) {
         val lines = mutableListOf<OverlayTextLine>()
-        val lsLines = mutableListOf<OverlayTextLine>()
         val type = Diana.lootTracker
-        val totalEvents: Int = SBOConfigBundle.pastDianaEventsData.events.size
-        val tracker = when (type) {
+        val tracker = getDianaTracker(type) ?: run {
+            overlay.setLines(emptyList())
+            return
+        }
+
+        updateControlLines(lines, isCraftingOpen)
+        lines.add(OverlayTextLine("$YELLOW${BOLD}Diana Loot $GRAY($YELLOW${Helper.toTitleCase(type.toString())}$GRAY)"))
+        lines.addAll(generateLootLines(tracker))
+        lines.addAll(generateStatisticsLines(tracker, type, isCraftingOpen))
+        overlay.setLines(lines)
+    }
+
+    private fun getDianaTracker(type: Diana.Tracker): DianaTracker? {
+        return when (type) {
             Diana.Tracker.TOTAL -> SBOConfigBundle.dianaTrackerTotalData
             Diana.Tracker.EVENT -> SBOConfigBundle.dianaTrackerMayorData
             Diana.Tracker.SESSION -> SBOConfigBundle.dianaTrackerSessionData
-            Diana.Tracker.OFF -> {
-                overlay.setLines(emptyList())
-                return
-            }
+            Diana.Tracker.OFF -> null
         }
-        val timer = when (type) {
-            Diana.Tracker.TOTAL -> SboTimerManager.timerTotal
-            Diana.Tracker.EVENT -> SboTimerManager.timerMayor
-            Diana.Tracker.SESSION -> SboTimerManager.timerSession
-            else -> SboTimerManager.timerMayor
-        }
+    }
 
-        val kingShardPercent = calcPercentOne(tracker.items, tracker.mobs, "KING_MINOS_SHARD", "KING_MINOS")
-        val sphinxShardPercent = calcPercentOne(tracker.items, tracker.mobs, "SPHINX_SHARD", "SPHINX")
-        val shimmPercent = calcPercentOne(tracker.items, tracker.mobs, "SHIMMERING_WOOL", "KING_MINOS")
-        val shimmLsPercent = calcPercentOne(tracker.items, tracker.mobs, "SHIMMERING_WOOL_LS", "KING_MINOS_LS")
-        val mantiPercent = calcPercentOne(tracker.items, tracker.mobs, "MANT_CORE", "MANTICORE")
-        val mantiLsPercent = calcPercentOne(tracker.items, tracker.mobs, "MANT_CORE_LS", "MANTICORE_LS")
-        val stingerPercent = calcPercentOne(tracker.items, tracker.mobs, "FABLED_STINGER", "MANTICORE")
-        val stingerLsPercent = calcPercentOne(tracker.items, tracker.mobs, "FABLED_STINGER_LS", "MANTICORE_LS")
-        val chimPercent = calcPercentOne(tracker.items, tracker.mobs, "CHIMERA", "MINOS_INQUISITOR")
-        val chimLsPercent = calcPercentOne(tracker.items, tracker.mobs, "CHIMERA_LS", "MINOS_INQUISITOR_LS")
-        val brainPercent = calcPercentOne(tracker.items, tracker.mobs, "BRAIN_FOOD", "SPHINX")
-        val brainLsPercent = calcPercentOne(tracker.items, tracker.mobs, "BRAIN_FOOD_LS", "SPHINX_LS")
-        val relicPercent = calcPercentOne(tracker.items, tracker.mobs, "MINOS_RELIC", "MINOS_CHAMPION")
-        val stickPercent = calcPercentOne(tracker.items, tracker.mobs, "DAEDALUS_STICK", "MINOTAUR")
-        val playTimeHrs = tracker.items.TIME.toDouble() / TimeUnit.HOURS.toMillis(1)
-        val burrowsPerHr = Helper.getBurrowsPerHr(tracker, timer)
-        val bphText = if (burrowsPerHr.isNaN() || burrowsPerHr == 0.0) {
-            ""
-        } else {
-            " $GRAY[$AQUA$burrowsPerHr$GRAY/${AQUA}hr$GRAY]"
-        }
-        val kingShardPrice = Helper.getItemPriceFormatted("KING_MINOS_SHARD", tracker.items.KING_MINOS_SHARD)
-        val sphinxShardPrice = Helper.getItemPriceFormatted("SPHINX_SHARD", tracker.items.SPHINX_SHARD)
-        val fabledStingerPrice = Helper.getItemPriceFormatted("FABLED_STINGER", tracker.items.FABLED_STINGER)
-        val fabledStingerLsPrice = Helper.getItemPriceFormatted("FABLED_STINGER", tracker.items.FABLED_STINGER_LS)
-        val shimmPrice = Helper.getItemPriceFormatted("SHIMMERING_WOOL", tracker.items.SHIMMERING_WOOL)
-        val shimmLsPrice = Helper.getItemPriceFormatted("SHIMMERING_WOOL", tracker.items.SHIMMERING_WOOL_LS)
-        val mantiPrice = Helper.getItemPriceFormatted("MANTI_CORE", tracker.items.MANTI_CORE)
-        val mantiLsPrice = Helper.getItemPriceFormatted("MANTI_CORE", tracker.items.MANTI_CORE_LS)
-        val chimPrice = Helper.getItemPriceFormatted("CHIMERA", tracker.items.CHIMERA)
-        val chimLsPrice = Helper.getItemPriceFormatted("CHIMERA", tracker.items.CHIMERA_LS)
-        val brainPrice = Helper.getItemPriceFormatted("BRAIN_FOOD", tracker.items.BRAIN_FOOD)
-        val brainLsPrice = Helper.getItemPriceFormatted("BRAIN_FOOD", tracker.items.BRAIN_FOOD_LS)
-        val relicPrice = Helper.getItemPriceFormatted("MINOS_RELIC", tracker.items.MINOS_RELIC)
-        val braidedPrice = Helper.getItemPriceFormatted("BRAIDED_GRIFFIN_FEATHER", tracker.items.BRAIDED_GRIFFIN_FEATHER)
-        val stickPrice = Helper.getItemPriceFormatted("DAEDALUS_STICK", tracker.items.DAEDALUS_STICK)
-        val minotaurShardPrice = Helper.getItemPriceFormatted("MINOTAUR_SHARD", tracker.items.MINOTAUR_SHARD)
-        val crownPrice = Helper.getItemPriceFormatted("CROWN_OF_GREED", tracker.items.CROWN_OF_GREED)
-        val sovenirPrice = Helper.getItemPriceFormatted("WASHED_UP_SOUVENIR", tracker.items.WASHED_UP_SOUVENIR)
-        val mythoFragPrice = Helper.getItemPriceFormatted("MYTHOS_FRAGMENT", tracker.items.MYTHOS_FRAGMENT)
-        val urnPrice = Helper.getItemPriceFormatted("CRETAN_URN", tracker.items.CRETAN_URN)
-        val featherPrice = Helper.getItemPriceFormatted("GRIFFIN_FEATHER", tracker.items.GRIFFIN_FEATHER)
-        val shelmetPrice = Helper.getItemPriceFormatted("DWARF_TURTLE_SHELMET", tracker.items.DWARF_TURTLE_SHELMET)
-        val plushiePrice = Helper.getItemPriceFormatted("CROCHET_TIGER_PLUSHIE", tracker.items.CROCHET_TIGER_PLUSHIE)
-        val remediesPrice = Helper.getItemPriceFormatted("ANTIQUE_REMEDIES", tracker.items.ANTIQUE_REMEDIES)
-        val cretanShardPrice = Helper.getItemPriceFormatted("CRETAN_BULL_SHARD", tracker.items.CRETAN_BULL_SHARD)
-        val hiltPrice = Helper.getItemPriceFormatted("HILT_OF_REVELATIONS", tracker.items.HILT_OF_REVELATIONS)
-        val clawPrice= Helper.getItemPriceFormatted("ANCIENT_CLAW", tracker.items.ANCIENT_CLAW)
-        val echClawPrice = Helper.getItemPriceFormatted("ENCHANTED_ANCIENT_CLAW", tracker.items.ENCHANTED_ANCIENT_CLAW)
-        val echGoldPrice = Helper.getItemPriceFormatted("ENCHANTED_GOLD", tracker.items.ENCHANTED_GOLD)
-        val profitPerHr = if (playTimeHrs > 0) {
-            Helper.formatNumber(totalProfit(tracker) / playTimeHrs)
-        } else 0.0
-        val poriftPerBurrow = if (tracker.items.TOTAL_BURROWS > 0) {
-            Helper.formatNumber(totalProfit(tracker) / tracker.items.TOTAL_BURROWS)
-        } else 0.0
+    private fun updateControlLines(lines: MutableList<OverlayTextLine>, isCraftingOpen: Boolean) {
+        val screenOpen = isCraftingOpen || isCraftingScreenOpen()
         val sellTypeText = if (isSellTypeHovered) {
             "$YELLOW${UNDERLINE}${Helper.toTitleCase(Diana.bazaarSettingDiana.toString())}"
         } else {
@@ -226,99 +220,85 @@ object DianaLoot {
         }
         changeSellType.text = sellTypeText
 
-        if (screen == "CraftingOpen" || mc.currentScreen?.title?.string == "Crafting") {
-            lines.add(changeView)
-            lines.add(delimiter)
-            lines.add(changeSellType)
+        if (screenOpen) {
+            lines.addAll(listOf(changeView, delimiter, changeSellType))
         }
+    }
 
-        lines.add(OverlayTextLine("$YELLOW${BOLD}Diana Loot $GRAY($YELLOW${Helper.toTitleCase(type.toString())}$GRAY)"))
-
-        if (Diana.combineLootLines) {
-            val shimmCombinedPrice = Helper.getItemPriceFormatted("SHIMMERING_WOOL", tracker.items.SHIMMERING_WOOL + tracker.items.SHIMMERING_WOOL_LS)
-            val mantiCombinedPrice = Helper.getItemPriceFormatted("MANTI_CORE", tracker.items.MANTI_CORE + tracker.items.MANTI_CORE_LS)
-            val stingerCombinedPrice = Helper.getItemPriceFormatted("FABLED_STINGER", tracker.items.FABLED_STINGER + tracker.items.FABLED_STINGER_LS)
-            val chimCombinedPrice = Helper.getItemPriceFormatted("CHIMERA", tracker.items.CHIMERA + tracker.items.CHIMERA_LS)
-            val brainCombinedPrice = Helper.getItemPriceFormatted("BRAIN_FOOD", tracker.items.BRAIN_FOOD + tracker.items.BRAIN_FOOD_LS)
-            lsLines.addAll(
-                listOf(
-                    createCombinedLine("SHIMMERING_WOOL", "$GOLD$shimmCombinedPrice $GRAY|$RED Shimmering Wool: $AQUA${Helper.formatNumber(tracker.items.SHIMMERING_WOOL, true)}", tracker.items.SHIMMERING_WOOL, "$GOLD$shimmLsPrice $GRAY|$RED Shimmering Wool $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.SHIMMERING_WOOL_LS, true)} $GRAY($AQUA${shimmLsPercent}%$GRAY)", tracker.items.SHIMMERING_WOOL_LS),
-                    createCombinedLine("MANTI_CORE", "$GOLD$mantiCombinedPrice $GRAY|$RED Manti-core: $AQUA${Helper.formatNumber(tracker.items.MANTI_CORE, true)}", tracker.items.MANTI_CORE, "$GOLD$mantiLsPrice $GRAY|$RED Manti-core $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.MANTI_CORE_LS, true)} $GRAY($AQUA${mantiLsPercent}%$GRAY)", tracker.items.MANTI_CORE_LS),
-                    createLine("KING_MINOS_SHARD", "$GOLD$kingShardPrice $GRAY|$RED King Minos Shard: $AQUA${Helper.formatNumber(tracker.items.KING_MINOS_SHARD, true)} $GRAY($AQUA${kingShardPercent}%$GRAY)", tracker.items.KING_MINOS_SHARD),
-                    createCombinedLine("FABLED_STINGER", "$GOLD$stingerCombinedPrice $GRAY|$LIGHT_PURPLE Fabled Stinger: $AQUA${Helper.formatNumber(tracker.items.FABLED_STINGER, true)}", tracker.items.FABLED_STINGER, "$GOLD$fabledStingerLsPrice $GRAY|$LIGHT_PURPLE Fabled Stinger $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.FABLED_STINGER_LS, true)} $GRAY($AQUA${stingerLsPercent}%$GRAY)", tracker.items.FABLED_STINGER_LS),
-                    createCombinedLine("CHIMERA", "$GOLD$chimCombinedPrice $GRAY|$LIGHT_PURPLE Chimera: $AQUA${Helper.formatNumber(tracker.items.CHIMERA, true)}", tracker.items.CHIMERA, "$GOLD$chimLsPrice $GRAY|$LIGHT_PURPLE Chimera $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.CHIMERA_LS, true)} $GRAY($AQUA${chimLsPercent}%$GRAY)", tracker.items.CHIMERA_LS),
-                    createCombinedLine("BRAIN_FOOD", "$GOLD$brainCombinedPrice $GRAY|$DARK_PURPLE Brain Food: $AQUA${Helper.formatNumber(tracker.items.BRAIN_FOOD, true)}", tracker.items.BRAIN_FOOD, "$GOLD$brainLsPrice $GRAY|$DARK_PURPLE Brain Food $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.BRAIN_FOOD_LS, true)} $GRAY($AQUA${brainLsPercent}%$GRAY)", tracker.items.BRAIN_FOOD_LS)
+    private fun generateLootLines(tracker: DianaTracker): List<OverlayTextLine> {
+        val lines = mutableListOf<OverlayTextLine>()
+        for (data in LOOT_ITEMS) {
+            if (Diana.combineLootLines && data.combined) {
+                lines.add(createCombinedLootLine(data, tracker))
+            } else if (data.combined) {
+                lines.add(createLootLine(data, tracker))
+                val lsData = data.copy(
+                    id = "${data.id}_LS",
+                    name = "${data.name} $GRAY[${AQUA}LS$GRAY]",
+                    combined = false,
+                    isRarerDrop = true
                 )
-            )
+                lines.add(createLootLine(lsData, tracker))
+            } else {
+                lines.add(createLootLine(data, tracker))
+            }
         }
-        else {
-            lsLines.addAll(
-                listOf(
-                    createLine("SHIMMERING_WOOL", "$GOLD$shimmPrice $GRAY|$RED Shimmering Wool: $AQUA${Helper.formatNumber(tracker.items.SHIMMERING_WOOL, true)} $GRAY($AQUA${shimmPercent}%$GRAY)", tracker.items.SHIMMERING_WOOL),
-                    createLine("SHIMMERING_WOOL_LS", "$GOLD$shimmLsPrice $GRAY|$RED Shimmering Wool $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.SHIMMERING_WOOL_LS, true)} $GRAY($AQUA${shimmLsPercent}%$GRAY)", tracker.items.SHIMMERING_WOOL_LS),
-                    createLine("MANTI_CORE", "$GOLD$mantiPrice $GRAY|$RED Manti-core: $AQUA${Helper.formatNumber(tracker.items.MANTI_CORE, true)} $GRAY($AQUA${mantiPercent}%$GRAY)", tracker.items.MANTI_CORE),
-                    createLine("MANTI_CORE_LS", "$GOLD$mantiLsPrice $GRAY|$RED Manti-core $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.MANTI_CORE_LS, true)} $GRAY($AQUA${mantiLsPercent}%$GRAY)", tracker.items.MANTI_CORE_LS),
-                    createLine("KING_MINOS_SHARD", "$GOLD$kingShardPrice $GRAY|$RED King Minos Shard: $AQUA${Helper.formatNumber(tracker.items.KING_MINOS_SHARD, true)} $GRAY($AQUA${kingShardPercent}%$GRAY)", tracker.items.KING_MINOS_SHARD),
-                    createLine("FABLED_STINGER", "$GOLD$fabledStingerPrice $GRAY|$LIGHT_PURPLE Fabled Stinger: $AQUA${Helper.formatNumber(tracker.items.FABLED_STINGER, true)} $GRAY($AQUA${stingerPercent}%$GRAY)", tracker.items.FABLED_STINGER),
-                    createLine("FABLED_STINGER_LS", "$GOLD$fabledStingerLsPrice $GRAY|$LIGHT_PURPLE Fabled Stinger $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.FABLED_STINGER_LS, true)} $GRAY($AQUA${stingerLsPercent}%$GRAY)", tracker.items.FABLED_STINGER_LS),
-                    createLine("CHIMERA", "$GOLD$chimPrice $GRAY|$LIGHT_PURPLE Chimera: $AQUA${Helper.formatNumber(tracker.items.CHIMERA, true)} $GRAY($AQUA${chimPercent}%$GRAY)", tracker.items.CHIMERA),
-                    createLine("CHIMERA_LS", "$GOLD$chimLsPrice $GRAY|$LIGHT_PURPLE Chimera $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.CHIMERA_LS, true)} $GRAY($AQUA${chimLsPercent}%$GRAY)", tracker.items.CHIMERA_LS),
-                    createLine("BRAIN_FOOD", "$GOLD$brainPrice $GRAY|$DARK_PURPLE Brain Food: $AQUA${Helper.formatNumber(tracker.items.BRAIN_FOOD, true)} $GRAY($AQUA${brainPercent}%$GRAY)", tracker.items.BRAIN_FOOD),
-                    createLine("BRAIN_FOOD_LS", "$GOLD$brainLsPrice $GRAY|$DARK_PURPLE Brain Food $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(tracker.items.BRAIN_FOOD_LS, true)} $GRAY($AQUA${brainLsPercent}%$GRAY)", tracker.items.BRAIN_FOOD_LS),
-                )
-            )
-        }
+        return lines
+    }
 
-        lines.addAll(lsLines)
-        lines.addAll(
-            listOf(
-                createLine("MINOS_RELIC", "$GOLD$relicPrice $GRAY|$DARK_PURPLE Minos Relic: $AQUA${Helper.formatNumber(tracker.items.MINOS_RELIC, true)} $GRAY($AQUA${relicPercent}%$GRAY)", tracker.items.MINOS_RELIC),
-                createLine("SPHINX_SHARD", "$GOLD$sphinxShardPrice $GRAY|$DARK_PURPLE Sphinx Shard: $AQUA${Helper.formatNumber(tracker.items.SPHINX_SHARD, true)} $GRAY($AQUA${sphinxShardPercent}%$GRAY)", tracker.items.SPHINX_SHARD),
-                createLine("BRAIDED_GRIFFIN_FEATHER", "$GOLD$braidedPrice $GRAY|$DARK_PURPLE Braided Griffin Feather: $AQUA${Helper.formatNumber(tracker.items.BRAIDED_GRIFFIN_FEATHER, true)}", tracker.items.BRAIDED_GRIFFIN_FEATHER),
-                createLine("DAEDALUS_STICK", "$GOLD$stickPrice $GRAY|$GOLD Daedalus Stick: $AQUA${Helper.formatNumber(tracker.items.DAEDALUS_STICK, true)} $GRAY($AQUA${stickPercent}%$GRAY)", tracker.items.DAEDALUS_STICK),
-                createLine("MINOTAUR_SHARD", "$GOLD$minotaurShardPrice $GRAY|$GOLD Minotaur Shard: $AQUA${Helper.formatNumber(tracker.items.MINOTAUR_SHARD, true)}", tracker.items.MINOTAUR_SHARD),
-                createLine("CROWN_OF_GREED", "$GOLD$crownPrice $GRAY|$GOLD Crown of Greed: $AQUA${Helper.formatNumber(tracker.items.CROWN_OF_GREED, true)}", tracker.items.CROWN_OF_GREED),
-                createLine("WASHED_UP_SOUVENIR", "$GOLD$sovenirPrice $GRAY|$GOLD Washed-up Souvenir: $AQUA${Helper.formatNumber(tracker.items.WASHED_UP_SOUVENIR, true)}", tracker.items.WASHED_UP_SOUVENIR),
-                createLine("GRIFFIN_FEATHER", "$GOLD$featherPrice $GRAY|$GOLD Griffin Feather: $AQUA${Helper.formatNumber(tracker.items.GRIFFIN_FEATHER, true)}", tracker.items.GRIFFIN_FEATHER),
-                createLine("MYTHOS_FRAGMENT", "$GOLD$mythoFragPrice $GRAY|$GOLD Mytho Fragment: $AQUA${Helper.formatNumber(tracker.items.MYTHOS_FRAGMENT, true)}", tracker.items.MYTHOS_FRAGMENT),
-                createLine("CRETAN_URN", "$GOLD$urnPrice $GRAY|$DARK_GREEN Cretan Urn: $AQUA${Helper.formatNumber(tracker.items.CRETAN_URN, true)}", tracker.items.CRETAN_URN),
-                createLine("DWARF_TURTLE_SHELMET", "$GOLD$shelmetPrice $GRAY|$DARK_GREEN Dwarf Turtle Helmet: $AQUA${Helper.formatNumber(tracker.items.DWARF_TURTLE_SHELMET, true)}", tracker.items.DWARF_TURTLE_SHELMET),
-                createLine("CROCHET_TIGER_PLUSHIE", "$GOLD$plushiePrice $GRAY|$DARK_GREEN Crochet Tiger Plushie: $AQUA${Helper.formatNumber(tracker.items.CROCHET_TIGER_PLUSHIE, true)}", tracker.items.CROCHET_TIGER_PLUSHIE),
-                createLine("ANTIQUE_REMEDIES", "$GOLD$remediesPrice $GRAY|$DARK_GREEN Antique Remedies: $AQUA${Helper.formatNumber(tracker.items.ANTIQUE_REMEDIES, true)}", tracker.items.ANTIQUE_REMEDIES),
-                createLine("CRETAN_BULL_SHARD", "$GOLD$cretanShardPrice $GRAY|$DARK_GREEN Cretan Bull Shard: $AQUA${Helper.formatNumber(tracker.items.CRETAN_BULL_SHARD)}", tracker.items.CRETAN_BULL_SHARD),
-                createLine("HILT_OF_REVELATIONS", "$GOLD$hiltPrice $GRAY|$BLUE Hilt of Revelations: $AQUA${Helper.formatNumber(tracker.items.HILT_OF_REVELATIONS)}", tracker.items.HILT_OF_REVELATIONS),
-                createLine("ANCIENT_CLAW", "$GOLD$clawPrice $GRAY|$BLUE Ancient Claw: $AQUA${Helper.formatNumber(tracker.items.ANCIENT_CLAW)}", tracker.items.ANCIENT_CLAW),
-                createLine("ENCHANTED_ANCIENT_CLAW", "$GOLD$echClawPrice $GRAY|$BLUE Enchanted Ancient Claw: $AQUA${Helper.formatNumber(tracker.items.ENCHANTED_ANCIENT_CLAW)}", tracker.items.ENCHANTED_ANCIENT_CLAW),
-                createLine("ENCHANTED_GOLD", "$GOLD$echGoldPrice $GRAY|$BLUE Enchanted Gold: $AQUA${Helper.formatNumber(tracker.items.ENCHANTED_GOLD)}", tracker.items.ENCHANTED_GOLD),
-                OverlayTextLine("${GRAY}Total Burrows: $AQUA${Helper.formatNumber(tracker.items.TOTAL_BURROWS, true)}$bphText"),
-                OverlayTextLine("${GOLD}Total Coins: $AQUA${Helper.formatNumber(tracker.items.COINS)}")
-                    .onHover { drawContext, textRenderer ->
-                        val scaleFactor = mc.window.scaleFactor
-                        val mouseX = mc.mouse.x / scaleFactor
-                        val mouseY = mc.mouse.y / scaleFactor
-                        RenderUtils2D.drawHoveringString(drawContext,
-                                "$YELLOW${BOLD}Coin Break Down:\n" +
-                                "${GOLD}Treasure: $AQUA${Helper.formatNumber(tracker.items.COINS - tracker.items.FISH_COINS - tracker.items.SCAVENGER_COINS)}\n" +
-                                "${GOLD}Four-Eyed Fish: $AQUA${Helper.formatNumber(tracker.items.FISH_COINS)}\n" +
-                                "${GOLD}Scavenger: $AQUA${Helper.formatNumber(tracker.items.SCAVENGER_COINS)}",
-                            mouseX, mouseY, textRenderer, overlay.scale)
-                    },
-                OverlayTextLine("${YELLOW}Total Profit: $AQUA${Helper.formatNumber(totalProfit(tracker))} coins")
-                    .onHover { drawContext, textRenderer ->
-                        val scaleFactor = mc.window.scaleFactor
-                        val mouseX = mc.mouse.x / scaleFactor
-                        val mouseY = mc.mouse.y / scaleFactor
-                        RenderUtils2D.drawHoveringString(drawContext,
-                            "$GOLD$profitPerHr coins/hr\n" +
-                                "$GOLD$poriftPerBurrow coins/burrow",
-                            mouseX, mouseY, textRenderer, overlay.scale)
-                    }
-            )
+    private fun generateStatisticsLines(tracker: DianaTracker, type: Diana.Tracker, isCraftingOpen: Boolean): List<OverlayTextLine> {
+        val totalBurrows = tracker.items.TOTAL_BURROWS
+        val totalProfitValue = totalProfit(tracker)
+        val playTimeHrs = tracker.items.TIME.toDouble() / TimeUnit.HOURS.toMillis(1)
+        val totalEvents = SBOConfigBundle.pastDianaEventsData.events.size
+
+        val burrowsPerHr = Helper.getBurrowsPerHr(tracker, SboTimerManager.getTimer(type.toString())?: SboTimerManager.timerMayor)
+        val bphText = if (burrowsPerHr.isNaN() || burrowsPerHr == 0.0) "" else " $GRAY[$AQUA$burrowsPerHr$GRAY/${AQUA}hr$GRAY]"
+
+        val profitPerHr = if (playTimeHrs > 0) Helper.formatNumber(totalProfitValue / playTimeHrs) else 0.0
+        val profitPerBurrow = if (totalBurrows > 0) Helper.formatNumber(totalProfitValue / totalBurrows) else 0.0
+
+        val screenOpen = isCraftingOpen || isCraftingScreenOpen()
+
+        val stats = mutableListOf(
+            OverlayTextLine("${GRAY}Total Burrows: $AQUA${Helper.formatNumber(totalBurrows, true)}$bphText"),
+            createCoinLine(tracker),
+            createProfitLine(totalProfitValue, profitPerHr, profitPerBurrow)
         )
-        lines.add(timerLine)
-        if (type == Diana.Tracker.TOTAL) lines.add(OverlayTextLine("${YELLOW}Total Events: $AQUA$totalEvents"))
-        if ((screen == "CraftingOpen" || mc.currentScreen?.title?.string == "Crafting") && type == Diana.Tracker.SESSION) lines.add(resetSession)
-        overlay.setLines(lines)
+
+        stats.add(timerLine)
+        if (type == Diana.Tracker.TOTAL) stats.add(OverlayTextLine("${YELLOW}Total Events: $AQUA$totalEvents"))
+        if (screenOpen && type == Diana.Tracker.SESSION) stats.add(resetSession)
+
+        return stats
+    }
+
+    private fun createCoinLine(tracker: DianaTracker): OverlayTextLine {
+        return OverlayTextLine("${GOLD}Total Coins: $AQUA${Helper.formatNumber(tracker.items.COINS)}")
+            .onHover { drawContext, textRenderer ->
+                val scaleFactor = mc.window.scaleFactor
+                val mouseX = mc.mouse.x / scaleFactor
+                val mouseY = mc.mouse.y / scaleFactor
+                RenderUtils2D.drawHoveringString(drawContext,
+                    "$YELLOW${BOLD}Coin Break Down:\n" +
+                            "${GOLD}Treasure: $AQUA${Helper.formatNumber(tracker.items.COINS - tracker.items.FISH_COINS - tracker.items.SCAVENGER_COINS)}\n" +
+                            "${GOLD}Four-Eyed Fish: $AQUA${Helper.formatNumber(tracker.items.FISH_COINS)}\n" +
+                            "${GOLD}Scavenger: $AQUA${Helper.formatNumber(tracker.items.SCAVENGER_COINS)}",
+                    mouseX, mouseY, textRenderer, overlay.scale)
+            }
+    }
+
+    private fun createProfitLine(totalProfitValue: Long, profitPerHr: Any, profitPerBurrow: Any): OverlayTextLine {
+        return OverlayTextLine("${YELLOW}Total Profit: $AQUA${Helper.formatNumber(totalProfitValue)} coins")
+            .onHover { drawContext, textRenderer ->
+                val scaleFactor = mc.window.scaleFactor
+                val mouseX = mc.mouse.x / scaleFactor
+                val mouseY = mc.mouse.y / scaleFactor
+                RenderUtils2D.drawHoveringString(drawContext,
+                    "$GOLD$profitPerHr coins/hr\n" +
+                            "$GOLD$profitPerBurrow coins/burrow",
+                    mouseX, mouseY, textRenderer, overlay.scale)
+            }
     }
 
     fun totalProfit(tracker: DianaTracker): Long {
