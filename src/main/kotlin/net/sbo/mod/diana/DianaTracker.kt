@@ -637,9 +637,7 @@ object DianaTracker {
     }
 
     fun checkMayorTracker() {
-        SBOKotlin.logger.info("debug checkMayorTracker: mayorElectedYear: |${Mayor.mayorElectedYear}|, dianaTrackerMayor.year: |${dianaTrackerMayor.year}|")
         if (dianaTrackerMayor.year == 0 || dianaTrackerMayor.year >= Mayor.mayorElectedYear) return
-        SBOKotlin.logger.info("debug checkMayorTracker: new mayor detected, resetting mayor tracker")
         var allZero = true
         for (item in dianaTrackerMayor.mobs::class.java.declaredFields) {
             item.isAccessible = true
@@ -651,7 +649,6 @@ object DianaTracker {
             }
         }
         resetMayorTracker(allZero)
-        SBOKotlin.logger.info("debug checkMayorTracker: mayor tracker reset complete")
     }
 
     internal fun resetMayorTracker(check: Boolean = false) {
@@ -671,6 +668,7 @@ object DianaTracker {
         Register.onChatMessageCancable(Pattern.compile("^(.*?) You charmed a (.*?) and captured (.*?) Shards §7from it.$", Pattern.DOTALL)) { message, matchResult ->
             val shard = matchResult.group(2).removeFormatting()
             val amount = matchResult.group(3).removeFormatting().toIntOrNull() ?: 0
+            println("debug shard chat: |$shard|, amount: |$amount|")
             when (shard) {
                 "King Minos" -> onRareDropFromMob("King Minos Shard", true, true, false, 0, amount)
                 "Sphinx" -> onRareDropFromMob("Sphinx Shard", true, true, false, 0, amount)
