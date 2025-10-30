@@ -22,6 +22,16 @@ interface DianaTracker {
         }
         return this
     }
+
+    fun getAmountOf(itemId: String): Int {
+        return when {
+            items.COINS.toString() == itemId -> items.COINS.toInt()
+            else -> {
+                val itemField = DianaItemsData::class.members.find { it.name == itemId }
+                itemField?.call(items) as? Int ?: 0
+            }
+        }
+    }
 }
 
 data class SboConfigBundle(

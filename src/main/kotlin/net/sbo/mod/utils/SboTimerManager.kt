@@ -48,6 +48,10 @@ object SboTimerManager {
         activeTimers.remove(timer)
     }
 
+    internal fun getTimer(name: String): SBOTimer? {
+        return SBOTimer.timerList.find { it.name.lowercase() == name.lowercase() }
+    }
+
     @SboEvent
     fun onDisconnect(event: DisconnectEvent) {
         activeTimers.toList().forEach { it.pause() }

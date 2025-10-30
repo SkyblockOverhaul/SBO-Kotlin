@@ -72,6 +72,10 @@ class Overlay(
         lines.remove(line)
     }
 
+    fun removeLines(linesToRemove: List<OverlayTextLine>) {
+        lines.removeAll(linesToRemove)
+    }
+
     fun clearLines() {
         lines = mutableListOf()
     }
