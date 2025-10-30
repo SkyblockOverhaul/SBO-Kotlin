@@ -686,6 +686,12 @@ object DianaTracker {
         trackItem("TOTAL_MOBS", amount)
         sboData.mobsSinceInq += amount
         if (sboData.mobsSinceInq >= 2) sboData.b2bInq = false
+        sboData.mobsSinceKing += amount
+        if (sboData.mobsSinceKing >= 2) sboData.b2bKing = false
+        sboData.mobsSinceManti += amount
+        if (sboData.mobsSinceManti >= 2) sboData.b2bManti = false
+        sboData.mobsSinceSphinx += amount
+        if (sboData.mobsSinceSphinx >= 2) sboData.b2bSphinx = false
         SboDataObject.save("SboData")
     }
 
