@@ -97,6 +97,7 @@ object DianaTracker {
         trackCoinsWithChat()
         trackTreasuresWithChat()
         trackRngDropsWithChat()
+        trackShardsWithChat()
     }
 
     fun trackWithPickuplog(item: Item) {
@@ -668,7 +669,6 @@ object DianaTracker {
         Register.onChatMessageCancable(Pattern.compile("^(.*?) You charmed a (.*?) and captured (.*?) Shards §7from it.$", Pattern.DOTALL)) { message, matchResult ->
             val shard = matchResult.group(2).removeFormatting()
             val amount = matchResult.group(3).removeFormatting().toIntOrNull() ?: 0
-            println("debug shard chat: |$shard|, amount: |$amount|")
             when (shard) {
                 "King Minos" -> onRareDropFromMob("King Minos Shard", true, true, false, 0, amount)
                 "Sphinx" -> onRareDropFromMob("Sphinx Shard", true, true, false, 0, amount)
