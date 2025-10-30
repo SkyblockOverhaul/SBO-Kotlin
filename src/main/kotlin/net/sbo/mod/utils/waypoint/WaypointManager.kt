@@ -256,7 +256,7 @@ object WaypointManager {
      */
     fun removeWithinDistance(type: String, distance: Int) {
         val playerPos = Player.getLastPosition()
-        waypoints[type] = getWaypointsOfType(type).filterNot { it.pos.distanceTo(playerPos) < distance }.toMutableList()
+        waypoints[type.lowercase()] = getWaypointsOfType(type).filterNot { it.pos.distanceTo(playerPos) < distance }.toMutableList()
     }
 
     /**
