@@ -331,14 +331,41 @@ object Helper {
 
             if (!stack.isEmpty) {
                 val customData = stack.get(DataComponentTypes.CUSTOM_DATA)
-                val item = Item(
-                    ItemUtils.getSBID(customData),
-                    ItemUtils.getUUID(customData),
-                    ItemUtils.getDisplayName(stack),
-                    ItemUtils.getTimestamp(customData),
-                    stack.count
-                )
-                val id = if (item.itemUUID != "") item.itemUUID else item.itemId
+                val lore = ItemUtils.getLoreList(stack)
+                var id: String
+                var item: Item
+                val sbId = ItemUtils.getSBID(customData)
+                // print for debugging the lore lines
+                var isChimera = false
+                if (sbId == "ENCHANTED_BOOK") {
+                    for (line in lore) {
+                        if (line.contains("Chimera")) {
+                            isChimera = true
+                            break
+                        }
+                    }
+                }
+
+                if (!isChimera) {
+                    item = Item(
+                        sbId,
+                        ItemUtils.getUUID(customData),
+                        ItemUtils.getDisplayName(stack),
+                        ItemUtils.getTimestamp(customData),
+                        stack.count
+                    )
+                    id = if (item.itemUUID != "") item.itemUUID else item.itemId
+                } else {
+                    item = Item(
+                        "CHIMERA",
+                        ItemUtils.getUUID(customData),
+                        "§d§lChimera",
+                        ItemUtils.getTimestamp(customData),
+                        stack.count
+                    )
+                    id = "CHIMERA"
+                }
+
                 if (invItems.containsKey(id)) {
                     invItems[id]?.count += item.count
                 } else {

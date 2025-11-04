@@ -29,7 +29,6 @@ import java.lang.Thread.sleep
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
 
-// todo: fix the daxe achievements
 object AchievementManager {
     val rarityColorDict = mapOf(
         "Common" to "§f",
@@ -117,14 +116,13 @@ object AchievementManager {
     }
 
     fun trackAchievementsItem(tracker: DianaTrackerMayorData) {
-        if (isOnHypixel) return
+        if (!isOnHypixel) return
         val itemsData = tracker.items
         val time = itemsData.TIME
         val totalBurrows = itemsData.TOTAL_BURROWS
         val totalChimera = itemsData.CHIMERA + itemsData.CHIMERA_LS
         val daedalusStickCount = itemsData.DAEDALUS_STICK
         val chimeraLsCount = itemsData.CHIMERA_LS
-
         when {
             totalBurrows >= 25000 -> unlockAchievement(22)
             totalBurrows >= 20000 -> unlockAchievement(21)
@@ -176,7 +174,7 @@ object AchievementManager {
     }
 
     fun trackSince() {
-        if (isOnHypixel) return
+        if (!isOnHypixel) return
 
         when {
             sboData.mobsSinceInq >= 1000 -> unlockAchievement(33)
@@ -200,7 +198,7 @@ object AchievementManager {
     }
 
     fun trackMagicFind(magicFind: Int, chimera: Boolean = false) {
-        if (isOnHypixel) return
+        if (!isOnHypixel) return
 
         when {
             magicFind >= 600 -> unlockAchievement(42)
