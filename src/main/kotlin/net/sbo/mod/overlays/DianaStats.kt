@@ -20,11 +20,17 @@ object DianaStats {
         lines.addAll(
             listOf(
                 OverlayTextLine("$YELLOW${BOLD}Diana Stats"),
+                OverlayTextLine("$GRAY - ${RED}Mobs since King: $AQUA${sboData.mobsSinceKing}"),
+                OverlayTextLine("$GRAY - ${RED}Kings since Wool: $AQUA${sboData.inqsSinceChim}$GRAY, ${RED}since §7[§bLS§7]: $AQUA${sboData.kingSinceLsWool}"),
+                OverlayTextLine("$GRAY - ${RED}Mobs since Manti: $AQUA${sboData.mobsSinceManti}"),
+                OverlayTextLine("$GRAY - ${RED}Mantis since Core: $AQUA${sboData.mantiSinceCore}$GRAY, ${RED}since §7[§bLS§7]: $AQUA${sboData.mantiSinceLsCore}"),
+                OverlayTextLine("$GRAY - ${RED}Mantis since Stinger: $AQUA${sboData.mantiSinceStinger}$GRAY, ${RED}since §7[§bLS§7]: $AQUA${sboData.mantiSinceLsStinger}"),
                 OverlayTextLine("$GRAY - ${LIGHT_PURPLE}Mobs since Inq: $AQUA${sboData.mobsSinceInq}"),
-                OverlayTextLine("$GRAY - ${LIGHT_PURPLE}Inqs since Chimera: $AQUA${sboData.inqsSinceChim}"),
-                OverlayTextLine("$GRAY - ${LIGHT_PURPLE}Inqs since Chimera §7[§bLS§7]: $AQUA${sboData.inqsSinceLsChim}"),
+                OverlayTextLine("$GRAY - ${LIGHT_PURPLE}Inqs since Chimera: $AQUA${sboData.inqsSinceChim}$GRAY, ${LIGHT_PURPLE}since §7[§bLS§7]: $AQUA${sboData.inqsSinceLsChim}"),
+                OverlayTextLine("$GRAY - ${LIGHT_PURPLE}Mobs since Sphinx: $AQUA${sboData.mobsSinceSphinx}"),
+                OverlayTextLine("$GRAY - ${DARK_PURPLE}Sphinxes since Food: $AQUA${sboData.sphinxSinceFood}$GRAY, ${DARK_PURPLE}since §7[§bLS§7]: $AQUA${sboData.sphinxSinceLsFood}"),
+                OverlayTextLine("$GRAY - ${DARK_PURPLE}Champs since Relic: $AQUA${Helper.formatNumber(sboData.champsSinceRelic, true)}"),
                 OverlayTextLine("$GRAY - ${GOLD}Minos since Stick: $AQUA${Helper.formatNumber(sboData.minotaursSinceStick, true)}"),
-                OverlayTextLine("$GRAY - ${DARK_PURPLE}Champs since Relic: $AQUA${Helper.formatNumber(sboData.champsSinceRelic, true)}")
             )
         )
         overlay.setLines(lines)
