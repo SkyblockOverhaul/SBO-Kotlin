@@ -21,7 +21,7 @@ object DianaStats {
             listOf(
                 OverlayTextLine("$YELLOW${BOLD}Diana Stats"),
                 OverlayTextLine("$GRAY - ${RED}Mobs since King: $AQUA${sboData.mobsSinceKing}"),
-                OverlayTextLine("$GRAY - ${RED}Kings since Wool: $AQUA${sboData.inqsSinceChim}$GRAY, ${RED}since §7[§bLS§7]: $AQUA${sboData.kingSinceLsWool}"),
+                OverlayTextLine("$GRAY - ${RED}Kings since Wool: $AQUA${sboData.kingSinceWool}$GRAY, ${RED}since §7[§bLS§7]: $AQUA${sboData.kingSinceLsWool}"),
                 OverlayTextLine("$GRAY - ${RED}Mobs since Manti: $AQUA${sboData.mobsSinceManti}"),
                 OverlayTextLine("$GRAY - ${RED}Mantis since Core: $AQUA${sboData.mantiSinceCore}$GRAY, ${RED}since §7[§bLS§7]: $AQUA${sboData.mantiSinceLsCore}"),
                 OverlayTextLine("$GRAY - ${RED}Mantis since Stinger: $AQUA${sboData.mantiSinceStinger}$GRAY, ${RED}since §7[§bLS§7]: $AQUA${sboData.mantiSinceLsStinger}"),
