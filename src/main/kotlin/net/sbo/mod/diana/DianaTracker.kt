@@ -165,6 +165,8 @@ object DianaTracker {
                         if (!isLootShare) Chat.chat("§6[SBO] §6§lRARE DROP! ${item.name}!")
                         announceLootToParty("Chimera!", "Chimera!")
                     }
+                } else {
+                    onRareDropFromMob("Hilt of Revelations", false, false, false, 0)
                 }
 
 
