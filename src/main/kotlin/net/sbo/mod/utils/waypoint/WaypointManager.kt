@@ -35,15 +35,28 @@ object WaypointManager {
     private val angleThreshold = Math.toRadians(4.0)
     private val cosThreshold = cos(angleThreshold)
     private var lastMultiGuessWp: Waypoint? = null
+    val rareMobs: List<String> = listOf(
+        "minos inquisitor",
+        "inquisitor",
+        "inq",
+        "manticore",
+        "king minos",
+        "king",
+        "sphinx"
+    )
 
     fun init() {
         if (guessWp == null) {
             guessWp = Waypoint("Guess", 100.0, 100.0, 100.0, 0.0f, 0.964f, 1.0f, 0,"guess")
         }
 
-        Register.command("sbosendinq") {
+        Register.command("sbosendping") { args ->
             val playerPos = Player.getLastPosition()
-            Chat.command("pc x: ${playerPos.x.roundToInt()}, y: ${playerPos.y.roundToInt() - 1}, z: ${playerPos.z.roundToInt()}")
+            if (args.isNotEmpty()) {
+                val playerName = args[0]
+                Chat.command("pc x: ${playerPos.x.roundToInt()}, y: ${playerPos.y.roundToInt() - 1}, z: ${playerPos.z.roundToInt()} | ${args[0].trim()}")
+            } else
+                Chat.command("pc x: ${playerPos.x.roundToInt()}, y: ${playerPos.y.roundToInt() - 1}, z: ${playerPos.z.roundToInt()}")
         }
 
         Register.onChatMessage(
@@ -57,13 +70,34 @@ object WaypointManager {
             val z = match.groups["z"]?.value?.toIntOrNull() ?: 0.0
 
             val trailing = match.groups["trailing"]?.value ?: ""
+            val mob = trailing.replace("|", "").trim().lowercase()
             val playername = Player.getName() ?: ""
             if (!channel.contains("Guild")) {
-                if ((!trailing.startsWith(" ") || trailing.lowercase().contains("inquisitor") || Diana.allWaypointsAreInqs) && Diana.receiveInq && checkDiana()) {
-                    if (hideOwnWaypoints.contains(HideOwnWaypoints.INQ) && player.contains(playername)) return@onChatMessage
-                    Helper.showTitle("§r§6§l<§b§l§kO§6§l> §b§lINQUISITOR! §6§l<§b§l§kO§6§l>", player, 0, 90, 20)
-                    playCustomSound(Customization.inqSound[0], Customization.inqVolume)
-                    addWaypoint(Waypoint(player, x.toDouble(), y.toDouble(), z.toDouble(), 1.0f, 0.84f, 0.0f, 45, type = "inq"))
+                if ((!trailing.startsWith(" ") || rareMobs.contains(mob) || Diana.allWaypointsAreInqs) && Diana.receiveInq && checkDiana()) {
+                    when (mob) { // todo: add custom sounds per mob
+                        "minos inquisitor", "inquisitor", "inq" -> {
+                            Helper.showTitle("§r§6§l<§b§l§kO§6§l> §b§lINQUISITOR! §6§l<§b§l§kO§6§l>", player, 0, 90, 20)
+                            playCustomSound(Customization.inqSound[0], Customization.inqVolume)
+                        }
+                        "king minos", "king" -> {
+                            Helper.showTitle("§r§6§l<§b§l§kO§6§l> §b§lKING MINOS! §6§l<§b§l§kO§6§l>", player, 0, 90, 20)
+                        }
+                        "manticore" -> {
+                            Helper.showTitle("§r§6§l<§b§l§kO§6§l> §b§lMANTICORE! §6§l<§b§l§kO§6§l>", player, 0, 90, 20)
+                        }
+                        "sphinx" -> {
+                            Helper.showTitle("§r§6§l<§b§l§kO§6§l> §b§lSPHINX! §6§l<§b§l§kO§6§l>", player, 0, 90, 20)
+                        }
+                        else -> {
+                            Helper.showTitle("§r§6§l<§b§l§kO§6§l> §b§lRARE MOB! §6§l<§b§l§kO§6§l>", player, 0, 90, 20)
+                        }
+                    }
+                    addRareMobWaypoint(
+                        player,
+                        SboVec(x.toDouble(), y.toDouble(), z.toDouble()),
+                        mob,
+                        playername
+                    )
                 } else if (patcherWaypoints) {
                     if (hideOwnWaypoints.contains(HideOwnWaypoints.NORMAL) && player.contains(playername)) return@onChatMessage
                     addWaypoint(Waypoint(player, x.toDouble(), y.toDouble(), z.toDouble(), 0.0f, 0.2f, 1.0f, 30, type = "world"))
@@ -76,7 +110,7 @@ object WaypointManager {
             closestBurrow = getClosestWaypoint(playerPos, "burrow") ?: (null to 1000.0)
             closestGuess = getClosestWaypoint(playerPos, "guess") ?: (null to 1000.0)
 
-            val inqWps = getWaypointsOfType("inq")
+            val inqWps = getWaypointsOfType("rareMob")
 
             val posP = SboVec(playerPos.x, playerPos.y, playerPos.z).roundLocationToBlock()
             val guessesToRemove = getGuessWaypoints()
@@ -139,8 +173,18 @@ object WaypointManager {
         removeAllOfType("world")
     }
 
+    fun addRareMobWaypoint(player: String, pos: SboVec, mobName: String, playername: String) {
+        when (mobName) {
+            "minos inquisitor", "inquisitor" -> if (hideOwnWaypoints.contains(HideOwnWaypoints.INQ) && player.contains(playername)) return
+            "king minos", "king" -> if (hideOwnWaypoints.contains(HideOwnWaypoints.KING) && player.contains(playername)) return
+            "manticore" -> if (hideOwnWaypoints.contains(HideOwnWaypoints.MANTICORE) && player.contains(playername)) return
+            "sphinx" -> if (hideOwnWaypoints.contains(HideOwnWaypoints.SPHINX) && player.contains(playername)) return
+        }
+        addWaypoint(Waypoint(player, pos.x, pos.y, pos.z, 1.0f, 0.84f, 0.0f, 45, type = "rareMob") )
+    }
+
     fun onLootshare() {
-        removeWithinDistance("inq", 30)
+        removeWithinDistance("rareMob", 30)
     }
 
     /**
@@ -212,7 +256,7 @@ object WaypointManager {
      */
     fun removeWithinDistance(type: String, distance: Int) {
         val playerPos = Player.getLastPosition()
-        waypoints[type] = getWaypointsOfType(type).filterNot { it.pos.distanceTo(playerPos) < distance }.toMutableList()
+        waypoints[type.lowercase()] = getWaypointsOfType(type).filterNot { it.pos.distanceTo(playerPos) < distance }.toMutableList()
     }
 
     /**
@@ -328,7 +372,7 @@ object WaypointManager {
         }
 
         val condition1 = playerDistance > (closestDistance + Diana.warpDiff)
-        val condition2 = condition1 && (closestBurrow.second > 60 || getWaypointsOfType("inq").isNotEmpty())
+        val condition2 = condition1 && (closestBurrow.second > 60 || getWaypointsOfType("rareMob").isNotEmpty())
 
         val condition = if (Diana.dontWarpIfBurrowClose) condition2 else condition1
 
@@ -351,7 +395,7 @@ object WaypointManager {
     }
 
     fun warpToInq() {
-        val newestInq = getWaypointsOfType("inq").maxByOrNull { it.creation }
+        val newestInq = getWaypointsOfType("rareMob").maxByOrNull { it.creation }
         if (newestInq == null) return
 
         val warp = getClosestWarp(newestInq.pos)
@@ -361,7 +405,7 @@ object WaypointManager {
     }
 
     fun warpBoth() {
-        if (getWaypointsOfType("inq").isEmpty()) {
+        if (getWaypointsOfType("rareMob").isEmpty()) {
             warpToGuess()
         } else {
             warpToInq()

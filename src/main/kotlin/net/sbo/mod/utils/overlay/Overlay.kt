@@ -72,6 +72,10 @@ class Overlay(
         lines.remove(line)
     }
 
+    fun removeLines(linesToRemove: List<OverlayTextLine>) {
+        lines.removeAll(linesToRemove)
+    }
+
     fun clearLines() {
         lines = mutableListOf()
     }
@@ -93,6 +97,7 @@ class Overlay(
         var currentX = x / scale
 
         for (line in getLines()) {
+            if (!line.checkCondition()) continue
             line.lineClicked(mouseX, mouseY, currentX * scale, currentY * scale, textRenderer, scale)
 
             if (line.linebreak) {

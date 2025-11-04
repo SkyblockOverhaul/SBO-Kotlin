@@ -13,6 +13,9 @@ import net.sbo.mod.settings.categories.Diana
 import net.sbo.mod.utils.Helper.getSecondsPassed
 import net.sbo.mod.utils.Helper.lastCocoon
 import net.sbo.mod.utils.Helper.lastInqDeath
+import net.sbo.mod.utils.Helper.lastKingDeath
+import net.sbo.mod.utils.Helper.lastMantiDeath
+import net.sbo.mod.utils.Helper.lastSphinxDeath
 import net.sbo.mod.utils.Helper.showTitle
 import net.sbo.mod.utils.Helper.sleep
 import net.sbo.mod.utils.Player
@@ -104,9 +107,10 @@ object DianaMobDetect {
 
     private fun checkCocoon(entity: ArmorStandEntity): Boolean {
         val cocoonTexture = "eyJ0aW1lc3RhbXAiOjE1ODMxMjMyODkwNTMsInByb2ZpbGVJZCI6IjkxZjA0ZmU5MGYzNjQzYjU4ZjIwZTMzNzVmODZkMzllIiwicHJvZmlsZU5hbWUiOiJTdG9ybVN0b3JteSIsInNpZ25hdHVyZVJlcXVpcmVkIjp0cnVlLCJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGNlYjBlZDhmYzIyNzJiM2QzZDgyMDY3NmQ1MmEzOGU3YjJlOGRhOGM2ODdhMjMzZTBkYWJhYTE2YzBlOTZkZiJ9fX0="
-        val lastInq = getSecondsPassed(lastInqDeath) < 5
-        if (!lastInq) return false
+        val anyRecentDeath = listOf(lastInqDeath, lastKingDeath, lastSphinxDeath, lastMantiDeath)
+            .any { getSecondsPassed(it) < 5 }
 
+        if (!anyRecentDeath) return false
         val head: ItemStack = entity.getEquippedStack(EquipmentSlot.HEAD)
         if (!head.isEmpty && head.item.toString() == "minecraft:player_head"){
             val profile: ProfileComponent? = head.get(DataComponentTypes.PROFILE)
@@ -129,10 +133,10 @@ object DianaMobDetect {
         return false
     }
 
-    fun onInqSpawn() {
-        if (Diana.shareInq) {
+    fun onRareSpawn(mob: String) {
+        if (Diana.shareRareMob) {
             val playerPos = Player.getLastPosition()
-            Chat.command("pc x: ${playerPos.x.roundToInt()}, y: ${playerPos.y.roundToInt() - 1}, z: ${playerPos.z.roundToInt()}")
+            Chat.command("pc x: ${playerPos.x.roundToInt()}, y: ${playerPos.y.roundToInt() - 1}, z: ${playerPos.z.roundToInt()} | $mob")
         }
 
         Diana.announceKilltext.firstOrNull()?.let { killText ->

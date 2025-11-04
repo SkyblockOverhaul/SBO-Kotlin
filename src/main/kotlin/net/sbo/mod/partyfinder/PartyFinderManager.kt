@@ -208,52 +208,61 @@ object PartyFinderManager {
     fun queueParty() {
         if (!this.creatingParty) return
         creatingParty = false
-        if (partyMember.size < partySize && !inQueue) {
-            try {
-                val currentTime = System.currentTimeMillis()
-                Http.sendGetRequest(
-                    "$API_URL/createParty?uuids=${partyMember.joinToString(",").replace("-", "")}" +
-                            "&reqs=$partyReqs" +
-                            "&note=$partyNote" +
-                            "&partytype=$partyType" +
-                            "&partysize=$partySize" +
-                            "&key=${sboData.sboKey}"
-                ).toJson<PartyAddResponse> { response ->
-                    if (response.success) {
-                        val timeTaken = System.currentTimeMillis() - currentTime
-                        inQueue = true
-                        creatingParty = false
-                        partyReqsMap = response.partyReqs!!
-                        SBOEvent.emit(PartyFinderRefreshListEvent())
+        if (partyMember.size > partySize) {
+            Chat.chat("§6[SBO] §4Party is over the limit. ${partyMember.size}/$partySize")
+            return
+        }
+        if (inQueue) {
+            Chat.chat("§6[SBO] §4Party is already in the queue.")
+            return
+        }
+        if (!isLeader) {
+            Chat.chat("§6[SBO] §4You must be the party leader to queue the party.")
+            return
+        }
 
-                        if (ghostParty) {
-                            removePartyFromQueue()
-                            ghostParty = false
-                        }
+        try {
+            val currentTime = System.currentTimeMillis()
+            Http.sendGetRequest(
+                "$API_URL/createParty?uuids=${partyMember.joinToString(",").replace("-", "")}" +
+                        "&reqs=$partyReqs" +
+                        "&note=$partyNote" +
+                        "&partytype=$partyType" +
+                        "&partysize=$partySize" +
+                        "&key=${sboData.sboKey}"
+            ).toJson<PartyAddResponse> { response ->
+                if (response.success) {
+                    val timeTaken = System.currentTimeMillis() - currentTime
+                    inQueue = true
+                    creatingParty = false
+                    partyReqsMap = response.partyReqs!!
+                    SBOEvent.emit(PartyFinderRefreshListEvent())
 
-                        if (requeue) {
-                            requeue = false
-                            Chat.clickableChat("§6[SBO] §eClick to dequeue party", "Dequeue Party", "/sbodequeue")
-                        }
-
-                        Chat.chat("§6[SBO] §eParty created successfully! Time taken: ${timeTaken}ms")
-
-                        if (isInParty) Chat.command("pc [SBO] Party now in queue.")
-                    } else {
-                        val errorMessage = response.error ?: "Unknown error"
-                        Chat.chat("§6[SBO] §4Failed to create party: ${errorMessage.replace("&", "§")}")
-
+                    if (ghostParty) {
+                        removePartyFromQueue()
+                        ghostParty = false
                     }
 
-                }.error { error ->
-                    Chat.chat("§6[SBO] §4Unexpected error while creating party: ${error.message}")
+                    if (requeue) {
+                        requeue = false
+                        Chat.clickableChat("§6[SBO] §eClick to dequeue party", "Dequeue Party", "/sbodequeue")
+                    }
+
+                    Chat.chat("§6[SBO] §eParty created successfully! Time taken: ${timeTaken}ms")
+
+                    if (isInParty) Chat.command("pc [SBO] Party now in queue.")
+                } else {
+                    val errorMessage = response.error ?: "Unknown error"
+                    Chat.chat("§6[SBO] §4Failed to create party: ${errorMessage.replace("&", "§")}")
+
                 }
 
-            } catch (_: Exception) {
-                return
+            }.error { error ->
+                Chat.chat("§6[SBO] §4Unexpected error while creating party: ${error.message}")
             }
-        } else {
-            Chat.chat("§6[SBO] §4Party is already in queue or full.")
+
+        } catch (_: Exception) {
+            return
         }
     }
 

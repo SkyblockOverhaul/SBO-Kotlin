@@ -30,7 +30,6 @@ import net.sbo.mod.overlays.Bobber
 import net.sbo.mod.overlays.DianaLoot
 import net.sbo.mod.overlays.DianaMobs
 import net.sbo.mod.overlays.DianaStats
-import net.sbo.mod.overlays.InquisLoot
 import net.sbo.mod.overlays.Legion
 import net.sbo.mod.overlays.MagicFind
 import net.sbo.mod.qol.MessageHider
@@ -109,7 +108,6 @@ object SBOKotlin {
 		DianaMobs.init()
 		DianaMobDetect.init()
 		DianaLoot.init()
-		InquisLoot.init()
 		AchievementManager.init()
 		MessageHider.init()
 

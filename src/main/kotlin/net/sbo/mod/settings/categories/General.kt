@@ -6,7 +6,7 @@ import net.sbo.mod.utils.overlay.OverlayEditScreen
 
 object General : CategoryKt("General") {
     enum class HideOwnWaypoints {
-        NORMAL, INQ
+        NORMAL, INQ, MANTICORE, KING, SPHINX
     }
 
     init {

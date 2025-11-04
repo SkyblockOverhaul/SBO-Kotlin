@@ -9,7 +9,7 @@ import java.lang.reflect.Field
 import java.util.Locale
 
 object SboTimerManager {
-    private val activeTimers = mutableListOf<SBOTimer>()
+    internal val activeTimers = mutableListOf<SBOTimer>()
     val timerMayor = SBOTimer(
         name = "Mayor",
         inactiveTimeLimit = 1.5f,
@@ -46,6 +46,10 @@ object SboTimerManager {
 
     private fun removeTimer(timer: SBOTimer) {
         activeTimers.remove(timer)
+    }
+
+    internal fun getTimer(name: String): SBOTimer? {
+        return SBOTimer.timerList.find { it.name.lowercase() == name.lowercase() }
     }
 
     @SboEvent

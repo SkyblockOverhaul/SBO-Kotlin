@@ -5,12 +5,10 @@ import com.google.gson.annotations.SerializedName
 interface DianaTracker {
     var items: DianaItemsData
     var mobs: DianaMobsData
-    var inquis: DianaInquisData
 
     fun reset(): DianaTracker {
         items = DianaItemsData()
         mobs = DianaMobsData()
-        inquis = DianaInquisData()
         if (this is DianaTrackerMayorData) year = 0
         return this
     }
@@ -23,6 +21,16 @@ interface DianaTracker {
             else -> {}
         }
         return this
+    }
+
+    fun getAmountOf(itemId: String): Int {
+        return when {
+            items.COINS.toString() == itemId -> items.COINS.toInt()
+            else -> {
+                val itemField = DianaItemsData::class.members.find { it.name == itemId }
+                itemField?.call(items) as? Int ?: 0
+            }
+        }
     }
 }
 
@@ -61,10 +69,17 @@ data class SboData(
     var inqsSinceLsChim: Int = 0,
     var highestChimMagicFind: Int = 0,
     var highestStickMagicFind: Int = 0,
+    var highestFoodMagicFind: Int = 0,
+    var highestWoolMagicFind: Int = 0,
+    var highestCoreMagicFind: Int = 0,
+    var highestStingerMagicFind: Int = 0,
     var hideTrackerLines: MutableList<String> = mutableListOf(),
     var partyBlacklist: List<String> = emptyList(),
     var achievementFilter: String = "Locked",
+    var lastKingDate: Long = 0,
+    var lastMantiDate: Long = 0,
     var lastInqDate: Long = 0,
+    var lastSphinxDate: Long = 0,
     var b2bStick: Boolean = false,
     var b2bChim: Boolean = false,
     var b2bChimLs: Boolean = false,
@@ -72,6 +87,31 @@ data class SboData(
     var b2bChimLsInq: Boolean = false,
     var sboKey: String = "",
     var b2bStreakCounter: MutableMap<String, Int> = mutableMapOf(),
+
+    var mobsSinceKing: Int = 0,
+    var b2bKing: Boolean = false,
+    var kingSinceWool: Int = 0,
+    var b2bWool: Boolean = false,
+    var kingSinceLsWool: Int = 0,
+    var b2bWoolLs: Boolean = false,
+
+    var mobsSinceManti: Int = 0,
+    var b2bManti: Boolean = false,
+    var mantiSinceCore: Int = 0,
+    var b2bCore: Boolean = false,
+    var mantiSinceLsCore: Int = 0,
+    var b2bCoreLs: Boolean = false,
+    var mantiSinceStinger: Int = 0,
+    var b2bStinger: Boolean = false,
+    var mantiSinceLsStinger: Int = 0,
+    var b2bStingerLs: Boolean = false,
+
+    var mobsSinceSphinx: Int = 0,
+    var b2bSphinx: Boolean = false,
+    var sphinxSinceFood: Int = 0,
+    var b2bFood: Boolean = false,
+    var sphinxSinceLsFood: Int = 0,
+    var b2bFoodLs: Boolean = false,
 )
 
 data class AchievementsData(
@@ -85,27 +125,23 @@ data class PastDianaEventsData(
 data class DianaTrackerTotalData(
     override var items: DianaItemsData = DianaItemsData(),
     override var mobs: DianaMobsData = DianaMobsData(),
-    override var inquis: DianaInquisData = DianaInquisData(),
 ) : DianaTracker
 
 data class DianaTrackerSessionData(
     override var items: DianaItemsData = DianaItemsData(),
     override var mobs: DianaMobsData = DianaMobsData(),
-    override var inquis: DianaInquisData = DianaInquisData()
 ) : DianaTracker
 
 data class DianaTrackerMayorData(
     var year: Int = 0,
     override var items: DianaItemsData = DianaItemsData(),
     override var mobs: DianaMobsData = DianaMobsData(),
-    override var inquis: DianaInquisData = DianaInquisData()
 ) : DianaTracker {
     fun snapshot(): DianaTrackerMayorData {
         return DianaTrackerMayorData(
             year = this.year,
             items = this.items.copy(),
             mobs = this.mobs.copy(),
-            inquis = this.inquis.copy()
         )
     }
 }
@@ -126,11 +162,22 @@ data class PartyFinderData(
 data class DianaItemsData(
     @SerializedName("coins") var COINS: Long = 0,
     @SerializedName("Griffin Feather") var GRIFFIN_FEATHER: Int = 0,
+    @SerializedName("Mythos Fragment") var MYTHOS_FRAGMENT: Int = 0,
     @SerializedName("Crown of Greed") var CROWN_OF_GREED: Int = 0,
     @SerializedName("Washed-up Souvenir") var WASHED_UP_SOUVENIR: Int = 0,
+    @SerializedName("Shimmering Wool") var SHIMMERING_WOOL: Int = 0,
+    @SerializedName("Shimmering Wool Ls") var SHIMMERING_WOOL_LS: Int = 0,
+    @SerializedName("Manti-core") var MANTI_CORE: Int = 0,
+    @SerializedName("Manti-core Ls") var MANTI_CORE_LS: Int = 0,
     @SerializedName("Chimera") var CHIMERA: Int = 0,
     @SerializedName("ChimeraLs") var CHIMERA_LS: Int = 0,
+    @SerializedName("Brain Food") var BRAIN_FOOD: Int = 0,
+    @SerializedName("Brain Food LS") var BRAIN_FOOD_LS: Int = 0,
+    @SerializedName("Fateful Stinger") var FATEFUL_STINGER: Int = 0,
+    @SerializedName("Fateful Stinger Ls") var FATEFUL_STINGER_LS: Int = 0,
+    @SerializedName("Braided Griffin Feather") var BRAIDED_GRIFFIN_FEATHER: Int = 0,
     @SerializedName("Daedalus Stick") var DAEDALUS_STICK: Int = 0,
+    @SerializedName("CRETAN_URN") var CRETAN_URN: Int = 0,
     @SerializedName("DWARF_TURTLE_SHELMET") var DWARF_TURTLE_SHELMET: Int = 0,
     @SerializedName("ANTIQUE_REMEDIES") var ANTIQUE_REMEDIES: Int = 0,
     @SerializedName("CROCHET_TIGER_PLUSHIE") var CROCHET_TIGER_PLUSHIE: Int = 0,
@@ -138,33 +185,36 @@ data class DianaItemsData(
     @SerializedName("ANCIENT_CLAW") var ANCIENT_CLAW: Int = 0,
     @SerializedName("MINOS_RELIC") var MINOS_RELIC: Int = 0,
     @SerializedName("ENCHANTED_GOLD") var ENCHANTED_GOLD: Int = 0,
-    @SerializedName("ENCHANTED_IRON") var ENCHANTED_IRON: Int = 0,
+    @SerializedName("Hilt of Revelations") var HILT_OF_REVELATIONS: Int = 0,
     @SerializedName("Total Burrows") var TOTAL_BURROWS: Int = 0,
     @SerializedName("scavengerCoins") var SCAVENGER_COINS: Long  = 0,
     @SerializedName("fishCoins") var FISH_COINS: Long  = 0,
-    @SerializedName("time") var TIME: Long = 0
+    @SerializedName("time") var TIME: Long = 0,
+    @SerializedName("KING_MINOS_SHARD") var KING_MINOS_SHARD: Int = 0,
+    @SerializedName("SPHINX_SHARD") var SPHINX_SHARD: Int = 0,
+    @SerializedName("MINOTAUR_SHARD") var MINOTAUR_SHARD: Int = 0,
+    @SerializedName("CRETAN_BULL_SHARD") var CRETAN_BULL_SHARD: Int = 0,
 )
 
 @Suppress("PropertyName")
 data class DianaMobsData(
+    @SerializedName("King Minos") var KING_MINOS: Int = 0,
+    @SerializedName("Manticore") var MANTICORE: Int = 0,
     @SerializedName("Minos Inquisitor") var MINOS_INQUISITOR: Int = 0,
+    @SerializedName("Sphinx") var SPHINX: Int = 0,
     @SerializedName("Minos Champion") var MINOS_CHAMPION: Int = 0,
     @SerializedName("Minotaur") var MINOTAUR: Int = 0,
     @SerializedName("Gaia Construct") var GAIA_CONSTRUCT: Int = 0,
+    @SerializedName("Harpy") var HARPY: Int = 0,
+    @SerializedName("Cretan Bull") var CRETAN_BULL: Int = 0,
+    @SerializedName("Stranded Nymph") var STRANDED_NYMPH: Int = 0,
     @SerializedName("Siamese Lynxes") var SIAMESE_LYNXES: Int = 0,
     @SerializedName("Minos Hunter") var MINOS_HUNTER: Int = 0,
     @SerializedName("TotalMobs") var TOTAL_MOBS: Int = 0,
-    @SerializedName("Minos Inquisitor Ls") var MINOS_INQUISITOR_LS: Int = 0
-)
-
-@Suppress("PropertyName")
-data class DianaInquisData(
-    var DWARF_TURTLE_SHELMET: Int = 0,
-    var CROCHET_TIGER_PLUSHIE: Int = 0,
-    var ANTIQUE_REMEDIES: Int = 0,
-    var DWARF_TURTLE_SHELMET_LS: Int = 0,
-    var CROCHET_TIGER_PLUSHIE_LS: Int = 0,
-    var ANTIQUE_REMEDIES_LS: Int = 0
+    @SerializedName("Minos Inquisitor Ls") var MINOS_INQUISITOR_LS: Int = 0,
+    @SerializedName("King Minos Ls") var KING_MINOS_LS: Int = 0,
+    @SerializedName("Manticore Ls") var MANTICORE_LS: Int = 0,
+    @SerializedName("Sphinx Ls") var SPHINX_LS: Int = 0,
 )
 
 // ------ Party Finder ------

@@ -4,7 +4,6 @@ import com.teamresourceful.resourcefulconfigkt.api.CategoryKt
 import com.teamresourceful.resourcefulconfigkt.api.ObservableEntry
 import net.sbo.mod.overlays.DianaLoot
 import net.sbo.mod.overlays.DianaMobs
-import net.sbo.mod.overlays.InquisLoot
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.waypoint.AdditionalHubWarps
@@ -102,7 +101,12 @@ object Diana : CategoryKt("Diana") {
     var mobTracker by ObservableEntry(
         enum(Tracker.OFF) {
             this.name = Translated("Mob Tracker")
-            this.description = Translated("Shows your Diana mob kills, /sboguis to move the overlay")
+            this.description = Translated(
+                "Shows your Diana mob kills, /sboguis to move the overlay\n" +
+                "§bNOTE!: You can interact with the tracker in the inventory!!!§r\n" +
+                "By clicking on a mob line you can hide/unhide it\n" +
+                "Hovering over some lines may display additional information"
+            )
         }
     ) { old, new ->
         if (old != new) {
@@ -112,9 +116,15 @@ object Diana : CategoryKt("Diana") {
         }
     }
 
-    var lootTracker by ObservableEntry( enum(Tracker.OFF) {
+    var lootTracker by ObservableEntry(
+        enum(Tracker.OFF) {
             this.name = Translated("Loot Tracker")
-            this.description = Translated("Shows your Diana loot, /sboguis to move the overlay")
+            this.description = Translated(
+                "Shows your Diana loot, /sboguis to move the overlay\n" +
+                    "§bNOTE!: You can interact with the tracker in the inventory!!!§r\n" +
+                    "By clicking on a loot line you can hide/unhide it\n" +
+                    "Hovering over some lines may display additional information"
+            )
         }
     ) { old, new ->
         if (old != new) {
@@ -124,14 +134,31 @@ object Diana : CategoryKt("Diana") {
         }
     }
 
-    var inquisTracker by ObservableEntry( enum(Tracker.OFF) {
-            this.name = Translated("Inquis Loot Tracker")
-            this.description = Translated("Shows your Inquisitor Loot so you see how lucky/unlucky you are (Shelmet/Plushie/Remedies), /sboguis to move the overlay")
+    var hideUnobtainedItems by ObservableEntry(
+        boolean(true) {
+            this.name = Translated("Hide Unobtained Items")
+            this.description = Translated("Hides any loot or mob lines that have not been tracked yet (value is 0) to reduce clutter in the overlays.")
         }
     ) { old, new ->
         if (old != new) {
-            if (new != Tracker.OFF) {
-                InquisLoot.updateLines()
+            if (lootTracker != Tracker.OFF) {
+                DianaLoot.updateLines()
+            }
+            if (mobTracker != Tracker.OFF) {
+                DianaMobs.updateLines()
+            }
+        }
+    }
+
+    var combineLootLines by ObservableEntry(
+        boolean(false) {
+            this.name = Translated("Combine LS Loot")
+            this.description = Translated("Combines the base item and the Loot Share (LS) variant into a single line. The individual LS count is shown on hover.")
+        }
+    ) { old, new ->
+        if (old != new) {
+            if (lootTracker != Tracker.OFF) {
+                DianaLoot.updateLines()
             }
         }
     }
@@ -259,7 +286,7 @@ object Diana : CategoryKt("Diana") {
         }
     }
 
-    var shareInq by boolean(true) {
+    var shareRareMob by boolean(true) {
         this.name = Translated("Share Inquisitor")
         this.description = Translated("Sends the coordinates of the inquisitor to party chat when it spawns")
     }

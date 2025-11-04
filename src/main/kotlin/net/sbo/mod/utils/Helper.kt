@@ -43,10 +43,17 @@ object Helper {
     var hasSpade: Boolean = false
     var lastDianaMobDeath: Long = 0L
     var lastInqDeath: Long = 0L
+    var lastKingDeath: Long = 0L
+    var lastSphinxDeath: Long = 0L
+    var lastMantiDeath: Long = 0L
     var currentScreen: Screen? = null
     var lastCocoon: Long = 0L
 
     private var hasTrackedInq: Boolean = false
+    private var hasTrackedKing: Boolean = false
+    private var hasTrackedSphinx: Boolean = false
+    private var hasTrackedManti: Boolean = false
+
     private var prevInv = mutableMapOf<String, Item>()
     private var priceDataAh: Map<String, Long> = emptyMap()
     private var priceDataBazaar: HypixelBazaarResponse? = null
@@ -59,7 +66,7 @@ object Helper {
         }
 
         Register.onTick(20) { // maybe better way to register this
-            hasSpade = playerHasItem("ANCESTRAL_SPADE")
+            hasSpade = playerHasItem("ANCESTRAL_SPADE") || playerHasItem("ARCHAIC_SPADE") || playerHasItem("DEIFIC_SPADE")
         }
 
         Register.onTick(20 * 60 * 5) {
@@ -80,7 +87,35 @@ object Helper {
                 }
             }
             lastInqDeath = System.currentTimeMillis()
+        } else if (event.name.contains("King Minos")) {
+            if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedKing) {
+                hasTrackedKing = true
+                DianaTracker.trackItem("KING_MINOS_LS", 1)
+                sleep(2000) {
+                    hasTrackedKing = false
+                }
+            }
+            lastKingDeath = System.currentTimeMillis()
+        } else if (event.name.contains("Sphinx")) {
+            if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedSphinx) {
+                hasTrackedSphinx = true
+                DianaTracker.trackItem("SPHINX_LS", 1)
+                sleep(2000) {
+                    hasTrackedSphinx = false
+                }
+            }
+            lastSphinxDeath = System.currentTimeMillis()
+        } else if (event.name.contains("Manticore")) {
+            if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedManti) {
+                hasTrackedManti = true
+                DianaTracker.trackItem("MANTICORE_LS", 1)
+                sleep(2000) {
+                    hasTrackedManti = false
+                }
+            }
+            lastMantiDeath = System.currentTimeMillis()
         }
+
         if (dist <= 30) {
             allowSackTracking = true
             lastDianaMobDeath = System.currentTimeMillis()
@@ -296,14 +331,41 @@ object Helper {
 
             if (!stack.isEmpty) {
                 val customData = stack.get(DataComponentTypes.CUSTOM_DATA)
-                val item = Item(
-                    ItemUtils.getSBID(customData),
-                    ItemUtils.getUUID(customData),
-                    ItemUtils.getDisplayName(stack),
-                    ItemUtils.getTimestamp(customData),
-                    stack.count
-                )
-                val id = if (item.itemUUID != "") item.itemUUID else item.itemId
+                val lore = ItemUtils.getLoreList(stack)
+                var id: String
+                var item: Item
+                val sbId = ItemUtils.getSBID(customData)
+                // print for debugging the lore lines
+                var isChimera = false
+                if (sbId == "ENCHANTED_BOOK") {
+                    for (line in lore) {
+                        if (line.contains("Chimera")) {
+                            isChimera = true
+                            break
+                        }
+                    }
+                }
+
+                if (!isChimera) {
+                    item = Item(
+                        sbId,
+                        ItemUtils.getUUID(customData),
+                        ItemUtils.getDisplayName(stack),
+                        ItemUtils.getTimestamp(customData),
+                        stack.count
+                    )
+                    id = if (item.itemUUID != "") item.itemUUID else item.itemId
+                } else {
+                    item = Item(
+                        "CHIMERA",
+                        ItemUtils.getUUID(customData),
+                        "§d§lChimera",
+                        ItemUtils.getTimestamp(customData),
+                        stack.count
+                    )
+                    id = "CHIMERA"
+                }
+
                 if (invItems.containsKey(id)) {
                     invItems[id]?.count += item.count
                 } else {
