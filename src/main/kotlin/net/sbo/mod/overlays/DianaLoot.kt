@@ -119,7 +119,7 @@ object DianaLoot {
     private fun isCraftingScreenOpen(): Boolean = mc.currentScreen?.title?.string == CRAFTING_GUI_TITLE
 
     fun hideLine(name: String) {
-        if (isCraftingScreenOpen()) return
+        if (!isCraftingScreenOpen()) return
         val hideList = SBOConfigBundle.sboData.hideTrackerLines
         if (hideList.contains(name)) hideList.remove(name) else hideList.add(name)
         updateLines()
