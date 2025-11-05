@@ -67,7 +67,7 @@ object OverlayManager {
 
     fun registerRenderer() {
         ScreenEvents.AFTER_INIT.register { client, screen, scaledWidth, scaledHeight ->
-            ScreenEvents.beforeRender(screen).register { renderScreen, drawContext, mouseX, mouseY, tickDelta ->
+            ScreenEvents.afterRender(screen).register { renderScreen, drawContext, mouseX, mouseY, tickDelta ->
                 if (renderScreen !is OverlayEditScreen) {
                     postRender(drawContext, renderScreen)
                 }
