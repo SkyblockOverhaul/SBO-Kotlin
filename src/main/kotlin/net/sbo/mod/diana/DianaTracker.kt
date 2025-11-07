@@ -114,7 +114,7 @@ object DianaTracker {
         SBOKotlin.logger.info("debug trackWithPickuplog: itemid: |${item.itemId}|, ItemName: |${item.name}|, count: |${item.count}|, timestamp now ${System.currentTimeMillis()}, timestamp of item: |${item.creation}|, item age (senconds): |${Helper.getSecondsPassed(item.creation)}|s")
         val isLootShare = gotLootShareRecently(2)
         sleep (1000) {
-            if (Helper.getSecondsPassed(item.creation) < 3) return@sleep
+            if (Helper.getSecondsPassed(item.creation) > 3) return@sleep
 //            if (!dianaMobDiedRecently(3)) return@sleep
             if (!checkDiana()) return@sleep
             if (item.itemId in rareDrops.keys) {
