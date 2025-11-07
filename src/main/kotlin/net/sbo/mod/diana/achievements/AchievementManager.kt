@@ -199,6 +199,7 @@ object AchievementManager {
 
     fun trackMagicFind(magicFind: Int, chimera: Boolean = false) {
         if (!isOnHypixel) return
+        if (magicFind == 0) return
 
         when {
             magicFind >= 600 -> unlockAchievement(42)
