@@ -41,6 +41,7 @@ object DianaTracker {
     private val rareDrops = mapOf<String, String>("CHIMERA" to "§d", "HILT_OF_REVELATIONS" to "§9")
     private val otherDrops = listOf("ENCHANTED_ANCIENT_CLAW", "ANCIENT_CLAW", "ENCHANTED_GOLD")
     private val sackDrops = listOf("Enchanted Gold", "Ancient Claw", "Enchanted Ancient Claw")
+    private val isMobOnCooldown: MutableMap<String, Boolean> = mutableMapOf()
 
     private val lootAnnouncerBuffer: MutableList<String> = mutableListOf()
     private var lootAnnouncerBool: Boolean = false
@@ -751,6 +752,9 @@ object DianaTracker {
     }
 
     fun trackMob(item: String, amount: Int) {
+        if (isMobOnCooldown.getOrDefault(item, false)) return
+        isMobOnCooldown[item] = true
+
         trackItem(item, amount)
         trackItem("TOTAL_MOBS", amount)
         sboData.mobsSinceInq += amount
@@ -762,6 +766,10 @@ object DianaTracker {
         sboData.mobsSinceSphinx += amount
         if (sboData.mobsSinceSphinx >= 2) sboData.b2bSphinx = false
         SboDataObject.save("SboData")
+
+        sleep(500) {
+            isMobOnCooldown[item] = false
+        }
     }
 
     fun trackItem(item: String, amount: Int, fromInq: Boolean = false) {
