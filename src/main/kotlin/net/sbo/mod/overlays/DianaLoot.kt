@@ -87,6 +87,7 @@ object DianaLoot {
         LootItemData("CROCHET_TIGER_PLUSHIE", "Crochet Tiger Plushie", DARK_GREEN),
         LootItemData("ANTIQUE_REMEDIES", "Antique Remedies", DARK_GREEN),
         LootItemData("CRETAN_BULL_SHARD", "Cretan Bull Shard", DARK_GREEN),
+        LootItemData("HARPY_SHARD", "Harpy Shard", DARK_GREEN),
         LootItemData("HILT_OF_REVELATIONS", "Hilt of Revelations", BLUE),
         LootItemData("ANCIENT_CLAW", "Ancient Claw", BLUE),
         LootItemData("ENCHANTED_ANCIENT_CLAW", "Enchanted Ancient Claw", BLUE),
@@ -247,12 +248,18 @@ object DianaLoot {
     }
 
     private fun generateStatisticsLines(tracker: DianaTracker, type: Diana.Tracker, isCraftingOpen: Boolean): List<OverlayTextLine> {
+        val timer = when (type) {
+            Diana.Tracker.TOTAL -> SboTimerManager.timerTotal
+            Diana.Tracker.EVENT -> SboTimerManager.timerMayor
+            Diana.Tracker.SESSION -> SboTimerManager.timerSession
+            else -> SboTimerManager.timerMayor
+        }
         val totalBurrows = tracker.items.TOTAL_BURROWS
         val totalProfitValue = totalProfit(tracker)
         val playTimeHrs = tracker.items.TIME.toDouble() / TimeUnit.HOURS.toMillis(1)
         val totalEvents = SBOConfigBundle.pastDianaEventsData.events.size
 
-        val burrowsPerHr = Helper.getBurrowsPerHr(tracker, SboTimerManager.getTimer(type.toString())?: SboTimerManager.timerMayor)
+        val burrowsPerHr = Helper.getBurrowsPerHr(tracker, timer)
         val bphText = if (burrowsPerHr.isNaN() || burrowsPerHr == 0.0) "" else " $GRAY[$AQUA$burrowsPerHr$GRAY/${AQUA}hr$GRAY]"
 
         val profitPerHr = if (playTimeHrs > 0) Helper.formatNumber(totalProfitValue / playTimeHrs) else 0.0

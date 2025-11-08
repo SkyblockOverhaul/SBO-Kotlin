@@ -194,6 +194,7 @@ data class DianaItemsData(
     @SerializedName("SPHINX_SHARD") var SPHINX_SHARD: Int = 0,
     @SerializedName("MINOTAUR_SHARD") var MINOTAUR_SHARD: Int = 0,
     @SerializedName("CRETAN_BULL_SHARD") var CRETAN_BULL_SHARD: Int = 0,
+    @SerializedName("HARPY_SHARD") var HARPY_SHARD: Int = 0
 )
 
 @Suppress("PropertyName")
