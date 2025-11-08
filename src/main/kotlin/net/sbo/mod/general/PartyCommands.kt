@@ -188,6 +188,125 @@ object PartyCommands {
                         Chat.command("pc Chimera LS: $chimsLs ($percent%)")
                     }
                 }
+                "!core, !maanticore" -> {
+                    if (!settings.dianaPartyCommands) return@onChatMessage
+                    val coreCount = dianaTrackerMayor.items.MANTI_CORE
+                    val percent = calcPercentOne(dianaTrackerMayor.items, dianaTrackerMayor.mobs, "MANTI_CORE", "MANTICORE")
+                    sleep(200) {
+                        Chat.command("pc Cores: $coreCount ($percent%)")
+                    }
+                }
+                "!corels", "!manticorels", "!lscore", "!lsmanticore" -> {
+                    if (!settings.dianaPartyCommands) return@onChatMessage
+                    val coreLsCount = dianaTrackerMayor.items.MANTI_CORE_LS
+                    val percent = calcPercentOne(dianaTrackerMayor.items, dianaTrackerMayor.mobs, "MANTI_CORE_LS", "MANTICORE_LS")
+                    sleep(200) {
+                        Chat.command("pc Core LS: $coreLsCount ($percent%)")
+                    }
+                }
+                "!stinger", "!fatefulstinger" -> {
+                    if (!settings.dianaPartyCommands) return@onChatMessage
+                    val stingerCount = dianaTrackerMayor.items.FATEFUL_STINGER
+                    val percent = calcPercentOne(dianaTrackerMayor.items, dianaTrackerMayor.mobs, "FATEFUL_STINGER", "MANTICORE")
+                    sleep(200) {
+                        Chat.command("pc Stingers: $stingerCount ($percent%)")
+                    }
+                }
+                "!stingerls", "!fatefulstingerls", "!lsstinger", "!lsfatefulstinger" -> {
+                    if (!settings.dianaPartyCommands) return@onChatMessage
+                    val stingerLsCount = dianaTrackerMayor.items.FATEFUL_STINGER_LS
+                    val percent = calcPercentOne(dianaTrackerMayor.items, dianaTrackerMayor.mobs, "FATEFUL_STINGER_LS", "MANTICORE_LS")
+                    sleep(200) {
+                        Chat.command("pc Stinger LS: $stingerLsCount ($percent%)")
+                    }
+                }
+                "!wool", "!shimmering", "!shimmeringwool" -> {
+                    if (!settings.dianaPartyCommands) return@onChatMessage
+                    val woolCount = dianaTrackerMayor.items.SHIMMERING_WOOL
+                    val percent = calcPercentOne(dianaTrackerMayor.items, dianaTrackerMayor.mobs, "SHIMMERING_WOOL", "KING_MINOS")
+                    sleep(200) {
+                        Chat.command("pc Wool: $woolCount ($percent%)")
+                    }
+                }
+                "!woolls", "!shimmeringwoolls", "!lsshimmering", "!lsshimmeringwool" -> {
+                    if (!settings.dianaPartyCommands) return@onChatMessage
+                    val woolLsCount = dianaTrackerMayor.items.SHIMMERING_WOOL_LS
+                    val percent = calcPercentOne(dianaTrackerMayor.items, dianaTrackerMayor.mobs, "SHIMMERING_WOOL_LS", "KING_MINOS_LS")
+                    sleep(200) {
+                        Chat.command("pc Wool LS: $woolLsCount ($percent%)")
+                    }
+                }
+                "!food", "!brainfood", "!brain" -> {
+                    if (!settings.dianaPartyCommands) return@onChatMessage
+                    val foodCount = dianaTrackerMayor.items.BRAIN_FOOD
+                    val percent = calcPercentOne(dianaTrackerMayor.items, dianaTrackerMayor.mobs, "BRAIN_FOOD", "SPHINX")
+                    sleep(200) {
+                        Chat.command("pc Brain Food: $foodCount ($percent%)")
+                    }
+                }
+                "!foodls", "!brainfoodls", "!lsbrainfood", "!lsbrain" -> {
+                    if (!settings.dianaPartyCommands) return@onChatMessage
+                    val foodLsCount = dianaTrackerMayor.items.BRAIN_FOOD_LS
+                    val percent = calcPercentOne(dianaTrackerMayor.items, dianaTrackerMayor.mobs, "BRAIN_FOOD_LS", "SPHINX_LS")
+                    sleep(200) {
+                        Chat.command("pc Brain Food LS: $foodLsCount ($percent%)")
+                    }
+                }
+                "!kingshard", "!kingshards" -> {
+                    if (!settings.dianaPartyCommands) return@onChatMessage
+                    val kingShardCount = dianaTrackerMayor.items.KING_MINOS_SHARD
+                    val percent = calcPercentOne(dianaTrackerMayor.items, dianaTrackerMayor.mobs, "KING_MINOS_SHARD", "KING_MINOS")
+                    sleep(200) {
+                        Chat.command("pc King Shards: $kingShardCount ($percent%)")
+                    }
+                }
+                "!sphinxshard", "!sphinxshards" -> {
+                    if (!settings.dianaPartyCommands) return@onChatMessage
+                    val sphinxShardCount = dianaTrackerMayor.items.SPHINX_SHARD
+                    val percent = calcPercentOne(dianaTrackerMayor.items, dianaTrackerMayor.mobs, "SPHINX_SHARD", "SPHINX")
+                    sleep(200) {
+                        Chat.command("pc Sphinx Shards: $sphinxShardCount ($percent%)")
+                    }
+                }
+                "!minotaurshard", "!minotaurshards" -> {
+                    if (!settings.dianaPartyCommands) return@onChatMessage
+                    val minotaurShardCount = dianaTrackerMayor.items.MINOTAUR_SHARD
+                    val percent = calcPercentOne(dianaTrackerMayor.items, dianaTrackerMayor.mobs, "MINOTAUR_SHARD", "MINOTAUR")
+                    sleep(200) {
+                        Chat.command("pc Minotaur Shards: $minotaurShardCount ($percent%)")
+                    }
+                }
+                "!certanshard", "!certanshards" -> {
+                    if (!settings.dianaPartyCommands) return@onChatMessage
+                    val certanShardCount = dianaTrackerMayor.items.CRETAN_BULL_SHARD
+                    val percent = calcPercentOne(dianaTrackerMayor.items, dianaTrackerMayor.mobs, "CRETAN_BULL_SHARD", "CRETAN_BULL")
+                    sleep(200) {
+                        Chat.command("pc Certan Shards: $certanShardCount ($percent%)")
+                    }
+                }
+                "!mythofrag", "!frags" -> {
+                    if (!settings.dianaPartyCommands) return@onChatMessage
+                    val mythoFragCount = dianaTrackerMayor.items.MYTHOS_FRAGMENT
+                    sleep(200) {
+                        Chat.command("pc Mytho Frags: $mythoFragCount")
+                    }
+                }
+                "!urns", "!urn", "!cretanurn" -> {
+                    if (!settings.dianaPartyCommands) return@onChatMessage
+                    val urnCount = dianaTrackerMayor.items.CRETAN_URN
+                    val percent = calcPercentOne(dianaTrackerMayor.items, dianaTrackerMayor.mobs, "CRETAN_URN", "CRETAN_BULL")
+                    sleep(200) {
+                        Chat.command("pc Urns: $urnCount ($percent%)")
+                    }
+                }
+                "!hilt", "!hiltofrevelations" -> {
+                    if (!settings.dianaPartyCommands) return@onChatMessage
+                    val hiltCount = dianaTrackerMayor.items.HILT_OF_REVELATIONS
+                    val percent = calcPercentOne(dianaTrackerMayor.items, dianaTrackerMayor.mobs, "HILT_OF_REVELATIONS", "MINOS_HUNTER")
+                    sleep(200) {
+                        Chat.command("pc Hilts: $hiltCount ($percent%)")
+                    }
+                }
                 "!sticks", "!stick" -> {
                     if (!settings.dianaPartyCommands) return@onChatMessage
                     val stickCount = dianaTrackerMayor.items.DAEDALUS_STICK

@@ -41,6 +41,7 @@ object DianaTracker {
     private val rareDrops = mapOf<String, String>("CHIMERA" to "§d", "HILT_OF_REVELATIONS" to "§9")
     private val otherDrops = listOf("ENCHANTED_ANCIENT_CLAW", "ANCIENT_CLAW", "ENCHANTED_GOLD")
     private val sackDrops = listOf("Enchanted Gold", "Ancient Claw", "Enchanted Ancient Claw")
+    private val isMobOnCooldown: MutableMap<String, Boolean> = mutableMapOf()
 
     private val lootAnnouncerBuffer: MutableList<String> = mutableListOf()
     private var lootAnnouncerBool: Boolean = false
@@ -110,76 +111,73 @@ object DianaTracker {
         trackShardsWithChat()
     }
 
-    fun trackWithPickuplog(item: Item) {
-        SBOKotlin.logger.info("debug trackWithPickuplog: itemid: |${item.itemId}|, ItemName: |${item.name}|, count: |${item.count}|, timestamp now ${System.currentTimeMillis()}, timestamp of item: |${item.creation}|, item age (senconds): |${Helper.getSecondsPassed(item.creation)}|s")
-        val isLootShare = gotLootShareRecently(2)
-        sleep (1000) {
-            if (Helper.getSecondsPassed(item.creation) > 3) return@sleep
-//            if (!dianaMobDiedRecently(3)) return@sleep
-            if (!checkDiana()) return@sleep
-            if (item.itemId in rareDrops.keys) {
-                if (item.itemId == "CHIMERA") {
-                    playCustomSound(Customization.chimSound[0], Customization.chimVolume)
-                    onRareDropFromMob("Chimera", true, false, true, 0)
-
-                    if (!isLootShare) {
-                        // normal chimera
-                        if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.inqsSinceChim} §eInquisitors to get a Chimera!")
-
-                        if (sboData.b2bChim && sboData.inqsSinceChim == 1) {
-                            Chat.chat("§6[SBO] §cb2b2b Chimera!")
-                            unlockAchievement(2) // b2b2b chim
-                        }
-                        if (sboData.inqsSinceChim == 1 && !sboData.b2bChim) {
-                            Chat.chat("§6[SBO] §cb2b Chimera!")
-                            sboData.b2bChim = true
-                            unlockAchievement(1) // b2b chim
-                        }
-                        if (sboData.b2bChim && sboData.b2bInq) {
-                            unlockAchievement(75) // b2b chim from b2b inq
-                        }
-                        sboData.inqsSinceChim = 0
-                    } else {
-                        // lootshare chim
-                        if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.inqsSinceLsChim} §eInquisitors to lootshare a Chimera!")
-
-                        sleep(200) {
-                            if (sboData.b2bChimLs && sboData.inqsSinceLsChim == 1) {
-                                Chat.chat("§6[SBO] §cb2b2b Lootshare Chimera!")
-                                unlockAchievement(67) // b2b2b chim ls
-                            }
-                            if (sboData.inqsSinceLsChim == 1 && !sboData.b2bChimLs) {
-                                Chat.chat("§6[SBO] §cb2b Lootshare Chimera!")
-                                sboData.b2bChimLs = true
-                                unlockAchievement(65) // b2b chim ls
-                            }
-                            sboData.inqsSinceLsChim = 0
-                        }
-                    }
-
-                    val customChimMsg = Helper.checkCustomChimMessage(0)
-                    if (customChimMsg.first) {
-                        Chat.chat(customChimMsg.second)
-                        announceLootToParty("Chimera!", customChimMsg.second, true)
-                    } else {
-                        if (!isLootShare) Chat.chat("§6[SBO] §6§lRARE DROP! ${item.name}!")
-                        announceLootToParty("Chimera!", "Chimera!")
-                    }
-                } else {
-                    onRareDropFromMob("Hilt of Revelations", false, false, false, 0)
-                }
-
-
-                // if (Helper.getSecondsPassed(lastInqDeath) <= 3) {
-                //     announceLootToParty(item.itemId)
-                //     if (!isLootShare)
-                //         trackItem(item.itemId, item.count, true)
-                //     else
-                //         trackItem(item.itemId + "_LS", item.count, true)
-                // }
-            }
-        }
-    }
+//    fun trackWithPickuplog(item: Item) {
+//        SBOKotlin.logger.info("debug trackWithPickuplog: itemid: |${item.itemId}|, ItemName: |${item.name}|, count: |${item.count}|, timestamp now ${System.currentTimeMillis()}, timestamp of item: |${item.creation}|, item age (senconds): |${Helper.getSecondsPassed(item.creation)}|s")
+//        val isLootShare = gotLootShareRecently(2)
+//        sleep (1000) {
+//            if (Helper.getSecondsPassed(item.creation) > 3) return@sleep
+////            if (!dianaMobDiedRecently(3)) return@sleep
+//            if (!checkDiana()) return@sleep
+//            if (item.itemId == "CHIMERA") {
+//                playCustomSound(Customization.chimSound[0], Customization.chimVolume)
+//                onRareDropFromMob("Chimera", true, false, true, 0)
+//
+//                if (!isLootShare) {
+//                    // normal chimera
+//                    if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.inqsSinceChim} §eInquisitors to get a Chimera!")
+//
+//                    if (sboData.b2bChim && sboData.inqsSinceChim == 1) {
+//                        Chat.chat("§6[SBO] §cb2b2b Chimera!")
+//                        unlockAchievement(2) // b2b2b chim
+//                    }
+//                    if (sboData.inqsSinceChim == 1 && !sboData.b2bChim) {
+//                        Chat.chat("§6[SBO] §cb2b Chimera!")
+//                        sboData.b2bChim = true
+//                        unlockAchievement(1) // b2b chim
+//                    }
+//                    if (sboData.b2bChim && sboData.b2bInq) {
+//                        unlockAchievement(75) // b2b chim from b2b inq
+//                    }
+//                    sboData.inqsSinceChim = 0
+//                } else {
+//                    // lootshare chim
+//                    if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.inqsSinceLsChim} §eInquisitors to lootshare a Chimera!")
+//
+//                    sleep(200) {
+//                        if (sboData.b2bChimLs && sboData.inqsSinceLsChim == 1) {
+//                            Chat.chat("§6[SBO] §cb2b2b Lootshare Chimera!")
+//                            unlockAchievement(67) // b2b2b chim ls
+//                        }
+//                        if (sboData.inqsSinceLsChim == 1 && !sboData.b2bChimLs) {
+//                            Chat.chat("§6[SBO] §cb2b Lootshare Chimera!")
+//                            sboData.b2bChimLs = true
+//                            unlockAchievement(65) // b2b chim ls
+//                        }
+//                        sboData.inqsSinceLsChim = 0
+//                    }
+//                }
+//
+//                val customChimMsg = Helper.checkCustomChimMessage(0)
+//                if (customChimMsg.first) {
+//                    Chat.chat(customChimMsg.second)
+//                    announceLootToParty("Chimera!", customChimMsg.second, true)
+//                } else {
+//                    if (!isLootShare) Chat.chat("§6[SBO] §6§lRARE DROP! ${item.name}!")
+//                    announceLootToParty("Chimera!", "Chimera!")
+//                }
+//
+//
+//
+//                // if (Helper.getSecondsPassed(lastInqDeath) <= 3) {
+//                //     announceLootToParty(item.itemId)
+//                //     if (!isLootShare)
+//                //         trackItem(item.itemId, item.count, true)
+//                //     else
+//                //         trackItem(item.itemId + "_LS", item.count, true)
+//                // }
+//            }
+//        }
+//    }
 
     fun trackWithPickuplogStackable(item: Item, amount: Int) {
         sleep (1000) {
@@ -373,221 +371,225 @@ object DianaTracker {
             var mfPrefix = ""
             if (magicfind > 0) mfPrefix = " (+$magicfind ✯ Magic Find)"
 
-            if (drop.contains("Shimmering Wool")) { // todo: add achievements for wool, drop sound
-                onRareDropFromMob("Shimmering Wool", true, true, true, magicfind)
-                if (!isLootShare) {
-                    // normal wool
-                    if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.kingSinceWool} §eManticores to get Shimmering Wool!")
+            when {
+                drop.contains("Shimmering Wool") -> { // todo: add achievements for wool, drop sound
+                    onRareDropFromMob("Shimmering Wool", true, true, true, magicfind)
+                    if (!isLootShare) {
+                        // normal wool
+                        if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.kingSinceWool} §eManticores to get Shimmering Wool!")
 
-                    if (sboData.b2bWool && sboData.kingSinceWool == 1) {
-                        Chat.chat("§6[SBO] §cb2b2b Shimmering Wool!")
-                    }
-                    if (sboData.kingSinceWool == 1 && !sboData.b2bWool) {
-                        Chat.chat("§6[SBO] §cb2b Shimmering Wool!")
-                        sboData.b2bWool = true
-                    }
-                    sboData.kingSinceWool = 0
-                } else {
-                    // lootshare wool
-                    if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.kingSinceLsWool} §eManticores to lootshare Shimmering Wool!")
+                        if (sboData.b2bWool && sboData.kingSinceWool == 1) {
+                            Chat.chat("§6[SBO] §cb2b2b Shimmering Wool!")
+                        }
+                        if (sboData.kingSinceWool == 1 && !sboData.b2bWool) {
+                            Chat.chat("§6[SBO] §cb2b Shimmering Wool!")
+                            sboData.b2bWool = true
+                        }
+                        sboData.kingSinceWool = 0
+                    } else {
+                        // lootshare wool
+                        if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.kingSinceLsWool} §eManticores to lootshare Shimmering Wool!")
 
-                    sleep(200) {
-                        if (sboData.b2bWoolLs && sboData.kingSinceLsWool == 1) {
-                            Chat.chat("§6[SBO] §cb2b2b Lootshare Shimmering Wool!")
+                        sleep(200) {
+                            if (sboData.b2bWoolLs && sboData.kingSinceLsWool == 1) {
+                                Chat.chat("§6[SBO] §cb2b2b Lootshare Shimmering Wool!")
+                            }
+                            if (sboData.kingSinceLsWool == 1 && !sboData.b2bWoolLs) {
+                                Chat.chat("§6[SBO] §cb2b Lootshare Shimmering Wool!")
+                                sboData.b2bWoolLs = true
+                            }
+                            sboData.kingSinceLsWool = 0
                         }
-                        if (sboData.kingSinceLsWool == 1 && !sboData.b2bWoolLs) {
-                            Chat.chat("§6[SBO] §cb2b Lootshare Shimmering Wool!")
-                            sboData.b2bWoolLs = true
-                        }
-                        sboData.kingSinceLsWool = 0
                     }
                 }
-            } else if (drop.contains("Manti-core")) { // todo: add achievements for core, drop sound
-                onRareDropFromMob("Manti-core", true, true, true, magicfind)
-                if (!isLootShare) {
-                    // normal core
-                    if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.mantiSinceCore} §eManticores to get Manti-core!")
+                drop.contains("Manti-core") -> { // todo: add achievements for core, drop sound
+                    onRareDropFromMob("Manti-core", true, true, true, magicfind)
+                    if (!isLootShare) {
+                        // normal core
+                        if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.mantiSinceCore} §eManticores to get Manti-core!")
 
-                    if (sboData.b2bCore && sboData.mantiSinceCore == 1) {
-                        Chat.chat("§6[SBO] §cb2b2b Manti-core!")
-                    }
-                    if (sboData.mantiSinceCore == 1 && !sboData.b2bCore) {
-                        Chat.chat("§6[SBO] §cb2b Manti-core!")
-                        sboData.b2bCore = true
-                    }
-                    sboData.mantiSinceCore = 0
-                } else {
-                    // lootshare core
-                    if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.mantiSinceLsCore} §eManticores to lootshare Manti-core!")
-
-                    sleep(200) {
-                        if (sboData.b2bCoreLs && sboData.mantiSinceLsCore == 1) {
-                            Chat.chat("§6[SBO] §cb2b2b Lootshare Manti-core!")
+                        if (sboData.b2bCore && sboData.mantiSinceCore == 1) {
+                            Chat.chat("§6[SBO] §cb2b2b Manti-core!")
                         }
-                        if (sboData.mantiSinceLsCore == 1 && !sboData.b2bCoreLs) {
-                            Chat.chat("§6[SBO] §cb2b Lootshare Manti-core!")
-                            sboData.b2bCoreLs = true
+                        if (sboData.mantiSinceCore == 1 && !sboData.b2bCore) {
+                            Chat.chat("§6[SBO] §cb2b Manti-core!")
+                            sboData.b2bCore = true
                         }
-                        sboData.mantiSinceLsCore = 0
-                    }
-                }
-            } else if (drop.contains("Fateful Stinger")) { // todo: add achievements for stinger, drop sound
-                onRareDropFromMob("Fateful Stinger", true, true, true, magicfind)
-                if (!isLootShare) {
-                    // normal stinger
-                    if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.mantiSinceStinger} §eManticores to get Fateful Stinger!")
+                        sboData.mantiSinceCore = 0
+                    } else {
+                        // lootshare core
+                        if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.mantiSinceLsCore} §eManticores to lootshare Manti-core!")
 
-                    if (sboData.b2bStinger && sboData.mantiSinceStinger == 1) {
-                        Chat.chat("§6[SBO] §cb2b2b Fateful Stinger!")
-                    }
-                    if (sboData.mantiSinceStinger == 1 && !sboData.b2bStinger) {
-                        Chat.chat("§6[SBO] §cb2b Fateful Stinger!")
-                        sboData.b2bStinger = true
-                    }
-                    sboData.mantiSinceStinger = 0
-                } else {
-                    // lootshare stinger
-                    if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.mantiSinceLsStinger} §eManticores to lootshare Fateful Stinger!")
-
-                    sleep(200) {
-                        if (sboData.b2bStingerLs && sboData.mantiSinceLsStinger == 1) {
-                            Chat.chat("§6[SBO] §cb2b2b Lootshare Fateful Stinger!")
+                        sleep(200) {
+                            if (sboData.b2bCoreLs && sboData.mantiSinceLsCore == 1) {
+                                Chat.chat("§6[SBO] §cb2b2b Lootshare Manti-core!")
+                            }
+                            if (sboData.mantiSinceLsCore == 1 && !sboData.b2bCoreLs) {
+                                Chat.chat("§6[SBO] §cb2b Lootshare Manti-core!")
+                                sboData.b2bCoreLs = true
+                            }
+                            sboData.mantiSinceLsCore = 0
                         }
-                        if (sboData.mantiSinceLsStinger == 1 && !sboData.b2bStingerLs) {
-                            Chat.chat("§6[SBO] §cb2b Lootshare Fateful Stinger!")
-                            sboData.b2bStingerLs = true
+                    }
+                }
+                drop.contains("Fateful Stinger") -> { // todo: add achievements for stinger, drop sound
+                    onRareDropFromMob("Fateful Stinger", true, true, true, magicfind)
+                    if (!isLootShare) {
+                        // normal stinger
+                        if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.mantiSinceStinger} §eManticores to get Fateful Stinger!")
+
+                        if (sboData.b2bStinger && sboData.mantiSinceStinger == 1) {
+                            Chat.chat("§6[SBO] §cb2b2b Fateful Stinger!")
                         }
-                        sboData.mantiSinceLsStinger = 0
-                    }
-                }
-            } else if (drop.contains("Enchanted Book")) { //logic might need to be moved to pickuplog as theres no drop message curently todo
-                if (!drop.contains("Chimera")) return@onChatMessageCancable true
-
-//                playCustomSound(Customization.chimSound[0], Customization.chimVolume)
-//                onRareDropFromMob("Chimera", true, false, true, magicfind)
-//
-//                if (!isLootShare) {
-//                    // normal chimera
-//                    if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.inqsSinceChim} §eInquisitors to get a Chimera!")
-//
-//                    if (sboData.b2bChim && sboData.inqsSinceChim == 1) {
-//                        Chat.chat("§6[SBO] §cb2b2b Chimera!")
-//                        unlockAchievement(2) // b2b2b chim
-//                    }
-//                    if (sboData.inqsSinceChim == 1 && !sboData.b2bChim) {
-//                        Chat.chat("§6[SBO] §cb2b Chimera!")
-//                        sboData.b2bChim = true
-//                        unlockAchievement(1) // b2b chim
-//                    }
-//                    if (sboData.b2bChim && sboData.b2bInq) {
-//                        unlockAchievement(75) // b2b chim from b2b inq
-//                    }
-//                    sboData.inqsSinceChim = 0
-//                } else {
-//                    // lootshare chim
-//                    if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.inqsSinceLsChim} §eInquisitors to lootshare a Chimera!")
-//
-//                    sleep(200) {
-//                        if (sboData.b2bChimLs && sboData.inqsSinceLsChim == 1) {
-//                            Chat.chat("§6[SBO] §cb2b2b Lootshare Chimera!")
-//                            unlockAchievement(67) // b2b2b chim ls
-//                        }
-//                        if (sboData.inqsSinceLsChim == 1 && !sboData.b2bChimLs) {
-//                            Chat.chat("§6[SBO] §cb2b Lootshare Chimera!")
-//                            sboData.b2bChimLs = true
-//                            unlockAchievement(65) // b2b chim ls
-//                        }
-//                        sboData.inqsSinceLsChim = 0
-//                    }
-//                }
-//
-//                val customChimMsg = Helper.checkCustomChimMessage(magicfind)
-//                if (customChimMsg.first) {
-//                    Chat.chat(customChimMsg.second)
-//                    announceLootToParty("Chimera!", customChimMsg.second, true)
-//                } else {
-//                    announceLootToParty("Chimera!", "Chimera!$mfPrefix")
-//                }
-            } else if (drop.contains("Brain Food")) { // todo: add achievements for stinger, drop sound
-                onRareDropFromMob("Brain Food", true, true, true, magicfind)
-                if (!isLootShare) {
-                    // normal brain food
-                    if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.sphinxSinceFood} §eSphinx to get Brain Food!")
-
-                    if (sboData.b2bInq && sboData.sphinxSinceFood == 1) {
-                        Chat.chat("§6[SBO] §cb2b2b Brain Food!")
-                        unlockAchievement(9) // b2b2b food
-                    }
-                    if (sboData.sphinxSinceFood == 1 && !sboData.b2bInq) {
-                        Chat.chat("§6[SBO] §cb2b Brain Food!")
-                        sboData.b2bInq = true
-                        unlockAchievement(8) // b2b food
-                    }
-                    sboData.sphinxSinceFood = 0
-                } else {
-                    // lootshare brain food
-                    if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.sphinxSinceFood} §eSphinx to lootshare Brain Food!")
-
-                    sleep(200) {
-                        if (sboData.b2bFoodLs && sboData.sphinxSinceFood == 1) {
-                            Chat.chat("§6[SBO] §cb2b2b Lootshare Brain Food!")
+                        if (sboData.mantiSinceStinger == 1 && !sboData.b2bStinger) {
+                            Chat.chat("§6[SBO] §cb2b Fateful Stinger!")
+                            sboData.b2bStinger = true
                         }
-                        if (sboData.sphinxSinceFood == 1 && !sboData.b2bFoodLs) {
-                            Chat.chat("§6[SBO] §cb2b Lootshare Brain Food!")
-                            sboData.b2bFoodLs = true
+                        sboData.mantiSinceStinger = 0
+                    } else {
+                        // lootshare stinger
+                        if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.mantiSinceLsStinger} §eManticores to lootshare Fateful Stinger!")
+
+                        sleep(200) {
+                            if (sboData.b2bStingerLs && sboData.mantiSinceLsStinger == 1) {
+                                Chat.chat("§6[SBO] §cb2b2b Lootshare Fateful Stinger!")
+                            }
+                            if (sboData.mantiSinceLsStinger == 1 && !sboData.b2bStingerLs) {
+                                Chat.chat("§6[SBO] §cb2b Lootshare Fateful Stinger!")
+                                sboData.b2bStingerLs = true
+                            }
+                            sboData.mantiSinceLsStinger = 0
                         }
-                        sboData.sphinxSinceLsFood = 0
                     }
                 }
-            } else if (drop.contains("Daedalus Stick")) {
-                playCustomSound(Customization.stickSound[0], Customization.stickVolume)
-                onRareDropFromMob("Daedalus Stick", true, true, false, magicfind)
+                drop.contains("Enchanted Book") -> {
+                    if (!drop.contains("Chimera")) return@onChatMessageCancable true
 
-                if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.minotaursSinceStick} §eMinotaurs to get a Daedalus Stick!")
+                    playCustomSound(Customization.chimSound[0], Customization.chimVolume)
+                    onRareDropFromMob("Chimera", true, false, true, magicfind)
 
-                if (sboData.b2bStick && sboData.minotaursSinceStick == 1) {
-                    Chat.chat("§6[SBO] §cb2b2b Daedalus Stick!")
-                    unlockAchievement(4) // b2b2b stick
-                }
-                if (sboData.minotaursSinceStick == 1 && !sboData.b2bStick) {
-                    Chat.chat("§6[SBO] §cb2b Daedalus Stick!")
-                    sboData.b2bStick = true
-                    unlockAchievement(3) // b2b stick
-                }
-                sboData.minotaursSinceStick = 0
-            } else if (drop.contains("Minos Relic")) {
-                playCustomSound(Customization.relicSound[0], Customization.relicVolume)
-                onRareDropFromMob("Minos Relic", true, true, false, magicfind)
+                    if (!isLootShare) {
+                        // normal chimera
+                        if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.inqsSinceChim} §eInquisitors to get a Chimera!")
 
-                if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.champsSinceRelic} §eChampions to get a Minos Relic!")
+                        if (sboData.b2bChim && sboData.inqsSinceChim == 1) {
+                            Chat.chat("§6[SBO] §cb2b2b Chimera!")
+                            unlockAchievement(2) // b2b2b chim
+                        }
+                        if (sboData.inqsSinceChim == 1 && !sboData.b2bChim) {
+                            Chat.chat("§6[SBO] §cb2b Chimera!")
+                            sboData.b2bChim = true
+                            unlockAchievement(1) // b2b chim
+                        }
+                        if (sboData.b2bChim && sboData.b2bInq) {
+                            unlockAchievement(75) // b2b chim from b2b inq
+                        }
+                        sboData.inqsSinceChim = 0
+                    } else {
+                        // lootshare chim
+                        if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.inqsSinceLsChim} §eInquisitors to lootshare a Chimera!")
 
-                if (sboData.champsSinceRelic == 1) {
-                    Chat.chat("§6[SBO] §cb2b Minos Relic!")
-                    unlockAchievement(5) // b2b relic
+                        sleep(200) {
+                            if (sboData.b2bChimLs && sboData.inqsSinceLsChim == 1) {
+                                Chat.chat("§6[SBO] §cb2b2b Lootshare Chimera!")
+                                unlockAchievement(67) // b2b2b chim ls
+                            }
+                            if (sboData.inqsSinceLsChim == 1 && !sboData.b2bChimLs) {
+                                Chat.chat("§6[SBO] §cb2b Lootshare Chimera!")
+                                sboData.b2bChimLs = true
+                                unlockAchievement(65) // b2b chim ls
+                            }
+                            sboData.inqsSinceLsChim = 0
+                        }
+                    }
+
+                    val customChimMsg = Helper.checkCustomChimMessage(magicfind)
+                    if (customChimMsg.first) {
+                        Chat.chat(customChimMsg.second)
+                        announceLootToParty("Chimera!", customChimMsg.second, true)
+                    } else {
+                        announceLootToParty("Chimera!", "Chimera!$mfPrefix")
+                    }
                 }
-                if (isLootShare) {
-                    Chat.chat("§6[SBO] §cLootshared a Minos Relic!")
-                    unlockAchievement(17) // relic ls
+                drop.contains("Brain Food") -> { // todo: add achievements for food, drop sound
+                    onRareDropFromMob("Brain Food", true, true, true, magicfind)
+                    if (!isLootShare) {
+                        // normal brain food
+                        if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.sphinxSinceFood} §eSphinx to get Brain Food!")
+
+                        if (sboData.b2bInq && sboData.sphinxSinceFood == 1) {
+                            Chat.chat("§6[SBO] §cb2b2b Brain Food!")
+                            unlockAchievement(9) // b2b2b food
+                        }
+                        if (sboData.sphinxSinceFood == 1 && !sboData.b2bInq) {
+                            Chat.chat("§6[SBO] §cb2b Brain Food!")
+                            sboData.b2bInq = true
+                            unlockAchievement(8) // b2b food
+                        }
+                        sboData.sphinxSinceFood = 0
+                    } else {
+                        // lootshare brain food
+                        if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.sphinxSinceFood} §eSphinx to lootshare Brain Food!")
+
+                        sleep(200) {
+                            if (sboData.b2bFoodLs && sboData.sphinxSinceFood == 1) {
+                                Chat.chat("§6[SBO] §cb2b2b Lootshare Brain Food!")
+                            }
+                            if (sboData.sphinxSinceFood == 1 && !sboData.b2bFoodLs) {
+                                Chat.chat("§6[SBO] §cb2b Lootshare Brain Food!")
+                                sboData.b2bFoodLs = true
+                            }
+                            sboData.sphinxSinceLsFood = 0
+                        }
+                    }
                 }
-                sboData.champsSinceRelic = 0
-            } else if (drop.contains("Crown of Greed")) {
-                onRareDropFromMob("Crown of Greed", false, false, false, magicfind)
-            } else if (drop.contains("Washed-up Souvenir")) {
-                onRareDropFromMob("Washed-up Souvenir", false, false, false, magicfind)
-            } else if (drop.contains("Dwarf Turtle Shelmet")) {
-                onRareDropFromMob("Dwarf Turtle Shelmet", false, false, false, magicfind)
-            } else if (drop.contains("Crochet Tiger Plushie")) {
-                onRareDropFromMob("Crochet Tiger Plushie", false, false, false, magicfind)
-            } else if (drop.contains("Antique Remedies")) {
-                onRareDropFromMob("Antique Remedies", false, false, false, magicfind)
-            } else if (drop.contains("Cretan Urn")) {
-                onRareDropFromMob("Cretan Urn", false, false, false, magicfind)
+                drop.contains("Daedalus Stick") -> {
+                    playCustomSound(Customization.stickSound[0], Customization.stickVolume)
+                    onRareDropFromMob("Daedalus Stick", true, true, false, magicfind)
+
+                    if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.minotaursSinceStick} §eMinotaurs to get a Daedalus Stick!")
+
+                    if (sboData.b2bStick && sboData.minotaursSinceStick == 1) {
+                        Chat.chat("§6[SBO] §cb2b2b Daedalus Stick!")
+                        unlockAchievement(4) // b2b2b stick
+                    }
+                    if (sboData.minotaursSinceStick == 1 && !sboData.b2bStick) {
+                        Chat.chat("§6[SBO] §cb2b Daedalus Stick!")
+                        sboData.b2bStick = true
+                        unlockAchievement(3) // b2b stick
+                    }
+                    sboData.minotaursSinceStick = 0
+                }
+                drop.contains("Minos Relic") -> {
+                    playCustomSound(Customization.relicSound[0], Customization.relicVolume)
+                    onRareDropFromMob("Minos Relic", true, true, false, magicfind)
+
+                    if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.champsSinceRelic} §eChampions to get a Minos Relic!")
+
+                    if (sboData.champsSinceRelic == 1) {
+                        Chat.chat("§6[SBO] §cb2b Minos Relic!")
+                        unlockAchievement(5) // b2b relic
+                    }
+                    if (isLootShare) {
+                        Chat.chat("§6[SBO] §cLootshared a Minos Relic!")
+                        unlockAchievement(17) // relic ls
+                    }
+                    sboData.champsSinceRelic = 0
+                }
+                drop.contains("Crown of Greed") -> onRareDropFromMob("Crown of Greed", false, false, false, magicfind)
+                drop.contains("Washed-up Souvenir") -> onRareDropFromMob("Washed-up Souvenir", false, false, false, magicfind)
+                drop.contains("Dwarf Turtle Shelmet") -> onRareDropFromMob("Dwarf Turtle Shelmet", false, false, false, magicfind)
+                drop.contains("Crochet Tiger Plushie") -> onRareDropFromMob("Crochet Tiger Plushie", false, false, false, magicfind)
+                drop.contains("Antique Remedies") -> onRareDropFromMob("Antique Remedies", false, false, false, magicfind)
+                drop.contains("Cretan Urn") -> onRareDropFromMob("Cretan Urn", false, false, false, magicfind)
+                drop.contains("Hilt of Revelations") -> onRareDropFromMob("Hilt of Revelations", false, false, false, magicfind)
             }
             SboDataObject.save("SboData")
             true
         }
     }
 
+    // todo: show title and announce to party based on value of the item
     fun onRareDropFromMob(item: String, title: Boolean, partyAnnounce: Boolean, trackLootshare: Boolean, magicFind: Int, amount: Int = 1) {
         val itemId = item.uppercase().replace(" ", "_").replace("-", "_")
         var mfPrefix = ""
@@ -730,12 +732,29 @@ object DianaTracker {
                 "Sphinx" -> onRareDropFromMob("Sphinx Shard", true, true, false, 0, amount)
                 "Minotaur" -> onRareDropFromMob("Minotaur Shard", true, false, false, 0, amount)
                 "Cretan Bull" -> trackItem("CRETAN_BULL_SHARD", amount)
+                "Harpy" -> trackItem("HARPY_SHARD", amount)
+            }
+            true
+        }
+
+        Register.onChatMessageCancable(Pattern.compile("^(.*?) You charmed a (.*?) and captured its §9Shard§7.$", Pattern.DOTALL)) { message, matchResult ->
+            val shard = matchResult.group(2).removeFormatting()
+            val amount = 1
+            when (shard) {
+                "King Minos" -> onRareDropFromMob("King Minos Shard", true, true, false, 0, amount)
+                "Sphinx" -> onRareDropFromMob("Sphinx Shard", true, true, false, 0, amount)
+                "Minotaur" -> onRareDropFromMob("Minotaur Shard", true, false, false, 0, amount)
+                "Cretan Bull" -> trackItem("CRETAN_BULL_SHARD", amount)
+                "Harpy" -> trackItem("HARPY_SHARD", amount)
             }
             true
         }
     }
 
     fun trackMob(item: String, amount: Int) {
+        if (isMobOnCooldown.getOrDefault(item, false)) return
+        isMobOnCooldown[item] = true
+
         trackItem(item, amount)
         trackItem("TOTAL_MOBS", amount)
         sboData.mobsSinceInq += amount
@@ -747,6 +766,10 @@ object DianaTracker {
         sboData.mobsSinceSphinx += amount
         if (sboData.mobsSinceSphinx >= 2) sboData.b2bSphinx = false
         SboDataObject.save("SboData")
+
+        sleep(500) {
+            isMobOnCooldown[item] = false
+        }
     }
 
     fun trackItem(item: String, amount: Int, fromInq: Boolean = false) {
@@ -780,6 +803,7 @@ object DianaTracker {
             "SPHINX_SHARD" -> tracker.items.SPHINX_SHARD += amount
             "MINOTAUR_SHARD" -> tracker.items.MINOTAUR_SHARD += amount
             "CRETAN_BULL_SHARD" -> tracker.items.CRETAN_BULL_SHARD += amount
+            "HARPY_SHARD" -> tracker.items.HARPY_SHARD += amount
 
             // ITEMS
             "BRAIDED_GRIFFIN_FEATHER" -> tracker.items.BRAIDED_GRIFFIN_FEATHER += amount // todo: title, since und party message // drops from treasure burrow

@@ -73,7 +73,7 @@ object WaypointManager {
             val mob = trailing.replace("|", "").trim().lowercase()
             val playername = Player.getName() ?: ""
             if (!channel.contains("Guild")) {
-                if ((!trailing.startsWith(" ") || rareMobs.contains(mob) || Diana.allWaypointsAreInqs) && Diana.receiveInq && checkDiana()) {
+                if ((!trailing.startsWith(" ") || rareMobs.contains(mob) || Diana.allWaypointsAreInqs) && Diana.receiveRareMob && checkDiana()) {
                     when (mob) { // todo: add custom sounds per mob
                         "minos inquisitor", "inquisitor", "inq" -> {
                             Helper.showTitle("§r§6§l<§b§l§kO§6§l> §b§lINQUISITOR! §6§l<§b§l§kO§6§l>", player, 0, 90, 20)

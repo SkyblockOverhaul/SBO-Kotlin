@@ -287,13 +287,13 @@ object Diana : CategoryKt("Diana") {
     }
 
     var shareRareMob by boolean(true) {
-        this.name = Translated("Share Inquisitor")
-        this.description = Translated("Sends the coordinates of the inquisitor to party chat when it spawns")
+        this.name = Translated("Share Rare-Mob")
+        this.description = Translated("Sends the coordinates of rare mobs(King, Manti, Sphinx, Inq)to your party")
     }
 
-    var receiveInq by boolean(true) {
-        this.name = Translated("Receive Inquisitor")
-        this.description = Translated("Create a waypoint when someone in your party shares an inquisitor")
+    var receiveRareMob by boolean(true) {
+        this.name = Translated("Receive Rare-Mob")
+        this.description = Translated("Create a waypoint when someone in your party shares a rare mob(King, Manti, Sphinx, Inq)")
     }
 
     var allWaypointsAreInqs by boolean(false) {
