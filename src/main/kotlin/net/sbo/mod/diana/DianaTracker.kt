@@ -211,6 +211,7 @@ object DianaTracker {
     fun trackMobsWithChat() {
         Register.onChatMessageCancable(Pattern.compile("(.*?) §eYou dug (.*?)§2(.*?)§e!(.*?)$", Pattern.DOTALL)) { message, matchResult ->
             val mob = matchResult.group(3)
+            if (isMobOnCooldown.getOrDefault(mob, false)) return@onChatMessageCancable !QOL.dianaMessageHider
             when (mob) {
                 "King Minos" -> {
                     DianaMobDetect.onRareSpawn(mob)
