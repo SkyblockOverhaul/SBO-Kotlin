@@ -135,6 +135,14 @@ object DianaMobDetect {
 
     fun onRareSpawn(mob: String) {
         if (Diana.shareRareMob) {
+            val mobType: Diana.ShareList = when (mob) {
+                "Minos Inquisitor" -> Diana.ShareList.INQ
+                "King Minos" -> Diana.ShareList.KING
+                "Sphinx" -> Diana.ShareList.SPHINX
+                "Manticore" -> Diana.ShareList.MANTICORE
+                else -> return
+            }
+            if (mobType !in Diana.ShareMobs) return
             val playerPos = Player.getLastPosition()
             Chat.command("pc x: ${playerPos.x.roundToInt()}, y: ${playerPos.y.roundToInt() - 1}, z: ${playerPos.z.roundToInt()} | $mob")
         }

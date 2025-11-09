@@ -79,7 +79,7 @@ object Customization : CategoryKt("Customization") {
     var waypointTextScale by float(0.7f) {
         this.name = Translated("Waypoint Text Scale")
         this.description = Translated("Scale of the waypoint text")
-        this.range = 0.5f..2.0f
+        this.range = 0.3f..2.0f
         this.slider = true
     }
 

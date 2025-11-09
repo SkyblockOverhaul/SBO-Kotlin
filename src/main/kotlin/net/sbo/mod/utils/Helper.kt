@@ -16,6 +16,7 @@ import net.sbo.mod.utils.data.SboDataObject
 import kotlin.concurrent.thread
 import net.sbo.mod.utils.data.DianaItemsData
 import net.sbo.mod.utils.data.DianaMobsData
+import net.sbo.mod.utils.data.npcSellValueMap
 import net.sbo.mod.utils.data.HypixelBazaarResponse
 import net.sbo.mod.utils.data.Item
 import net.sbo.mod.utils.events.Register
@@ -498,8 +499,12 @@ object Helper {
     fun getItemPrice(sbId: String, amount: Int = 1): Long {
         val id = if (sbId == "CHIMERA") "ENCHANTMENT_ULTIMATE_CHIMERA_1" else sbId
         var ahPrice = priceDataAh[id]?.toDouble() ?: 0.0
-        if (id == "CROWN_OF_GREED")
-            ahPrice = if (ahPrice < 1000000.0) 1000000.0 else ahPrice
+        if (npcSellValueMap.containsKey(id)) {
+            val npcPrice = npcSellValueMap[id]?.toDouble() ?: 0.0
+            if (npcPrice > ahPrice) {
+                ahPrice = npcPrice
+            }
+        }
 
         val bazaarPrice = if (Diana.bazaarSettingDiana == Diana.SettingDiana.INSTASELL) {
             priceDataBazaar?.products?.get(id)?.quick_status?.sellPrice

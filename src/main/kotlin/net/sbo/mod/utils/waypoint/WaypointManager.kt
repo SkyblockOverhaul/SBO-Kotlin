@@ -4,6 +4,9 @@ import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.sbo.mod.diana.PreciseGuessBurrow
 import net.minecraft.client.MinecraftClient
+import net.sbo.mod.diana.DianaMobDetect
+import net.sbo.mod.diana.DianaTracker
+import net.sbo.mod.overlays.DianaMobs
 import net.sbo.mod.settings.categories.Customization
 import net.sbo.mod.utils.render.WaypointRenderer
 import net.sbo.mod.settings.categories.Diana
@@ -53,8 +56,7 @@ object WaypointManager {
         Register.command("sbosendping") { args ->
             val playerPos = Player.getLastPosition()
             if (args.isNotEmpty()) {
-                val playerName = args[0]
-                Chat.command("pc x: ${playerPos.x.roundToInt()}, y: ${playerPos.y.roundToInt() - 1}, z: ${playerPos.z.roundToInt()} | ${args[0].trim()}")
+                DianaMobDetect.onRareSpawn(args[0])
             } else
                 Chat.command("pc x: ${playerPos.x.roundToInt()}, y: ${playerPos.y.roundToInt() - 1}, z: ${playerPos.z.roundToInt()}")
         }
