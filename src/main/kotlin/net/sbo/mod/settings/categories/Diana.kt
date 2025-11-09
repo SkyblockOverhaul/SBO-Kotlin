@@ -4,6 +4,7 @@ import com.teamresourceful.resourcefulconfigkt.api.CategoryKt
 import com.teamresourceful.resourcefulconfigkt.api.ObservableEntry
 import net.sbo.mod.overlays.DianaLoot
 import net.sbo.mod.overlays.DianaMobs
+import net.sbo.mod.settings.categories.General.HideOwnWaypoints
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.waypoint.AdditionalHubWarps
@@ -11,6 +12,10 @@ import net.sbo.mod.utils.waypoint.AdditionalHubWarps
 
 
 object Diana : CategoryKt("Diana") {
+    enum class ShareList {
+        INQ, MANTICORE, KING, SPHINX
+    }
+
     enum class SettingDiana {
         INSTASELL, SELLOFFER;
 
@@ -282,7 +287,7 @@ object Diana : CategoryKt("Diana") {
 
     init {
         separator {
-            this.title = "Inquistor"
+            this.title = "Rare Mobs"
         }
     }
 
@@ -291,36 +296,41 @@ object Diana : CategoryKt("Diana") {
         this.description = Translated("Sends the coordinates of rare mobs(King, Manti, Sphinx, Inq)to your party")
     }
 
+    var ShareMobs by select(ShareList.INQ, ShareList.MANTICORE, ShareList.KING, ShareList.SPHINX) {
+        this.name = Translated("Wich Mobs to Share")
+        this.description = Translated("Select wich mobs to share")
+    }
+
     var receiveRareMob by boolean(true) {
         this.name = Translated("Receive Rare-Mob")
         this.description = Translated("Create a waypoint when someone in your party shares a rare mob(King, Manti, Sphinx, Inq)")
     }
 
     var allWaypointsAreInqs by boolean(false) {
-        this.name = Translated("All Waypoints From Chat Are Inqs")
-        this.description = Translated("All coordinates from chat are considered Inquisitor waypoints (only works in Hub and during Diana event)")
+        this.name = Translated("All Waypoints are Rare Mobs")
+        this.description = Translated("All coordinates from chat are considered rare mobs(King, Manti, Sphinx, Inq) only works in hub during diana")
     }
 
     var announceKilltext by strings("") {
-        this.name = Translated("Send Text On Inq Spawn")
-        this.description = Translated("Sends a text on inq spawn 5 seconds after spawn, use {since} for mobs since inq, {chance} for inq chance")
+        this.name = Translated("Send Text On Rare Mob Spawn")
+        this.description = Translated("Sends a text on Rare Mob spawn 5 seconds after spawn, use {since} for mobs since mob, {chance} for mob chance")
     }
 
     var announceCocoon by boolean(false) {
-        this.name = Translated("Send Text On Inq Cocoon")
-        this.description = Translated("Sends a text on inq cocoon")
+        this.name = Translated("Send Text On Cocoon")
+        this.description = Translated("Sends a text on cocoon")
     }
 
     var cocoonTitle by boolean(false) {
-        this.name = Translated("Show Title On Inq Cocoon")
-        this.description = Translated("Shows a title on inq cocoon")
+        this.name = Translated("Show Title On Cocoon")
+        this.description = Translated("Shows a title on cocoon")
     }
 
     init {
         button {
-            title = "Send Test Inq Message"
+            title = "Send Test Message"
             text = "Send Test"
-            description = "Sends a test message for the inquisitor spawn message"
+            description = "Sends a test message for the Rare mob spawn message"
             onClick {
                 Chat.chat(announceKilltext[0])
             }

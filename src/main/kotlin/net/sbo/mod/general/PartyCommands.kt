@@ -188,7 +188,7 @@ object PartyCommands {
                         Chat.command("pc Chimera LS: $chimsLs ($percent%)")
                     }
                 }
-                "!core, !maanticore" -> {
+                "!core", "!manticore" -> {
                     if (!settings.dianaPartyCommands) return@onChatMessage
                     val coreCount = dianaTrackerMayor.items.MANTI_CORE
                     val percent = calcPercentOne(dianaTrackerMayor.items, dianaTrackerMayor.mobs, "MANTI_CORE", "MANTICORE")
