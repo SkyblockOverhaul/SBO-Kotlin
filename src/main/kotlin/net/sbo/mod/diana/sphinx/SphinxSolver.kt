@@ -85,5 +85,9 @@ object SphinxSolver {
             "What does Junker Joel collect?",
             "Junk"
         ))
+        questions.add(SphinxQuestion(
+            "Where is the Titanoboa found?",
+            "Backwater Bayou"
+        ))
     }
 }
