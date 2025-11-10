@@ -377,7 +377,7 @@ object DianaTracker {
                     onRareDropFromMob("Shimmering Wool", true, true, true, magicfind)
                     if (!isLootShare) {
                         // normal wool
-                        if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.kingSinceWool} §eManticores to get Shimmering Wool!")
+                        if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.kingSinceWool} §eKing Minos to get Shimmering Wool!")
 
                         if (sboData.b2bWool && sboData.kingSinceWool == 1) {
                             Chat.chat("§6[SBO] §cb2b2b Shimmering Wool!")
@@ -389,7 +389,7 @@ object DianaTracker {
                         sboData.kingSinceWool = 0
                     } else {
                         // lootshare wool
-                        if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.kingSinceLsWool} §eManticores to lootshare Shimmering Wool!")
+                        if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.kingSinceLsWool} §eKing Minos to lootshare Shimmering Wool!")
 
                         sleep(200) {
                             if (sboData.b2bWoolLs && sboData.kingSinceLsWool == 1) {
