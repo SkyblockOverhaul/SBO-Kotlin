@@ -499,7 +499,7 @@ object DianaTracker {
                             if (sboData.inqsSinceLsChim == 1 && !sboData.b2bChimLs) {
                                 Chat.chat("§6[SBO] §cb2b Lootshare Chimera!")
                                 sboData.b2bChimLs = true
-                                unlockAchievement(65) // b2b chim ls
+                                unlockAchievement(66) // b2b chim ls
                             }
                             sboData.inqsSinceLsChim = 0
                         }
