@@ -297,7 +297,7 @@ object Diana : CategoryKt("Diana") {
     }
 
     var ShareMobs by select(ShareList.INQ, ShareList.MANTICORE, ShareList.KING, ShareList.SPHINX) {
-        this.name = Translated("Wich Mobs to Share")
+        this.name = Translated("Which Mobs to Share")
         this.description = Translated("Select wich mobs to share")
     }
 

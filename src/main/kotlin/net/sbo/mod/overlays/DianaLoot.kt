@@ -83,7 +83,7 @@ object DianaLoot {
         LootItemData("GRIFFIN_FEATHER", "Griffin Feather", GOLD),
         LootItemData("MYTHOS_FRAGMENT", "Mytho Fragment", GOLD),
         LootItemData("CRETAN_URN", "Cretan Urn", DARK_GREEN),
-        LootItemData("DWARF_TURTLE_SHELMET", "Dwarf Turtle Helmet", DARK_GREEN),
+        LootItemData("DWARF_TURTLE_SHELMET", "Dwarf Turtle Shelmet", DARK_GREEN),
         LootItemData("CROCHET_TIGER_PLUSHIE", "Crochet Tiger Plushie", DARK_GREEN),
         LootItemData("ANTIQUE_REMEDIES", "Antique Remedies", DARK_GREEN),
         LootItemData("CRETAN_BULL_SHARD", "Cretan Bull Shard", DARK_GREEN),
