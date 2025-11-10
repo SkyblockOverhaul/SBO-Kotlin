@@ -521,12 +521,10 @@ object DianaTracker {
 
                         if (sboData.b2bInq && sboData.sphinxSinceFood == 1) {
                             Chat.chat("§6[SBO] §cb2b2b Brain Food!")
-                            unlockAchievement(9) // b2b2b food
                         }
                         if (sboData.sphinxSinceFood == 1 && !sboData.b2bInq) {
                             Chat.chat("§6[SBO] §cb2b Brain Food!")
                             sboData.b2bInq = true
-                            unlockAchievement(8) // b2b food
                         }
                         sboData.sphinxSinceFood = 0
                     } else {
