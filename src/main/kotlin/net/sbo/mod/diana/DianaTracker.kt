@@ -42,6 +42,7 @@ object DianaTracker {
     private val otherDrops = listOf("ENCHANTED_ANCIENT_CLAW", "ANCIENT_CLAW", "ENCHANTED_GOLD")
     private val sackDrops = listOf("Enchanted Gold", "Ancient Claw", "Enchanted Ancient Claw")
     private val isMobOnCooldown: MutableMap<String, Boolean> = mutableMapOf()
+    private val isItemOnCooldown: MutableMap<String, Boolean> = mutableMapOf()
 
     private val lootAnnouncerBuffer: MutableList<String> = mutableListOf()
     private var lootAnnouncerBool: Boolean = false
@@ -592,6 +593,7 @@ object DianaTracker {
 
     // todo: show title and announce to party based on value of the item
     fun onRareDropFromMob(item: String, title: Boolean, partyAnnounce: Boolean, trackLootshare: Boolean, magicFind: Int, amount: Int = 1) {
+        if (isItemOnCooldown.getOrDefault(item, false)) return
         val itemId = item.uppercase().replace(" ", "_").replace("-", "_")
         var mfPrefix = ""
         if (magicFind > 0) mfPrefix = " (+$magicFind ✯ Magic Find)"
@@ -774,6 +776,9 @@ object DianaTracker {
     }
 
     fun trackItem(item: String, amount: Int, fromInq: Boolean = false) {
+        if (isItemOnCooldown.getOrDefault(item, false)) return
+        isItemOnCooldown[item] = true
+
         checkMayorTracker()
         val itemName = Helper.toUpperSnakeCase(item)
         if (itemName == "MINOS_INQUISITOR_LS") sboData.inqsSinceLsChim += 1
@@ -795,6 +800,10 @@ object DianaTracker {
         SboTimerManager.updateAllActivity()
         AchievementManager.trackAchievementsItem(dianaTrackerMayor)
         AchievementManager.trackSince()
+
+        sleep(500) {
+            isItemOnCooldown[item] = false
+        }
     }
 
     fun trackOne(tracker: DianaTracker, item: String, amount: Int, fromInq: Boolean = false) {
