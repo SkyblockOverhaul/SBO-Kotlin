@@ -126,7 +126,7 @@ object WaypointManager {
             closestBurrow = getClosestWaypoint(playerPos, "burrow") ?: (null to 1000.0)
             closestGuess = getClosestWaypoint(playerPos, "guess") ?: (null to 1000.0)
 
-            val inqWps = getWaypointsOfType("rareMob")
+            val rareWp = getWaypointsOfType("rareMob")
 
             val posP = SboVec(playerPos.x, playerPos.y, playerPos.z).roundLocationToBlock()
             val guessesToRemove = getGuessWaypoints()
@@ -137,6 +137,15 @@ object WaypointManager {
                 }
                 .toList()
 
+            if (Diana.removeRareMobwaypoint) {
+                val rareMobsToRemove = rareWp
+                    .filter { waypoint ->
+                        waypoint.distanceToPlayer() < 3.0
+                    }
+                    .toList()
+                rareMobsToRemove.forEach { waypoint -> removeWaypoint(waypoint) }
+            }
+
             guessesToRemove.forEach { waypoint ->
                 removeWaypoint(waypoint)
             }
@@ -146,12 +155,12 @@ object WaypointManager {
                     removeWaypoint(waypoint)
                 }
 
-                waypoint.line = closestBurrow.first == waypoint && Diana.burrowLine && closestBurrow.second <= 60 && inqWps.isEmpty()
+                waypoint.line = closestBurrow.first == waypoint && Diana.burrowLine && closestBurrow.second <= 60 && rareWp.isEmpty()
 
-                waypoint.format(inqWps, closestBurrow.second)
+                waypoint.format(rareWp, closestBurrow.second)
             }
 
-            guessWp?.format(inqWps, closestBurrow.second)
+            guessWp?.format(rareWp, closestBurrow.second)
         }
 
         Register.onTick(1) { _ ->
