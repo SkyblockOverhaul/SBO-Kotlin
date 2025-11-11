@@ -289,6 +289,11 @@ object Diana : CategoryKt("Diana") {
         this.description = Translated("Removes the guess waypoint when you are within this distance of it (0 to disable)")
     }
 
+    var removeRareMobwaypoint by boolean(true) {
+        this.name = Translated("Remove Rare Mob Waypoint when near")
+        this.description = Translated("Removes the rare mob waypoint when you are within 3 blocks of it")
+    }
+
     init {
         separator {
             this.title = "Rare Mobs"
