@@ -4,6 +4,9 @@ import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.sbo.mod.diana.PreciseGuessBurrow
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.world.ClientWorld
+import net.minecraft.util.math.BlockPos
+import net.sbo.mod.SBOKotlin
 import net.sbo.mod.diana.DianaMobDetect
 import net.sbo.mod.diana.DianaTracker
 import net.sbo.mod.overlays.DianaMobs
@@ -56,7 +59,7 @@ object WaypointManager {
         Register.command("sbosendping") { args ->
             val playerPos = Player.getLastPosition()
             if (args.isNotEmpty()) {
-                DianaMobDetect.onRareSpawn(args[0])
+                Chat.command("pc x: ${playerPos.x.roundToInt()}, y: ${playerPos.y.roundToInt() - 1}, z: ${playerPos.z.roundToInt()} | ${args.joinToString(" ")}")
             } else
                 Chat.command("pc x: ${playerPos.x.roundToInt()}, y: ${playerPos.y.roundToInt() - 1}, z: ${playerPos.z.roundToInt()}")
         }
@@ -66,16 +69,27 @@ object WaypointManager {
         ) { message, match ->
             val channel = match.groups["channel"]?.value ?: "Unknown"
             val player = match.groups["playerName"]?.value ?: "Unknown"
+            val world = SBOKotlin.mc.world ?: return@onChatMessage
 
-            val x = match.groups["x"]?.value?.toIntOrNull() ?: 0.0
-            val y = match.groups["y"]?.value?.toIntOrNull() ?: 0.0
-            val z = match.groups["z"]?.value?.toIntOrNull() ?: 0.0
+            val x = match.groups["x"]?.value?.toIntOrNull() ?: 0
+            var y = match.groups["y"]?.value?.toIntOrNull() ?: 0
+            val z = match.groups["z"]?.value?.toIntOrNull() ?: 0
+            y = findBlock(world, x, y, z)
 
             val trailing = match.groups["trailing"]?.value ?: ""
             val mob = trailing.replace("|", "").trim().lowercase()
             val playername = Player.getName() ?: ""
             if (!channel.contains("Guild")) {
                 if ((!trailing.startsWith(" ") || rareMobs.contains(mob) || Diana.allWaypointsAreInqs) && Diana.receiveRareMob && checkDiana()) {
+                    val mobType: Diana.ReceiveList = when (mob) {
+                        "minos inquisitor", "inquisitor", "inq" -> Diana.ReceiveList.INQ
+                        "king minos", "king" -> Diana.ReceiveList.KING
+                        "manticore" -> Diana.ReceiveList.MANTICORE
+                        "sphinx" -> Diana.ReceiveList.SPHINX
+                        else -> Diana.ReceiveList.OTHER
+                    }
+                    if (mobType !in Diana.ReceiveMobs) return@onChatMessage
+
                     when (mob) { // todo: add custom sounds per mob
                         "minos inquisitor", "inquisitor", "inq" -> {
                             Helper.showTitle("§r§6§l<§b§l§kO§6§l> §b§lINQUISITOR! §6§l<§b§l§kO§6§l>", player, 0, 90, 20)
@@ -425,5 +439,20 @@ object WaypointManager {
                 tryWarp = false
             }
         }
+    }
+
+    fun findBlock(world: ClientWorld, x: Int, y: Int, z: Int): Int {
+        val originalY = y
+        var currentY = y
+        while (currentY > world.bottomY) {
+            val pos = BlockPos(x, currentY, z)
+            val blockState = world.getBlockState(pos)
+            if (!blockState.isAir) {
+                return currentY
+            }
+            currentY--
+        }
+        // fallback if no block found
+        return originalY
     }
 }

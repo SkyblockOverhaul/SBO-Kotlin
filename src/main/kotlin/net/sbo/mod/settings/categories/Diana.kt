@@ -16,6 +16,10 @@ object Diana : CategoryKt("Diana") {
         INQ, MANTICORE, KING, SPHINX
     }
 
+    enum class ReceiveList {
+        INQ, MANTICORE, KING, SPHINX, OTHER
+    }
+
     enum class SettingDiana {
         INSTASELL, SELLOFFER;
 
@@ -297,13 +301,21 @@ object Diana : CategoryKt("Diana") {
     }
 
     var ShareMobs by select(ShareList.INQ, ShareList.MANTICORE, ShareList.KING, ShareList.SPHINX) {
-        this.name = Translated("Which Mobs to Share")
+        this.name = Translated("Select which Mobs to Share")
         this.description = Translated("Select wich mobs to share")
     }
 
     var receiveRareMob by boolean(true) {
         this.name = Translated("Receive Rare-Mob")
         this.description = Translated("Create a waypoint when someone in your party shares a rare mob(King, Manti, Sphinx, Inq)")
+    }
+
+    var ReceiveMobs by select(ReceiveList.INQ, ReceiveList.MANTICORE, ReceiveList.KING, ReceiveList.SPHINX, ReceiveList.OTHER) {
+        this.name = Translated("Wich Mobs to Receive")
+        this.description = Translated(
+        "Select which mobs to receive\n" +
+            "§bOTHER = Rare mobs from players that dont ping with sbo (mainly skyhanni)"
+        )
     }
 
     var allWaypointsAreInqs by boolean(false) {
