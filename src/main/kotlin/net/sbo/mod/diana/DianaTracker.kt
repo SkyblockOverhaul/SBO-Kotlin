@@ -60,6 +60,7 @@ object DianaTracker {
             resetMayorTracker()
             DianaMobs.updateLines()
             DianaLoot.updateLines()
+            SboTimerManager.timerMayor.reset()
             SboTimerManager.activeTimers.forEach { it.pause() }
         }
 
