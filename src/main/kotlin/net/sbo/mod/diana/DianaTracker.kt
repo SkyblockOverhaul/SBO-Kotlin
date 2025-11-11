@@ -378,7 +378,7 @@ object DianaTracker {
                     onRareDropFromMob("Shimmering Wool", true, true, true, magicfind)
                     if (!isLootShare) {
                         // normal wool
-                        if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.kingSinceWool} §eManticores to get Shimmering Wool!")
+                        if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.kingSinceWool} §eKing Minos to get Shimmering Wool!")
 
                         if (sboData.b2bWool && sboData.kingSinceWool == 1) {
                             Chat.chat("§6[SBO] §cb2b2b Shimmering Wool!")
@@ -390,7 +390,7 @@ object DianaTracker {
                         sboData.kingSinceWool = 0
                     } else {
                         // lootshare wool
-                        if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.kingSinceLsWool} §eManticores to lootshare Shimmering Wool!")
+                        if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.kingSinceLsWool} §eKing Minos to lootshare Shimmering Wool!")
 
                         sleep(200) {
                             if (sboData.b2bWoolLs && sboData.kingSinceLsWool == 1) {
@@ -499,7 +499,7 @@ object DianaTracker {
                             if (sboData.inqsSinceLsChim == 1 && !sboData.b2bChimLs) {
                                 Chat.chat("§6[SBO] §cb2b Lootshare Chimera!")
                                 sboData.b2bChimLs = true
-                                unlockAchievement(65) // b2b chim ls
+                                unlockAchievement(66) // b2b chim ls
                             }
                             sboData.inqsSinceLsChim = 0
                         }
@@ -521,12 +521,10 @@ object DianaTracker {
 
                         if (sboData.b2bInq && sboData.sphinxSinceFood == 1) {
                             Chat.chat("§6[SBO] §cb2b2b Brain Food!")
-                            unlockAchievement(9) // b2b2b food
                         }
                         if (sboData.sphinxSinceFood == 1 && !sboData.b2bInq) {
                             Chat.chat("§6[SBO] §cb2b Brain Food!")
                             sboData.b2bInq = true
-                            unlockAchievement(8) // b2b food
                         }
                         sboData.sphinxSinceFood = 0
                     } else {

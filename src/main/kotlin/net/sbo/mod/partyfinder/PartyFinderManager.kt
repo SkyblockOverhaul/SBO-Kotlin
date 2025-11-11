@@ -197,7 +197,7 @@ object PartyFinderManager {
     ) {
         if (this.creatingParty) return
         this.partyReqs = reqs
-        this.partyNote = checkPartyNote(note)
+        this.partyNote = note
         this.partyType = type
         this.partySize = size
         this.usedPf = true
@@ -226,7 +226,7 @@ object PartyFinderManager {
             Http.sendGetRequest(
                 "$API_URL/createParty?uuids=${partyMember.joinToString(",").replace("-", "")}" +
                         "&reqs=$partyReqs" +
-                        "&note=$partyNote" +
+                        "&note=${checkPartyNote(partyNote)}" +
                         "&partytype=$partyType" +
                         "&partysize=$partySize" +
                         "&key=${sboData.sboKey}"
@@ -275,7 +275,7 @@ object PartyFinderManager {
             Http.sendGetRequest(
                 "$API_URL/queuePartyUpdate?uuids=${partyMember.joinToString(",").replace("-", "")}" +
                         "&reqs=$partyReqs" +
-                        "&note=$partyNote" +
+                        "&note=${checkPartyNote(partyNote)}" +
                         "&partytype=$partyType" +
                         "&partysize=$partySize" +
                         "&key=${sboData.sboKey}"
