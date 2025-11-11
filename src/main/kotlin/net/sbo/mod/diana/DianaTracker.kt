@@ -194,11 +194,11 @@ object DianaTracker {
                     sboData.mantiSinceStinger += 1
 
                     if (Diana.sendSinceMessage) {
-                        val timeSinceKing = Helper.formatTime(dianaTrackerTotal.items.TIME - sboData.lastMantiDate)
+                        val timeSinceManti = Helper.formatTime(dianaTrackerTotal.items.TIME - sboData.lastMantiDate)
                         if (sboData.lastMantiDate != 0L) {
-                            Chat.chat("§6[SBO] §eTook §c${sboData.mobsSinceKing} §eMobs and §c$timeSinceKing §eto get a King!")
+                            Chat.chat("§6[SBO] §eTook §c${sboData.mobsSinceManti} §eMobs and §c$timeSinceManti §eto get a Manticore!")
                         } else {
-                            Chat.chat("§6[SBO] §eTook §c${sboData.mobsSinceKing} §eMobs to get a King!")
+                            Chat.chat("§6[SBO] §eTook §c${sboData.mobsSinceManti} §eMobs to get a Manticore!")
                         }
                     }
                     sboData.lastMantiDate = dianaTrackerTotal.items.TIME
