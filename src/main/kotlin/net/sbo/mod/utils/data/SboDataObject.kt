@@ -20,6 +20,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import java.util.concurrent.Executors
+import java.util.concurrent.ExecutorService
 import kotlin.collections.iterator
 import kotlin.concurrent.thread
 import kotlin.reflect.KMutableProperty1
@@ -55,6 +57,12 @@ object SboDataObject {
     lateinit var SBOConfigBundle: SboConfigBundle
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
     private const val MAX_BACKUPS = 5
+
+    private val DATA_SAVER_EXECUTOR: ExecutorService = Executors.newThreadPerTaskExecutor(Thread
+            .ofVirtual()
+            .name("sbo-data-saver-thread-", 1) // sbo-data-saver-thread-1, sbo-data-saver-thread-2 etc. starting from 1 (second parameter)
+            .factory() // virtual threads are daemon by default
+    )
 
     fun init() {
         SBOConfigBundle = loadAllData("SBO")
@@ -362,7 +370,7 @@ object SboDataObject {
     }
 
     fun saveAllDataThreaded(modName: String) {
-        thread(isDaemon = true) {
+        DATA_SAVER_EXECUTOR.execute {
             SBOKotlin.logger.info("[$modName] Saving all data to disk...")
             saveAllData()
             SBOKotlin.logger.info("[$modName] All data saved successfully.")
@@ -370,7 +378,7 @@ object SboDataObject {
     }
 
     fun saveAndBackupAllDataThreaded(modName: String) {
-        thread(isDaemon = true) {
+        DATA_SAVER_EXECUTOR.execute {
             SBOKotlin.logger.info("Saving all data to disk and creating backup...")
             saveAllData()
             SBOKotlin.logger.info("All data saved successfully.")
