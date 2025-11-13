@@ -54,7 +54,7 @@ object SboDataObject {
 
     lateinit var SBOConfigBundle: SboConfigBundle
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
-    private const val MAX_BACKUPS = 5
+    private const val MAX_BACKUPS = 10
 
     fun init() {
         SBOConfigBundle = loadAllData("SBO")
@@ -69,11 +69,6 @@ object SboDataObject {
         overlayData = SBOConfigBundle.overlayData
         saveAllDataThreaded("SBO")
         savePeriodically(5)
-    }
-
-    @SboEvent
-    fun onDisconnect(event: DisconnectEvent) {
-        saveAndBackupAllDataThreaded("SBO")
     }
 
     @SboEvent
