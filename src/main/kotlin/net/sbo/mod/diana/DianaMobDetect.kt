@@ -10,6 +10,7 @@ import net.sbo.mod.utils.events.Register
 import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.settings.categories.Customization
 import net.sbo.mod.settings.categories.Diana
+import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.Helper.getSecondsPassed
 import net.sbo.mod.utils.Helper.lastCocoon
 import net.sbo.mod.utils.Helper.lastInqDeath
@@ -37,6 +38,7 @@ object DianaMobDetect {
     private val tracked = mutableMapOf<Int, ArmorStandEntity>()
     private val defeated = mutableSetOf<Int>()
     private val mobHpOverlay: Overlay = Overlay("mythosMobHp", 10f, 10f, 1f, listOf("Chat screen"), OverlayExamples.mythosMobHpExample).setCondition { Diana.mythosMobHp }
+    private val warnedMobs = mutableSetOf<Int>()
 
     fun init() {
         mobHpOverlay.init()
@@ -96,8 +98,10 @@ object DianaMobDetect {
         if (name.isEmpty() || name == "Armor Stand") return null
         if (name.contains("§2✿", ignoreCase = true)) {
             val health = extractHealth(name)
+            checkForHealthAlert(name, id, health)
             if (health != null && health <= 0 && id !in defeated) {
                 defeated.add(id)
+                warnedMobs.remove(id)
                 SBOEvent.emit(DianaMobDeathEvent(name, entity))
             }
             return OverlayTextLine(name)
@@ -131,6 +135,24 @@ object DianaMobDetect {
             }
         }
         return false
+    }
+
+    private fun checkForHealthAlert(name: String, id: Int, health: Double?) {
+        if (health == null) return
+        if (id in defeated || id in warnedMobs) return
+        val alertEnabled = when {
+            name.contains("Minos Inquisitor", ignoreCase = true) -> Diana.hpAlert > 0.0
+            name.contains("King Minos", ignoreCase = true) -> Diana.hpAlert > 0.0
+            name.contains("Sphinx", ignoreCase = true) -> Diana.hpAlert > 0.0
+            name.contains("Manticore", ignoreCase = true) -> Diana.hpAlert > 0.0
+            else -> false
+        }
+        if (!alertEnabled) return
+        val hpThreshold = if (Diana.hpAlert  > 0.0) Diana.hpAlert * 1_000_000 else 0.0
+        if (hpThreshold > 0.0 && health <= hpThreshold) {
+            showTitle("§cHP LOW!", null, 10, 40, 10)
+            warnedMobs.add(id)
+        }
     }
 
     fun onRareSpawn(mob: String) {

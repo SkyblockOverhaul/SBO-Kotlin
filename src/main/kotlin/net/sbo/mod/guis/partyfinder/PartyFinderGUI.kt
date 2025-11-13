@@ -44,8 +44,8 @@ import net.sbo.mod.utils.data.PartyPlayerStats
 import net.sbo.mod.utils.data.Reqs
 import net.sbo.mod.utils.data.SboDataObject.pfConfigState
 import net.sbo.mod.utils.events.annotations.SboEvent
-import net.sbo.mod.utils.events.impl.PartyFinderOpenEvent
-import net.sbo.mod.utils.events.impl.PartyFinderRefreshListEvent
+import net.sbo.mod.utils.events.impl.partyfinder.PartyFinderOpenEvent
+import net.sbo.mod.utils.events.impl.partyfinder.PartyFinderRefreshListEvent
 import java.awt.Color
 
 

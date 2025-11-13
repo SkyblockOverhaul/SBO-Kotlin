@@ -343,6 +343,11 @@ object Diana : CategoryKt("Diana") {
         this.description = Translated("Shows a title on cocoon")
     }
 
+    var hpAlert by double(0.0) {
+        this.name = Translated("HP Alert")
+        this.description = Translated("Sends a title alert when a Rare Mob is below the set HP value in Million (0 to disable)")
+    }
+
     init {
         button {
             title = "Send Test Message"
