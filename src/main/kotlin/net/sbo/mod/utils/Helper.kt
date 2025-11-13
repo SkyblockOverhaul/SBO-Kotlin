@@ -79,42 +79,47 @@ object Helper {
     @SboEvent
     fun onDianaMobDeath(event: DianaMobDeathEvent) {
         val dist = event.entity.distanceTo(mc.player)
-        if (event.name.contains("Minos Inquisitor")) {
-            if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedInq) {
-                hasTrackedInq = true
-                DianaTracker.trackItem("MINOS_INQUISITOR_LS", 1)
-                sleep(2000) {
-                    hasTrackedInq = false
+        when {
+            event.name.contains("Minos Inquisitor") -> {
+                if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedInq) {
+                    hasTrackedInq = true
+                    DianaTracker.trackItem("MINOS_INQUISITOR_LS", 1)
+                    sleep(2000) {
+                        hasTrackedInq = false
+                    }
                 }
+                lastInqDeath = System.currentTimeMillis()
             }
-            lastInqDeath = System.currentTimeMillis()
-        } else if (event.name.contains("King Minos")) {
-            if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedKing) {
-                hasTrackedKing = true
-                DianaTracker.trackItem("KING_MINOS_LS", 1)
-                sleep(2000) {
-                    hasTrackedKing = false
+            event.name.contains("King Minos") -> {
+                if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedKing) {
+                    hasTrackedKing = true
+                    DianaTracker.trackItem("KING_MINOS_LS", 1)
+                    sleep(2000) {
+                        hasTrackedKing = false
+                    }
                 }
+                lastKingDeath = System.currentTimeMillis()
             }
-            lastKingDeath = System.currentTimeMillis()
-        } else if (event.name.contains("Sphinx")) {
-            if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedSphinx) {
-                hasTrackedSphinx = true
-                DianaTracker.trackItem("SPHINX_LS", 1)
-                sleep(2000) {
-                    hasTrackedSphinx = false
+            event.name.contains("Sphinx") -> {
+                if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedSphinx) {
+                    hasTrackedSphinx = true
+                    DianaTracker.trackItem("SPHINX_LS", 1)
+                    sleep(2000) {
+                        hasTrackedSphinx = false
+                    }
                 }
+                lastSphinxDeath = System.currentTimeMillis()
             }
-            lastSphinxDeath = System.currentTimeMillis()
-        } else if (event.name.contains("Manticore")) {
-            if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedManti) {
-                hasTrackedManti = true
-                DianaTracker.trackItem("MANTICORE_LS", 1)
-                sleep(2000) {
-                    hasTrackedManti = false
+            event.name.contains("Manticore") -> {
+                if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedManti) {
+                    hasTrackedManti = true
+                    DianaTracker.trackItem("MANTICORE_LS", 1)
+                    sleep(2000) {
+                        hasTrackedManti = false
+                    }
                 }
+                lastMantiDeath = System.currentTimeMillis()
             }
-            lastMantiDeath = System.currentTimeMillis()
         }
 
         if (dist <= 30) {
