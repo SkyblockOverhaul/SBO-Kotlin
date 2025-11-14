@@ -35,6 +35,8 @@ import kotlin.reflect.full.memberProperties
 import java.text.DecimalFormat
 import java.util.Locale
 import java.util.regex.Pattern
+import java.util.concurrent.Executors
+import java.util.concurrent.ExecutorService
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
@@ -58,6 +60,12 @@ object Helper {
     private var prevInv = mutableMapOf<String, Item>()
     private var priceDataAh: Map<String, Long> = emptyMap()
     private var priceDataBazaar: HypixelBazaarResponse? = null
+
+    private val SBO_CALLBACK_THREAD: ExecutorService = Executors.newThreadPerTaskExecutor(Thread
+            .ofVirtual()
+            .name("sbo-callback-thread-", 1) // sbo-callback-thread-1, sbo-callback-thread-2 etc. starting from 1 (second parameter)
+            .factory() // virtual threads are daemon by default
+    )
 
     fun init() {
         Register.onChatMessageCancable(Pattern.compile("^§e§lLOOT SHARE §fYou received loot for assisting (.*?)$", Pattern.DOTALL)) { message, matchResult ->
@@ -151,7 +159,7 @@ object Helper {
      * @param callback The function to execute after sleeping.
      */
     fun sleep(milliseconds: Long, callback: () -> Unit) {
-        thread(isDaemon = true) {
+        SBO_CALLBACK_THREAD.execute {
             Thread.sleep(milliseconds)
             callback()
         }
