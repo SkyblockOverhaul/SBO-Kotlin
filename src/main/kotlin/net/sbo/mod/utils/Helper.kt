@@ -497,7 +497,11 @@ object Helper {
 
 
     fun getItemPrice(sbId: String, amount: Int = 1): Long {
-        val id = if (sbId == "CHIMERA") "ENCHANTMENT_ULTIMATE_CHIMERA_1" else if (sbId.endsWith("_SHARD")) "${sbId.substringAfterLast('_')}_${sbId.substringBeforeLast('_')}" else sbId
+        val id = when {
+            sbId == "CHIMERA" -> "ENCHANTMENT_ULTIMATE_CHIMERA_1"
+            sbId.endsWith("_SHARD") -> "${sbId.substringAfterLast('_')}_${sbId.substringBeforeLast('_')}"
+            else -> sbId
+        }
         var ahPrice = priceDataAh[id]?.toDouble() ?: 0.0
         if (npcSellValueMap.containsKey(id)) {
             val npcPrice = npcSellValueMap[id]?.toDouble() ?: 0.0
