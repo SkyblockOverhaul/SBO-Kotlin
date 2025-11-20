@@ -1,6 +1,5 @@
 package net.sbo.mod.diana
 
-import com.mojang.authlib.properties.Property
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.ProfileComponent
 import net.minecraft.entity.Entity
@@ -35,7 +34,6 @@ import net.sbo.mod.utils.overlay.Overlay
 import net.sbo.mod.utils.overlay.OverlayExamples
 import net.sbo.mod.utils.overlay.OverlayTextLine
 import java.awt.Color
-import kotlin.collections.first
 import kotlin.math.roundToInt
 
 object DianaMobDetect {
