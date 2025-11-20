@@ -8,7 +8,7 @@ import net.sbo.mod.settings.categories.General.HideOwnWaypoints
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.waypoint.AdditionalHubWarps
-
+import java.awt.Color
 
 
 object Diana : CategoryKt("Diana") {
@@ -321,6 +321,18 @@ object Diana : CategoryKt("Diana") {
         "Select which mobs to receive\n" +
             "§bOTHER = Rare mobs from players that dont ping with sbo (mainly skyhanni)"
         )
+    }
+
+    var HighightRareMobs by boolean(true) {
+        this.name = Translated("Highlight Rare Mobs")
+        this.description = Translated("Highlights rare mobs(King, Manti, Sphinx, Inq) with a glowing effect")
+    }
+
+    var HighightColor by color(
+        Color(0.0f, 0.964f, 1.0f).rgb) {
+        this.name = Translated("Highlight Color")
+        this.description = Translated("Color for the rare mob highlight effect")
+        this.allowAlpha = true
     }
 
     var allWaypointsAreInqs by boolean(false) {
