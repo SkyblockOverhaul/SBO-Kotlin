@@ -132,7 +132,7 @@ object DianaMobDetect {
     private fun checkDianaMob(entity: ArmorStandEntity, id: Int) : OverlayTextLine? {
         val name = entity.customName?.formattedString() ?: entity.name.formattedString()
         if (name.isEmpty() || name == "Armor Stand") return null
-        if (!name.contains("༕", ignoreCase = true)) return null
+        if (!name.contains("§2✿", ignoreCase = true)) return null
 
         val health = parseHealthFromName(name)
         maybeTriggerHealthAlert(name, id, health)
