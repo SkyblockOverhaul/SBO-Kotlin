@@ -9,7 +9,13 @@ package net.sbo.mod.utils.events.annotations
  *
  * The annotated function:
  * - Must have exactly one parameter, representing the event type.
- *   All event types can be found in [net.sbo.mod.utils.events.impl].
+ * Events are organized in the following packages:
+ * - [net.sbo.mod.utils.events.impl.entity]
+ * - [net.sbo.mod.utils.events.impl.game]
+ * - [net.sbo.mod.utils.events.impl.guis]
+ * - [net.sbo.mod.utils.events.impl.packets]
+ * - [net.sbo.mod.utils.events.impl.partyfinder]
+ * - [net.sbo.mod.utils.events.impl.render]
  * - Must be defined inside an `object` singleton or a `companion object`.
  *
  * The function is automatically registered with the event bus at compile time
@@ -19,7 +25,7 @@ package net.sbo.mod.utils.events.annotations
  * ```kotlin
  * @SboEvent
  * fun onSomeEvent(event: SomeEvent) {
- *     // handle the event here
+ * // handle the event here
  * }
  * ```
  *
