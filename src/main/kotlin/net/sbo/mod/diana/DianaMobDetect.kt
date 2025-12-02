@@ -2,9 +2,7 @@ package net.sbo.mod.diana
 
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.ProfileComponent
-import net.minecraft.entity.Entity
 import net.minecraft.entity.EquipmentSlot
-import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.decoration.ArmorStandEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
@@ -18,7 +16,6 @@ import net.sbo.mod.utils.Helper.lastInqDeath
 import net.sbo.mod.utils.Helper.lastKingDeath
 import net.sbo.mod.utils.Helper.lastMantiDeath
 import net.sbo.mod.utils.Helper.lastSphinxDeath
-import net.sbo.mod.utils.Helper.removeFormatting
 import net.sbo.mod.utils.Helper.showTitle
 import net.sbo.mod.utils.Helper.sleep
 import net.sbo.mod.utils.Player
@@ -79,7 +76,7 @@ object DianaMobDetect {
 
             if (Diana.HighlightRareMobs && mc.player?.canSee(mob) == true && !mob.isInvisible) {
                 mob.isSboGlowing = true
-                mob.setSboGlowColor(Color(Diana.HighightColor))
+                mob.setSboGlowColor(Color(Diana.HighlightColor))
             } else {
                 mob.isSboGlowing = false
             }
