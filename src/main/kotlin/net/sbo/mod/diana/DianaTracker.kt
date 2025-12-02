@@ -60,6 +60,7 @@ object DianaTracker {
             resetMayorTracker()
             DianaMobs.updateLines()
             DianaLoot.updateLines()
+            SboTimerManager.timerMayor.reset()
             SboTimerManager.activeTimers.forEach { it.pause() }
         }
 
@@ -112,73 +113,18 @@ object DianaTracker {
         trackShardsWithChat()
     }
 
-//    fun trackWithPickuplog(item: Item) {
-//        SBOKotlin.logger.info("debug trackWithPickuplog: itemid: |${item.itemId}|, ItemName: |${item.name}|, count: |${item.count}|, timestamp now ${System.currentTimeMillis()}, timestamp of item: |${item.creation}|, item age (senconds): |${Helper.getSecondsPassed(item.creation)}|s")
-//        val isLootShare = gotLootShareRecently(2)
-//        sleep (1000) {
-//            if (Helper.getSecondsPassed(item.creation) > 3) return@sleep
-////            if (!dianaMobDiedRecently(3)) return@sleep
-//            if (!checkDiana()) return@sleep
-//            if (item.itemId == "CHIMERA") {
-//                playCustomSound(Customization.chimSound[0], Customization.chimVolume)
-//                onRareDropFromMob("Chimera", true, false, true, 0)
-//
-//                if (!isLootShare) {
-//                    // normal chimera
-//                    if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.inqsSinceChim} §eInquisitors to get a Chimera!")
-//
-//                    if (sboData.b2bChim && sboData.inqsSinceChim == 1) {
-//                        Chat.chat("§6[SBO] §cb2b2b Chimera!")
-//                        unlockAchievement(2) // b2b2b chim
-//                    }
-//                    if (sboData.inqsSinceChim == 1 && !sboData.b2bChim) {
-//                        Chat.chat("§6[SBO] §cb2b Chimera!")
-//                        sboData.b2bChim = true
-//                        unlockAchievement(1) // b2b chim
-//                    }
-//                    if (sboData.b2bChim && sboData.b2bInq) {
-//                        unlockAchievement(75) // b2b chim from b2b inq
-//                    }
-//                    sboData.inqsSinceChim = 0
-//                } else {
-//                    // lootshare chim
-//                    if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.inqsSinceLsChim} §eInquisitors to lootshare a Chimera!")
-//
-//                    sleep(200) {
-//                        if (sboData.b2bChimLs && sboData.inqsSinceLsChim == 1) {
-//                            Chat.chat("§6[SBO] §cb2b2b Lootshare Chimera!")
-//                            unlockAchievement(67) // b2b2b chim ls
-//                        }
-//                        if (sboData.inqsSinceLsChim == 1 && !sboData.b2bChimLs) {
-//                            Chat.chat("§6[SBO] §cb2b Lootshare Chimera!")
-//                            sboData.b2bChimLs = true
-//                            unlockAchievement(65) // b2b chim ls
-//                        }
-//                        sboData.inqsSinceLsChim = 0
-//                    }
-//                }
-//
-//                val customChimMsg = Helper.checkCustomChimMessage(0)
-//                if (customChimMsg.first) {
-//                    Chat.chat(customChimMsg.second)
-//                    announceLootToParty("Chimera!", customChimMsg.second, true)
-//                } else {
-//                    if (!isLootShare) Chat.chat("§6[SBO] §6§lRARE DROP! ${item.name}!")
-//                    announceLootToParty("Chimera!", "Chimera!")
-//                }
-//
-//
-//
-//                // if (Helper.getSecondsPassed(lastInqDeath) <= 3) {
-//                //     announceLootToParty(item.itemId)
-//                //     if (!isLootShare)
-//                //         trackItem(item.itemId, item.count, true)
-//                //     else
-//                //         trackItem(item.itemId + "_LS", item.count, true)
-//                // }
-//            }
-//        }
-//    }
+    fun trackWithPickuplog(item: Item) {
+        SBOKotlin.logger.info("debug trackWithPickuplog: itemid: |${item.itemId}|, ItemName: |${item.name}|, count: |${item.count}|, timestamp now ${System.currentTimeMillis()}, timestamp of item: |${item.creation}|, item age (senconds): |${Helper.getSecondsPassed(item.creation)}|s")
+        val isLootShare = gotLootShareRecently(2)
+        sleep (1000) {
+            if (Helper.getSecondsPassed(item.creation) > 5) return@sleep
+//            if (!dianaMobDiedRecently(3)) return@sleep
+            if (!checkDiana()) return@sleep
+            when (item.itemId) {
+                "HILT_OF_REVELATIONS" -> onRareDropFromMob("HILT_OF_REVELATIONS", false, false, false, 0)
+            }
+        }
+    }
 
     fun trackWithPickuplogStackable(item: Item, amount: Int) {
         sleep (1000) {
@@ -248,11 +194,11 @@ object DianaTracker {
                     sboData.mantiSinceStinger += 1
 
                     if (Diana.sendSinceMessage) {
-                        val timeSinceKing = Helper.formatTime(dianaTrackerTotal.items.TIME - sboData.lastMantiDate)
+                        val timeSinceManti = Helper.formatTime(dianaTrackerTotal.items.TIME - sboData.lastMantiDate)
                         if (sboData.lastMantiDate != 0L) {
-                            Chat.chat("§6[SBO] §eTook §c${sboData.mobsSinceKing} §eMobs and §c$timeSinceKing §eto get a King!")
+                            Chat.chat("§6[SBO] §eTook §c${sboData.mobsSinceManti} §eMobs and §c$timeSinceManti §eto get a Manticore!")
                         } else {
-                            Chat.chat("§6[SBO] §eTook §c${sboData.mobsSinceKing} §eMobs to get a King!")
+                            Chat.chat("§6[SBO] §eTook §c${sboData.mobsSinceManti} §eMobs to get a Manticore!")
                         }
                     }
                     sboData.lastMantiDate = dianaTrackerTotal.items.TIME
@@ -729,9 +675,9 @@ object DianaTracker {
             val shard = matchResult.group(2).removeFormatting()
             val amount = matchResult.group(3).removeFormatting().toIntOrNull() ?: 0
             when (shard) {
-                "King Minos" -> onRareDropFromMob("King Minos Shard", true, true, false, 0, amount)
-                "Sphinx" -> onRareDropFromMob("Sphinx Shard", true, true, false, 0, amount)
-                "Minotaur" -> onRareDropFromMob("Minotaur Shard", true, false, false, 0, amount)
+                "King Minos" -> onRareDropFromMob("King Minos Shard", false, true, false, 0, amount)
+                "Sphinx" -> onRareDropFromMob("Sphinx Shard", false, true, false, 0, amount)
+                "Minotaur" -> onRareDropFromMob("Minotaur Shard", false, false, false, 0, amount)
                 "Cretan Bull" -> trackItem("CRETAN_BULL_SHARD", amount)
                 "Harpy" -> trackItem("HARPY_SHARD", amount)
             }

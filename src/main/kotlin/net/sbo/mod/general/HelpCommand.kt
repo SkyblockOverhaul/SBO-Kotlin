@@ -72,20 +72,30 @@ object HelpCommand {
     fun dropChances() {
         Register.command("sbodc", "sbodropchances") { args ->
             if (args.size < 2) {
-                Chat.chat("§6[SBO] §ePlease provide mf/looting values. /sbodc <mf> <looting>")
+                Chat.chat("§6[SBO] §ePlease provide mf/looting values. /sbodc <mf> <looting> <griffinrairty>")
                 return@command
             }
 
             val mf = args[0].toIntOrNull()
             val looting = args[1].toIntOrNull()
-            if (mf == null || looting == null) {
-                Chat.chat("§6[SBO] §ePlease provide valid numbers. /sbodc 500 5")
+            val rarity = args[2]
+            if (mf == null || looting == null || (rarity.isEmpty() && rarity.lowercase() !in listOf("epic", "legendary", "mythic"))) {
+                Chat.chat("§6[SBO] §ePlease provide valid numbers. /sbodc 500 5 <griffinrarity(epic/legendary/mythic)>")
                 return@command
             }
 
-            val items = listOf("Chimera" to "chim", "Stick" to "stick", "Relic" to "relic")
-            val normalChances = Helper.getChance(mf, looting)
-            val lsChances = Helper.getChance(mf, looting, true)
+            val items = when (rarity.lowercase()) {
+                "epic" -> listOf("Stick" to "stick", "Relic" to "relic")
+                "legendary" -> listOf("Chimera" to "chim", "Stick" to "stick", "Relic" to "relic", "Food" to "food")
+                "mythic" -> listOf("Chimera" to "chim", "Stick" to "stick", "Relic" to "relic", "Food" to "food", "Wool" to "wool", "Core" to "core")
+                else -> {
+                    Chat.chat("§6[SBO] §ePlease provide a valid griffin rarity: epic, legendary, mythic.")
+                    return@command
+                }
+            }
+
+            val normalChances = Helper.getChance(mf, looting, rarity)
+            val lsChances = Helper.getChance(mf, looting, rarity, true)
 
             (listOf(false, true)).forEach { isLs ->
                 val chances = if (isLs) lsChances else normalChances

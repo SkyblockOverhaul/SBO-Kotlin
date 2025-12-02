@@ -109,12 +109,12 @@ object Customization : CategoryKt("Customization") {
     }
 
     var inqSound by strings("exporb") {
-        this.name = Translated("Inquisitor Spawn Sound")
-        this.description = Translated("Set the sound that plays when an inquisitor spawns. (enter filename)")
+        this.name = Translated("Rare Spawn Sound")
+        this.description = Translated("Set the sound that plays when an rare mob spawns. (enter filename)")
     }
     var inqVolume by float(1.0f) {
-        this.name = Translated("Inquisitor Spawn Volume")
-        this.description = Translated("Set the volume of the inquisitor spawn sound")
+        this.name = Translated("Rare Spawn Volume")
+        this.description = Translated("Set the volume of the rare mob spawn sound")
         this.range = 0.0f..1.0f
         this.slider = true
     }

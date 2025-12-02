@@ -8,7 +8,7 @@ import net.sbo.mod.settings.categories.General.HideOwnWaypoints
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.waypoint.AdditionalHubWarps
-
+import java.awt.Color
 
 
 object Diana : CategoryKt("Diana") {
@@ -72,11 +72,6 @@ object Diana : CategoryKt("Diana") {
         }
     }
 
-    var focusedWarp by boolean(false) {
-        this.name = Translated("Focused Warp")
-        this.description = Translated("If enabled, you warp to the guess you look at instead of the closest one")
-    }
-
     var allowedWarps by select(AdditionalHubWarps.WIZARD, AdditionalHubWarps.DA, AdditionalHubWarps.CASTLE) {
         this.name = Translated("Add Warps")
         this.description = Translated("Select the warps you want to be able to warp to with the guess and inquisitor warp keys.")
@@ -99,6 +94,11 @@ object Diana : CategoryKt("Diana") {
         this.slider = true
         this.name = Translated("Warp Delay (<X>ms)")
         this.description = Translated("The delay bevor you can warp after guessing with spade. (0 to disable)")
+    }
+
+    var focusedWarp by boolean(false) {
+        this.name = Translated("Focused Warp")
+        this.description = Translated("If enabled, you warp to the guess you look at instead of the closest one")
     }
 
     init {
@@ -266,8 +266,8 @@ object Diana : CategoryKt("Diana") {
     }
 
     var inqLine by boolean(true) {
-        this.name = Translated("Inquisitor Line")
-        this.description = Translated("Draws line for inquisitor, Disable View Bobbing in controls if its buggy")
+        this.name = Translated("Rare Mob Line")
+        this.description = Translated("Draws line to rare mob waypoints, Disable View Bobbing in controls if its buggy")
     }
 
     var burrowLine by boolean(true) {
@@ -307,7 +307,7 @@ object Diana : CategoryKt("Diana") {
 
     var ShareMobs by select(ShareList.INQ, ShareList.MANTICORE, ShareList.KING, ShareList.SPHINX) {
         this.name = Translated("Select which Mobs to Share")
-        this.description = Translated("Select wich mobs to share")
+        this.description = Translated("Select which mobs to share")
     }
 
     var receiveRareMob by boolean(true) {
@@ -316,11 +316,23 @@ object Diana : CategoryKt("Diana") {
     }
 
     var ReceiveMobs by select(ReceiveList.INQ, ReceiveList.MANTICORE, ReceiveList.KING, ReceiveList.SPHINX, ReceiveList.OTHER) {
-        this.name = Translated("Wich Mobs to Receive")
+        this.name = Translated("Which Mobs to Receive")
         this.description = Translated(
         "Select which mobs to receive\n" +
             "§bOTHER = Rare mobs from players that dont ping with sbo (mainly skyhanni)"
         )
+    }
+
+    var HighightRareMobs by boolean(true) {
+        this.name = Translated("Highlight Rare Mobs")
+        this.description = Translated("Highlights rare mobs(King, Manti, Sphinx, Inq) with a glowing effect")
+    }
+
+    var HighightColor by color(
+        Color(0.0f, 0.964f, 1.0f).rgb) {
+        this.name = Translated("Highlight Color")
+        this.description = Translated("Color for the rare mob highlight effect")
+        this.allowAlpha = true
     }
 
     var allWaypointsAreInqs by boolean(false) {
@@ -341,6 +353,11 @@ object Diana : CategoryKt("Diana") {
     var cocoonTitle by boolean(false) {
         this.name = Translated("Show Title On Cocoon")
         this.description = Translated("Shows a title on cocoon")
+    }
+
+    var hpAlert by double(0.0) {
+        this.name = Translated("HP Alert")
+        this.description = Translated("Sends a title alert when a Rare Mob is below the set HP value in Million (0 to disable)")
     }
 
     init {

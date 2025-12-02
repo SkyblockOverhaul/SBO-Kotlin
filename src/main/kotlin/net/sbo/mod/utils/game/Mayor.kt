@@ -29,36 +29,34 @@ object Mayor {
 
     fun init() {
         Register.onTick(20) {
-            if (World.isInSkyblock()) {
-                skyblockDateString = calcSkyblockDate(System.currentTimeMillis())
-                if (skyblockDateString.isNotEmpty()) {
-                    skyblockDate = convertStringToDate(skyblockDateString)
-                    if (newMayorAtDate == null || newMayorAtDate!!.time < skyblockDate!!.time) {
-                        newMayor = true
-                        val calendar = Calendar.getInstance()
-                        calendar.time = skyblockDate!!
-                        val currentYear = calendar.get(Calendar.YEAR)
-                        val compareDate = convertStringToDate("27.3.$currentYear")
-                        if (compareDate.time > skyblockDate!!.time) {
-                            mayorElectedYear = currentYear - 1
-                            dateMayorElected = convertStringToDate("27.3.${currentYear - 1}")
-                            newMayorAtDate = convertStringToDate("27.3.$currentYear")
-                        } else {
-                            mayorElectedYear = currentYear
-                            dateMayorElected = convertStringToDate("27.3.$currentYear")
-                            newMayorAtDate = convertStringToDate("27.3.${currentYear + 1}")
-                        }
-                    }
+            skyblockDateString = calcSkyblockDate(System.currentTimeMillis())
+            if (skyblockDateString.isNotEmpty()) {
+                skyblockDate = convertStringToDate(skyblockDateString)
+                if (newMayorAtDate == null || newMayorAtDate!!.time < skyblockDate!!.time) {
+                    newMayor = true
                     val calendar = Calendar.getInstance()
                     calendar.time = skyblockDate!!
-                    sbYear = calendar.get(Calendar.YEAR)
-                }
-
-                if (skyblockDate != null) {
-                    if ((mayor === null || mayorApiError || newMayor || outDatedApi) && !refreshingMayor) {
-                        getMayor()
-                        newMayor = false
+                    val currentYear = calendar.get(Calendar.YEAR)
+                    val compareDate = convertStringToDate("27.3.$currentYear")
+                    if (compareDate.time > skyblockDate!!.time) {
+                        mayorElectedYear = currentYear - 1
+                        dateMayorElected = convertStringToDate("27.3.${currentYear - 1}")
+                        newMayorAtDate = convertStringToDate("27.3.$currentYear")
+                    } else {
+                        mayorElectedYear = currentYear
+                        dateMayorElected = convertStringToDate("27.3.$currentYear")
+                        newMayorAtDate = convertStringToDate("27.3.${currentYear + 1}")
                     }
+                }
+                val calendar = Calendar.getInstance()
+                calendar.time = skyblockDate!!
+                sbYear = calendar.get(Calendar.YEAR)
+            }
+
+            if (skyblockDate != null) {
+                if ((mayor === null || mayorApiError || newMayor || outDatedApi) && !refreshingMayor) {
+                    getMayor()
+                    newMayor = false
                 }
             }
         }

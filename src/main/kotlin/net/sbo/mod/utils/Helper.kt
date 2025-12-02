@@ -35,6 +35,8 @@ import kotlin.reflect.full.memberProperties
 import java.text.DecimalFormat
 import java.util.Locale
 import java.util.regex.Pattern
+import java.util.concurrent.Executors
+import java.util.concurrent.ExecutorService
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
@@ -59,6 +61,12 @@ object Helper {
     private var priceDataAh: Map<String, Long> = emptyMap()
     private var priceDataBazaar: HypixelBazaarResponse? = null
 
+    private val SBO_CALLBACK_THREAD: ExecutorService = Executors.newThreadPerTaskExecutor(Thread
+            .ofVirtual()
+            .name("sbo-callback-thread-", 1) // sbo-callback-thread-1, sbo-callback-thread-2 etc. starting from 1 (second parameter)
+            .factory() // virtual threads are daemon by default
+    )
+
     fun init() {
         Register.onChatMessageCancable(Pattern.compile("^§e§lLOOT SHARE §fYou received loot for assisting (.*?)$", Pattern.DOTALL)) { message, matchResult ->
             onLootshare()
@@ -79,42 +87,47 @@ object Helper {
     @SboEvent
     fun onDianaMobDeath(event: DianaMobDeathEvent) {
         val dist = event.entity.distanceTo(mc.player)
-        if (event.name.contains("Minos Inquisitor")) {
-            if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedInq) {
-                hasTrackedInq = true
-                DianaTracker.trackItem("MINOS_INQUISITOR_LS", 1)
-                sleep(2000) {
-                    hasTrackedInq = false
+        when {
+            event.name.contains("Minos Inquisitor") -> {
+                if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedInq) {
+                    hasTrackedInq = true
+                    DianaTracker.trackItem("MINOS_INQUISITOR_LS", 1)
+                    sleep(2000) {
+                        hasTrackedInq = false
+                    }
                 }
+                lastInqDeath = System.currentTimeMillis()
             }
-            lastInqDeath = System.currentTimeMillis()
-        } else if (event.name.contains("King Minos")) {
-            if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedKing) {
-                hasTrackedKing = true
-                DianaTracker.trackItem("KING_MINOS_LS", 1)
-                sleep(2000) {
-                    hasTrackedKing = false
+            event.name.contains("King Minos") -> {
+                if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedKing) {
+                    hasTrackedKing = true
+                    DianaTracker.trackItem("KING_MINOS_LS", 1)
+                    sleep(2000) {
+                        hasTrackedKing = false
+                    }
                 }
+                lastKingDeath = System.currentTimeMillis()
             }
-            lastKingDeath = System.currentTimeMillis()
-        } else if (event.name.contains("Sphinx")) {
-            if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedSphinx) {
-                hasTrackedSphinx = true
-                DianaTracker.trackItem("SPHINX_LS", 1)
-                sleep(2000) {
-                    hasTrackedSphinx = false
+            event.name.contains("Sphinx") -> {
+                if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedSphinx) {
+                    hasTrackedSphinx = true
+                    DianaTracker.trackItem("SPHINX_LS", 1)
+                    sleep(2000) {
+                        hasTrackedSphinx = false
+                    }
                 }
+                lastSphinxDeath = System.currentTimeMillis()
             }
-            lastSphinxDeath = System.currentTimeMillis()
-        } else if (event.name.contains("Manticore")) {
-            if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedManti) {
-                hasTrackedManti = true
-                DianaTracker.trackItem("MANTICORE_LS", 1)
-                sleep(2000) {
-                    hasTrackedManti = false
+            event.name.contains("Manticore") -> {
+                if (getSecondsPassed(lastLootShare) < 2 && !hasTrackedManti) {
+                    hasTrackedManti = true
+                    DianaTracker.trackItem("MANTICORE_LS", 1)
+                    sleep(2000) {
+                        hasTrackedManti = false
+                    }
                 }
+                lastMantiDeath = System.currentTimeMillis()
             }
-            lastMantiDeath = System.currentTimeMillis()
         }
 
         if (dist <= 30) {
@@ -146,7 +159,7 @@ object Helper {
      * @param callback The function to execute after sleeping.
      */
     fun sleep(milliseconds: Long, callback: () -> Unit) {
-        thread(isDaemon = true) {
+        SBO_CALLBACK_THREAD.execute {
             Thread.sleep(milliseconds)
             callback()
         }
@@ -497,7 +510,11 @@ object Helper {
 
 
     fun getItemPrice(sbId: String, amount: Int = 1): Long {
-        val id = if (sbId == "CHIMERA") "ENCHANTMENT_ULTIMATE_CHIMERA_1" else sbId
+        val id = when {
+            sbId == "CHIMERA" -> "ENCHANTMENT_ULTIMATE_CHIMERA_1"
+            sbId.endsWith("_SHARD") -> "${sbId.substringAfterLast('_')}_${sbId.substringBeforeLast('_')}"
+            else -> sbId
+        }
         var ahPrice = priceDataAh[id]?.toDouble() ?: 0.0
         if (npcSellValueMap.containsKey(id)) {
             val npcPrice = npcSellValueMap[id]?.toDouble() ?: 0.0
@@ -545,8 +562,13 @@ object Helper {
         return BigDecimal(burrowsPerHr).setScale(2, RoundingMode.HALF_UP).toDouble()
     }
 
-    fun getChance(mf: Int, looting: Int, lootshare: Boolean = false): Map<String, Double> {
-        val baseChances = mapOf("chim" to 0.01, "stick" to 0.0008, "relic" to 0.0002)
+    fun getChance(mf: Int, looting: Int,rarity: String, lootshare: Boolean = false): Map<String, Double> {
+        val baseChances: Map<String, Double> = when (rarity.lowercase().trim()) {
+            "epic" -> mapOf("stick" to 0.0004, "relic" to 0.0002)
+            "legendary" -> mapOf("chim" to 0.01, "stick" to 0.0006, "relic" to 0.0003, "food" to 0.0025)
+            "mythic" -> mapOf("chim" to 0.0125, "stick" to 0.0008, "relic" to 0.0004, "food" to 0.005, "wool" to 0.002, "core" to 0.002, "stinger" to 0.005)
+            else -> mapOf("chim" to 0.0, "stick" to 0.0, "relic" to 0.0, "food" to 0.0, "wool" to 0.0, "core" to 0.0, "stinger" to 0.0)
+        }
         val multiplier = 1 + mf / 100.0
         if (lootshare) {
             val factor = multiplier / 5

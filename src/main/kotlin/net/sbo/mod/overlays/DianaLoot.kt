@@ -312,8 +312,9 @@ object DianaLoot {
         var totalProfit = 0L
         for (item in tracker.items::class.java.declaredFields) {
             item.isAccessible = true
-            val itemName = item.name
-            if (itemName == "TIME" || itemName == "TOTAL_BURROWS" || itemName == "COINS" || itemName == "SCAVENGER_COINS" || itemName == "FISH_COINS" || itemName == "CHIMERA_LS") continue
+            var itemName = item.name
+            if (itemName == "TIME" || itemName == "TOTAL_BURROWS" || itemName == "COINS" || itemName == "SCAVENGER_COINS" || itemName == "FISH_COINS") continue
+            itemName = itemName.replace("_LS", "")
             val itemValue = item.get(tracker.items) as Int
             if (itemValue <= 0) continue
             val itemPrice = Helper.getItemPrice(itemName)
@@ -321,7 +322,7 @@ object DianaLoot {
                 totalProfit += itemPrice * itemValue
             }
         }
-        return totalProfit + tracker.items.COINS + Helper.getItemPrice("CHIMERA", tracker.items.CHIMERA_LS)
+        return totalProfit + tracker.items.COINS
     }
 
     fun updateTimerText() {
