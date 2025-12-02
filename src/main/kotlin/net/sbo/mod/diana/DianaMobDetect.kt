@@ -4,7 +4,9 @@ import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.ProfileComponent
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EquipmentSlot
+import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.decoration.ArmorStandEntity
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.SBOKotlin.mc
@@ -16,6 +18,7 @@ import net.sbo.mod.utils.Helper.lastInqDeath
 import net.sbo.mod.utils.Helper.lastKingDeath
 import net.sbo.mod.utils.Helper.lastMantiDeath
 import net.sbo.mod.utils.Helper.lastSphinxDeath
+import net.sbo.mod.utils.Helper.removeFormatting
 import net.sbo.mod.utils.Helper.showTitle
 import net.sbo.mod.utils.Helper.sleep
 import net.sbo.mod.utils.Player
@@ -48,6 +51,7 @@ object DianaMobDetect {
     private val tracked = mutableMapOf<Int, ArmorStandEntity>()
     private val defeated = mutableSetOf<Int>()
     private val warned = mutableSetOf<Int>()
+    private val rareMobs = mutableSetOf<PlayerEntity>()
 
     private val mobHpOverlay: Overlay = Overlay("mythosMobHp", 10f, 10f, 1f, listOf("Chat screen"), OverlayExamples.mythosMobHpExample).setCondition { Diana.mythosMobHp }
 
@@ -62,22 +66,24 @@ object DianaMobDetect {
         }
     }
 
-    private fun ArmorStandEntity.actualMob(): Entity? = mc.world?.getEntityById(this.id - 1)
+    private fun checkMobGlow(world: net.minecraft.world.World) {
+        val iterator = rareMobs.iterator()
+        while (iterator.hasNext()) {
+            val mob = iterator.next()
 
-    private fun setGlow(entity: ArmorStandEntity, color: Color?) {
-        entity.actualMob()?.let { mob ->
-            val player = mc.player ?: return
-            if (!player.canSee(mob)) {
+            if (!mob.isAlive || mob.world != world) {
                 mob.isSboGlowing = false
-                return
+                iterator.remove()
+                continue
             }
-            mob.isSboGlowing = true
-            if (color != null) mob.setSboGlowColor(color)
-        }
-    }
 
-    private fun clearGlow(entity: ArmorStandEntity) {
-        entity.actualMob()?.isSboGlowing = false
+            if (Diana.HighlightRareMobs && mc.player?.canSee(mob) == true && !mob.isInvisible) {
+                mob.isSboGlowing = true
+                mob.setSboGlowColor(Color(Diana.HighightColor))
+            } else {
+                mob.isSboGlowing = false
+            }
+        }
     }
 
     private fun parseHealthFromName(name: String): Double? =
@@ -102,12 +108,12 @@ object DianaMobDetect {
                 val (id, armorStand) = iterator.next()
 
                 if (!armorStand.isAlive || armorStand.world != world) {
-                    clearGlow(armorStand)
                     iterator.remove()
                     defeated.remove(id)
                     continue
                 }
 
+                checkMobGlow(world)
                 checkCocoon(armorStand)
                 checkDianaMob(armorStand, id)?.let { overlayLines.add(it) }
             }
@@ -117,15 +123,29 @@ object DianaMobDetect {
 
     @SboEvent
     fun onEntityLoad(event: EntityLoadEvent) {
-        if (event.entity is ArmorStandEntity) tracked[event.entity.id] = event.entity
+        if (event.entity is ArmorStandEntity) {
+            tracked[event.entity.id] = event.entity
+        }
+        else if (event.entity is PlayerEntity) {
+            if (!Diana.HighlightRareMobs) return
+            if (RareDianaMob.entries.any { event.entity.name.string.contains(it.display, ignoreCase = true) } && event.entity.uuid.version() != 4) {
+                rareMobs.add(event.entity)
+            }
+        }
     }
 
     @SboEvent
     fun onEntityUnload(event: EntityUnloadEvent) {
         if (event.entity is ArmorStandEntity) {
-            clearGlow(event.entity)
             tracked.remove(event.entity.id)
             defeated.remove(event.entity.id)
+        }
+        else if (event.entity is PlayerEntity) {
+            if (!Diana.HighlightRareMobs) return
+            if (rareMobs.contains(event.entity)) {
+                event.entity.isSboGlowing = false
+                rareMobs.remove(event.entity)
+            }
         }
     }
 
@@ -137,15 +157,9 @@ object DianaMobDetect {
         val health = parseHealthFromName(name)
         maybeTriggerHealthAlert(name, id, health)
 
-        if (Diana.HighightRareMobs) {
-            val color = Color(Diana.HighightColor)
-            setGlow(entity, color)
-        }
-
         if (health != null && health <= 0.0 && id !in defeated) {
             defeated.add(id)
             warned.remove(id)
-            clearGlow(entity)
             SBOEvent.emit(DianaMobDeathEvent(name, entity))
         }
         return OverlayTextLine(name)
