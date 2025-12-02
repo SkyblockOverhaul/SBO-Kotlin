@@ -42,9 +42,12 @@ object DianaMobDetect {
     private const val CHAT_DELAY_MS = 200L
     private const val ANNOUNCE_DELAY_MS = 5_000L
 
+    private const val NAME_CHECK_TIMEOUT_MS = 1000L
+
     private val COCOON_TEXTURE = "eyJ0aW1lc3RhbXAiOjE1ODMxMjMyODkwNTMsInByb2ZpbGVJZCI6IjkxZjA0ZmU5MGYzNjQzYjU4ZjIwZTMzNzVmODZkMzllIiwicHJvZmlsZU5hbWUiOiJTdG9ybVN0b3JteSIsInNpZ25hdHVyZVJlcXVpcmVkIjp0cnVlLCJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGNlYjBlZDhmYzIyNzJiM2QzZDgyMDY3NmQ1MmEzOGU3YjJlOGRhOGM2ODdhMjMzZTBkYWJhYTE2YzBlOTZkZiJ9fX0="
     private val healthRegex = """([0-9]+(?:\.[0-9]+)?[MK]?)§f/""".toRegex()
 
+    private val unconfirmed = mutableMapOf<Int, Pair<ArmorStandEntity, Long>>()
     private val tracked = mutableMapOf<Int, ArmorStandEntity>()
     private val defeated = mutableSetOf<Int>()
     private val warned = mutableSetOf<Int>()
@@ -100,28 +103,51 @@ object DianaMobDetect {
             val world = mc.world ?: return@onTick
             val overlayLines = mutableListOf<OverlayTextLine>()
 
-            val iterator = tracked.iterator()
-            while (iterator.hasNext()) {
-                val (id, armorStand) = iterator.next()
+            val unconfirmedIterator = unconfirmed.iterator()
+            val now = System.currentTimeMillis()
 
-                if (!armorStand.isAlive || armorStand.world != world) {
-                    iterator.remove()
-                    defeated.remove(id)
+            while (unconfirmedIterator.hasNext()) {
+                val (id, data) = unconfirmedIterator.next()
+                val (entity, spawnTime) = data
+
+                if (!entity.isAlive || entity.world != world) {
+                    unconfirmedIterator.remove()
                     continue
                 }
 
-                checkMobGlow(world)
+                val name = entity.customName?.formattedString() ?: entity.name.formattedString()
+                if (name.contains("§2✿", ignoreCase = true)) {
+                    tracked[id] = entity
+                    unconfirmedIterator.remove()
+                }
+                else if (now - spawnTime > NAME_CHECK_TIMEOUT_MS) unconfirmedIterator.remove()
+            }
+
+            val trackedIterator = tracked.iterator()
+            while (trackedIterator.hasNext()) {
+                val (id, armorStand) = trackedIterator.next()
+
+                if (!armorStand.isAlive || armorStand.world != world) {
+                    trackedIterator.remove()
+                    defeated.remove(id)
+                    continue
+                }
                 checkCocoon(armorStand)
                 checkDianaMob(armorStand, id)?.let { overlayLines.add(it) }
             }
             mobHpOverlay.setLines(overlayLines)
+        }
+
+        Register.onTick(4) {
+            val world = mc.world ?: return@onTick
+            checkMobGlow(world)
         }
     }
 
     @SboEvent
     fun onEntityLoad(event: EntityLoadEvent) {
         if (event.entity is ArmorStandEntity) {
-            tracked[event.entity.id] = event.entity
+            unconfirmed[event.entity.id] = event.entity to System.currentTimeMillis()
         }
         else if (event.entity is PlayerEntity) {
             if (!Diana.HighlightRareMobs) return
