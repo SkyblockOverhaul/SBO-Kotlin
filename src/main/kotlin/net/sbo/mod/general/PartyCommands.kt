@@ -68,7 +68,7 @@ object PartyCommands {
             Chat.chat("§7> §a!mobs")
             Chat.chat("§7> §a!burrows")
             Chat.chat("§7> §a!stats <playername>")
-            Chat.chat("§7> §a!since (chim, chimls, relic, stick, inq)")
+            Chat.chat("§7> §a!since (chim, chimls, relic, stick, inq, king, manti)")
         }
     }
 
@@ -396,6 +396,12 @@ object PartyCommands {
                         }
                         "lschim", "chimls", "lschimera", "chimerals", "lsbook", "bookls", "lootsharechim" -> sleep(200) {
                             Chat.command("pc Inqs since lootshare chim: ${sboData.inqsSinceLsChim}")
+                        }
+                        "kings", "king" -> sleep(200) {
+                            Chat.command("pc Mobs since king: ${sboData.mobsSinceKing}")
+                        }
+                        "manti" -> sleep(200) {
+                            Chat.command("pc Mobs since manti: ${sboData.mobsSinceManti}")
                         }
                     }
                     if (secondArg == null) {
