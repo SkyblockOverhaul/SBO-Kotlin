@@ -327,7 +327,7 @@ object Diana : CategoryKt("Diana") {
         this.description = Translated("Highlights rare mobs(King, Manti, Sphinx, Inq) with a glowing effect")
     }
 
-    var HighightColor by color(
+    var HighlightColor by color(
         Color(0.0f, 0.964f, 1.0f).rgb) {
         this.name = Translated("Highlight Color")
         this.description = Translated("Color for the rare mob highlight effect")
