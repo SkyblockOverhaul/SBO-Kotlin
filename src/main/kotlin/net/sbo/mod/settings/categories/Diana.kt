@@ -4,7 +4,6 @@ import com.teamresourceful.resourcefulconfigkt.api.CategoryKt
 import com.teamresourceful.resourcefulconfigkt.api.ObservableEntry
 import net.sbo.mod.overlays.DianaLoot
 import net.sbo.mod.overlays.DianaMobs
-import net.sbo.mod.settings.categories.General.HideOwnWaypoints
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.waypoint.AdditionalHubWarps
@@ -323,7 +322,7 @@ object Diana : CategoryKt("Diana") {
         )
     }
 
-    var HighightRareMobs by boolean(true) {
+    var HighlightRareMobs by boolean(true) {
         this.name = Translated("Highlight Rare Mobs")
         this.description = Translated("Highlights rare mobs(King, Manti, Sphinx, Inq) with a glowing effect")
     }
