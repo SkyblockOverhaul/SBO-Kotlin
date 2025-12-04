@@ -876,7 +876,7 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
 
     private fun settings() {
         mc.send{
-            displayScreen(ResourcefulConfigScreen.getFactory("sbo").apply(null))
+            displayScreen(ResourcefulConfigScreen.getFactory("sbo-kotlin").apply(null))
         }
     }
 

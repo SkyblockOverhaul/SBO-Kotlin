@@ -52,7 +52,7 @@ object SBOKotlin {
 	internal const val MOD_ID = "sbo-kotlin"
 	internal val logger = LoggerFactory.getLogger(MOD_ID)
 
-	val configurator = Configurator("sbo")
+	val configurator = Configurator("sbo-kotlin")
 	val settings = Settings.register(configurator)
 
 	lateinit var version: String
@@ -79,7 +79,7 @@ object SBOKotlin {
 		PartyCommands.init()
 		Register.command("sbo") {
 			mc.send{
-				mc.setScreen(ResourcefulConfigScreen.getFactory("sbo").apply(null))
+				mc.setScreen(ResourcefulConfigScreen.getFactory("sbo-kotlin").apply(null))
 			}
 		}
 
