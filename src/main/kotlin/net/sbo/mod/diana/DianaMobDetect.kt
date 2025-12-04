@@ -4,7 +4,6 @@ import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.ProfileComponent
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.decoration.ArmorStandEntity
-import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.SBOKotlin.mc
@@ -20,8 +19,6 @@ import net.sbo.mod.utils.Helper.showTitle
 import net.sbo.mod.utils.Helper.sleep
 import net.sbo.mod.utils.Player
 import net.sbo.mod.utils.SoundHandler.playCustomSound
-import net.sbo.mod.utils.accessors.isSboGlowing
-import net.sbo.mod.utils.accessors.setSboGlowColor
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.chat.ChatUtils.formattedString
 import net.sbo.mod.utils.events.SBOEvent
@@ -33,7 +30,6 @@ import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.overlay.Overlay
 import net.sbo.mod.utils.overlay.OverlayExamples
 import net.sbo.mod.utils.overlay.OverlayTextLine
-import java.awt.Color
 import kotlin.math.roundToInt
 
 object DianaMobDetect {
@@ -51,11 +47,10 @@ object DianaMobDetect {
     private val tracked = mutableMapOf<Int, ArmorStandEntity>()
     private val defeated = mutableSetOf<Int>()
     private val warned = mutableSetOf<Int>()
-    private val rareMobs = mutableSetOf<PlayerEntity>()
 
     private val mobHpOverlay: Overlay = Overlay("mythosMobHp", 10f, 10f, 1f, listOf("Chat screen"), OverlayExamples.mythosMobHpExample).setCondition { Diana.mythosMobHp }
 
-    private enum class RareDianaMob(val display: String) {
+    internal enum class RareDianaMob(val display: String) {
         INQ("Minos Inquisitor"),
         KING("King Minos"),
         SPHINX("Sphinx"),
@@ -66,25 +61,7 @@ object DianaMobDetect {
         }
     }
 
-    private fun checkMobGlow(world: net.minecraft.world.World) {
-        val iterator = rareMobs.iterator()
-        while (iterator.hasNext()) {
-            val mob = iterator.next()
 
-            if (!mob.isAlive || mob.world != world) {
-                mob.isSboGlowing = false
-                iterator.remove()
-                continue
-            }
-
-            if (Diana.HighlightRareMobs && mc.player?.canSee(mob) == true && !mob.isInvisible) {
-                mob.isSboGlowing = true
-                mob.setSboGlowColor(Color(Diana.HighlightColor))
-            } else {
-                mob.isSboGlowing = false
-            }
-        }
-    }
 
     private fun parseHealthFromName(name: String): Double? =
         healthRegex.find(name)?.groupValues?.get(1)?.let { raw ->
@@ -137,23 +114,12 @@ object DianaMobDetect {
             }
             mobHpOverlay.setLines(overlayLines)
         }
-
-        Register.onTick(4) {
-            val world = mc.world ?: return@onTick
-            checkMobGlow(world)
-        }
     }
 
     @SboEvent
     fun onEntityLoad(event: EntityLoadEvent) {
         if (event.entity is ArmorStandEntity) {
             unconfirmed[event.entity.id] = event.entity to System.currentTimeMillis()
-        }
-        else if (event.entity is PlayerEntity) {
-            if (!Diana.HighlightRareMobs) return
-            if (RareDianaMob.entries.any { event.entity.name.string.contains(it.display, ignoreCase = true) } && event.entity.uuid.version() != 4) {
-                rareMobs.add(event.entity)
-            }
         }
     }
 
@@ -162,13 +128,6 @@ object DianaMobDetect {
         if (event.entity is ArmorStandEntity) {
             tracked.remove(event.entity.id)
             defeated.remove(event.entity.id)
-        }
-        else if (event.entity is PlayerEntity) {
-            if (!Diana.HighlightRareMobs) return
-            if (rareMobs.contains(event.entity)) {
-                event.entity.isSboGlowing = false
-                rareMobs.remove(event.entity)
-            }
         }
     }
 

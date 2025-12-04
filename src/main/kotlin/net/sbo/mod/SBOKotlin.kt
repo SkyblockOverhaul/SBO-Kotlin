@@ -23,6 +23,7 @@ import net.sbo.mod.utils.HypixelModApi
 import net.sbo.mod.utils.game.World
 import net.sbo.mod.diana.burrows.BurrowDetector
 import net.sbo.mod.diana.DianaMobDetect
+import net.sbo.mod.diana.RareMobHighlight
 import net.sbo.mod.diana.achievements.AchievementManager
 import net.sbo.mod.diana.achievements.AchievementManager.unlockAchievement
 import net.sbo.mod.diana.sphinx.SphinxSolver
@@ -112,6 +113,7 @@ object SBOKotlin {
 		AchievementManager.init()
 		MessageHider.init()
 		SphinxSolver.init()
+		RareMobHighlight.init()
 
 		Register.onTick(100) { unregister ->
 			if (mc.player != null && World.isInSkyblock()) {
