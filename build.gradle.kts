@@ -34,20 +34,25 @@ dependencies {
     ksp("dev.zacsweers.autoservice:auto-service-ksp:${property("autoservice.version")}")
 
     modImplementation(include("gg.essential:elementa:${property("elementa.version")}")!!)
-    modImplementation(include("gg.essential:universalcraft-$mcData:${property("uc.version")}")!!)
     modImplementation(include("net.azureaaron:hm-api:${property("hmapi.version")}")!!)
     modImplementation(include("com.teamresourceful.resourcefulconfigkt:resourcefulconfigkt-fabric-1.21.5:${property("rconfig.version.1.21.5")}")!!)
 
     // modImplementation(include("xyz.meowing:vexel-${mcData}:${property("vexel.version")}")!!)
-
-    when (mcData.version) {
-        MinecraftVersions.VERSION_1_21_7 -> {
+    when (mcData.version.toString()) {
+        "1.21.10" -> {
+            modImplementation("com.terraformersmc:modmenu:${property("modmenu.version.1.21.10")}")
+            modImplementation(include("com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-1.21.9:${property("rconfig.version.1.21.10")}")!!)
+            modImplementation(include("gg.essential:universalcraft-1.21.9-fabric:${property("uc.version")}")!!)
+        }
+        "1.21.7" -> {
             modImplementation("com.terraformersmc:modmenu:${property("modmenu.version.1.21.7")}")
             modImplementation(include("com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-${mcData.version}:${property("rconfig.version.1.21.7")}")!!)
+            modImplementation(include("gg.essential:universalcraft-$mcData:${property("uc.version")}")!!)
         }
-        MinecraftVersions.VERSION_1_21_5 -> {
+        "1.21.5" -> {
             modImplementation("com.terraformersmc:modmenu:${property("modmenu.version.1.21.5")}")
             modImplementation(include("com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-${mcData.version}:${property("rconfig.version.1.21.5")}")!!)
+            modImplementation(include("gg.essential:universalcraft-$mcData:${property("uc.version")}")!!)
         }
         else -> {}
     }
