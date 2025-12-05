@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "package": "net.sbo.mod.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "GameMenuScreenMixin",
+    "GameRenderMixin",
+    "MinecraftClientMixin",
+    "PacketMixin",
+    "PlayerInteractMixin",
+    "ScreenHandlerSlotUpdateS2CPacketMixin",
+    "ScreenMixin",
+    "accessor.BeaconBlockEntityRendererInvoker",
+    "EntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -4,3 +4,4 @@
 !.gitignore
 !gradle.properties
 !src/**
+!src/
