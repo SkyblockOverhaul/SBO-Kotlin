@@ -195,6 +195,10 @@ class Overlay(
     }
 
     private fun drawDebugBox(drawContext: DrawContext, x: Int, y: Int, width: Int, height: Int) {
+        //#if MC >= 1.21.9
+        //$$ drawContext.drawStrokedRectangle(x, y, width, height, Color(255, 0, 0, 170).rgb)
+        //#else
         drawContext.drawBorder(x, y, width, height, Color(255, 0, 0, 170).rgb)
+        //#endif
     }
 }

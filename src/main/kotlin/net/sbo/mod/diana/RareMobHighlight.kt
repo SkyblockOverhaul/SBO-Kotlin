@@ -55,7 +55,12 @@ object RareMobHighlight {
         while (iterator.hasNext()) {
             val mob = iterator.next()
 
-            if (!mob.isAlive || mob.world != world) {
+            //#if MC >= 1.21.9
+            //$$ val entityWorld = mob.entityWorld
+            //#else
+            val entityWorld = mob.world
+            //#endif
+            if (!mob.isAlive || entityWorld != world) {
                 mob.isSboGlowing = false
                 iterator.remove()
                 continue
