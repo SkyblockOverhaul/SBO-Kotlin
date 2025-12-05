@@ -316,7 +316,7 @@ object AchievementManager {
         addAchievement(5, "Back-to-Back Relic", "Get 2 Relics in a row", "Impossible")
         addAchievement(6, "Inquisitor Double Trouble", "Get 2 Inquisitors in a row", "Epic")
         addAchievement(7, "b2b2b Inquisitor", "Get 3 Inquisitors in a row", "Divine")
-        addAchievement(75, "b2b king", "Get b2b chimera from b2b inquisitor", "Impossible", hidden = true)
+        addAchievement(75, "Too Rare To Be Legal", "Get b2b chimera from b2b inquisitor", "Impossible", hidden = true)
 
         addAchievement(12, "First Chimera", "Get your first Chimera", "Epic")
         addAchievement(9, "Chimera V", "Get 16 chimera in one event", "Mythic", 12)
@@ -363,6 +363,7 @@ object AchievementManager {
         addAchievement(44, "Magic Find is overrated", "Drop a Chimera, under 200 Magic Find", "Epic")
         addAchievement(43, "I don't need Magic Find", "Drop a Chimera, under 100 Magic Find", "Legendary", 44)
 
+        // TODO Update to add other mobs & update max be
         addAchievement(45, "Inquisitor Slayer", "Max the Inquisitor Bestiary", "Epic")
         addAchievement(46, "Minotaur Slayer", "Max the Minotaur Bestiary", "Legendary")
         addAchievement(47, "Champion Slayer", "Max the Champion Bestiary", "Epic")
@@ -394,6 +395,25 @@ object AchievementManager {
 
         addAchievement(73, "Can I craft a Chimera sword now?", "Get 1 stick & 2 chimeras in 1 event", "Epic")
         addAchievement(74, "Can I craft a Relic sword now?", "Get 1 stick & 2 relics in 1 event", "Legendary")
+        addAchievement(78, "Can I craft a Core sword now?", "Get 1 stick & 2 manti-cores in 1 event", "Mythic") // TODO
+        addAchievement(79, "Can I craft a Shimmering bed now?", "Get 3 shimmering wool in 1 event", "Mythic") // TODO
+
+        addAchievement(80, "Dm me the client name please :)", "Get b2b2b wool", "Impossible") // TODO
+        addAchievement(81, "Tf?", "Get b2b wool", "Mythic") // TODO
+        addAchievement(82, "Hax", "Get b2b wool lootshare", "Impossible") // TODO
+        addAchievement(83, "Hide before your party finds you", "Get b2b2b wool lootshare", "Impossible") // TODO
+        addAchievement(85, "Get 8 brain food", "Might get some braincells back with so much brain", "Legendary") // TODO
+        addAchievement(86, "It could look better", "Get a Mythological Dye", "Epic") // TODO
+
+        addAchievement(84, "Those coins gotta be heavy? Lemme take that weight off of you", "Make 1b coins in 1 event", "Legendary") // TODO
+
+        addAchievement(87, "", "Get b2b king", "Legendary") // TODO
+
+        addAchievement(88, "Let your party cope!", "Die to a king", "Rare") // TODO
+
+        addAchievement(89, "You know there is this funny thing called grass?", "Get top 100 king bestiary", "Legendary") // TODO
+        addAchievement(90, "Get a j*b", "Get top 10 king bestiary", "Mythic") // TODO
+        addAchievement(91, "The best of the best", "Get top 1 king bestiary", "Impossible") // TODO
 
         addAchievement(77, "From the ashes", "Drop a Phoenix pet from a Diana mob", "Impossible", hidden = true)
     }
