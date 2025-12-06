@@ -4,15 +4,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.minecraft.client.gui.screen.ingame.HandledScreen
-import net.minecraft.client.gui.screen.ingame.HandledScreens
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.NbtComponent
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.util.ActionResult
 import net.sbo.mod.SBOKotlin
+import net.sbo.mod.diana.DianaMobDetect.RareDianaMob
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.HypixelModApi.isOnHypixel
-import net.sbo.mod.utils.SboTimerManager
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.data.DianaTrackerMayorData
 import net.sbo.mod.utils.data.PartyPlayerStats
@@ -22,15 +23,15 @@ import net.sbo.mod.utils.data.SboDataObject.dianaTrackerMayor
 import net.sbo.mod.utils.data.SboDataObject.pastDianaEventsData
 import net.sbo.mod.utils.data.SboDataObject.sboData
 import net.sbo.mod.overlays.DianaLoot.totalProfit
-import net.sbo.mod.utils.data.SboData
+import net.sbo.mod.utils.ItemUtils.getDisplayName
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
+import net.sbo.mod.utils.events.impl.entity.EntitiyHitEvent
 import net.sbo.mod.utils.events.impl.game.WorldChangeEvent
 import net.sbo.mod.utils.events.impl.guis.GuiOpenEvent
 import java.lang.Thread.sleep
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.compareTo
 
 object AchievementManager {
     val rarityColorDict = mapOf(
@@ -77,6 +78,16 @@ object AchievementManager {
 
         // Die to a Minos King
         // Register.onChatMessage()
+    }
+
+    @SboEvent
+    fun onEntityHit(event: EntitiyHitEvent) {
+        if (event.entity !is PlayerEntity) return
+        val isRareMob = RareDianaMob.entries.any { event.entity.name.string.contains(it.display, ignoreCase = true) } && event.entity.uuid.version() != 4
+        if (!isRareMob) return
+        if (getDisplayName(event.player.mainHandStack).contains("Shears", true) && event.entity.name.string.contains("King Minos")) unlockAchievement(92)
+        if (getDisplayName(event.player.mainHandStack).contains("Core", true) && event.entity.name.string.contains("Manticore")) unlockAchievement(93)
+        ActionResult.PASS
     }
 
     fun addAchievement(id: Int, name: String, description: String, rarity: String, previousId: Int? = null, hidden: Boolean = false) {
