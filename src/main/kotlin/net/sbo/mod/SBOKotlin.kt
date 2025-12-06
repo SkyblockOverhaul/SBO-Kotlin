@@ -71,7 +71,7 @@ object SBOKotlin {
 		// Load Custom Sound System
 		SoundHandler.init()
 
-		// Register Annotation Pocessor and Events
+		// Register Annotation Processor and Events
 		SboEventGeneratedRegistry.registerAll()
 		SBOEvent.init()
 
