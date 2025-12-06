@@ -410,6 +410,36 @@ object PartyCommands {
                         }
                     }
                 }
+                "!sincechim", "!sincechimera", "!sincechims", "!sincechimeras", "!sincebook", "!sincebooks" -> {
+                    if (!settings.dianaPartyCommands) return@onChatMessage
+                    sleep(200) {
+                        Chat.command("pc Inqs since chim: ${sboData.inqsSinceChim}")
+                    }
+                }
+                "!sincestick", "!sincesticks" -> {
+                    if (!settings.dianaPartyCommands) return@onChatMessage
+                    sleep(200) {
+                        Chat.command("pc Minos since stick: ${sboData.minotaursSinceStick}")
+                    }
+                }
+                "!sincerelic", "!sincerelics" -> {
+                    if (!settings.dianaPartyCommands) return@onChatMessage
+                    sleep(200) {
+                        Chat.command("pc Champs since relic: ${sboData.champsSinceRelic}")
+                    }
+                }
+                "!sinceinq", "!sinceinqs", "!sinceinquisitor", "!sinceinquisitors", "!sinceinquis" -> {
+                    if (!settings.dianaPartyCommands) return@onChatMessage
+                    sleep(200) {
+                        Chat.command("pc Mobs since inq: ${sboData.mobsSinceInq}")
+                    }
+                }
+                "!sincelschim", "!sincechimls", "!sincelschimera", "!sincechimerals", "!sincelsbook", "!sincebookls", "!sincelootsharechim" -> {
+                    if (!settings.dianaPartyCommands) return@onChatMessage
+                    sleep(200) {
+                        Chat.command("pc Inqs since lootshare chim: ${sboData.inqsSinceLsChim}")
+                    }
+                }
 
             }
         }
