@@ -264,23 +264,34 @@ object AchievementManager {
             val screen = event.screen
             if (screen !is HandledScreen<*>) return@sleep
             if (!event.screen.title.string.contains("Mythological Creatur", ignoreCase = true)) return@sleep
+
             val slots = screen.screenHandler.slots
 
-            val gaiaKills = Helper.getKillsFromLore(slots[10].stack)
-            val champKills = Helper.getKillsFromLore(slots[11].stack)
-            val hunterKills = Helper.getKillsFromLore(slots[12].stack)
-            val inqKills = Helper.getKillsFromLore(slots[13].stack)
-            val minoKills = Helper.getKillsFromLore(slots[14].stack)
-            val catKills = Helper.getKillsFromLore(slots[15].stack)
+            val bullKills = Helper.getKillsFromLore(slots[10].stack)
+            val gaiaKills = Helper.getKillsFromLore(slots[11].stack)
+            val harpyKills = Helper.getKillsFromLore(slots[12].stack)
+            val kingKills = Helper.getKillsFromLore(slots[13].stack)
+            val mantiKills = Helper.getKillsFromLore(slots[14].stack)
+            val champKills = Helper.getKillsFromLore(slots[15].stack)
+            val hunterKills = Helper.getKillsFromLore(slots[16].stack)
+            val inqKills = Helper.getKillsFromLore(slots[19].stack)
+            val minoKills = Helper.getKillsFromLore(slots[20].stack)
+            val catKills = Helper.getKillsFromLore(slots[21].stack)
+            val sphinxKills = Helper.getKillsFromLore(slots[22].stack)
+            val nymphKills = Helper.getKillsFromLore(slots[23].stack)
 
             val allMaxed = listOf(
                 gaiaKills to 50, inqKills to 45, minoKills to 46,
-                champKills to 47, hunterKills to 48, catKills to 49
+                champKills to 47, hunterKills to 48, catKills to 49,
+                nymphKills to 101, bullKills to 102, harpyKills to 103,
+                sphinxKills to 104, mantiKills to 105, kingKills to 106
             ).all { (kills, id) ->
                 val isMaxed = when (id) {
                     45 -> kills >= 500
-                    50, 46, 49 -> kills >= 3000
+                    50, 46, 49, 102, 103, 101 -> kills >= 3000
                     47, 48 -> kills >= 1000
+                    104 -> kills >= 100
+                    105, 106 -> kills >= 50
                     else -> false
                 }
                 if (isMaxed) unlockAchievement(id) else lockById(id)
@@ -438,12 +449,12 @@ object AchievementManager {
         addAchievement(48, "Hunter Slayer", "Max the Hunter Bestiary", "Epic")
         addAchievement(49, "Lynx Slayer", "Max the Siamese Lynx Bestiary", "Epic")
         addAchievement(50, "Gaia Slayer", "Max the Gaia Bestiary", "Legendary")
-        addAchievement(101, "Nymph Slayer", "Max the Nymph Bestiary", "Epic") // TODO
-        addAchievement(102, "Cretan Bull Slayer", "Max the Cretan Bull Bestiary", "Epic") // TODO
-        addAchievement(103, "Harpy Slayer", "Max the Harpy Bestiary", "Epic") // TODO
-        addAchievement(104, "Sphinx Slayer", "Max the Sphinx Bestiary", "Legendary") // TODO
-        addAchievement(105, "Manticore Slayer", "Max the Manticore Bestiary", "Mythic") // TODO
-        addAchievement(106, "King Minos Slayer", "Max the King Minos Bestiary", "Mythic") // TODO
+        addAchievement(101, "Nymph Slayer", "Max the Nymph Bestiary", "Epic")
+        addAchievement(102, "Cretan Bull Slayer", "Max the Cretan Bull Bestiary", "Epic")
+        addAchievement(103, "Harpy Slayer", "Max the Harpy Bestiary", "Epic")
+        addAchievement(104, "Sphinx Slayer", "Max the Sphinx Bestiary", "Legendary")
+        addAchievement(105, "Manticore Slayer", "Max the Manticore Bestiary", "Mythic")
+        addAchievement(106, "King Minos Slayer", "Max the King Minos Bestiary", "Mythic")
         addAchievement(51, "Time to get on the leaderboard", "Max all Diana Bestiaries", "Mythic", hidden = true)
 
         addAchievement(52, "Daedalus Mastery: Chimera V", "Chimera V on Daedalus Axe", "Legendary")
