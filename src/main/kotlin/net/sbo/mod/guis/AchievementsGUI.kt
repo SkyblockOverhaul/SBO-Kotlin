@@ -10,24 +10,27 @@ import gg.essential.elementa.components.UIRoundedRectangle
 import gg.essential.elementa.components.UIText
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.ChildBasedSizeConstraint
+import gg.essential.elementa.constraints.ColorConstraint
 import gg.essential.elementa.constraints.FillConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.childOf
 import gg.essential.elementa.dsl.constrain
 import gg.essential.elementa.dsl.percent
 import gg.essential.elementa.dsl.pixels
+import gg.essential.elementa.dsl.toConstraint
 import net.sbo.mod.diana.achievements.Achievement
 import net.sbo.mod.diana.achievements.AchievementManager
 import net.sbo.mod.utils.data.SboDataObject
 import java.awt.Color
 import kotlin.math.floor
+import net.minecraft.util.Formatting
 
 class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
     enum class AchievementFilter {
         DEFAULT, RARITY, LOCKED, UNLOCKED
     }
 
-    private val rarityOrder = listOf("Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Divine", "Impossible")
+    private val rarityOrder = listOf("Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Divine", "Impossible", "Celestial")
 
     private var filterType = AchievementFilter.DEFAULT
     private var achievementList: List<Achievement> = emptyList()
@@ -197,6 +200,7 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
             val posY = spacingY + (row * (achievementBoxHeight + spacingY))
             lastY = posY
             val borderColor = if (achievement.isUnlocked()) Color(0, 255, 0) else Color(255, 0, 0)
+            val achievementColor =  if (achievement.rarity != "Celestial") Color(Formatting.byCode(achievement.color[1])?.colorValue ?: 0xFFFFFF) else Color(0x7D00FF)
 
             val roundedOutline = UIRoundedRectangle(5f).constrain {
                 x = posX.pixels
@@ -211,20 +215,22 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
                 width = achievementBoxWidth.pixels
                 height = achievementBoxHeight.pixels
             }.setColor(Color(0, 0, 0, 255))
-                .addChild(UIText(achievement.getDisplayName()).constrain {
+                .addChild(UIText(achievement.name).constrain {
                     x = 5.pixels
                     y = 5.pixels
                     textScale = 1.0.pixels
+                    color = achievementColor.toConstraint()
                 })
                 .addChild(UIText("§7${achievement.description}").constrain {
                     x = 5.pixels
                     y = SiblingConstraint(5f)
                     textScale = 1.0.pixels
                 })
-                .addChild(UIText("${achievement.color}${achievement.rarity}").constrain {
+                .addChild(UIText(achievement.rarity).constrain {
                     x = 5.pixels
                     y = SiblingConstraint(5f)
                     textScale = 0.8.pixels
+                    color = achievementColor.toConstraint()
                 }) childOf roundedOutline
 
             roundedOutline childOf contentPanel
