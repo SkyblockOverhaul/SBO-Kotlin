@@ -31,7 +31,7 @@ class Achievement(
             hiddenExtra = "§7[Secret Achievement] "
         }
         val player = mc.player
-        if (this.rarity == "Divine" || this.rarity == "Impossible") {
+        if (this.rarity == "Divine" || this.rarity == "Impossible" || this.rarity == "Celestial") {
             Helper.showTitle("§kd§r $color$name §kd§r", "§aAchievement Unlocked!", 0, 50, 20)
             Chat.chat(textComponent("§6[SBO] §aAchievement Unlocked §7>> $color§kd§r $color$name §kd§r", "$hiddenExtra§a$description"))
             mc.world?.playSound(player, player?.blockPos, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.PLAYERS, 1.0f, 1.0f)

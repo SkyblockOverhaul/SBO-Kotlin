@@ -21,6 +21,8 @@ import net.sbo.mod.utils.data.SboDataObject.achievementsData
 import net.sbo.mod.utils.data.SboDataObject.dianaTrackerMayor
 import net.sbo.mod.utils.data.SboDataObject.pastDianaEventsData
 import net.sbo.mod.utils.data.SboDataObject.sboData
+import net.sbo.mod.overlays.DianaLoot.totalProfit
+import net.sbo.mod.utils.data.SboData
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.game.WorldChangeEvent
@@ -28,6 +30,7 @@ import net.sbo.mod.utils.events.impl.guis.GuiOpenEvent
 import java.lang.Thread.sleep
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.compareTo
 
 object AchievementManager {
     val rarityColorDict = mapOf(
@@ -39,6 +42,7 @@ object AchievementManager {
         "Mythic" to "§d",
         "Divine" to "§b",
         "Impossible" to "§4",
+        "Celestial" to "§1",
     )
 
     internal val achievements = mutableMapOf<Int, Achievement>()
@@ -67,6 +71,12 @@ object AchievementManager {
             backTrackAchievements()
         }
         addAllAchievements()
+
+        // Dye
+        // Register.onChatMessage()
+
+        // Die to a Minos King
+        // Register.onChatMessage()
     }
 
     fun addAchievement(id: Int, name: String, description: String, rarity: String, previousId: Int? = null, timeout: Int = 1, hidden: Boolean = false) {
@@ -169,8 +179,40 @@ object AchievementManager {
             }
         }
 
-        if (daedalusStickCount >= 1 && totalChimera >= 2) unlockAchievement(73)
-        if (daedalusStickCount >= 1 && itemsData.MINOS_RELIC >= 2) unlockAchievement(74)
+        when {
+            daedalusStickCount >= 1 && totalChimera >= 2 -> unlockAchievement(73)
+            daedalusStickCount >= 1 && itemsData.MINOS_RELIC >= 2 -> unlockAchievement(74)
+            daedalusStickCount >= 1 && itemsData.MANTI_CORE + itemsData.MANTI_CORE_LS >= 2 -> unlockAchievement(78)
+            itemsData.SHIMMERING_WOOL + itemsData.SHIMMERING_WOOL_LS >= 3 -> unlockAchievement(79)
+            itemsData.BRAIN_FOOD + itemsData.BRAIN_FOOD_LS >= 8 -> unlockAchievement(85)
+        }
+
+        when {
+            sboData.b2bWool -> unlockAchievement(81)
+            sboData.b2bWoolLs -> unlockAchievement(82)
+            sboData.b2bKing -> unlockAchievement(87)
+
+            itemsData.SHIMMERING_WOOL + itemsData.SHIMMERING_WOOL_LS >= 1 -> unlockAchievement(83)
+            itemsData.SHIMMERING_WOOL_LS >= 1 -> unlockAchievement(111)
+
+            // b2b(2b) brain food/sphinx/core/manticores:
+            sboData.b2bFood -> unlockAchievement(97)
+            // TODO: sboData.b2b2bFood -> unlockAchievement(98)
+            sboData.b2bFoodLs -> unlockAchievement(99)
+            //TODO: sboData.b2b2bFoodLs -> unlockAchievement(100)
+
+            sboData.b2bCore -> unlockAchievement(94)
+            sboData.b2bCoreLs -> unlockAchievement(95)
+            sboData.b2bSphinx -> unlockAchievement(107)
+            // TODO: sboData.b2b2bSphinx -> unlockAchievement(108)
+            sboData.b2bManti -> unlockAchievement(109)
+            // TODO: sboData.b2b2bManti -> unlockAchievement(110)
+
+            // TODO: itemsData.MYTHOLOGICAL_DYE >= 1 -> unlockAchievement(86)
+        }
+
+        if (totalProfit(dianaTrackerMayor) >= 1_000_000_000L) unlockAchievement(84)
+
     }
 
     fun trackSince() {
@@ -192,8 +234,8 @@ object AchievementManager {
         if (sboData.minotaursSinceStick >= 200) unlockAchievement(29)
 
         when {
-            sboData.champsSinceRelic >= 3000 -> unlockAchievement(66)
-            sboData.champsSinceRelic >= 1000 -> unlockAchievement(30)
+            sboData.champsSinceRelic >= 3000 -> unlockAchievement(30)
+            sboData.champsSinceRelic >= 1000 -> unlockAchievement(65)
         }
     }
 
@@ -363,14 +405,19 @@ object AchievementManager {
         addAchievement(44, "Magic Find is overrated", "Drop a Chimera, under 200 Magic Find", "Epic")
         addAchievement(43, "I don't need Magic Find", "Drop a Chimera, under 100 Magic Find", "Legendary", 44)
 
-        // TODO Update to add other mobs & update max be
         addAchievement(45, "Inquisitor Slayer", "Max the Inquisitor Bestiary", "Epic")
         addAchievement(46, "Minotaur Slayer", "Max the Minotaur Bestiary", "Legendary")
         addAchievement(47, "Champion Slayer", "Max the Champion Bestiary", "Epic")
         addAchievement(48, "Hunter Slayer", "Max the Hunter Bestiary", "Epic")
         addAchievement(49, "Lynx Slayer", "Max the Siamese Lynx Bestiary", "Epic")
         addAchievement(50, "Gaia Slayer", "Max the Gaia Bestiary", "Legendary")
-        addAchievement(51, "Time to get on the leaderboard", "Max all Diana Bestiaries", "Mythic", hidden = true)
+        addAchievement(101, "Sphinx Slayer", "Max the Sphinx Bestiary", "Epic") // TODO
+        addAchievement(102, "Manti-core Slayer", "Max the Manti-core Bestiary", "Mythic") // TODO
+        addAchievement(103, "Minos King Slayer", "Max the Minos King Bestiary", "Mythic") // TODO
+        addAchievement(104, "Creatan Bull Slayer", "Max the Creatan Bull Slayer", "Epic") // TODO
+        addAchievement(105, "Nymph Slayer", "Max the Nymph Slayer", "Epic") // TODO
+        addAchievement(106, "Harpy Slayer", "Max the Nymph Slayer", "Epic") // TODO
+        addAchievement(51, "Time to get on the leaderboard", "Max all Diana Bestiaries", "Mythic", hidden = true) // TODO Update
 
         addAchievement(52, "Daedalus Mastery: Chimera V", "Chimera V on Daedalus Axe", "Legendary")
         addAchievement(53, "Daedalus Mastery: Looting V", "Looting V on Daedalus Axe", "Legendary")
@@ -395,28 +442,42 @@ object AchievementManager {
 
         addAchievement(73, "Can I craft a Chimera sword now?", "Get 1 stick & 2 chimeras in 1 event", "Epic")
         addAchievement(74, "Can I craft a Relic sword now?", "Get 1 stick & 2 relics in 1 event", "Legendary")
-        addAchievement(78, "Can I craft a Core sword now?", "Get 1 stick & 2 manti-cores in 1 event", "Mythic") // TODO
-        addAchievement(79, "Can I craft a Shimmering bed now?", "Get 3 shimmering wool in 1 event", "Mythic") // TODO
+        addAchievement(78, "Can I craft a Core sword now?", "Get 1 stick & 2 manti-cores in 1 event", "Divine")
+        addAchievement(79, "Can I craft a Shimmering bed now?", "Get 3 shimmering wool in 1 event", "Celestial")
 
-        addAchievement(80, "Dm me the client name please :)", "Get b2b2b wool", "Impossible") // TODO
-        addAchievement(81, "Tf?", "Get b2b wool", "Mythic") // TODO
-        addAchievement(82, "Hax", "Get b2b wool lootshare", "Impossible") // TODO
-        addAchievement(83, "Hide before your party finds you", "Get b2b2b wool lootshare", "Impossible") // TODO
-        addAchievement(85, "Get 8 brain food", "Might get some braincells back with so much brain", "Legendary") // TODO
+        addAchievement(81, "Dm me the client name please :)", "Get b2b wool", "Impossible")
+        addAchievement(82, "Hide before your party finds you", "Get b2b wool lootshare", "Celestial")
+        addAchievement(83, "How good does it feel?","Get 1 wool", "Mythic")
+        addAchievement(111, "Wdym you lootshared a wool?", "Lootshare 1 wool", "Divine")
+        addAchievement(85, "Might get some braincells back", "Get 8 brain food", "Legendary")
         addAchievement(86, "It could look better", "Get a Mythological Dye", "Epic") // TODO
 
-        addAchievement(84, "Those coins gotta be heavy? Lemme take that weight off of you", "Make 1b coins in 1 event", "Legendary") // TODO
+        addAchievement(84, "Those coins gotta be heavy?", "Make 1b profit in 1 event", "Legendary")
 
-        addAchievement(87, "", "Get b2b king", "Legendary") // TODO
+        addAchievement(87, "Get b2b king", "Get b2b king", "Divine")
 
-        addAchievement(88, "Let your party cope!", "Die to a king", "Rare") // TODO
+        addAchievement(88, "Let your party cope!", "Die to your Minos King", "Rare") // TODO
 
-        addAchievement(89, "You know there is this funny thing called grass?", "Get top 100 king bestiary", "Legendary") // TODO
+        addAchievement(89, "Ever heard of gr*ss?", "Get top 100 king bestiary", "Legendary") // TODO
         addAchievement(90, "Get a j*b", "Get top 10 king bestiary", "Mythic") // TODO
         addAchievement(91, "The best of the best", "Get top 1 king bestiary", "Impossible") // TODO
-        addAchievement(92, "Why am I not getting a wool this way???", "Hit a king with a shear, maybe you should try with enchanted shears", "Uncommon", true) // TODO
-        addAchievement(92, "Why are you doing this?", "Kill a Manti-core while holding an item with 'core' in it", "Uncommon", true) // TODO
+
+        addAchievement(92, "Why am I not getting a wool???", "Hit a king with a shear", "Uncommon", hidden = true) // TODO
+        addAchievement(93, "Why are you doing this?", "Hit a Manti-core with an item with 'core' in the name", "Uncommon", hidden = true) // TODO
+
+        addAchievement(94, "b2b core", "", "Impossible")
+        addAchievement(95, "b2b core ls", "", "Celestial")
+        addAchievement(97, "b2b brain food", "", "Legendary")
+        addAchievement(98, "b2b2b brain food", "", "Divine") // TODO
+        addAchievement(99, "b2b brain food ls", "", "Mythic")
+        addAchievement(100,"b2b2b brain food ls", "", "Impossible") // TODO
+
+        addAchievement(107, "b2b sphinx", "", "Mythic")
+        addAchievement(108, "b2b2b sphinx", "", "Divine") // TODO
+        addAchievement(109, "b2b Manticore", "", "Impossible")
+        addAchievement(110, "b2b2b Manticore", "", "Celestial") // TODO
 
         addAchievement(77, "From the ashes", "Drop a Phoenix pet from a Diana mob", "Impossible", hidden = true)
+
     }
 }
