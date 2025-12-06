@@ -41,8 +41,8 @@ object AchievementManager {
         "Legendary" to "§6",
         "Mythic" to "§d",
         "Divine" to "§b",
-        "Impossible" to "§4",
         "Celestial" to "§1",
+        "Impossible" to "§4",
     )
 
     internal val achievements = mutableMapOf<Int, Achievement>()
