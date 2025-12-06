@@ -10,7 +10,6 @@
     "PlayerInteractMixin",
     "ScreenHandlerSlotUpdateS2CPacketMixin",
     "ScreenMixin",
-    "accessor.BeaconBlockEntityRendererInvoker",
     "EntityMixin"
   ],
   "injectors": {

@@ -27,7 +27,6 @@ toolkitMultiversion {
 }
 
 dependencies {
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${mcData.dependencies.fabric.fabricApiVersion}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${mcData.dependencies.fabric.fabricLanguageKotlinVersion}")
 
     ksp(project(":event-processor"))
@@ -38,18 +37,21 @@ dependencies {
     modImplementation(include("com.teamresourceful.resourcefulconfigkt:resourcefulconfigkt-fabric-1.21.5:${property("rconfig.version.1.21.5")}")!!)
 
     // modImplementation(include("xyz.meowing:vexel-${mcData}:${property("vexel.version")}")!!)
-    when (mcData.version.toString()) {
-        "1.21.10" -> {
+    when (mcData.version) {
+        MinecraftVersions.VERSION_1_21_10 -> {
+            modImplementation("net.fabricmc.fabric-api:fabric-api:0.138.3+1.21.10")
             modImplementation("com.terraformersmc:modmenu:${property("modmenu.version.1.21.10")}")
             modImplementation(include("com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-1.21.9:${property("rconfig.version.1.21.10")}")!!)
             modImplementation(include("gg.essential:universalcraft-1.21.9-fabric:${property("uc.version")}")!!)
         }
-        "1.21.7" -> {
+        MinecraftVersions.VERSION_1_21_7 -> {
+            modImplementation("net.fabricmc.fabric-api:fabric-api:${mcData.dependencies.fabric.fabricApiVersion}")
             modImplementation("com.terraformersmc:modmenu:${property("modmenu.version.1.21.7")}")
             modImplementation(include("com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-${mcData.version}:${property("rconfig.version.1.21.7")}")!!)
             modImplementation(include("gg.essential:universalcraft-$mcData:${property("uc.version")}")!!)
         }
-        "1.21.5" -> {
+        MinecraftVersions.VERSION_1_21_5 -> {
+            modImplementation("net.fabricmc.fabric-api:fabric-api:${mcData.dependencies.fabric.fabricApiVersion}")
             modImplementation("com.terraformersmc:modmenu:${property("modmenu.version.1.21.5")}")
             modImplementation(include("com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-${mcData.version}:${property("rconfig.version.1.21.5")}")!!)
             modImplementation(include("gg.essential:universalcraft-$mcData:${property("uc.version")}")!!)
