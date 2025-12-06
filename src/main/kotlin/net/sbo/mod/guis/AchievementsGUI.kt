@@ -30,7 +30,7 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
         DEFAULT, RARITY, LOCKED, UNLOCKED
     }
 
-    private val rarityOrder = listOf("Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Divine", "Impossible", "Celestial")
+    private val rarityOrder = listOf("Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Divine", "Celestial", "Impossible")
 
     private var filterType = AchievementFilter.DEFAULT
     private var achievementList: List<Achievement> = emptyList()
