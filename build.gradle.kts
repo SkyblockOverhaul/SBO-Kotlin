@@ -63,4 +63,7 @@ dependencies {
     runtimeOnly("me.djtheredstoner:DevAuth-fabric:${property("devauth.version")}")
 }
 
-tasks.findByName("preprocessCode")?.dependsOn(":1.21.5-fabric:kspKotlin")
+tasks.findByName("preprocessCode")?.apply {
+    dependsOn(":1.21.5-fabric:kspKotlin")
+    dependsOn(":1.21.7-fabric:kspKotlin")
+}
