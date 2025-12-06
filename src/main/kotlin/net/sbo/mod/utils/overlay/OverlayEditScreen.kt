@@ -6,10 +6,6 @@ import net.minecraft.text.Text
 import net.sbo.mod.utils.data.SboDataObject
 import net.sbo.mod.utils.data.SboDataObject.overlayData
 import org.lwjgl.glfw.GLFW
-//#if MC >= 1.21.9
-//$$ import net.minecraft.client.gui.Click
-//$$ import net.minecraft.client.input.KeyInput
-//#endif
 
 class OverlayEditScreen : Screen(Text.literal("SBO_Overlay_Editor")) {
     private var selectedOverlay: Overlay? = null
@@ -23,14 +19,7 @@ class OverlayEditScreen : Screen(Text.literal("SBO_Overlay_Editor")) {
         OverlayManager.render(context)
     }
 
-    //#if MC >= 1.21.9
-    //$$ override fun mouseClicked(click: Click, doubled: Boolean): Boolean {
-    //$$     val mouseX = click.x
-    //$$     val mouseY = click.y
-    //$$     val button = click.buttonInfo().button
-    //#else
     override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
-    //#endif
         if (button == 0) {
             selectedOverlay = OverlayManager.overlays.firstOrNull { it.isOverOverlay(mouseX, mouseY) }
 
@@ -47,18 +36,10 @@ class OverlayEditScreen : Screen(Text.literal("SBO_Overlay_Editor")) {
             }
             return true
         }
-        //#if MC >= 1.21.9
-        //$$ return super.mouseClicked(click, doubled)
-        //#else
         return super.mouseClicked(mouseX, mouseY, button)
-        //#endif
     }
 
-    //#if MC >= 1.21.9
-    //$$  override fun mouseDragged(click: Click, deltaX: Double, deltaY: Double): Boolean {
-    //#else
     override fun mouseDragged(mouseX: Double, mouseY: Double, button: Int, deltaX: Double, deltaY: Double): Boolean {
-    //#endif
         if (isDragging && selectedOverlay != null) {
             selectedOverlay?.x = (selectedOverlay?.x ?: 0f) + deltaX.toFloat()
             overlayData.overlays[selectedOverlay!!.name]?.x = selectedOverlay?.x ?: 0f
@@ -66,30 +47,15 @@ class OverlayEditScreen : Screen(Text.literal("SBO_Overlay_Editor")) {
             overlayData.overlays[selectedOverlay!!.name]?.y = selectedOverlay?.y ?: 0f
             return true
         }
-        //#if MC >= 1.21.9
-        //$$ return super.mouseDragged(click, deltaX, deltaY)
-        //#else
         return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY)
-        //#endif
     }
 
-    //#if MC >= 1.21.9
-    //$$ override fun mouseReleased(click: Click): Boolean {
-    //$$     val mouseX = click.x
-    //$$     val mouseY = click.y
-    //$$     val button = click.buttonInfo().button
-    //#else
     override fun mouseReleased(mouseX: Double, mouseY: Double, button: Int): Boolean {
-    //#endif
         if (button == 0) {
             isDragging = false
             return true
         }
-        //#if MC >= 1.21.9
-        //$$ return super.mouseReleased(click)
-        //#else
         return super.mouseReleased(mouseX, mouseY, button)
-        //#endif
     }
 
     override fun mouseScrolled(mouseX: Double, mouseY: Double, horizontalAmount: Double, verticalAmount: Double): Boolean {
@@ -101,12 +67,7 @@ class OverlayEditScreen : Screen(Text.literal("SBO_Overlay_Editor")) {
         return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)
     }
 
-    //#if MC >= 1.21.9
-    //$$ override fun keyPressed(keyInput: KeyInput): Boolean {
-    //$$    val keyCode = keyInput.key
-    //#else
     override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
-    //#endif
         selectedOverlay?.let {
             val step = 1f
             when (keyCode) {
@@ -126,19 +87,11 @@ class OverlayEditScreen : Screen(Text.literal("SBO_Overlay_Editor")) {
                     it.x += step
                     overlayData.overlays[it.name]?.x = it.x
                 }
-                //#if MC >= 1.21.9
-                //$$ else -> return super.keyPressed(keyInput)
-                //#else
                 else -> return super.keyPressed(keyCode, scanCode, modifiers)
-                //#endif
             }
             return true
         }
-        //#if MC >= 1.21.9
-        //$$ return super.keyPressed(keyInput)
-        //#else
         return super.keyPressed(keyCode, scanCode, modifiers)
-        //#endif
     }
 
     override fun removed() {
