@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback
 import net.minecraft.util.ActionResult
+import net.sbo.mod.utils.events.impl.entity.EntitiyHitEvent
 import net.sbo.mod.utils.events.impl.entity.EntityLoadEvent
 import net.sbo.mod.utils.events.impl.entity.EntityUnloadEvent
 import net.sbo.mod.utils.events.impl.game.ChatMessageAllowEvent
@@ -90,7 +91,7 @@ object SBOEvent {
          * Fired when a player hits an entity.
          */
         AttackEntityCallback.EVENT.register { player, world, hand, entity, hitResult ->
-            emit(net.sbo.mod.utils.events.impl.entity.EntitiyHitEvent(player, world, hand, entity, hitResult))
+            emit(EntitiyHitEvent(player, world, hand, entity, hitResult))
             ActionResult.PASS
         }
     }
