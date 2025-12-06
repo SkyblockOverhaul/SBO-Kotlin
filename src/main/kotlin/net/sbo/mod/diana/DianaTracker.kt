@@ -533,6 +533,14 @@ object DianaTracker {
             SboDataObject.save("SboData")
             true
         }
+
+        Register.onChatMessageCancable(Pattern.compile("^§d§lWOW! (.*?) §6found a §2Mythological Dye§6!$", Pattern.DOTALL)) { message, matchResult ->
+            val player = matchResult.group(1).removeFormatting().lowercase().trim()
+            if (player.contains(Player.getName()?.lowercase()?.trim()?: "")) {
+                onRareDropFromMob("Mythological Dye", true, true, false, 0)
+            }
+            true
+        }
     }
 
     // todo: show title and announce to party based on value of the item
@@ -544,7 +552,7 @@ object DianaTracker {
         if (Diana.lootAnnouncerScreen && title) {
             val subTitle = if (Diana.lootAnnouncerPrice) "§6${Helper.getItemPriceFormatted(itemId, amount)} coins" else ""
             when (itemId) {
-                "MANTI_CORE", "SHIMMERING_WOOL", "KING_MINOS_SHARD" -> {
+                "MANTI_CORE", "SHIMMERING_WOOL", "KING_MINOS_SHARD", "MYTHOLOGICAL_DYE" -> {
                     Helper.showTitle("§c§l$item!", subTitle, 0, 25, 35)
                 }
                 "CHIMERA", "FABLED_STINGER" -> {
@@ -769,6 +777,8 @@ object DianaTracker {
             "SHIMMERING_WOOL_LS" -> tracker.items.SHIMMERING_WOOL_LS += amount
             "BRAIN_FOOD" -> tracker.items.BRAIN_FOOD += amount
             "BRAIN_FOOD_LS" -> tracker.items.BRAIN_FOOD_LS += amount
+
+            "MYTHOLOGICAL_DYE" -> tracker.items.MYTHOLOGICAL_DYE += amount
 
             "CRETAN_URN" -> tracker.items.CRETAN_URN += amount
             "MYTHOS_FRAGMENT" -> tracker.items.MYTHOS_FRAGMENT += amount
