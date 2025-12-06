@@ -87,7 +87,12 @@ object DianaMobDetect {
                 val (id, data) = unconfirmedIterator.next()
                 val (entity, spawnTime) = data
 
-                if (!entity.isAlive || entity.world != world) {
+                //#if MC >= 1.21.9
+                //$$ val entityWorld = entity.entityWorld
+                //#else
+                val entityWorld = entity.world
+                //#endif
+                if (!entity.isAlive || entityWorld != world) {
                     unconfirmedIterator.remove()
                     continue
                 }
@@ -104,7 +109,12 @@ object DianaMobDetect {
             while (trackedIterator.hasNext()) {
                 val (id, armorStand) = trackedIterator.next()
 
-                if (!armorStand.isAlive || armorStand.world != world) {
+                //#if MC >= 1.21.9
+                //$$ val entityWorld = armorStand.entityWorld
+                //#else
+                val entityWorld = armorStand.world
+                //#endif
+                if (!armorStand.isAlive || entityWorld != world) {
                     trackedIterator.remove()
                     defeated.remove(id)
                     continue
@@ -157,8 +167,13 @@ object DianaMobDetect {
 
         if (head.isEmpty) return
         if (head.item.toString() != "minecraft:player_head") return
+        //#if MC >= 1.21.9
+        //$$ val profileComponent: ProfileComponent? = head.get(DataComponentTypes.PROFILE)
+        //$$ val texture: String? = profileComponent?.getGameProfile()?.properties?.get("textures")?.firstOrNull()?.value
+        //#else
         val profile: ProfileComponent? = head.get(DataComponentTypes.PROFILE)
         val texture: String? = profile?.properties?.get("textures")?.firstOrNull()?.value
+        //#endif
 
         if (texture == null) return
         val now = System.currentTimeMillis()
