@@ -64,6 +64,9 @@ dependencies {
 }
 
 tasks.findByName("preprocessCode")?.apply {
-    dependsOn(":1.21.5-fabric:kspKotlin")
-    dependsOn(":1.21.7-fabric:kspKotlin")
+    when (mcData.version) {
+        MinecraftVersions.VERSION_1_21_10 -> dependsOn(":1.21.7-fabric:kspKotlin")
+        MinecraftVersions.VERSION_1_21_7 -> dependsOn(":1.21.5-fabric:kspKotlin")
+        else -> {}
+    }
 }
