@@ -87,7 +87,6 @@ object AchievementManager {
         if (!isRareMob) return
         if (getDisplayName(event.player.mainHandStack).contains("Shears", true) && event.entity.name.string.contains("King Minos")) unlockAchievement(92)
         if (getDisplayName(event.player.mainHandStack).contains("Core", true) && event.entity.name.string.contains("Manticore")) unlockAchievement(93)
-        ActionResult.PASS
     }
 
     fun addAchievement(id: Int, name: String, description: String, rarity: String, previousId: Int? = null, hidden: Boolean = false) {
