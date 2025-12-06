@@ -188,6 +188,24 @@ object AchievementManager {
         }
 
         when {
+            // Inquis & Chimeras:
+            // TODO: sboData.b2bchim -> unlockAchievement(1)
+            // TODO: sboData.b2b2bchim -> unlockAchievement(2)
+            // TODO: sboData.b2bchimls -> unlockAchievement(66)
+            // TODO: sboData.b2b2bchimls -> unlockAchievement(67)
+
+            // TODO: sboData.stickLs -> unlockAchievement(15)
+            // TODO: itemsData.relicLs >= 1 -> unlockAchievement(17)
+
+
+
+            sboData.b2bStick -> unlockAchievement(3)
+            // TODO: sboData.b2bRelic -> unlockAchievement(5)
+            sboData.b2bInq -> unlockAchievement(6)
+            // TODO: sboData.b2b2bInq -> unlockAchievement(7)
+
+            // TODO smth -> unlockAchievement(75)
+
             sboData.b2bWool -> unlockAchievement(81)
             sboData.b2bWoolLs -> unlockAchievement(82)
             sboData.b2bKing -> unlockAchievement(87)
@@ -264,7 +282,6 @@ object AchievementManager {
             val screen = event.screen
             if (screen !is HandledScreen<*>) return@sleep
             if (!event.screen.title.string.contains("Mythological Creatur", ignoreCase = true)) return@sleep
-
             val slots = screen.screenHandler.slots
 
             val bullKills = Helper.getKillsFromLore(slots[10].stack)
