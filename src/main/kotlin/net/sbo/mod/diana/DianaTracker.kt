@@ -552,10 +552,10 @@ object DianaTracker {
         if (Diana.lootAnnouncerScreen && title) {
             val subTitle = if (Diana.lootAnnouncerPrice) "§6${Helper.getItemPriceFormatted(itemId, amount)} coins" else ""
             when (itemId) {
-                "MANTI_CORE", "SHIMMERING_WOOL", "KING_MINOS_SHARD" -> {
+                "MANTI_CORE", "SHIMMERING_WOOL", "KING_MINOS_SHARD", "MYTHOLOGICAL_DYE" -> {
                     Helper.showTitle("§c§l$item!", subTitle, 0, 25, 35)
                 }
-                "CHIMERA", "FABLED_STINGER", "MYTHOLOGICAL_DYE" -> {
+                "CHIMERA", "FABLED_STINGER" -> {
                     Helper.showTitle("§d§l$item!", subTitle, 0, 25, 35)
                 }
                 "BRAIN_FOOD", "MINOS_RELIC", "BRAIDED_GRIFFIN_FEATHER", "SPHINX_SHARD" -> {
