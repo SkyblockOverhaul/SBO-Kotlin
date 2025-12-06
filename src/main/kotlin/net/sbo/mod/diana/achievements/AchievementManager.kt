@@ -128,6 +128,7 @@ object AchievementManager {
     fun trackAchievementsItem(tracker: DianaTrackerMayorData) {
         if (!isOnHypixel) return
         val itemsData = tracker.items
+        val mobsData = tracker.mobs
         val time = itemsData.TIME
         val totalBurrows = itemsData.TOTAL_BURROWS
         val totalChimera = itemsData.CHIMERA + itemsData.CHIMERA_LS
@@ -209,6 +210,7 @@ object AchievementManager {
             sboData.b2bWool -> unlockAchievement(81)
             sboData.b2bWoolLs -> unlockAchievement(82)
             sboData.b2bKing -> unlockAchievement(87)
+            mobsData.KING_MINOS >= 1 -> unlockAchievement(116)
 
             itemsData.SHIMMERING_WOOL + itemsData.SHIMMERING_WOOL_LS >= 1 -> unlockAchievement(83)
             itemsData.SHIMMERING_WOOL_LS >= 1 -> unlockAchievement(111)
@@ -218,6 +220,7 @@ object AchievementManager {
             // TODO: sboData.b2b2bFood -> unlockAchievement(98)
             sboData.b2bFoodLs -> unlockAchievement(99)
             //TODO: sboData.b2b2bFoodLs -> unlockAchievement(100)
+            mobsData.SPHINX >= 1 -> unlockAchievement(115)
 
             sboData.b2bCore -> unlockAchievement(94)
             sboData.b2bCoreLs -> unlockAchievement(95)
@@ -225,8 +228,9 @@ object AchievementManager {
             // TODO: sboData.b2b2bSphinx -> unlockAchievement(108)
             sboData.b2bManti -> unlockAchievement(109)
             // TODO: sboData.b2b2bManti -> unlockAchievement(110)
+            mobsData.MANTICORE >= 1 -> unlockAchievement(112)
 
-            // TODO: itemsData.MYTHOLOGICAL_DYE >= 1 -> unlockAchievement(86)
+            itemsData.MYTHOLOGICAL_DYE >= 1 -> unlockAchievement(86)
         }
 
         if (totalProfit(dianaTrackerMayor) >= 1_000_000_000L) unlockAchievement(84)
@@ -401,7 +405,7 @@ object AchievementManager {
         addAchievement(17, "1/25000", "Lootshare a Relic (1/25000)", "Impossible", hidden = true)
         addAchievement(5, "Back-to-Back Relic", "Get 2 Relics in a row", "Impossible")
 
-        addAchievement(115, "What do i click?", "Get your first Sphinx", "Uncommon") // TODO
+        addAchievement(115, "What do i click?", "Get your first Sphinx", "Uncommon")
         addAchievement(107, "Back-to-Back Sphinx", "Get 2 Sphinx in a row", "Epic")
         addAchievement(108, "b2b2b Sphinx", "Get 3 Sphinx in a row", "Mythic", 107) // TODO
         addAchievement(97, "Back-to-Back Brain Food", "Get 2 Brain Food in a row", "Legendary")
@@ -411,7 +415,7 @@ object AchievementManager {
 
         addAchievement(85, "Might get some braincells back", "Get 5 brain food in one event", "Legendary")
 
-        addAchievement(112, "Here, Kitty Kitty… OH NO.", "Spawn your first Manticore", "Epic") // TODO
+        addAchievement(112, "Here, Kitty Kitty… OH NO.", "Spawn your first Manticore", "Epic")
         addAchievement(109, "b2b Manticore", "Spawn 2 Manticores in a row", "Divine")
         addAchievement(110, "b2b2b Manticore", "Spawn 3 Manticores in a row", "Celestial") // TODO
         addAchievement(113, "First core", "Drop your first Manti-core", "Mythic") // TODO
@@ -419,7 +423,7 @@ object AchievementManager {
         addAchievement(114, "First Lootshare core", "Lootshare your first Manti-core", "Legendary") // TODO
         addAchievement(95, "Back-to-Back Lootshare core", "Lootshare 2 Manti-cores in a row", "Impossible")
 
-        addAchievement(116, "Why do i hear boss music?", "get your first King Minos", "Legendary") // TODO
+        addAchievement(116, "Why do i hear boss music?", "get your first King Minos", "Legendary")
         addAchievement(87, "b2b King Minos", "Get 2 King Minos in a row", "Celestial")
         addAchievement(117, "b2b2b King Minos", "Get 3 King Minos in a row", "Impossible") // TODO
         addAchievement(83, "First Wool", "Get your first Wool", "Mythic")
@@ -500,7 +504,7 @@ object AchievementManager {
         addAchievement(78, "Can I craft a Core sword now?", "Get 1 stick & 2 manti-cores in 1 event", "Divine")
         addAchievement(79, "Can I craft a Shimmering bed now?", "Get 3 shimmering wool in 1 event", "Celestial")
 
-        addAchievement(86, "It could look better", "Get a Mythological Dye", "Epic") // TODO
+        addAchievement(86, "It could look better", "Get a Mythological Dye", "Epic")
 
         addAchievement(84, "Those coins gotta be heavy?", "Make 1b profit in 1 event", "Legendary")
 
