@@ -71,6 +71,8 @@ object DianaMobDetect {
                 else -> raw.toDoubleOrNull()
             }
         }
+    
+    private fun parseStarFromName(name: String): Boolean = name.contains("✯")//todo: implement overlay for star check
 
     private fun shouldAlertForMob(name: String) = RareDianaMob.fromName(name) != null && Diana.hpAlert > 0.0
 
