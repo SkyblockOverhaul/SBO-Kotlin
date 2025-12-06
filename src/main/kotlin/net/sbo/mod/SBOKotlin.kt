@@ -34,6 +34,7 @@ import net.sbo.mod.overlays.DianaMobs
 import net.sbo.mod.overlays.DianaStats
 import net.sbo.mod.overlays.Legion
 import net.sbo.mod.overlays.MagicFind
+import net.sbo.mod.qol.HitDetector
 import net.sbo.mod.qol.MessageHider
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.SboTimerManager
@@ -114,6 +115,7 @@ object SBOKotlin {
 		MessageHider.init()
 		SphinxSolver.init()
 		RareMobHighlight.init()
+		HitDetector.init()
 
 		Register.onTick(100) { unregister ->
 			if (mc.player != null && World.isInSkyblock()) {
