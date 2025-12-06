@@ -188,6 +188,24 @@ object AchievementManager {
         }
 
         when {
+            // Inquis & Chimeras:
+            // TODO: sboData.b2bchim -> unlockAchievement(1)
+            // TODO: sboData.b2b2bchim -> unlockAchievement(2)
+            // TODO: sboData.b2bchimls -> unlockAchievement(66)
+            // TODO: sboData.b2b2bchimls -> unlockAchievement(67)
+
+            // TODO: sboData.stickLs -> unlockAchievement(15)
+            // TODO: itemsData.relicLs >= 1 -> unlockAchievement(17)
+
+
+
+            sboData.b2bStick -> unlockAchievement(3)
+            // TODO: sboData.b2bRelic -> unlockAchievement(5)
+            sboData.b2bInq -> unlockAchievement(6)
+            // TODO: sboData.b2b2bInq -> unlockAchievement(7)
+
+            // TODO smth -> unlockAchievement(75)
+
             sboData.b2bWool -> unlockAchievement(81)
             sboData.b2bWoolLs -> unlockAchievement(82)
             sboData.b2bKing -> unlockAchievement(87)
@@ -438,13 +456,13 @@ object AchievementManager {
         addAchievement(48, "Hunter Slayer", "Max the Hunter Bestiary", "Epic")
         addAchievement(49, "Lynx Slayer", "Max the Siamese Lynx Bestiary", "Epic")
         addAchievement(50, "Gaia Slayer", "Max the Gaia Bestiary", "Legendary")
-        addAchievement(101, "Nymph Slayer", "Max the Nymph Bestiary", "Epic") // TODO
-        addAchievement(102, "Cretan Bull Slayer", "Max the Cretan Bull Bestiary", "Epic") // TODO
-        addAchievement(103, "Harpy Slayer", "Max the Harpy Bestiary", "Epic") // TODO
-        addAchievement(104, "Sphinx Slayer", "Max the Sphinx Bestiary", "Legendary") // TODO
-        addAchievement(105, "Manticore Slayer", "Max the Manticore Bestiary", "Mythic") // TODO
-        addAchievement(106, "King Minos Slayer", "Max the King Minos Bestiary", "Mythic") // TODO
-        addAchievement(51, "Time to get on the leaderboard", "Max all Diana Bestiaries", "Mythic", hidden = true)
+        addAchievement(101, "Sphinx Slayer", "Max the Sphinx Bestiary", "Epic") // TODO
+        addAchievement(102, "Manti-core Slayer", "Max the Manti-core Bestiary", "Mythic") // TODO
+        addAchievement(103, "Minos King Slayer", "Max the Minos King Bestiary", "Mythic") // TODO
+        addAchievement(104, "Creatan Bull Slayer", "Max the Creatan Bull Slayer", "Epic") // TODO
+        addAchievement(105, "Nymph Slayer", "Max the Nymph Slayer", "Epic") // TODO
+        addAchievement(106, "Harpy Slayer", "Max the Harpy Slayer", "Epic") // TODO
+        addAchievement(51, "Time to get on the leaderboard", "Max all Diana Bestiaries", "Mythic", hidden = true) // TODO Update
 
         addAchievement(52, "Daedalus Mastery: Chimera V", "Chimera V on Daedalus Axe", "Legendary")
         addAchievement(53, "Daedalus Mastery: Looting V", "Looting V on Daedalus Axe", "Legendary")
@@ -470,8 +488,13 @@ object AchievementManager {
         addAchievement(73, "Can I craft a Chimera sword now?", "Get 1 stick & 2 chimeras in 1 event", "Epic")
         addAchievement(74, "Can I craft a Relic sword now?", "Get 1 stick & 2 relics in 1 event", "Legendary")
         addAchievement(78, "Can I craft a Core sword now?", "Get 1 stick & 2 manti-cores in 1 event", "Divine")
-        addAchievement(79, "Can I craft a Shimmering bed now?", "Get 3 shimmering wool in 1 event", "Celestial")
+        addAchievement(79, "Can I craft a Shimmering bed now?", "Get 3 shimmering wool in 1 event", "Impossible")
 
+        addAchievement(81, "Dm me the client name please :)", "Get b2b wool", "Celestial")
+        addAchievement(82, "Hide before your party finds you", "Get b2b wool lootshare", "Impossible")
+        addAchievement(83, "How good does it feel?","Get 1 wool", "Mythic")
+        addAchievement(111, "Wdym you lootshared a wool?", "Lootshare 1 wool", "Divine")
+        addAchievement(85, "Might get some braincells back", "Get 8 brain food", "Legendary")
         addAchievement(86, "It could look better", "Get a Mythological Dye", "Epic") // TODO
 
         addAchievement(84, "Those coins gotta be heavy?", "Make 1b profit in 1 event", "Legendary")
@@ -481,7 +504,19 @@ object AchievementManager {
         addAchievement(91, "King of the Hill", "Get top 1 king bestiary", "Impossible") // TODO
 
         addAchievement(92, "Why am I not getting a wool???", "Hit a king with a shear", "Uncommon", hidden = true) // TODO
-        addAchievement(93, "Why are you doing this?", "Hit a Manti-core with an item with 'core' in the name", "Uncommon", hidden = true) // TODO
+        addAchievement(93, "Why are you doing this?", "Hit a Manti with an item with 'core' in the name", "Uncommon", hidden = true) // TODO
+
+        addAchievement(94, "b2b core", "", "Celestial")
+        addAchievement(95, "b2b core ls", "", "Impossible")
+        addAchievement(97, "b2b brain food", "", "Legendary")
+        addAchievement(98, "b2b2b brain food", "", "Divine") // TODO
+        addAchievement(99, "b2b brain food ls", "", "Mythic")
+        addAchievement(100,"b2b2b brain food ls", "", "Celestial") // TODO
+
+        addAchievement(107, "b2b sphinx", "", "Mythic")
+        addAchievement(108, "b2b2b sphinx", "", "Divine") // TODO
+        addAchievement(109, "b2b Manticore", "", "Celestial")
+        addAchievement(110, "b2b2b Manticore", "", "Impossible") // TODO
 
         addAchievement(77, "From the ashes", "Drop a Phoenix pet from a Diana mob", "Impossible", hidden = true)
     }
