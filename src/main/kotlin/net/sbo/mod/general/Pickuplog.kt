@@ -102,7 +102,7 @@ object Pickuplog {
         for (item in newItems) {
             refreshOverlay(item.itemId, item.name, item.count)
             if (item.itemUUID != "") {
-                DianaTracker.trackWithPickuplog(item)
+//                DianaTracker.trackWithPickuplog(item)
             } else {
                 DianaTracker.trackWithPickuplogStackable(item, item.count)
             }
