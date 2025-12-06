@@ -512,8 +512,8 @@ object AchievementManager {
         addAchievement(90, "Get a j*b", "Get top 10 king bestiary", "Mythic") // TODO
         addAchievement(91, "King of the Hill", "Get top 1 king bestiary", "Impossible") // TODO
 
-        addAchievement(92, "Why am I not getting a wool???", "Hit a king with a shear", "Uncommon", hidden = true) // TODO
-        addAchievement(93, "Why are you doing this?", "Hit a Manti-core with an item with 'core' in the name", "Uncommon", hidden = true) // TODO
+        addAchievement(92, "Why am I not getting a wool???", "Hit a king with a shear", "Uncommon", hidden = true)
+        addAchievement(93, "Why are you doing this?", "Hit a Manti-core with an item with 'core' in the name", "Uncommon", hidden = true)
 
         addAchievement(77, "From the ashes", "Drop a Phoenix pet from a Diana mob", "Impossible", hidden = true)
     }
