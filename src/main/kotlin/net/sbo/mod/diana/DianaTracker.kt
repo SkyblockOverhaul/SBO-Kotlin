@@ -675,8 +675,8 @@ object DianaTracker {
             val shard = matchResult.group(2).removeFormatting()
             val amount = matchResult.group(3).removeFormatting().toIntOrNull() ?: 0
             when (shard) {
-                "King Minos" -> onRareDropFromMob("King Minos Shard", false, true, false, 0, amount)
-                "Sphinx" -> onRareDropFromMob("Sphinx Shard", false, true, false, 0, amount)
+                "King Minos" -> onRareDropFromMob("King Minos Shard", false, false, false, 0, amount)
+                "Sphinx" -> onRareDropFromMob("Sphinx Shard", false, false, false, 0, amount)
                 "Minotaur" -> onRareDropFromMob("Minotaur Shard", false, false, false, 0, amount)
                 "Cretan Bull" -> trackItem("CRETAN_BULL_SHARD", amount)
                 "Harpy" -> trackItem("HARPY_SHARD", amount)
