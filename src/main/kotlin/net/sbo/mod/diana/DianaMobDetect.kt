@@ -4,6 +4,7 @@ import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.ProfileComponent
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.decoration.ArmorStandEntity
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.SBOKotlin.mc
@@ -49,6 +50,7 @@ object DianaMobDetect {
     private val warned = mutableSetOf<Int>()
 
     private val mobHpOverlay: Overlay = Overlay("mythosMobHp", 10f, 10f, 1f, listOf("Chat screen"), OverlayExamples.mythosMobHpExample).setCondition { Diana.mythosMobHp }
+    private val noShurikenOverlay: Overlay = Overlay("noShuriken", 10f, 10f, 3f, listOf("Chat screen"), OverlayExamples.dianaStarlessMobExample).setCondition { Diana.noShurikenOverlay }
 
     internal enum class RareDianaMob(val display: String) {
         INQ("Minos Inquisitor"),
@@ -71,15 +73,17 @@ object DianaMobDetect {
                 else -> raw.toDoubleOrNull()
             }
         }
-    
+
     private fun parseStarFromName(name: String): Boolean = name.contains("✯")//todo: implement overlay for star check
 
     private fun shouldAlertForMob(name: String) = RareDianaMob.fromName(name) != null && Diana.hpAlert > 0.0
 
     fun init() {
         mobHpOverlay.init()
+        noShurikenOverlay.init()
         Register.onTick(1) {
             val world = mc.world ?: return@onTick
+            val player = mc.player ?: return@onTick
             val overlayLines = mutableListOf<OverlayTextLine>()
 
             val unconfirmedIterator = unconfirmed.iterator()
@@ -107,6 +111,8 @@ object DianaMobDetect {
                 else if (now - spawnTime > NAME_CHECK_TIMEOUT_MS) unconfirmedIterator.remove()
             }
 
+            var closestStarlessMob: ArmorStandEntity? = null
+            var closestDistanceSq = Double.MAX_VALUE
             val trackedIterator = tracked.iterator()
             while (trackedIterator.hasNext()) {
                 val (id, armorStand) = trackedIterator.next()
@@ -123,8 +129,20 @@ object DianaMobDetect {
                 }
                 checkCocoon(armorStand)
                 checkDianaMob(armorStand, id)?.let { overlayLines.add(it) }
+
+                val result = ckeckStarlessMob(armorStand, id, player, closestStarlessMob, closestDistanceSq)
+                closestStarlessMob = result.first
+                closestDistanceSq = result.second
             }
             mobHpOverlay.setLines(overlayLines)
+
+            if (closestStarlessMob != null) {
+                noShurikenOverlay.setLines(listOf(
+                    OverlayTextLine("§c§lNO SHURIKEN!"),
+                ))
+            } else {
+                noShurikenOverlay.clearLines()
+            }
         }
     }
 
@@ -157,6 +175,29 @@ object DianaMobDetect {
             SBOEvent.emit(DianaMobDeathEvent(name, entity))
         }
         return OverlayTextLine(name)
+    }
+
+    private fun ckeckStarlessMob(
+        entity: ArmorStandEntity,
+        id: Int,
+        player: PlayerEntity,
+        currentClosest: ArmorStandEntity?,
+        currentDistanceSq: Double
+    ): Pair<ArmorStandEntity?, Double> {
+        if (id in defeated) return currentClosest to currentDistanceSq
+        val name = entity.customName?.formattedString() ?: entity.name.formattedString()
+        if (RareDianaMob.fromName(name) == null) return currentClosest to currentDistanceSq
+        if (parseStarFromName(name)) return currentClosest to currentDistanceSq
+
+        val health = parseHealthFromName(name)
+        if (health != null && health <= 0.0) return currentClosest to currentDistanceSq
+
+        val distSq = player.squaredDistanceTo(entity)
+        return if (distSq < currentDistanceSq) {
+            entity to distSq
+        } else {
+            currentClosest to currentDistanceSq
+        }
     }
 
     private fun checkCocoon(entity: ArmorStandEntity) {

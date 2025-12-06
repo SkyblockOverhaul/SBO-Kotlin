@@ -359,6 +359,11 @@ object Diana : CategoryKt("Diana") {
         this.description = Translated("Sends a title alert when a Rare Mob is below the set HP value in Million (0 to disable)")
     }
 
+    var noShurikenOverlay by boolean(false) {
+        this.name = Translated("No Shuriken Overlay")
+        this.description = Translated("Shows an overlay when the RareMob has no shuriken applied /sboguis to move it")
+    }
+
     init {
         button {
             title = "Send Test Message"
