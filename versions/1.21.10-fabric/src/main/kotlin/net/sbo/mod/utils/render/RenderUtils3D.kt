@@ -13,6 +13,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.util.math.ColorHelper
 import net.minecraft.util.math.MathHelper
+import net.sbo.mod.settings.categories.Diana
 
 object RenderUtils3D {
     fun renderWaypoint(
@@ -254,6 +255,9 @@ object RenderUtils3D {
         colorComponents: FloatArray,
         phase: Boolean = false
     ) {
+        val player = mc.player ?: return
+        if (vec.center().distanceTo(player.x, player.y, player.z) < Diana.removeBeam) return
+
         val consumers = ctx.consumers()
         val matrices = ctx.matrices() ?: return
         val wolrd = mc.world ?: return

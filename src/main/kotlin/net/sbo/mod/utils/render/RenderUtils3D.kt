@@ -14,6 +14,7 @@ import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.ColorHelper
+import net.sbo.mod.settings.categories.Diana
 
 object RenderUtils3D {
     fun renderWaypoint(
@@ -254,6 +255,9 @@ object RenderUtils3D {
         colorComponents: FloatArray,
         phase: Boolean = false
     ) {
+        val player = mc.player ?: return
+        if (vec.center().distanceTo(player.x, player.y, player.z) < Diana.removeBeam) return
+
         val consumers = ctx.consumers()
         val matrices = ctx.matrixStack() ?: return
         val wolrd = mc.world ?: return
