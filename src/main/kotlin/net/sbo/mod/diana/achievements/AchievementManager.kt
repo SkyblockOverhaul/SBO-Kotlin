@@ -194,32 +194,27 @@ object AchievementManager {
             }
         }
 
-        when {
-            daedalusStickCount >= 1 && totalChimera >= 2 -> unlockAchievement(73)
-            daedalusStickCount >= 1 && itemsData.MINOS_RELIC >= 2 -> unlockAchievement(74)
-            daedalusStickCount >= 1 && itemsData.MANTI_CORE + itemsData.MANTI_CORE_LS >= 2 -> unlockAchievement(78)
-        }
+        if (daedalusStickCount >= 1 && totalChimera >= 2) unlockAchievement(73)
+        if (daedalusStickCount >= 1 && itemsData.MINOS_RELIC >= 2) unlockAchievement(74)
+        if (daedalusStickCount >= 1 && itemsData.MANTI_CORE + itemsData.MANTI_CORE_LS >= 2) unlockAchievement(78)
 
         when {
             totalWools >= 3 -> unlockAchievement(79)
             totalWools >= 1 -> unlockAchievement(83)
-            itemsData.SHIMMERING_WOOL_LS >= 1 -> unlockAchievement(111)
         }
 
-        when {
-            itemsData.MANTI_CORE_LS >= 1 -> unlockAchievement(114)
-            totalCores >= 1 -> unlockAchievement(113)
-        }
+        if (itemsData.SHIMMERING_WOOL_LS >= 1) unlockAchievement(111)
+
+        if (itemsData.MANTI_CORE_LS >= 1) unlockAchievement(114)
+        if (totalCores >= 1) unlockAchievement(113)
 
         if (totalBrainFood >= 5) unlockAchievement(85)
 
         if (itemsData.MYTHOLOGICAL_DYE >= 1) unlockAchievement(86)
 
-        when {
-            mobsData.KING_MINOS >= 1 -> unlockAchievement(116)
-            mobsData.SPHINX >= 1 -> unlockAchievement(115)
-            mobsData.MANTICORE >= 1 -> unlockAchievement(112)
-        }
+        if (mobsData.KING_MINOS >= 1) unlockAchievement(116)
+        if (mobsData.SPHINX >= 1) unlockAchievement(115)
+        if (mobsData.MANTICORE >= 1) unlockAchievement(112)
 
         if (totalProfit(dianaTrackerMayor) >= 1_000_000_000L) unlockAchievement(84)
 
@@ -509,7 +504,7 @@ object AchievementManager {
         addAchievement(73, "Can I craft a Chimera sword now?", "Get 1 stick & 2 chimeras in 1 event", "Epic")
         addAchievement(74, "Can I craft a Relic sword now?", "Get 1 stick & 2 relics in 1 event", "Legendary")
         addAchievement(78, "Can I craft a Core sword now?", "Get 1 stick & 2 manti-cores in 1 event", "Divine")
-        addAchievement(79, "Can I craft a Shimmering bed now?", "Get 3 shimmering wool in 1 event", "Celestial")
+        addAchievement(79, "Can I craft a Shimmering bed now?", "Get 3 shimmering wool in 1 event", "Celestial", 83)
 
         addAchievement(86, "It could look better", "Get a Mythological Dye", "Epic")
 
