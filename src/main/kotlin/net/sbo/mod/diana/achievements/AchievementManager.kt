@@ -77,7 +77,7 @@ object AchievementManager {
 
         // Get a King's soul
         Register.onChatMessage(Regex("^§aYou added a §e(.*?) §asoul to your §9(.*?)§a!$")) { message, matchResult ->
-            if (matchResult.groupValues[0].contains("Zombie")) unlockAchievement(118)
+            if (matchResult.groupValues[0].contains("King Minos")) unlockAchievement(118)
         }
 
         // Die to a Minos King
