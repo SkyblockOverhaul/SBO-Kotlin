@@ -32,6 +32,8 @@ import net.sbo.mod.utils.events.impl.guis.GuiOpenEvent
 import java.lang.Thread.sleep
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.regex.Pattern
+import kotlin.text.Regex
 
 object AchievementManager {
     val rarityColorDict = mapOf(
@@ -74,9 +76,8 @@ object AchievementManager {
         addAllAchievements()
 
         // Get a King's soul
-        Register.onChatMessage(Pattern.compile("§aYou added a (.*?) soul to your (.*?)")) { message, matchResult ->
-            Chat.chat("Got a soul")
-            if (matchResult.captureGroup(1).contains("Zombie")) unlockAchievement(107)
+        Register.onChatMessage(Regex("^§aYou added a §e(.*?) §asoul to your §9(.*?)§a!$")) { message, matchResult ->
+            if (matchResult.groupValues[0].contains("Zombie")) unlockAchievement(118)
         }
 
         // Die to a Minos King
@@ -519,7 +520,7 @@ object AchievementManager {
 
         addAchievement(92, "Why am I not getting a wool???", "Hit a king with a shear", "Uncommon", hidden = true)
         addAchievement(93, "Why are you doing this?", "Hit a Manticore with 'core' in item name", "Uncommon", hidden = true)
-        addAchievement(107, "No wool? Sell his soul to the devil!", "Get a King's soul", "Epic", hidden = true)
+        addAchievement(118, "No wool? Sell his soul to the devil!", "Get a King's soul", "Epic", hidden = true)
 
         addAchievement(77, "From the ashes", "Drop a Phoenix pet from a Diana mob", "Impossible", hidden = true)
     }
