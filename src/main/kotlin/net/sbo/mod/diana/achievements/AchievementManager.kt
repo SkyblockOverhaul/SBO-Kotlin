@@ -73,8 +73,11 @@ object AchievementManager {
         }
         addAllAchievements()
 
-        // Dye
-        // Register.onChatMessage()
+        // Get a King's soul
+        Register.onChatMessage(Pattern.compile("§aYou added a (.*?) soul to your (.*?)")) { message, matchResult ->
+            Chat.chat("Got a soul")
+            if (matchResult.captureGroup(1).contains("Zombie")) unlockAchievement(107)
+        }
 
         // Die to a Minos King
         // Register.onChatMessage()
@@ -516,6 +519,7 @@ object AchievementManager {
 
         addAchievement(92, "Why am I not getting a wool???", "Hit a king with a shear", "Uncommon", hidden = true)
         addAchievement(93, "Why are you doing this?", "Hit a Manticore with 'core' in item name", "Uncommon", hidden = true)
+        addAchievement(107, "No wool? Sell his soul to the devil!", "Get a King's soul", "Epic", hidden = true)
 
         addAchievement(77, "From the ashes", "Drop a Phoenix pet from a Diana mob", "Impossible", hidden = true)
     }
