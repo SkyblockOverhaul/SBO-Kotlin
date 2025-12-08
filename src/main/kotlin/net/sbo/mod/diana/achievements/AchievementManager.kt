@@ -76,6 +76,7 @@ object AchievementManager {
         addAllAchievements()
         
         kingSoul()
+        mythTheFish()
 
         // Die to a Minos King
         // Register.onChatMessage()
@@ -371,6 +372,12 @@ object AchievementManager {
         }
     }
 
+    fun mythTheFish() {
+        Register.onChatMessage(Regex("^(.*?) &e§eYou just dug out(.*?)$")) { message, matchResult ->
+            if (matchResult.groupValues[1].contains("Myth the Fish")) unlockAchievement(119)
+        }
+    }
+
     fun addAllAchievements() {
         // inquisitor
         addAchievement(1, "Back-to-Back Chimera", "Get 2 Chimera in a row", "Mythic")
@@ -524,6 +531,8 @@ object AchievementManager {
         addAchievement(92, "Why am I not getting a wool???", "Hit a king with a shear", "Uncommon", hidden = true)
         addAchievement(93, "Why are you doing this?", "Hit a Manticore with 'core' in item name", "Uncommon", hidden = true)
         addAchievement(118, "No wool? Sell his soul to the devil!", "Get a King's soul", "Epic", hidden = true)
+
+        addAchievement(119, "Knowledge is Power", "Answer the Sphinx to get Myth the Fish", "Mythic", hidden = true)
 
         addAchievement(77, "From the ashes", "Drop a Phoenix pet from a Diana mob", "Impossible", hidden = true)
     }
