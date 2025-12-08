@@ -326,7 +326,7 @@ object DianaTracker {
             if (magicfind > 0) mfPrefix = " (+$magicfind ✯ Magic Find)"
 
             when {
-                drop.contains("Shimmering Wool") -> { // todo: add achievements for wool, drop sound
+                drop.contains("Shimmering Wool") -> { // todo: drop sound
                     onRareDropFromMob("Shimmering Wool", true, true, true, magicfind)
                     if (!isLootShare) {
                         // normal wool
@@ -358,7 +358,7 @@ object DianaTracker {
                         }
                     }
                 }
-                drop.contains("Manti-core") -> { // todo: add achievements for core, drop sound
+                drop.contains("Manti-core") -> { // todo: drop sound
                     onRareDropFromMob("Manti-core", true, true, true, magicfind)
                     if (!isLootShare) {
                         // normal core
@@ -390,7 +390,7 @@ object DianaTracker {
                         }
                     }
                 }
-                drop.contains("Fateful Stinger") -> { // todo: add achievements for stinger, drop sound
+                drop.contains("Fateful Stinger") -> { // todo: drop sound
                     onRareDropFromMob("Fateful Stinger", true, true, true, magicfind)
                     if (!isLootShare) {
                         // normal stinger
@@ -469,7 +469,7 @@ object DianaTracker {
                         announceLootToParty("Chimera!", "Chimera!$mfPrefix")
                     }
                 }
-                drop.contains("Brain Food") -> { // todo: add achievements for food, drop sound
+                drop.contains("Brain Food") -> { // todo: drop sound
                     onRareDropFromMob("Brain Food", true, true, true, magicfind)
                     if (!isLootShare) {
                         // normal brain food
