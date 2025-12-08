@@ -293,6 +293,13 @@ object Diana : CategoryKt("Diana") {
         this.description = Translated("Removes the rare mob waypoint when you are within 3 blocks of it")
     }
 
+    var removeBeam by int(8) {
+        this.range = 0..20
+        this.slider = true
+        this.name = Translated("Remove Rare Mob Beam Distance")
+        this.description = Translated("Removes the rare mob waypoint beam when you are within this distance of it (0 to disable)")
+    }
+
     init {
         separator {
             this.title = "Rare Mobs"
@@ -357,6 +364,11 @@ object Diana : CategoryKt("Diana") {
     var hpAlert by double(0.0) {
         this.name = Translated("HP Alert")
         this.description = Translated("Sends a title alert when a Rare Mob is below the set HP value in Million (0 to disable)")
+    }
+
+    var noShurikenOverlay by boolean(false) {
+        this.name = Translated("No Shuriken Overlay")
+        this.description = Translated("Shows an overlay when the RareMob has no shuriken applied /sboguis to move it")
     }
 
     init {
