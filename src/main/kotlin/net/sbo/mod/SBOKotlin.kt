@@ -4,6 +4,8 @@ import com.teamresourceful.resourcefulconfig.api.client.ResourcefulConfigScreen
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.MinecraftClient
+import net.minecraft.util.Identifier
+import net.sbo.mod.compat.IrisCompatibility
 import net.sbo.mod.diana.DianaTracker
 import net.sbo.mod.utils.waypoint.WaypointManager
 import org.slf4j.LoggerFactory
@@ -56,6 +58,8 @@ object SBOKotlin {
 	val settings = Settings.register(configurator)
 
 	lateinit var version: String
+
+	fun id(path: String): Identifier = Identifier.of(MOD_ID, path)
 
 	@JvmStatic
 	fun onInitializeClient() {
@@ -122,6 +126,10 @@ object SBOKotlin {
 				unlockAchievement(38)
 				unregister()
 			}
+		}
+
+		if (FabricLoader.getInstance().isModLoaded("iris")) {
+			IrisCompatibility.init()
 		}
 
 		logger.info("SBO-Kotlin initialized successfully!")

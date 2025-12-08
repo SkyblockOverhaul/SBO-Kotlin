@@ -32,36 +32,36 @@ object Customization : CategoryKt("Customization") {
 
     var guessColor by color(
         Color(0.0f, 0.964f, 1.0f).rgb) {
-        this.name = Translated("Guess Color")
-        this.description = Translated("Pick a color for your guess")
+        this.name = Literal("Guess Color")
+        this.description = Literal("Pick a color for your guess")
         this.allowAlpha = true
     }
 
     var StartColor by color(
         Color(0.333f, 1.0f, 0.333f).rgb) {
-        this.name = Translated("Start Burrow Color")
-        this.description = Translated("Pick a color for start burrows")
+        this.name = Literal("Start Burrow Color")
+        this.description = Literal("Pick a color for start burrows")
         this.allowAlpha = true
     }
     
     var focusedColor by color(
         Color(0.6f, 0.2f, 0.8f).rgb) {
-        this.name = Translated("Focused Color")
-        this.description = Translated("Pick a color for your focused guess")
+        this.name = Literal("Focused Color")
+        this.description = Literal("Pick a color for your focused guess")
         this.allowAlpha = true
     }
 
     var MobColor by color(
         Color(1.0f, 0.333f, 0.333f).rgb) {
-        this.name = Translated("Mob Burrow Color")
-        this.description = Translated("Pick a color for mob burrows")
+        this.name = Literal("Mob Burrow Color")
+        this.description = Literal("Pick a color for mob burrows")
         this.allowAlpha = true
     }
 
     var TreasureColor by color(
         Color(1f, 0.666f, 0.0f).rgb) {
-        this.name = Translated("Treasure Burrow Color")
-        this.description = Translated("Pick a color for treasure burrows")
+        this.name = Literal("Treasure Burrow Color")
+        this.description = Literal("Pick a color for treasure burrows")
         this.allowAlpha = true
     }
 
@@ -72,13 +72,13 @@ object Customization : CategoryKt("Customization") {
     }
 
     var waypointTextShadow by boolean(true) {
-        this.name = Translated("Waypoint Text Shadow")
-        this.description = Translated("Enables shadow for waypoint text")
+        this.name = Literal("Waypoint Text Shadow")
+        this.description = Literal("Enables shadow for waypoint text")
     }
 
     var waypointTextScale by float(0.7f) {
-        this.name = Translated("Waypoint Text Scale")
-        this.description = Translated("Scale of the waypoint text")
+        this.name = Literal("Waypoint Text Scale")
+        this.description = Literal("Scale of the waypoint text")
         this.range = 0.3f..2.0f
         this.slider = true
     }
@@ -109,67 +109,67 @@ object Customization : CategoryKt("Customization") {
     }
 
     var inqSound by strings("exporb") {
-        this.name = Translated("Rare Spawn Sound")
-        this.description = Translated("Set the sound that plays when an rare mob spawns. (enter filename)")
+        this.name = Literal("Rare Spawn Sound")
+        this.description = Literal("Set the sound that plays when an rare mob spawns. (enter filename)")
     }
     var inqVolume by float(1.0f) {
-        this.name = Translated("Rare Spawn Volume")
-        this.description = Translated("Set the volume of the rare mob spawn sound")
+        this.name = Literal("Rare Spawn Volume")
+        this.description = Literal("Set the volume of the rare mob spawn sound")
         this.range = 0.0f..1.0f
         this.slider = true
     }
 
     var burrowSound by strings("") {
-        this.name = Translated("Burrow Found Sound")
-        this.description = Translated("Set the sound that plays when you find a burrow. (enter filename)")
+        this.name = Literal("Burrow Found Sound")
+        this.description = Literal("Set the sound that plays when you find a burrow. (enter filename)")
     }
     var burrowVolume by float(1.0f) {
-        this.name = Translated("Burrow Found Volume")
-        this.description = Translated("Set the volume of the burrow found sound")
+        this.name = Literal("Burrow Found Volume")
+        this.description = Literal("Set the volume of the burrow found sound")
         this.range = 0.0f..1.0f
         this.slider = true
     }
 
     var chimSound by strings("") {
-        this.name = Translated("Chimera Drop Sound")
-        this.description = Translated("Set the sound that plays when you drop a chimera book. (enter filename)")
+        this.name = Literal("Chimera Drop Sound")
+        this.description = Literal("Set the sound that plays when you drop a chimera book. (enter filename)")
     }
     var chimVolume by float(1.0f) {
-        this.name = Translated("Chimera Drop Volume")
-        this.description = Translated("Set the volume of the chimera drop sound")
+        this.name = Literal("Chimera Drop Volume")
+        this.description = Literal("Set the volume of the chimera drop sound")
         this.range = 0.0f..1.0f
         this.slider = true
     }
 
     var relicSound by strings("") {
-        this.name = Translated("Relic Drop Sound")
-        this.description = Translated("Set the sound that plays when you drop a minos relic. (enter filename)")
+        this.name = Literal("Relic Drop Sound")
+        this.description = Literal("Set the sound that plays when you drop a minos relic. (enter filename)")
     }
     var relicVolume by float(1.0f) {
-        this.name = Translated("Relic Drop Volume")
-        this.description = Translated("Set the volume of the relic drop sound")
+        this.name = Literal("Relic Drop Volume")
+        this.description = Literal("Set the volume of the relic drop sound")
         this.range = 0.0f..1.0f
         this.slider = true
     }
 
     var stickSound by strings("") {
-        this.name = Translated("Daedalus Stick Drop Sound")
-        this.description = Translated("Set the sound that plays when you drop a daedalus stick.")
+        this.name = Literal("Daedalus Stick Drop Sound")
+        this.description = Literal("Set the sound that plays when you drop a daedalus stick.")
     }
     var stickVolume by float(1.0f) {
-        this.name = Translated("Daedalus Stick Drop Volume")
-        this.description = Translated("Set the volume of the daedalus stick drop sound")
+        this.name = Literal("Daedalus Stick Drop Volume")
+        this.description = Literal("Set the volume of the daedalus stick drop sound")
         this.range = 0.0f..1.0f
         this.slider = true
     }
 
     var sprSound by strings("") {
-        this.name = Translated("Shelmet/Plushie/Remedies Drop Sound")
-        this.description = Translated("Set the sound that plays when you drop a Shelmet/Plushie/Remedies. (enter filename)")
+        this.name = Literal("Shelmet/Plushie/Remedies Drop Sound")
+        this.description = Literal("Set the sound that plays when you drop a Shelmet/Plushie/Remedies. (enter filename)")
     }
     var sprVolume by float(1.0f) {
-        this.name = Translated("Shelmet/Plushie/Remedies Drop Volume")
-        this.description = Translated("Set the volume of the Shelmet/Plushie/Remedies drop sound")
+        this.name = Literal("Shelmet/Plushie/Remedies Drop Volume")
+        this.description = Literal("Set the volume of the Shelmet/Plushie/Remedies drop sound")
         this.range = 0.0f..1.0f
         this.slider = true
     }
