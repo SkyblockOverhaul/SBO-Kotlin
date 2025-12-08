@@ -33,7 +33,8 @@ object RareMobHighlight {
     fun onEntityLoad(event: EntityLoadEvent) {
         if (event.entity is PlayerEntity) {
             if (!Diana.HighlightRareMobs) return
-            if (RareDianaMob.entries.any { event.entity.name.string.contains(it.display, ignoreCase = true) } && event.entity.uuid.version() != 4) {
+            if (event.entity.uuid.version() == 4) return
+            if (RareDianaMob.entries.any { event.entity.name.string.contains(it.display, ignoreCase = true) }) {
                 rareMobs.add(event.entity)
             }
         }
