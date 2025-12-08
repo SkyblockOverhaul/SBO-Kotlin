@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
+import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents
 import net.sbo.mod.utils.events.impl.entity.EntityLoadEvent
 import net.sbo.mod.utils.events.impl.entity.EntityUnloadEvent
 import net.sbo.mod.utils.events.impl.game.ChatMessageAllowEvent
@@ -14,6 +15,7 @@ import net.sbo.mod.utils.events.impl.game.DisconnectEvent
 import net.sbo.mod.utils.events.impl.game.GameCloseEvent
 import net.sbo.mod.utils.events.impl.game.WorldChangeEvent
 import net.sbo.mod.utils.events.impl.guis.GuiCloseEvent
+import net.sbo.mod.utils.events.impl.guis.GuiMouseClick
 import kotlin.reflect.KClass
 
 object SBOEvent {
@@ -73,13 +75,19 @@ object SBOEvent {
             event.isAllowed
         }
 
-        /**
-         * GUI Close Event
-         * Fired when a GUI screen is closed.
-         */
         ScreenEvents.AFTER_INIT.register { client, screen, scaledWidth, scaledHeight ->
+            /**
+             * GUI Close Event
+             * Fired when a GUI screen is closed.
+             */
             ScreenEvents.remove(screen).register {
                 emit(GuiCloseEvent(client, screen, scaledWidth, scaledHeight))
+            }
+            /** GUI Mouse Click Event
+             * Fired before a mouse click is processed in a GUI screen.
+             */
+            ScreenMouseEvents.beforeMouseClick(screen).register { s, mouseX, mouseY, button ->
+                emit(GuiMouseClick(s, mouseX, mouseY, button))
             }
         }
     }
