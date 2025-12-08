@@ -373,7 +373,7 @@ object AchievementManager {
     }
 
     fun mythTheFish() {
-        Register.onChatMessage(Regex("^(.*?) &e§eYou just dug out(.*?)$")) { message, matchResult ->
+        Register.onChatMessage(Regex("^(.*?) §eYou just dug out(.*?)$")) { message, matchResult ->
             if (matchResult.groupValues[1].contains("Myth the Fish")) unlockAchievement(119)
         }
     }
