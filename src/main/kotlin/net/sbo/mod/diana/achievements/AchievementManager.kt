@@ -74,11 +74,8 @@ object AchievementManager {
             backTrackAchievements()
         }
         addAllAchievements()
-
-        // Get a King's soul
-        Register.onChatMessage(Regex("^§aYou added a §e(.*?) §asoul to your §9(.*?)§a!$")) { message, matchResult ->
-            if (matchResult.groupValues[0].contains("King Minos")) unlockAchievement(118)
-        }
+        
+        kingSoul()
 
         // Die to a Minos King
         // Register.onChatMessage()
@@ -365,6 +362,12 @@ object AchievementManager {
             if (lootingV) unlockAchievement(53)
             if (divineGift3) unlockAchievement(54)
             if (chimV && lootingV && divineGift3) unlockAchievement(55)
+        }
+    }
+
+    fun kingSoul() {
+        Register.onChatMessage(Regex("^§aYou added a §e(.*?) §asoul to your §9(.*?)§a!$")) { message, matchResult ->
+            if (matchResult.groupValues[0].contains("King Minos")) unlockAchievement(118)
         }
     }
 
