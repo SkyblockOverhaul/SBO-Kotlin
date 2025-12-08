@@ -696,6 +696,34 @@ object DianaTracker {
             }
             true
         }
+
+        Register.onChatMessageCancable(Pattern.compile("^§aYou caught (.*?) (.*?) §aShards(.*?)$", Pattern.DOTALL)) { message, matchResult ->
+            val shard = matchResult.group(2).removeFormatting()
+            val amount = matchResult.group(1).removeFormatting().replace("x", "").trim().toIntOrNull() ?: 0
+            println("Detected shard chat: shard: $shard | amount: $amount")
+            when (shard) {
+                "King Minos" -> trackItem("KING_MINOS_SHARD", amount)
+                "Sphinx" -> trackItem("SPHINX_SHARD", amount)
+                "Minotaur" -> trackItem("MINOTAUR_SHARD", amount)
+                "Cretan Bull" -> trackItem("CRETAN_BULL_SHARD", amount)
+                "Harpy" -> trackItem("HARPY_SHARD", amount)
+            }
+            true
+        }
+
+        Register.onChatMessageCancable(Pattern.compile("^§aYou caught a (.*?) §aShard!$", Pattern.DOTALL)) { message, matchResult ->
+            val shard = matchResult.group(1).removeFormatting()
+            val amount = 1
+            println("Detected shard chat: shard: $shard | amount: $amount")
+            when (shard) {
+                "King Minos" -> trackItem("KING_MINOS_SHARD", amount)
+                "Sphinx" -> trackItem("SPHINX_SHARD", amount)
+                "Minotaur" -> trackItem("MINOTAUR_SHARD", amount)
+                "Cretan Bull" -> trackItem("CRETAN_BULL_SHARD", amount)
+                "Harpy" -> trackItem("HARPY_SHARD", amount)
+            }
+            true
+        }
     }
 
     fun trackMob(item: String, amount: Int) {
