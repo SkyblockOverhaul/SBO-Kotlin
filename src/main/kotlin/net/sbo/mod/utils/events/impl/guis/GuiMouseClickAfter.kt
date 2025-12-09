@@ -9,7 +9,7 @@ import net.minecraft.client.gui.screen.Screen
  * @param mouseY The Y coordinate of the mouse click.
  * @param button The mouse button that was clicked.
  */
-class GuiMouseClick (
+class GuiMouseClickAfter (
     val screen: Screen,
     val mouseX: Double,
     val mouseY: Double,
