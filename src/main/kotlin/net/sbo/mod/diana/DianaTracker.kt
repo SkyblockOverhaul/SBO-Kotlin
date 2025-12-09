@@ -702,7 +702,6 @@ object DianaTracker {
         Register.onChatMessageCancable(Pattern.compile("^§aYou caught (.*?) (.*?) §aShards(.*?)$", Pattern.DOTALL)) { message, matchResult ->
             val shard = matchResult.group(2).removeFormatting()
             val amount = matchResult.group(1).removeFormatting().replace("x", "").trim().toIntOrNull() ?: 0
-            println("Detected shard chat: shard: $shard | amount: $amount")
             when (shard) {
                 "King Minos" -> trackItem("KING_MINOS_SHARD", amount)
                 "Sphinx" -> trackItem("SPHINX_SHARD", amount)
@@ -716,7 +715,6 @@ object DianaTracker {
         Register.onChatMessageCancable(Pattern.compile("^§aYou caught a (.*?) §aShard!$", Pattern.DOTALL)) { message, matchResult ->
             val shard = matchResult.group(1).removeFormatting()
             val amount = 1
-            println("Detected shard chat: shard: $shard | amount: $amount")
             when (shard) {
                 "King Minos" -> trackItem("KING_MINOS_SHARD", amount)
                 "Sphinx" -> trackItem("SPHINX_SHARD", amount)
