@@ -392,4 +392,9 @@ object Diana : CategoryKt("Diana") {
         this.name = Translated("Mythos Mob HP")
         this.description = Translated("Displays HP of mythological mobs near you. /sboguis to move it")
     }
+
+    var sphinxSolver by boolean(true) {
+        this.name = Literal("Sphinx Solver")
+        this.description = Literal("Helps you solve the sphinx riddle by showing you the answer choices in chat and it automatically clicks the correct one for you when you click anywehre while the chat is open.")
+    }
 }
