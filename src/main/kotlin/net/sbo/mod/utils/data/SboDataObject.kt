@@ -84,8 +84,6 @@ object SboDataObject {
         saveAndBackupAllDataThreaded("SBO")
     }
 
-
-
     fun <T> load(modName: String, fileName: String, defaultData: T, type: Class<T>): T {
         val modConfigDir = File(FabricLoader.getInstance().configDir.toFile(), modName)
         if (!modConfigDir.exists()) {
@@ -100,55 +98,53 @@ object SboDataObject {
         }
 
         return try {
-            val loadedData = FileReader(dataFile).use { reader ->
-                gson.fromJson(reader, type)
-            }
+            FileReader(dataFile).use { reader ->
+                val loadedData = gson.fromJson(reader, type)
+                val jsonObject = JsonParser.parseReader(FileReader(dataFile)).asJsonObject
 
-            val jsonObject = FileReader(dataFile).use { reader ->
-                JsonParser.parseReader(reader).asJsonObject
-            }
+                var dataModified = false
 
-            var dataModified = false
+                if (loadedData is DianaTracker) {
+                    if (jsonObject.has("items")) {
+                        val itemsObject = jsonObject.getAsJsonObject("items")
 
-            if (loadedData is DianaTracker) {
-                if (jsonObject.has("items")) {
-                    val itemsObject = jsonObject.getAsJsonObject("items")
+                        val totalTime = itemsObject.get("totalTime")?.asLong ?: 0
+                        val sessionTime = itemsObject.get("sessionTime")?.asLong ?: 0
+                        val mayorTime = itemsObject.get("mayorTime")?.asLong ?: 0
+                        val oldTime = maxOf(totalTime, sessionTime, mayorTime)
 
-                    val totalTime = itemsObject.get("totalTime")?.asLong ?: 0
-                    val sessionTime = itemsObject.get("sessionTime")?.asLong ?: 0
-                    val mayorTime = itemsObject.get("mayorTime")?.asLong ?: 0
-                    val oldTime = maxOf(totalTime, sessionTime, mayorTime)
-
-                    if (oldTime > 0) {
-                        loadedData.items.TIME = oldTime
-                        dataModified = true
+                        if (oldTime > 0) {
+                            loadedData.items.TIME = oldTime
+                            dataModified = true
+                        }
                     }
                 }
-            }
 
-            if (loadedData is PastDianaEventsData) {
-                val eventsArray = jsonObject.getAsJsonArray("events")
-                if (eventsArray != null) {
-                    for ((index, element) in eventsArray.withIndex()) {
-                        val eventObject = element.asJsonObject
-                        if (eventObject.has("items")) {
-                            val itemsObject = eventObject.getAsJsonObject("items")
-                            val oldTime = itemsObject.get("mayorTime")?.asLong ?: 0
+                if (loadedData is PastDianaEventsData) {
+                    val eventsArray = jsonObject.getAsJsonArray("events")
+                    if (eventsArray != null) {
+                        for ((index, element) in eventsArray.withIndex()) {
+                            val eventObject = element.asJsonObject
+                            if (eventObject.has("items")) {
+                                val itemsObject = eventObject.getAsJsonObject("items")
+                                val oldTime = itemsObject.get("mayorTime")?.asLong ?: 0
 
-                            if (oldTime > 0) {
-                                loadedData.events[index].items.TIME = oldTime
-                                dataModified = true
+                                if (oldTime > 0) {
+                                    loadedData.events[index].items.TIME = oldTime
+                                    dataModified = true
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            if (dataModified) {
-                SBOKotlin.logger.info("[$modName] Old data format detected and migrated. Saving updated file.")
-                save(modName, loadedData, fileName)
+                if (dataModified) {
+                    SBOKotlin.logger.info("[$modName] Old data format detected and migrated. Saving updated file.")
+                    save(modName, loadedData, fileName)
+                }
+
+                loadedData
             }
-            loadedData
         } catch (_: JsonSyntaxException) {
             SBOKotlin.logger.error("[$modName] Error parsing JSON in $fileName, resetting to default data.")
             save(modName, defaultData, fileName)
