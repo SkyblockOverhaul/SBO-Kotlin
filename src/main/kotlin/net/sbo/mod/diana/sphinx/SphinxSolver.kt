@@ -2,6 +2,7 @@ package net.sbo.mod.diana.sphinx
 
 import net.minecraft.client.gui.screen.ChatScreen
 import net.sbo.mod.settings.categories.Diana
+import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.Helper.removeFormatting
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.chat.ChatUtils.createStyledAnswerText
@@ -39,8 +40,10 @@ object SphinxSolver {
             val questionText = matchResult.group(1).trim()
             for (sphinxQuestion in SphinxQuestions.QUESTIONS) {
                 if (sphinxQuestion.question.equals(questionText.removeFormatting(), ignoreCase = true)) {
-                    Chat.chat("§6[SBO] §aCorrect answer: ${sphinxQuestion.answer}")
-                    Chat.chat("§b[SBO] Click anywhere on the screen to answer.")
+                    Helper.sleep(100) {
+                        Chat.chat("§6[SBO] §aCorrect answer: ${sphinxQuestion.answer}")
+                        Chat.chat("§6[SBO] §bClick anywhere on the screen to answer while the chat is open.")
+                    }
                 }
             }
             true
