@@ -8,6 +8,7 @@ import gg.essential.elementa.components.ScrollComponent
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIRoundedRectangle
 import gg.essential.elementa.components.UIText
+import gg.essential.elementa.components.UIWrappedText
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.ChildBasedSizeConstraint
 import gg.essential.elementa.constraints.ColorConstraint
@@ -221,9 +222,10 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
                     textScale = 1.0.pixels
                     color = achievementColor.toConstraint()
                 })
-                .addChild(UIText("§7${achievement.description}").constrain {
+                .addChild(UIWrappedText("§7${achievement.description}").constrain {
                     x = 5.pixels
                     y = SiblingConstraint(5f)
+                    width = achievementBoxWidth.pixels
                     textScale = 1.0.pixels
                 })
                 .addChild(UIText(achievement.rarity).constrain {
