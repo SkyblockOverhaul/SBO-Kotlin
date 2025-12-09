@@ -513,6 +513,7 @@ object Helper {
         val id = when {
             sbId == "CHIMERA" -> "ENCHANTMENT_ULTIMATE_CHIMERA_1"
             sbId.endsWith("_SHARD") -> "${sbId.substringAfterLast('_')}_${sbId.substringBeforeLast('_')}"
+            sbId.endsWith("_DYE") -> "${sbId.substringAfterLast('_')}_${sbId.substringBeforeLast('_')}"
             else -> sbId
         }
         var ahPrice = priceDataAh[id]?.toDouble() ?: 0.0
