@@ -99,7 +99,7 @@ object SphinxSolver {
                         cText = msg
                     }
                 }
-                true
+                false
             }
     }
 
