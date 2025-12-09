@@ -15,7 +15,9 @@ import net.sbo.mod.utils.events.impl.game.DisconnectEvent
 import net.sbo.mod.utils.events.impl.game.GameCloseEvent
 import net.sbo.mod.utils.events.impl.game.WorldChangeEvent
 import net.sbo.mod.utils.events.impl.guis.GuiCloseEvent
-import net.sbo.mod.utils.events.impl.guis.GuiMouseClick
+import net.sbo.mod.utils.events.impl.guis.GuiMouseClickAfter
+import net.sbo.mod.utils.events.impl.guis.GuiMouseClickBefore
+import net.sbo.mod.utils.events.impl.guis.GuiPostRenderEvent
 import kotlin.reflect.KClass
 
 object SBOEvent {
@@ -83,12 +85,44 @@ object SBOEvent {
             ScreenEvents.remove(screen).register {
                 emit(GuiCloseEvent(client, screen, scaledWidth, scaledHeight))
             }
+
+            /** GUI Post Render Event
+             * Fired after a GUI screen is rendered.
+             */
+            ScreenEvents.afterRender(screen).register { renderScreen, drawContext, mouseX, mouseY, tickDelta ->
+                emit(GuiPostRenderEvent(renderScreen, drawContext, mouseX, mouseY, tickDelta))
+            }
+
             /** GUI Mouse Click Event
              * Fired before a mouse click is processed in a GUI screen.
              */
+            //#if MC >= 1.21.9
+            //$$ ScreenMouseEvents.beforeMouseClick(screen).register { s, click ->
+            //$$    val mouseX = click.x
+            //$$    val mouseY = click.y
+            //$$    val button = click.buttonInfo().button
+            //#else
             ScreenMouseEvents.beforeMouseClick(screen).register { s, mouseX, mouseY, button ->
-                emit(GuiMouseClick(s, mouseX, mouseY, button))
+            //#endif
+                emit(GuiMouseClickBefore(s, mouseX, mouseY, button))
             }
+
+            /** GUI Mouse Click Event
+             * Fired after a mouse click is processed in a GUI screen.
+             */
+            //#if MC >= 1.21.9
+            //$$ ScreenMouseEvents.afterMouseClick(screen).register { s, click, consumed ->
+            //$$    val mouseX = click.x
+            //$$    val mouseY = click.y
+            //$$    val button = click.buttonInfo().button
+            //$$    emit(GuiMouseClickAfter(s, mouseX, mouseY, button))
+            //$$    consumed
+            //$$ }
+            //#else
+            ScreenMouseEvents.afterMouseClick(screen).register { s, mouseX, mouseY, button ->
+                emit(GuiMouseClickAfter(s, mouseX, mouseY, button))
+            }
+            //#endif
         }
     }
 
