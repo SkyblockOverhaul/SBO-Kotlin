@@ -1,5 +1,6 @@
 package net.sbo.mod.diana.achievements
 
+import gg.essential.universal.utils.toUnformattedString
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,6 +35,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.regex.Pattern
 import kotlin.text.Regex
+import net.minecraft.screen.slot.Slot
 
 object AchievementManager {
     val rarityColorDict = mapOf(
@@ -305,6 +307,30 @@ object AchievementManager {
         }
     }
 
+    @SboEvent
+    fun trackCarnivalPerks(event: GuiOpenEvent) {
+        Helper.sleep(200) {
+            val screen = event.screen
+            if (screen !is HandledScreen<*>) return@sleep
+            if (!event.screen.title.string.contains("Mythological Ritual", ignoreCase = true)) return@sleep
+            val slots = screen.screenHandler.slots
+
+            val dmgSlot = slots[11]
+            val coinsSlot = slots[12]
+            val mfSlot = slots[14]
+            val trackingSlot = slots[15]
+
+            if (
+                dmgSlot.stack.name.toUnformattedString().contains("Storied Stinger V") &&
+                coinsSlot.stack.name.toUnformattedString().contains("Deadly Greed V") &&
+                mfSlot.stack.name.toUnformattedString().contains("Diana's Favor III") &&
+                trackingSlot.stack.name.toUnformattedString().contains("Elusive Hunter II")
+            ) unlockAchievement(120)
+        }
+
+
+    }
+
     fun backTrackAchievements() {
         Chat.chat("§6[SBO] §eBacktracking Achievements...")
         pastDianaEventsData.events.forEach { eventData ->
@@ -524,7 +550,8 @@ object AchievementManager {
         addAchievement(93, "Why are you doing this?", "Hit a Manticore with 'core' in item name", "Uncommon", hidden = true)
         addAchievement(118, "No wool? Sell his soul to the devil!", "Get a King's soul", "Epic", hidden = true)
 
-        addAchievement(119, "Knowledge is Power", "Answer the Sphinx to get Myth the Fish", "Mythic", hidden = true) // TODO add after merge
+        addAchievement(119, "Knowledge is Power", "Answer the Sphinx to get Myth the Fish", "Mythic", hidden = true)
+        addAchievement(120, "Max Carnival", "Get all diana carnival perks maxed out", "Legendary")
 
         addAchievement(77, "From the ashes", "Drop a Phoenix pet from a Diana mob", "Impossible", hidden = true)
     }
