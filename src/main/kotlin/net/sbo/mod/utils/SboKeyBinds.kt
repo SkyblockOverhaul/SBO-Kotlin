@@ -8,19 +8,11 @@ import net.minecraft.client.util.InputUtil
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.waypoint.WaypointManager
 import org.lwjgl.glfw.GLFW
-//#if MC >= 1.21.9
-//$$ import net.minecraft.util.Identifier
-//#endif
 
 object SboKeyBinds {
 
     private data class KeyPressState(var isHeldDown: Boolean = false, var lastActivation: Long = 0)
     private val keyStates = mutableMapOf<KeyBinding, KeyPressState>()
-    //#if MC >= 1.21.9
-    //$$ private val SBO_CATEGORY = KeyBinding.Category(Identifier.of("sbo-kotlin", "keybinds"))
-    //#else
-    private val SBO_CATEGORY = "key.category.sbo-kotlin.keybinds"
-    //#endif
 
     fun init() {
         register()
@@ -31,28 +23,28 @@ object SboKeyBinds {
         "key.sbo-kotlin.guess_warp",
         InputUtil.Type.KEYSYM,
         GLFW.GLFW_KEY_UNKNOWN,
-        SBO_CATEGORY
+        "key.category.sbo-kotlin.keybinds"
     )
 
     val inqWarpKey: KeyBinding = KeyBinding(
         "key.sbo-kotlin.inq_warp",
         InputUtil.Type.KEYSYM,
         GLFW.GLFW_KEY_UNKNOWN,
-        SBO_CATEGORY
+        "key.category.sbo-kotlin.keybinds"
     )
 
     val generalWarpKey: KeyBinding = KeyBinding(
         "key.sbo-kotlin.general_warp",
         InputUtil.Type.KEYSYM,
         GLFW.GLFW_KEY_UNKNOWN,
-        SBO_CATEGORY
+        "key.category.sbo-kotlin.keybinds"
     )
 
     val sendCoordsKey: KeyBinding = KeyBinding(
         "key.sbo-kotlin.send_coords",
         InputUtil.Type.KEYSYM,
         GLFW.GLFW_KEY_UNKNOWN,
-        SBO_CATEGORY
+        "key.category.sbo-kotlin.keybinds"
     )
 
     fun register() {

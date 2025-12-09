@@ -82,23 +82,13 @@ object OverlayManager {
 
     fun registerMouseLeftClick() {
         ScreenEvents.AFTER_INIT.register { client, screen, scaledWidth, scaledHeight ->
-            //#if MC >= 1.21.9
-            //$$ ScreenMouseEvents.afterMouseClick(screen).register { clickedScreen, click, consumed ->
-            //$$     val mouseX = click.x
-            //$$     val mouseY = click.y
-            //$$     val button = click.buttonInfo().button
-            //$$     if (clickedScreen !is OverlayEditScreen && button == 0) {
-            //$$         overlays.forEach { it.overlayClicked(mouseX, mouseY) }
-            //$$     }
-            //$$     false // return true to consume the event
-            //$$ }
-            //#else
             ScreenMouseEvents.afterMouseClick(screen).register { clickedScreen, mouseX, mouseY, button ->
                 if (clickedScreen !is OverlayEditScreen && button == 0) {
-                    overlays.forEach { it.overlayClicked(mouseX, mouseY) }
+                    for (overlay in overlays) {
+                        overlay.overlayClicked(mouseX, mouseY)
+                    }
                 }
             }
-            //#endif
         }
     }
 }

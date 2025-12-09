@@ -5,7 +5,7 @@ import net.sbo.mod.settings.categories.Customization
 import net.sbo.mod.settings.categories.Diana
 import net.sbo.mod.utils.Player
 import net.sbo.mod.utils.math.SboVec
-import net.sbo.mod.utils.render.RenderUtils3D
+import net.sbo.mod.utils.render.RenderUtil
 import net.sbo.mod.utils.waypoint.WaypointManager.closestGuess
 import net.sbo.mod.utils.waypoint.WaypointManager.focusedGuess
 import kotlin.math.pow
@@ -142,7 +142,7 @@ class Waypoint(
         if (!this.formatted || this.hidden) return
         if (this.type == "guess" && this.distanceRaw <= Diana.removeGuessDistance) return
 
-        RenderUtils3D.renderWaypoint(
+        RenderUtil.renderWaypoint(
             context,
             this.formattedText,
             this.pos,
