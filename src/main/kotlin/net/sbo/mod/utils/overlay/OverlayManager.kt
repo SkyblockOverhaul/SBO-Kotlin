@@ -1,6 +1,5 @@
 package net.sbo.mod.utils.overlay
 
-import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
 import net.sbo.mod.SBOKotlin.mc
