@@ -77,7 +77,9 @@ object DianaTracker {
         Register.onChatMessageCancable(
             Pattern.compile("^§eThe election room is now closed\\. Clerk Seraphine is doing a final count of the votes\\.\\.\\.$", Pattern.DOTALL)
         ) { _, _ ->
-            checkMayorTracker()
+            sleep(10000) {
+                checkMayorTracker()
+            }
             true
         }
 
