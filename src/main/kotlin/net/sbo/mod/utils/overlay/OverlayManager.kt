@@ -1,17 +1,14 @@
 package net.sbo.mod.utils.overlay
 
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
-import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
-import net.minecraft.util.Identifier
 import net.sbo.mod.SBOKotlin.mc
-import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.render.RenderEvent
-
+import net.sbo.mod.utils.events.impl.guis.GuiMouseClickAfter
 //#if MC >= 1.21.7
 //$$ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
 //#else
@@ -34,12 +31,18 @@ object OverlayManager {
 //        }
 
         registerRenderer()
-        registerMouseLeftClick()
 
         Register.command("sboguis", "sbomoveguis", "sbomove") {
             mc.send {
                 mc.setScreen(OverlayEditScreen())
             }
+        }
+    }
+
+    @SboEvent
+    fun onMouseClickAfter(event: GuiMouseClickAfter) {
+        if (event.screen !is OverlayEditScreen && event.button == 0) {
+            overlays.forEach { it.overlayClicked(event.mouseX, event.mouseY) }
         }
     }
 
@@ -78,27 +81,5 @@ object OverlayManager {
     @SboEvent
     fun onRender(event: RenderEvent) {
         render(event.context,  mc.currentScreen?.title?.string ?: "")
-    }
-
-    fun registerMouseLeftClick() {
-        ScreenEvents.AFTER_INIT.register { client, screen, scaledWidth, scaledHeight ->
-            //#if MC >= 1.21.9
-            //$$ ScreenMouseEvents.afterMouseClick(screen).register { clickedScreen, click, consumed ->
-            //$$     val mouseX = click.x
-            //$$     val mouseY = click.y
-            //$$     val button = click.buttonInfo().button
-            //$$     if (clickedScreen !is OverlayEditScreen && button == 0) {
-            //$$         overlays.forEach { it.overlayClicked(mouseX, mouseY) }
-            //$$     }
-            //$$     false // return true to consume the event
-            //$$ }
-            //#else
-            ScreenMouseEvents.afterMouseClick(screen).register { clickedScreen, mouseX, mouseY, button ->
-                if (clickedScreen !is OverlayEditScreen && button == 0) {
-                    overlays.forEach { it.overlayClicked(mouseX, mouseY) }
-                }
-            }
-            //#endif
-        }
     }
 }
