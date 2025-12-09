@@ -292,11 +292,10 @@ object AchievementManager {
                 sphinxKills to 104, mantiKills to 105, kingKills to 106
             ).all { (kills, id) ->
                 val isMaxed = when (id) {
-                    45 -> kills >= 500
-                    50, 46, 49, 102, 103, 101 -> kills >= 3000
-                    47, 48 -> kills >= 1000
-                    104 -> kills >= 100
-                    105, 106 -> kills >= 50
+                    45, 104 -> kills >= 500
+                    50, 49, 102, 103, 101, 48 -> kills >= 3000
+                    47, 46 -> kills >= 1000
+                    105, 106 -> kills >= 100
                     else -> false
                 }
                 if (isMaxed) unlockAchievement(id)
