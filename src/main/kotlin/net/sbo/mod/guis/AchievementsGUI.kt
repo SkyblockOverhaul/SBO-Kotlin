@@ -166,7 +166,7 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
         contentPanel.clearChildren()
 
         val achievementBoxWidth = 200f
-        val achievementBoxHeight = 45f
+        val achievementBoxHeight = 55f
         val spacingX = 20f
         val spacingY = 20f
         val columns = floor((scrollComponent.getWidth() - spacingX) / (achievementBoxWidth + spacingX)).toInt()
@@ -226,6 +226,7 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
                     x = 5.pixels
                     y = SiblingConstraint(5f)
                     width = achievementBoxWidth.pixels
+                    height = 18.pixels
                     textScale = 1.0.pixels
                 })
                 .addChild(UIText(achievement.rarity).constrain {

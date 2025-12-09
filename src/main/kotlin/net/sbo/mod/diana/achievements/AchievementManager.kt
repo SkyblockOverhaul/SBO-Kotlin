@@ -547,7 +547,7 @@ object AchievementManager {
         addAchievement(93, "Why are you doing this?", "Hit a Manticore with 'core' in item name", "Uncommon", hidden = true)
         addAchievement(118, "No wool? Sell his soul to the devil!", "Get a King's soul", "Epic", hidden = true)
 
-        addAchievement(119, "Knowledge is Power", "Answer the Sphinx to get Myth the Fish", "Mythic", hidden = true) // TODO track after merge with dianaV2
+        addAchievement(119, "Knowledge is Power", "Get Myth the Fish from answering Sphinx question correct", "Mythic", hidden = true) // TODO track after merge with dianaV2
         addAchievement(120, "Max Carnival", "Get all diana carnival perks maxed out", "Legendary")
 
         addAchievement(77, "From the ashes", "Drop a Phoenix pet from a Diana mob", "Impossible", hidden = true)
