@@ -31,6 +31,9 @@ import kotlin.collections.iterator
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.text.get
+//#if MC >= 1.21.9
+//$$ import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents
+//#endif
 
 object WaypointManager {
     var guessWp: Waypoint? = null
@@ -189,7 +192,11 @@ object WaypointManager {
             focusedGuess = bestGuess.takeIf { maxDot >= cosThreshold }
         }
 
+        //#if MC >= 1.21.9
+        //$$ WorldRenderEvents.BEFORE_TRANSLUCENT.register(WaypointRenderer)
+        //#else
         WorldRenderEvents.AFTER_TRANSLUCENT.register(WaypointRenderer)
+        //#endif
     }
 
     @SboEvent

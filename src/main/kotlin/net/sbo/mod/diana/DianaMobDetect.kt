@@ -20,8 +20,6 @@ import net.sbo.mod.utils.Helper.showTitle
 import net.sbo.mod.utils.Helper.sleep
 import net.sbo.mod.utils.Player
 import net.sbo.mod.utils.SoundHandler.playCustomSound
-import net.sbo.mod.utils.accessors.isSboGlowing
-import net.sbo.mod.utils.accessors.setSboGlowColor
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.chat.ChatUtils.formattedString
 import net.sbo.mod.utils.events.SBOEvent
@@ -33,7 +31,6 @@ import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.overlay.Overlay
 import net.sbo.mod.utils.overlay.OverlayExamples
 import net.sbo.mod.utils.overlay.OverlayTextLine
-import java.awt.Color
 import kotlin.math.roundToInt
 
 object DianaMobDetect {
@@ -51,11 +48,11 @@ object DianaMobDetect {
     private val tracked = mutableMapOf<Int, ArmorStandEntity>()
     private val defeated = mutableSetOf<Int>()
     private val warned = mutableSetOf<Int>()
-    private val rareMobs = mutableSetOf<PlayerEntity>()
 
     private val mobHpOverlay: Overlay = Overlay("mythosMobHp", 10f, 10f, 1f, listOf("Chat screen"), OverlayExamples.mythosMobHpExample).setCondition { Diana.mythosMobHp }
+    private val noShurikenOverlay: Overlay = Overlay("noShuriken", 10f, 10f, 3f, listOf("Chat screen"), OverlayExamples.dianaStarlessMobExample).setCondition { Diana.noShurikenOverlay }
 
-    private enum class RareDianaMob(val display: String) {
+    internal enum class RareDianaMob(val display: String) {
         INQ("Minos Inquisitor"),
         KING("King Minos"),
         SPHINX("Sphinx"),
@@ -66,25 +63,7 @@ object DianaMobDetect {
         }
     }
 
-    private fun checkMobGlow(world: net.minecraft.world.World) {
-        val iterator = rareMobs.iterator()
-        while (iterator.hasNext()) {
-            val mob = iterator.next()
 
-            if (!mob.isAlive || mob.world != world) {
-                mob.isSboGlowing = false
-                iterator.remove()
-                continue
-            }
-
-            if (Diana.HighlightRareMobs && mc.player?.canSee(mob) == true && !mob.isInvisible) {
-                mob.isSboGlowing = true
-                mob.setSboGlowColor(Color(Diana.HighlightColor))
-            } else {
-                mob.isSboGlowing = false
-            }
-        }
-    }
 
     private fun parseHealthFromName(name: String): Double? =
         healthRegex.find(name)?.groupValues?.get(1)?.let { raw ->
@@ -95,12 +74,16 @@ object DianaMobDetect {
             }
         }
 
+    private fun parseStarFromName(name: String): Boolean = name.contains("✯")//todo: implement overlay for star check
+
     private fun shouldAlertForMob(name: String) = RareDianaMob.fromName(name) != null && Diana.hpAlert > 0.0
 
     fun init() {
         mobHpOverlay.init()
+        noShurikenOverlay.init()
         Register.onTick(1) {
             val world = mc.world ?: return@onTick
+            val player = mc.player ?: return@onTick
             val overlayLines = mutableListOf<OverlayTextLine>()
 
             val unconfirmedIterator = unconfirmed.iterator()
@@ -110,7 +93,12 @@ object DianaMobDetect {
                 val (id, data) = unconfirmedIterator.next()
                 val (entity, spawnTime) = data
 
-                if (!entity.isAlive || entity.world != world) {
+                //#if MC >= 1.21.9
+                //$$ val entityWorld = entity.entityWorld
+                //#else
+                val entityWorld = entity.world
+                //#endif
+                if (!entity.isAlive || entityWorld != world) {
                     unconfirmedIterator.remove()
                     continue
                 }
@@ -123,24 +111,38 @@ object DianaMobDetect {
                 else if (now - spawnTime > NAME_CHECK_TIMEOUT_MS) unconfirmedIterator.remove()
             }
 
+            var closestStarlessMob: ArmorStandEntity? = null
+            var closestDistanceSq = Double.MAX_VALUE
             val trackedIterator = tracked.iterator()
             while (trackedIterator.hasNext()) {
                 val (id, armorStand) = trackedIterator.next()
 
-                if (!armorStand.isAlive || armorStand.world != world) {
+                //#if MC >= 1.21.9
+                //$$ val entityWorld = armorStand.entityWorld
+                //#else
+                val entityWorld = armorStand.world
+                //#endif
+                if (!armorStand.isAlive || entityWorld != world) {
                     trackedIterator.remove()
                     defeated.remove(id)
                     continue
                 }
                 checkCocoon(armorStand)
                 checkDianaMob(armorStand, id)?.let { overlayLines.add(it) }
+
+                val result = ckeckStarlessMob(armorStand, id, player, closestStarlessMob, closestDistanceSq)
+                closestStarlessMob = result.first
+                closestDistanceSq = result.second
             }
             mobHpOverlay.setLines(overlayLines)
-        }
 
-        Register.onTick(4) {
-            val world = mc.world ?: return@onTick
-            checkMobGlow(world)
+            if (closestStarlessMob != null) {
+                noShurikenOverlay.setLines(listOf(
+                    OverlayTextLine("§c§lNO SHURIKEN!"),
+                ))
+            } else {
+                noShurikenOverlay.clearLines()
+            }
         }
     }
 
@@ -149,12 +151,6 @@ object DianaMobDetect {
         if (event.entity is ArmorStandEntity) {
             unconfirmed[event.entity.id] = event.entity to System.currentTimeMillis()
         }
-        else if (event.entity is PlayerEntity) {
-            if (!Diana.HighlightRareMobs) return
-            if (RareDianaMob.entries.any { event.entity.name.string.contains(it.display, ignoreCase = true) } && event.entity.uuid.version() != 4) {
-                rareMobs.add(event.entity)
-            }
-        }
     }
 
     @SboEvent
@@ -162,13 +158,6 @@ object DianaMobDetect {
         if (event.entity is ArmorStandEntity) {
             tracked.remove(event.entity.id)
             defeated.remove(event.entity.id)
-        }
-        else if (event.entity is PlayerEntity) {
-            if (!Diana.HighlightRareMobs) return
-            if (rareMobs.contains(event.entity)) {
-                event.entity.isSboGlowing = false
-                rareMobs.remove(event.entity)
-            }
         }
     }
 
@@ -188,6 +177,29 @@ object DianaMobDetect {
         return OverlayTextLine(name)
     }
 
+    private fun ckeckStarlessMob(
+        entity: ArmorStandEntity,
+        id: Int,
+        player: PlayerEntity,
+        currentClosest: ArmorStandEntity?,
+        currentDistanceSq: Double
+    ): Pair<ArmorStandEntity?, Double> {
+        if (id in defeated) return currentClosest to currentDistanceSq
+        val name = entity.customName?.formattedString() ?: entity.name.formattedString()
+        if (RareDianaMob.fromName(name) == null) return currentClosest to currentDistanceSq
+        if (parseStarFromName(name)) return currentClosest to currentDistanceSq
+
+        val health = parseHealthFromName(name)
+        if (health != null && health <= 0.0) return currentClosest to currentDistanceSq
+
+        val distSq = player.squaredDistanceTo(entity)
+        return if (distSq < currentDistanceSq) {
+            entity to distSq
+        } else {
+            currentClosest to currentDistanceSq
+        }
+    }
+
     private fun checkCocoon(entity: ArmorStandEntity) {
         if (World.getWorld() != "Hub") return
         val recentDeath = listOf(lastInqDeath, lastKingDeath, lastSphinxDeath, lastMantiDeath)
@@ -198,8 +210,13 @@ object DianaMobDetect {
 
         if (head.isEmpty) return
         if (head.item.toString() != "minecraft:player_head") return
+        //#if MC >= 1.21.9
+        //$$ val profileComponent: ProfileComponent? = head.get(DataComponentTypes.PROFILE)
+        //$$ val texture: String? = profileComponent?.getGameProfile()?.properties?.get("textures")?.firstOrNull()?.value
+        //#else
         val profile: ProfileComponent? = head.get(DataComponentTypes.PROFILE)
         val texture: String? = profile?.properties?.get("textures")?.firstOrNull()?.value
+        //#endif
 
         if (texture == null) return
         val now = System.currentTimeMillis()

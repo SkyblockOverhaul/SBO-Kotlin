@@ -293,6 +293,13 @@ object Diana : CategoryKt("Diana") {
         this.description = Translated("Removes the rare mob waypoint when you are within 3 blocks of it")
     }
 
+    var removeBeam by int(8) {
+        this.range = 0..20
+        this.slider = true
+        this.name = Translated("Remove Rare Mob Beam Distance")
+        this.description = Translated("Removes the rare mob waypoint beam when you are within this distance of it (0 to disable)")
+    }
+
     init {
         separator {
             this.title = "Rare Mobs"
@@ -359,6 +366,11 @@ object Diana : CategoryKt("Diana") {
         this.description = Translated("Sends a title alert when a Rare Mob is below the set HP value in Million (0 to disable)")
     }
 
+    var noShurikenOverlay by boolean(false) {
+        this.name = Translated("No Shuriken Overlay")
+        this.description = Translated("Shows an overlay when the RareMob has no shuriken applied /sboguis to move it")
+    }
+
     init {
         button {
             title = "Send Test Message"
@@ -379,5 +391,10 @@ object Diana : CategoryKt("Diana") {
     var mythosMobHp by boolean(true) {
         this.name = Translated("Mythos Mob HP")
         this.description = Translated("Displays HP of mythological mobs near you. /sboguis to move it")
+    }
+
+    var sphinxSolver by boolean(true) {
+        this.name = Literal("Sphinx Solver")
+        this.description = Literal("Helps you solve the sphinx riddle by showing you the answer choices in chat and it automatically clicks the correct one for you when you click anywehre while the chat is open.")
     }
 }

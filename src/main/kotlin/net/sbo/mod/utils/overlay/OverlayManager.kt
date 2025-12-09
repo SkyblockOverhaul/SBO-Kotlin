@@ -1,23 +1,14 @@
 package net.sbo.mod.utils.overlay
 
-import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
-import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
-import net.minecraft.util.Identifier
 import net.sbo.mod.SBOKotlin.mc
-import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.render.RenderEvent
-
-//#if MC >= 1.21.7
-//$$ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
-//#else
-import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback
-import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer
-//#endif
+import net.sbo.mod.utils.events.impl.guis.GuiMouseClickAfter
+import net.sbo.mod.utils.events.impl.guis.GuiPostRenderEvent
 
 object OverlayManager {
     val overlays = mutableListOf<Overlay>()
@@ -33,14 +24,30 @@ object OverlayManager {
 //            RenderUtils2D.drawHoveringString(drawContext, "this is hovered text", mouseX, mouseY, textRenderer, testOverlay.scale)
 //        }
 
-        registerRenderer()
-        registerMouseLeftClick()
-
         Register.command("sboguis", "sbomoveguis", "sbomove") {
             mc.send {
                 mc.setScreen(OverlayEditScreen())
             }
         }
+    }
+
+    @SboEvent
+    fun onMouseClickAfter(event: GuiMouseClickAfter) {
+        if (event.screen !is OverlayEditScreen && event.button == 0) {
+            overlays.forEach { it.overlayClicked(event.mouseX, event.mouseY) }
+        }
+    }
+
+    @SboEvent
+    fun onPostRender(event: GuiPostRenderEvent) {
+        if (event.screen !is OverlayEditScreen) {
+            postRender(event.context, event.screen)
+        }
+    }
+
+    @SboEvent
+    fun onRender(event: RenderEvent) {
+        render(event.context,  mc.currentScreen?.title?.string ?: "")
     }
 
     fun render(drawContext: DrawContext, renderScreen: String = "") {
@@ -62,33 +69,6 @@ object OverlayManager {
         for (overlay in overlays.toList()) {
             if (renderScreen.title.string in overlay.allowedGuis)
                 overlay.render(drawContext, mouseX, mouseY)
-        }
-    }
-
-    fun registerRenderer() {
-        ScreenEvents.AFTER_INIT.register { client, screen, scaledWidth, scaledHeight ->
-            ScreenEvents.afterRender(screen).register { renderScreen, drawContext, mouseX, mouseY, tickDelta ->
-                if (renderScreen !is OverlayEditScreen) {
-                    postRender(drawContext, renderScreen)
-                }
-            }
-        }
-    }
-
-    @SboEvent
-    fun onRender(event: RenderEvent) {
-        render(event.context,  mc.currentScreen?.title?.string ?: "")
-    }
-
-    fun registerMouseLeftClick() {
-        ScreenEvents.AFTER_INIT.register { client, screen, scaledWidth, scaledHeight ->
-            ScreenMouseEvents.afterMouseClick(screen).register { clickedScreen, mouseX, mouseY, button ->
-                if (clickedScreen !is OverlayEditScreen && button == 0) {
-                    for (overlay in overlays) {
-                        overlay.overlayClicked(mouseX, mouseY)
-                    }
-                }
-            }
         }
     }
 }
