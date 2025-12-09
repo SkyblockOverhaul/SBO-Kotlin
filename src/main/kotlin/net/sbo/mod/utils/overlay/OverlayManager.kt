@@ -9,12 +9,7 @@ import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.render.RenderEvent
 import net.sbo.mod.utils.events.impl.guis.GuiMouseClickAfter
-//#if MC >= 1.21.7
-//$$ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
-//#else
-import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback
-import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer
-//#endif
+import net.sbo.mod.utils.events.impl.guis.GuiPostRenderEvent
 
 object OverlayManager {
     val overlays = mutableListOf<Overlay>()
@@ -30,8 +25,6 @@ object OverlayManager {
 //            RenderUtils2D.drawHoveringString(drawContext, "this is hovered text", mouseX, mouseY, textRenderer, testOverlay.scale)
 //        }
 
-        registerRenderer()
-
         Register.command("sboguis", "sbomoveguis", "sbomove") {
             mc.send {
                 mc.setScreen(OverlayEditScreen())
@@ -44,6 +37,18 @@ object OverlayManager {
         if (event.screen !is OverlayEditScreen && event.button == 0) {
             overlays.forEach { it.overlayClicked(event.mouseX, event.mouseY) }
         }
+    }
+
+    @SboEvent
+    fun onPostRender(event: GuiPostRenderEvent) {
+        if (event.screen !is OverlayEditScreen) {
+            postRender(event.context, event.screen)
+        }
+    }
+
+    @SboEvent
+    fun onRender(event: RenderEvent) {
+        render(event.context,  mc.currentScreen?.title?.string ?: "")
     }
 
     fun render(drawContext: DrawContext, renderScreen: String = "") {
@@ -66,20 +71,5 @@ object OverlayManager {
             if (renderScreen.title.string in overlay.allowedGuis)
                 overlay.render(drawContext, mouseX, mouseY)
         }
-    }
-
-    fun registerRenderer() {
-        ScreenEvents.AFTER_INIT.register { client, screen, scaledWidth, scaledHeight ->
-            ScreenEvents.afterRender(screen).register { renderScreen, drawContext, mouseX, mouseY, tickDelta ->
-                if (renderScreen !is OverlayEditScreen) {
-                    postRender(drawContext, renderScreen)
-                }
-            }
-        }
-    }
-
-    @SboEvent
-    fun onRender(event: RenderEvent) {
-        render(event.context,  mc.currentScreen?.title?.string ?: "")
     }
 }

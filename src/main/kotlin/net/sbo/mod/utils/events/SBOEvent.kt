@@ -17,6 +17,7 @@ import net.sbo.mod.utils.events.impl.game.WorldChangeEvent
 import net.sbo.mod.utils.events.impl.guis.GuiCloseEvent
 import net.sbo.mod.utils.events.impl.guis.GuiMouseClickAfter
 import net.sbo.mod.utils.events.impl.guis.GuiMouseClickBefore
+import net.sbo.mod.utils.events.impl.guis.GuiPostRenderEvent
 import kotlin.reflect.KClass
 
 object SBOEvent {
@@ -84,6 +85,14 @@ object SBOEvent {
             ScreenEvents.remove(screen).register {
                 emit(GuiCloseEvent(client, screen, scaledWidth, scaledHeight))
             }
+
+            /** GUI Post Render Event
+             * Fired after a GUI screen is rendered.
+             */
+            ScreenEvents.afterRender(screen).register { renderScreen, drawContext, mouseX, mouseY, tickDelta ->
+                emit(GuiPostRenderEvent(renderScreen, drawContext, mouseX, mouseY, tickDelta))
+            }
+
             /** GUI Mouse Click Event
              * Fired before a mouse click is processed in a GUI screen.
              */

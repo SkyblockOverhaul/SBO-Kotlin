@@ -6,7 +6,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.input.KeyInput;
 import net.sbo.mod.utils.events.SBOEvent;
 import net.sbo.mod.utils.events.impl.guis.GuiKeyEvent;
-import net.sbo.mod.utils.events.impl.guis.GuiPostRenderEvent;
 import net.sbo.mod.utils.events.impl.guis.GuiRenderEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,13 +21,6 @@ public abstract class ScreenMixin {
         MinecraftClient client = MinecraftClient.getInstance();
         Screen screen = (Screen)(Object)this;
         SBOEvent.INSTANCE.emit(new GuiRenderEvent(client, screen, context, mouseX, mouseY, delta));
-    }
-
-    @Inject(method = "render", at = @At("RETURN"))
-    public void onPostRender(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        Screen screen = (Screen)(Object)this;
-        SBOEvent.INSTANCE.emit(new GuiPostRenderEvent(client, screen, context, mouseX, mouseY, delta));
     }
 
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
