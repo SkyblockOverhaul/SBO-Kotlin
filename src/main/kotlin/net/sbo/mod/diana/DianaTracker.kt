@@ -113,6 +113,7 @@ object DianaTracker {
         trackTreasuresWithChat()
         trackRngDropsWithChat()
         trackShardsWithChat()
+        trackMythTheFish()
     }
 
     fun trackWithPickuplog(item: Item) {
@@ -728,6 +729,14 @@ object DianaTracker {
         }
     }
 
+    fun trackMythTheFish() {
+        Register.onChatMessage(Regex("^(.*?) §eYou just dug out(.*?)$")) { message, matchResult ->
+            if (matchResult.groupValues[1].contains("Myth the Fish")) {
+                onRareDropFromMob("Myth the Fish", false, true, false, 0)
+            }
+        }
+    }
+
     fun trackMob(item: String, amount: Int) {
         if (isMobOnCooldown.getOrDefault(item, false)) return
         isMobOnCooldown[item] = true
@@ -803,6 +812,7 @@ object DianaTracker {
             "CRETAN_URN" -> tracker.items.CRETAN_URN += amount
             "MYTHOS_FRAGMENT" -> tracker.items.MYTHOS_FRAGMENT += amount
             "HILT_OF_REVELATIONS" -> tracker.items.HILT_OF_REVELATIONS += amount
+            "MYTH_THE_FISH" -> tracker.items.MYTH_THE_FISH += amount
 
             "COINS" -> tracker.items.COINS += amount
             "GRIFFIN_FEATHER" -> tracker.items.GRIFFIN_FEATHER += amount
