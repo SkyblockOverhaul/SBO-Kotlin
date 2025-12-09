@@ -78,7 +78,6 @@ object AchievementManager {
         addAllAchievements()
         
         kingSoul()
-        mythTheFish()
 
         // Die to a Minos King
         // Register.onChatMessage()
@@ -295,11 +294,10 @@ object AchievementManager {
                 sphinxKills to 104, mantiKills to 105, kingKills to 106
             ).all { (kills, id) ->
                 val isMaxed = when (id) {
-                    45 -> kills >= 500
-                    50, 46, 49, 102, 103, 101 -> kills >= 3000
-                    47, 48 -> kills >= 1000
-                    104 -> kills >= 100
-                    105, 106 -> kills >= 50
+                    45, 104 -> kills >= 500
+                    50, 49, 102, 103, 101, 48 -> kills >= 3000
+                    47, 46 -> kills >= 1000
+                    105, 106 -> kills >= 100
                     else -> false
                 }
                 if (isMaxed) unlockAchievement(id)
@@ -395,12 +393,6 @@ object AchievementManager {
     fun kingSoul() {
         Register.onChatMessage(Regex("^§aYou added a §e(.*?) §asoul to your §9(.*?)§a!$")) { message, matchResult ->
             if (matchResult.groupValues[0].contains("King Minos")) unlockAchievement(118)
-        }
-    }
-
-    fun mythTheFish() {
-        Register.onChatMessage(Regex("^(.*?) §eYou just dug out(.*?)$")) { message, matchResult ->
-            if (matchResult.groupValues[1].contains("Myth the Fish")) unlockAchievement(119)
         }
     }
 
