@@ -1,5 +1,7 @@
 package net.sbo.mod.utils.chat
 
+import net.minecraft.text.ClickEvent
+import net.minecraft.text.HoverEvent
 import net.minecraft.text.Style
 import net.minecraft.text.TextColor
 import net.minecraft.text.Text
@@ -38,5 +40,35 @@ object ChatUtils {
             Style.EMPTY
         )
         return builder.toString()
+    }
+
+    internal fun Text.getShowTextHoverEvent(): HoverEvent? {
+        val hover = this.style?.hoverEvent ?: return null
+        if (hover is HoverEvent.ShowText) {
+            return HoverEvent.ShowText(hover.value())
+        }
+        return null
+    }
+
+    internal fun String.toStyledText(click: ClickEvent?, hover: HoverEvent?): Text {
+        return Text.literal(this).setStyle(
+            Style.EMPTY
+                .withClickEvent(click)
+                .withHoverEvent(hover)
+        )
+    }
+
+    internal fun Text.toClickableText(command: String): Text {
+        val content = this.formattedString()
+        val hover = this.getShowTextHoverEvent()
+        val click = ClickEvent.RunCommand(command)
+        return content.toStyledText(click, hover)
+    }
+
+    internal fun Text.createStyledAnswerText(possibleAnswer: String, isCorrect: Boolean): Text {
+        val newColorCode = if (isCorrect) "§a" else "§c"
+        val newString = this.formattedString().replace("§f", newColorCode)
+        val originalHoverEvent = this.getShowTextHoverEvent()
+        return newString.toStyledText(click = null, hover = originalHoverEvent)
     }
 }
