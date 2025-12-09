@@ -1,12 +1,15 @@
 package net.sbo.mod.diana.sphinx
 
 import net.minecraft.client.gui.screen.ChatScreen
+import net.minecraft.text.Text
 import net.sbo.mod.settings.categories.Diana
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.Helper.removeFormatting
 import net.sbo.mod.utils.chat.Chat
-import net.sbo.mod.utils.chat.ChatUtils.createStyledAnswerText
+import net.sbo.mod.utils.chat.ChatUtils.formattedString
+import net.sbo.mod.utils.chat.ChatUtils.getShowTextHoverEvent
 import net.sbo.mod.utils.chat.ChatUtils.toClickableText
+import net.sbo.mod.utils.chat.ChatUtils.toStyledText
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.guis.GuiMouseClickBefore
@@ -41,7 +44,6 @@ object SphinxSolver {
             for (sphinxQuestion in SphinxQuestions.QUESTIONS) {
                 if (sphinxQuestion.question.equals(questionText.removeFormatting(), ignoreCase = true)) {
                     Helper.sleep(100) {
-                        Chat.chat("§6[SBO] §aCorrect answer: ${sphinxQuestion.answer}")
                         Chat.chat("§6[SBO] §bClick anywhere on the screen to answer while the chat is open.")
                     }
                 }
@@ -65,7 +67,7 @@ object SphinxSolver {
                 session.correctAnswersIndex = index
             }
 
-            val formattedMsg = msg.createStyledAnswerText(possibleAnswer, isCorrect)
+            val formattedMsg = msg.createStyledAnswerText(isCorrect)
             session.answerTexts[letter] = formattedMsg
 
             if (session.isComplete()) {
@@ -91,4 +93,10 @@ object SphinxSolver {
         }
     }
 
+    private fun Text.createStyledAnswerText(isCorrect: Boolean): Text {
+        val newColorCode = if (isCorrect) "§a§n" else "§c"
+        val newString = this.formattedString().replace("§f", newColorCode)
+        val originalHoverEvent = this.getShowTextHoverEvent()
+        return newString.toStyledText(click = null, hover = originalHoverEvent)
+    }
 }

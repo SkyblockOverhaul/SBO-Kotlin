@@ -64,11 +64,4 @@ object ChatUtils {
         val click = ClickEvent.RunCommand(command)
         return content.toStyledText(click, hover)
     }
-
-    internal fun Text.createStyledAnswerText(possibleAnswer: String, isCorrect: Boolean): Text {
-        val newColorCode = if (isCorrect) "§a" else "§c"
-        val newString = this.formattedString().replace("§f", newColorCode)
-        val originalHoverEvent = this.getShowTextHoverEvent()
-        return newString.toStyledText(click = null, hover = originalHoverEvent)
-    }
 }
