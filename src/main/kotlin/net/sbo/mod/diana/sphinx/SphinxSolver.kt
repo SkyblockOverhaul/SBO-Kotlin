@@ -40,7 +40,7 @@ object SphinxSolver {
             for (sphinxQuestion in SphinxQuestions.QUESTIONS) {
                 if (sphinxQuestion.question.equals(questionText.removeFormatting(), ignoreCase = true)) {
                     Chat.chat("§6[SBO] §aCorrect answer: ${sphinxQuestion.answer}")
-                    Chat.chat("§b[SBO] To select the correct answer, click anywhere while the chat screen is open.")
+                    Chat.chat("§b[SBO] Click anywhere on the screen to answer.")
                 }
             }
             true
