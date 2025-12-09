@@ -9,7 +9,6 @@ import net.minecraft.component.type.NbtComponent
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
-import net.minecraft.util.ActionResult
 import net.sbo.mod.SBOKotlin
 import net.sbo.mod.diana.DianaMobDetect.RareDianaMob
 import net.sbo.mod.utils.Helper
@@ -23,6 +22,7 @@ import net.sbo.mod.utils.data.SboDataObject.dianaTrackerMayor
 import net.sbo.mod.utils.data.SboDataObject.pastDianaEventsData
 import net.sbo.mod.utils.data.SboDataObject.sboData
 import net.sbo.mod.overlays.DianaLoot.totalProfit
+import net.sbo.mod.utils.Helper.removeFormatting
 import net.sbo.mod.utils.ItemUtils.getDisplayName
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
@@ -32,7 +32,6 @@ import net.sbo.mod.utils.events.impl.guis.GuiOpenEvent
 import java.lang.Thread.sleep
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.regex.Pattern
 import kotlin.text.Regex
 
 object AchievementManager {
@@ -305,6 +304,30 @@ object AchievementManager {
         }
     }
 
+    @SboEvent
+    fun trackCarnivalPerks(event: GuiOpenEvent) {
+        Helper.sleep(200) {
+            val screen = event.screen
+            if (screen !is HandledScreen<*>) return@sleep
+            if (!event.screen.title.string.contains("Mythological Ritual", ignoreCase = true)) return@sleep
+            val slots = screen.screenHandler.slots
+
+            val dmgSlot = slots[11]
+            val coinsSlot = slots[12]
+            val mfSlot = slots[14]
+            val trackingSlot = slots[15]
+
+            if (
+                dmgSlot.stack.name.removeFormatting().contains("Storied Stinger V") &&
+                coinsSlot.stack.name.removeFormatting().contains("Deadly Greed V") &&
+                mfSlot.stack.name.removeFormatting().contains("Diana's Favor III") &&
+                trackingSlot.stack.name.removeFormatting().contains("Elusive Hunter II")
+            ) unlockAchievement(120)
+        }
+
+
+    }
+
     fun backTrackAchievements() {
         Chat.chat("§6[SBO] §eBacktracking Achievements...")
         pastDianaEventsData.events.forEach { eventData ->
@@ -524,7 +547,8 @@ object AchievementManager {
         addAchievement(93, "Why are you doing this?", "Hit a Manticore with 'core' in item name", "Uncommon", hidden = true)
         addAchievement(118, "No wool? Sell his soul to the devil!", "Get a King's soul", "Epic", hidden = true)
 
-        addAchievement(119, "Knowledge is Power", "Answer the Sphinx to get Myth the Fish", "Mythic", hidden = true) // TODO add after merge
+        addAchievement(119, "Knowledge is Power", "Answer the Sphinx to get Myth the Fish", "Mythic", hidden = true) // TODO track after merge with dianaV2
+        addAchievement(120, "Max Carnival", "Get all diana carnival perks maxed out", "Legendary")
 
         addAchievement(77, "From the ashes", "Drop a Phoenix pet from a Diana mob", "Impossible", hidden = true)
     }
