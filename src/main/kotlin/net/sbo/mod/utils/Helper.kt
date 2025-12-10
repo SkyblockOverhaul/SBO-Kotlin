@@ -345,13 +345,13 @@ object Helper {
 
             if (!stack.isEmpty) {
                 val customData = stack.get(DataComponentTypes.CUSTOM_DATA)
-                val lore = ItemUtils.getLoreList(stack)
                 var id: String
                 var item: Item
                 val sbId = ItemUtils.getSBID(customData)
                 // print for debugging the lore lines
                 var isChimera = false
                 if (sbId == "ENCHANTED_BOOK") {
+                    val lore = ItemUtils.getLoreList(stack)
                     for (line in lore) {
                         if (line.contains("Chimera")) {
                             isChimera = true
@@ -608,4 +608,5 @@ object Helper {
         return 0
     }
 }
+
 
