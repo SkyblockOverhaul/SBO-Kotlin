@@ -89,7 +89,7 @@ object HypixelModApi {
     }
 
     private fun onErrorPacket(id: String, reason: ErrorReason) {
-        if (id == "location") { // unsure
+        if (id == "location") {
             isOnSkyblock = false
             mode = ""
         }
