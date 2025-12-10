@@ -3,8 +3,49 @@ package net.sbo.mod.utils.game
 import net.minecraft.client.network.PlayerListEntry
 import net.minecraft.text.Text
 import net.sbo.mod.SBOKotlin.mc
+import net.sbo.mod.utils.events.Register
 
 object TabList {
+    /**
+     * Holds cached tab lines updated each tick.
+     */
+    private var cachedTabLines = emptyList<String>()
+
+    /**
+     * Ensures the tab lines are fetched on the first call,
+     * and that future updates are scheduled for it each tick.
+     */
+    private val initOnce: Unit by lazy {
+        // The registered tick task would only update cache on next tick
+        // To avoid accessing uninitalized cache on first call, call it explicitly before registering tick task
+        updateCache()
+
+        Register.onTick(1) {
+            // Periodic updates each tick
+            updateCache()
+        }
+    }
+
+    /**
+     * Updates tab list cache by fetching, filtering and mapping the tab list.
+     */
+    private fun updateCache() {
+        val tabLines = mutableListOf<String>()
+
+        for (entry in getTabEntries()) {
+            if (entry == null) continue
+
+            val displayName = entry.displayName
+            val profile = entry.profile
+            val profileName = profile?.name?.let { Text.literal(it) }
+
+            val text = displayName ?: profileName ?: continue
+            tabLines.add(text.string.trim())
+        }
+
+        cachedTabLines = tabLines
+    }
+
     /**
      * Returns a list of all PlayerListEntry objects from the current tab list.
      * Each PlayerListEntry object contains detailed information about a player.
@@ -25,14 +66,14 @@ object TabList {
      * @return The value associated with the key, or null if not found.
      */
     fun findInfo(key: String): String? {
-        return getTabEntries()
-            .filterNotNull()
-            .mapNotNull { entry ->
-                val text = entry.displayName ?: entry.profile?.name?.let { Text.literal(it) }
-                text?.string?.trim()
+        initOnce
+
+        for (line in cachedTabLines) {
+            if (line.startsWith(key)) {
+                return line.substring(key.length).trim()
             }
-            .firstOrNull { it.startsWith(key) }
-            ?.substring(key.length)
-            ?.trim()
+        }
+
+        return null
     }
 }
