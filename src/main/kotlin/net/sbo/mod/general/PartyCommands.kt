@@ -331,11 +331,8 @@ object PartyCommands {
                 "!mobs", "!mob" -> {
                     if (!settings.dianaPartyCommands) return@onChatMessage
                     val totalMobs = dianaTrackerMayor.mobs.TOTAL_MOBS
-                    val playTimeHrs = dianaTrackerMayor.items.TIME / TimeUnit.HOURS.toMillis(1)
-                    val mobsPerHr = if (playTimeHrs > 0) {
-                        val result = totalMobs.toDouble() / playTimeHrs
-                        BigDecimal(result).setScale(2, RoundingMode.HALF_UP).toDouble()
-                    } else 0.0
+                    val timer = SboTimerManager.timerMayor
+                    val mobsPerHr = Helper.getMobsPerHr(dianaTrackerMayor, timer)
                     sleep(200) {
                         Chat.command("pc Mobs: $totalMobs ($mobsPerHr/h)")
                     }

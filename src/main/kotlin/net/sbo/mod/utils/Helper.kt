@@ -563,6 +563,14 @@ object Helper {
         return BigDecimal(burrowsPerHr).setScale(2, RoundingMode.HALF_UP).toDouble()
     }
 
+    fun getMobsPerHr(tracker: DianaTrackerDataClass, timer: SboTimerManager.SBOTimer): Double {
+        val hours = timer.getHourTime()
+        if (hours <= 0.01) return 0.0
+        val totalMobs = tracker.mobs.TOTAL_MOBS.toDouble()
+        val mobsPerHr = totalMobs / hours
+        return BigDecimal(mobsPerHr).setScale(2, RoundingMode.HALF_UP).toDouble()
+    }
+
     fun getChance(mf: Int, looting: Int,rarity: String, lootshare: Boolean = false): Map<String, Double> {
         val baseChances: Map<String, Double> = when (rarity.lowercase().trim()) {
             "epic" -> mapOf("stick" to 0.0004, "relic" to 0.0002)
