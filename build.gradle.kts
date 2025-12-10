@@ -1,6 +1,4 @@
 import dev.deftu.gradle.utils.version.MinecraftVersions
-import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.include
-import org.jetbrains.kotlin.gradle.utils.property
 
 plugins {
     java
