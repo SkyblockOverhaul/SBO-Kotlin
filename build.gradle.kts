@@ -1,4 +1,6 @@
 import dev.deftu.gradle.utils.version.MinecraftVersions
+import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.include
+import org.jetbrains.kotlin.gradle.utils.property
 
 plugins {
     java
@@ -19,7 +21,7 @@ repositories {
     maven("https://repo.essential.gg/repository/maven-public")
     maven("https://maven.teamresourceful.com/repository/maven-public/")
     maven("https://maven.terraformersmc.com/")
-    maven("https://maven.azureaaron.net/releases")
+    maven("https://api.modrinth.com/maven")
 }
 
 toolkitMultiversion {
@@ -33,7 +35,8 @@ dependencies {
     ksp("dev.zacsweers.autoservice:auto-service-ksp:${property("autoservice.version")}")
 
     modImplementation(include("gg.essential:elementa:${property("elementa.version")}")!!)
-    modImplementation(include("net.azureaaron:hm-api:${property("hmapi.version")}")!!)
+    modImplementation(include("net.hypixel:mod-api:${property("modapi.version")}")!!)
+    modImplementation(include("maven.modrinth:hypixel-mod-api:${property("modapifabric.version")}")!!)
     modImplementation(include("com.teamresourceful.resourcefulconfigkt:resourcefulconfigkt-fabric-1.21.5:${property("rconfig.version.1.21.5")}")!!)
 
     // modImplementation(include("xyz.meowing:vexel-${mcData}:${property("vexel.version")}")!!)

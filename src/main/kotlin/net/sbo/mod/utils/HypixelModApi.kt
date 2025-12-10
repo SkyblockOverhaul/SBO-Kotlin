@@ -1,16 +1,19 @@
 package net.sbo.mod.utils
 
-import net.azureaaron.hmapi.events.HypixelPacketEvents
-import net.azureaaron.hmapi.network.HypixelNetworking
-import net.azureaaron.hmapi.network.packet.s2c.ErrorS2CPacket
-import net.azureaaron.hmapi.network.packet.s2c.HelloS2CPacket
-import net.azureaaron.hmapi.network.packet.s2c.HypixelS2CPacket
-import net.azureaaron.hmapi.network.packet.v1.s2c.LocationUpdateS2CPacket
-import net.azureaaron.hmapi.network.packet.v2.s2c.PartyInfoS2CPacket
+import net.hypixel.modapi.HypixelModAPI
+import net.hypixel.modapi.error.ErrorReason
+import net.hypixel.modapi.fabric.event.HypixelModAPICallback
+import net.hypixel.modapi.fabric.event.HypixelModAPIErrorCallback
+import net.hypixel.modapi.packet.ClientboundHypixelPacket
+import net.hypixel.modapi.packet.impl.clientbound.ClientboundHelloPacket
+import net.hypixel.modapi.packet.impl.clientbound.ClientboundPartyInfoPacket
+import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket
+import net.hypixel.modapi.packet.impl.serverbound.ServerboundPartyInfoPacket
 import net.sbo.mod.partyfinder.PartyFinderManager
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.game.DisconnectEvent
+import kotlin.jvm.optionals.getOrNull
 
 object HypixelModApi {
     var isOnHypixel: Boolean = false
@@ -22,13 +25,12 @@ object HypixelModApi {
 
     // listeners
     private val partyInfoListeners = mutableListOf<(isInParty: Boolean, isLeader: Boolean, members: List<String>) -> Unit>()
-    private val errorListeners = mutableListOf<(packet: ErrorS2CPacket) -> Unit>()
+    private val errorListeners = mutableListOf<(packetId: String) -> Unit>()
 
 
     fun init() {
-        HypixelPacketEvents.HELLO.register(::handlePacket)
-        HypixelPacketEvents.PARTY_INFO.register(::handlePacket)
-        HypixelPacketEvents.LOCATION_UPDATE.register(::handlePacket)
+        HypixelModAPICallback.EVENT.register { handlePacket(it) }
+        HypixelModAPIErrorCallback.EVENT.register { id, reason -> onErrorPacket(id, reason) }
     }
 
     @SboEvent
@@ -41,49 +43,36 @@ object HypixelModApi {
         mode = ""
     }
 
-    private fun handlePacket(packet: HypixelS2CPacket) {
+    private fun handlePacket(packet: ClientboundHypixelPacket) {
         when (packet) {
-            is HelloS2CPacket -> {
-                onHelloPacket(packet)
-            }
-
-            is LocationUpdateS2CPacket -> {
-                onLocationUpdatePacket(packet)
-            }
-
-            is PartyInfoS2CPacket -> {
-                onPartyInfoPacket(packet)
-            }
-
-            is ErrorS2CPacket -> {
-                onErrorPacket(packet)
-            }
-
+            is ClientboundHelloPacket -> onHelloPacket(packet)
+            is ClientboundLocationPacket -> onLocationUpdatePacket(packet)
+            is ClientboundPartyInfoPacket -> onPartyInfoPacket(packet)
             else -> {}
         }
     }
 
-    private fun onLocationUpdatePacket(packet: LocationUpdateS2CPacket) {
-        isOnSkyblock = packet.serverType.orElse("") == "SKYBLOCK"
+    private fun onLocationUpdatePacket(packet: ClientboundLocationPacket) {
+        isOnSkyblock = packet.serverType?.getOrNull()?.name == "SKYBLOCK"
         mode = packet.mode.orElse("")
     }
 
-    private fun onHelloPacket(packet: HelloS2CPacket) {
+    private fun onHelloPacket(packet: ClientboundHelloPacket) {
         isOnHypixel = true
         sendPartyInfoPacket()
     }
 
-    private fun onPartyInfoPacket(packet: PartyInfoS2CPacket) {
-        this.isInParty = packet.inParty
+    private fun onPartyInfoPacket(packet: ClientboundPartyInfoPacket) {
+        this.isInParty = packet.isInParty
 
-        val membersList = packet.members?.map { it.key.toString() }?.toMutableList() ?: mutableListOf()
+        val membersList = packet.memberMap?.map { it.key.toString() }?.toMutableList() ?: mutableListOf()
         if (isInParty) {
-            val leaderUUID = packet.members?.entries?.find { it.value.toString() == "LEADER" }?.key.toString()
+            val leaderUUID = packet.memberMap?.entries?.find { it.value.toString() == "LEADER" }?.key.toString()
 
             membersList.remove(leaderUUID)
             membersList.add(0, leaderUUID)
 
-            this.isLeader = packet.members?.get(Player.getUUID())?.toString() == "LEADER"
+            this.isLeader = packet.memberMap?.get(Player.getUUID())?.toString() == "LEADER"
         } else {
             this.isLeader = true
             membersList.add(Player.getUUIDString())
@@ -99,18 +88,18 @@ object HypixelModApi {
         partyInfoListeners.add(listener)
     }
 
-    private fun onErrorPacket(packet: ErrorS2CPacket) {
-        if (packet.id == LocationUpdateS2CPacket.ID) {
+    private fun onErrorPacket(id: String, reason: ErrorReason) {
+        if (id == "location") { // unsure
             isOnSkyblock = false
             mode = ""
         }
 
         errorListeners.forEach { listener ->
-            listener(packet)
+            listener(id)
         }
     }
 
-    fun onError(listener: (packet: ErrorS2CPacket) -> Unit) {
+    fun onError(listener: (packetId: String) -> Unit) {
         errorListeners.add(listener)
     }
 
@@ -118,7 +107,7 @@ object HypixelModApi {
         try {
             if (isOnHypixel) {
                 if (createParty) PartyFinderManager.creatingParty = true
-                HypixelNetworking.sendPartyInfoC2SPacket(2)
+                HypixelModAPI.getInstance().sendPacket(ServerboundPartyInfoPacket())
             } else {
                 PartyFinderManager.creatingParty = false
                 Chat.chat("§6[SBO] §eYou are not on Hypixel. You can only use this feature on Hypixel.")
