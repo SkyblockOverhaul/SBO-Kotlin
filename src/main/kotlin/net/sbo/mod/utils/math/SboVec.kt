@@ -1,10 +1,19 @@
 package net.sbo.mod.utils.math
 
+import net.minecraft.block.Block
+import net.minecraft.block.BlockState
+import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
+import net.sbo.mod.SBOKotlin
+import kotlin.math.absoluteValue
 import kotlin.math.floor
 import kotlin.math.pow
 import kotlin.math.sqrt
 
+/**
+ * A 3D vector class for mathematical operations and Minecraft world interactions.
+ * The credits to this class go fully to the Skyhanni Mod: https://github.com/hannibal002/SkyHanni/blob/beta/src/main/java/at/hannibal2/skyhanni/utils/LorenzVec.kt
+ */
 data class SboVec(var x: Double, var y: Double, var z: Double) {
 
     fun distanceTo(other: SboVec): Double {
@@ -29,9 +38,19 @@ data class SboVec(var x: Double, var y: Double, var z: Double) {
 
     fun clone(): SboVec = this.copy()
 
-    fun down(amount: Double): SboVec {
+    fun down(amount: Double = 1.0): SboVec {
         return this.copy(y = this.y - amount)
     }
+
+    fun up(amount: Double = 1.0): SboVec {
+        return this.copy(y = this.y + amount)
+    }
+
+    fun add(x: Double = 0.0, y: Double = 0.0, z: Double = 0.0): SboVec =
+        SboVec(this.x + x, this.y + y, this.z + z)
+
+    fun add(x: Int = 0, y: Int = 0, z: Int = 0): SboVec = SboVec(this.x + x, this.y + y, this.z + z)
+
 
     fun roundLocationToBlock(): SboVec {
         return SboVec(floor(this.x), floor(this.y), floor(this.z))
@@ -56,6 +75,41 @@ data class SboVec(var x: Double, var y: Double, var z: Double) {
     fun length(): Double {
         return sqrt(x * x + y * y + z * z)
     }
+
+    fun roundToBlock() = SboVec(floor(x), floor(y), floor(z))
+
+    fun normalize() = length().let { SboVec(x / it, y / it, z / it) }
+
+    fun lengthSquared(): Double = x * x + y * y + z * z
+
+    fun isNormalized(tolerance: Double = 0.01) = (lengthSquared() - 1.0).absoluteValue < tolerance
+
+    fun crossProduct(other: SboVec): SboVec = SboVec(
+        this.y * other.z - this.z * other.y,
+        this.z * other.x - this.x * other.z,
+        this.x * other.y - this.y * other.x,
+    )
+
+    fun distance(other: SboVec): Double = distanceSq(other).pow(0.5)
+
+    fun distanceSq(other: SboVec): Double {
+        val dx = other.x - x
+        val dy = other.y - y
+        val dz = other.z - z
+        return (dx * dx + dy * dy + dz * dz)
+    }
+
+    fun isInLoadedChunk(): Boolean = SBOKotlin.mc.world?.isPosLoaded(toBlockPos()) ?: false
+
+    fun toBlockPos(): BlockPos = BlockPos(floor(x).toInt(), floor(y).toInt(), floor(z).toInt())
+
+    fun getBlockAt(): Block? = getBlockStateAt()?.block
+
+    fun getBlockStateAt(): BlockState? = SBOKotlin.mc.world?.getBlockState(toBlockPos())
+
+    fun dotProduct(other: SboVec): Double = (x * other.x) + (y * other.y) + (z * other.z)
+
+    fun scale(scalar: Double): SboVec = SboVec(scalar * x, scalar * y, scalar * z)
 
     companion object {
         fun fromArray(arr: List<Double>): SboVec {
