@@ -130,7 +130,7 @@ object DianaMobDetect {
                 checkCocoon(armorStand)
                 checkDianaMob(armorStand, id)?.let { overlayLines.add(it) }
 
-                val result = ckeckStarlessMob(armorStand, id, player, closestStarlessMob, closestDistanceSq)
+                val result = checkStarlessMob(armorStand, id, player, closestStarlessMob, closestDistanceSq)
                 closestStarlessMob = result.first
                 closestDistanceSq = result.second
             }
@@ -177,7 +177,7 @@ object DianaMobDetect {
         return OverlayTextLine(name)
     }
 
-    private fun ckeckStarlessMob(
+    private fun checkStarlessMob(
         entity: ArmorStandEntity,
         id: Int,
         player: PlayerEntity,
