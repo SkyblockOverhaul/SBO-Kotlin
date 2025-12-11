@@ -186,7 +186,16 @@ object DianaMobDetect {
     ): Pair<ArmorStandEntity?, Double> {
         if (id in defeated) return currentClosest to currentDistanceSq
         val name = entity.customName?.formattedString() ?: entity.name.formattedString()
-        if (RareDianaMob.fromName(name) == null) return currentClosest to currentDistanceSq
+        val mobType = RareDianaMob.fromName(name) ?: return currentClosest to currentDistanceSq
+
+        val shouldCheck = when (mobType) {
+            RareDianaMob.INQ -> Diana.NoShurikenList.INQ in Diana.NoShurikenMobs
+            RareDianaMob.MANTI -> Diana.NoShurikenList.MANTICORE in Diana.NoShurikenMobs
+            RareDianaMob.KING -> Diana.NoShurikenList.KING in Diana.NoShurikenMobs
+            RareDianaMob.SPHINX -> Diana.NoShurikenList.SPHINX in Diana.NoShurikenMobs
+        }
+
+        if (!shouldCheck) return currentClosest to currentDistanceSq
         if (parseStarFromName(name)) return currentClosest to currentDistanceSq
 
         val health = parseHealthFromName(name)
