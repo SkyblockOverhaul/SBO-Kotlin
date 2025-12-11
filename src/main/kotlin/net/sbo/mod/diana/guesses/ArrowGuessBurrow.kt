@@ -150,18 +150,15 @@ object ArrowGuessBurrow {
         }
         if (currentChain == 1) return
 
-        // logic to remove guesses that are within 3 blocks of the dug location
         val containList = allGuesses.filter { guessList ->
             guessList.any { guess -> guess.distanceTo(location) <= 3 }
         }
 
-        //todo: Skyhanni one: containingLists.forEach { list -> list.forEach { GriffinBurrowHelper.removePreciseGuess(it) } }
         containList.forEach { list ->
             list.forEach {
                 WaypointManager.removeWaypointAt(it, "guess")
             }
         }
-        // end of todoo/logic
 
         allGuesses.removeAll(containList)
     }
@@ -303,12 +300,12 @@ object ArrowGuessBurrow {
                     }
                 }
                 medium -> {
-                    if (lastBlockClicked!!.distanceTo(guess) in 120.0..279.0) {
+                    if (lastBlockClicked!!.distanceTo(guess) in 120.0..280.0) {
                         bestPossibilitys.add(guess)
                     }
                 }
                 close -> {
-                    if (lastBlockClicked!!.distanceTo(guess) <= 119) {
+                    if (lastBlockClicked!!.distanceTo(guess) <= 120) {
                         bestPossibilitys.add(guess)
                     }
                 }
