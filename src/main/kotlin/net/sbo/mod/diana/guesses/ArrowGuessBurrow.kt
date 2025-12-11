@@ -8,11 +8,12 @@ import net.minecraft.particle.ParticleTypes
 import net.sbo.mod.SBOKotlin
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.math.RaycastUtils
-import net.sbo.mod.utils.TimeLimitedList
+import net.sbo.mod.utils.collection.TimeLimitedSet
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.packets.PacketReceiveEvent
 import net.sbo.mod.utils.math.SboVec
+import net.sbo.mod.utils.waypoint.WaypointManager
 import java.util.regex.Pattern
 import kotlin.math.abs
 import kotlin.math.pow
@@ -52,7 +53,7 @@ object ArrowGuessBurrow {
 
     private val allowedOffsets = setOf(0.0f, 128.0f, 255.0f)
 
-    private val recentArrowParticles = TimeLimitedList<SboVec>(1.minutes)
+    private val recentArrowParticles = TimeLimitedSet<SboVec>(1.minutes)
     private val locations: MutableSet<SboVec> = mutableSetOf()
 
     private var lastBlockClicked: SboVec? = null
