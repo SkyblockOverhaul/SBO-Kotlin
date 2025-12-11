@@ -1,19 +1,26 @@
 package net.sbo.mod.diana.guesses
 
 import net.minecraft.block.Blocks
+import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket
 import net.minecraft.util.math.Box
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.particle.ParticleTypes
 import net.sbo.mod.SBOKotlin
 import net.sbo.mod.utils.Helper
+import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.math.RaycastUtils
 import net.sbo.mod.utils.collection.TimeLimitedSet
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
+import net.sbo.mod.utils.events.impl.game.PlayerInteractEvent
 import net.sbo.mod.utils.events.impl.packets.PacketReceiveEvent
+import net.sbo.mod.utils.events.impl.packets.PacketSendEvent
+import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.math.SboVec
 import net.sbo.mod.utils.waypoint.WaypointManager
+import org.joml.Vector3f
+import java.awt.Color
 import java.util.regex.Pattern
 import kotlin.math.abs
 import kotlin.math.pow
@@ -62,6 +69,10 @@ object ArrowGuessBurrow {
 
     private var newArrow = true
 
+    private var far = Color(1, 0, 0)
+    private var medium = Color(255, 1, 0)
+    private var close = Color(127, 128, 0)
+
     fun init() {
         registerBurrowDug()
     }
@@ -80,12 +91,15 @@ object ArrowGuessBurrow {
 
         val location = SboVec(packet.x, packet.y, packet.z)
         if(!recentArrowParticles.add(location)) return
+
         locations.add(location)
 
         val arrow = detectArrow() ?: return
-        newArrow = false
         locations.clear()
-        val guess = findClosestValidBlockToRayNew(arrow) ?: return
+        val guess = findClosestValidBlockToRayNew(arrow, parameters) ?: return
+        WaypointManager.updateGuess(guess, newArrow)
+        newArrow = false
+
     }
 
     private fun registerBurrowDug() {
@@ -95,6 +109,21 @@ object ArrowGuessBurrow {
             lastBlockClicked?.let { onBurrowDug(it, currentBurrow, maxBurrow) }
             true
         }
+    }
+
+    @SboEvent
+    fun onPlayerActionSend(event: PacketSendEvent) {
+        val packet = event.packet
+        if (packet !is PlayerActionC2SPacket) return
+        if (World.getWorld() != "Hub") return
+
+        if (packet.action != PlayerActionC2SPacket.Action.START_DESTROY_BLOCK) return
+
+        lastBlockClicked = SboVec(
+            packet.pos.x.toDouble(),
+            packet.pos.y.toDouble(),
+            packet.pos.z.toDouble()
+        )
     }
 
     private fun onBurrowDug(location: SboVec, currentChain: Int, maxChain: Int) {
@@ -110,7 +139,11 @@ object ArrowGuessBurrow {
         }
 
         //todo: Skyhanni one: containingLists.forEach { list -> list.forEach { GriffinBurrowHelper.removePreciseGuess(it) } }
-        containList.forEach { list -> list.forEach {  } }
+        containList.forEach { list ->
+            list.forEach {
+                WaypointManager.removeWaypointAt(it, "guess")
+            }
+        }
         // end of todoo/logic
 
         allGuesses.removeAll(containList)
@@ -200,7 +233,7 @@ object ArrowGuessBurrow {
         return locations.count { it != origin && it.distanceSq(origin) <= maxDistSq }
     }
 
-    private fun findClosestValidBlockToRayNew(ray: RaycastUtils.Ray): SboVec? {
+    private fun findClosestValidBlockToRayNew(ray: RaycastUtils.Ray, parameters: DustParticleEffect): SboVec? {
         val bounds = HUB_BOUNDS
         if (!bounds.isInside(ray.origin)) return null
 
@@ -240,9 +273,41 @@ object ArrowGuessBurrow {
 
         if (possibilities.isEmpty()) return null
 
-        allGuesses.add(possibilities)
+        val bestPossibilitys: MutableList<SboVec> = mutableListOf()
 
-        return possibilities[0]
+        if (lastBlockClicked == null) return null
+
+        possibilities.forEach { guess ->
+            when (parameters.color.toColor()) {
+                far -> {
+                    if (lastBlockClicked!!.distanceTo(guess) >= 281) {
+                        bestPossibilitys.add(guess)
+                    }
+                }
+                medium -> {
+                    if (lastBlockClicked!!.distanceTo(guess) in 120.0..280.0) {
+                        bestPossibilitys.add(guess)
+                    }
+                }
+                close -> {
+                    if (lastBlockClicked!!.distanceTo(guess) <= 119) {
+                        bestPossibilitys.add(guess)
+                    }
+                }
+                else -> {
+                    Chat.chat("Unknown arrow particle color detected: ${parameters.color}")
+                }
+            }
+        }
+
+        allGuesses.add(bestPossibilitys)
+
+        if (bestPossibilitys.isEmpty()) return null
+        if (bestPossibilitys.size > 1) {
+            Chat.chat("Multiple possible burrow locations detected")
+        }
+
+        return bestPossibilitys[0]
     }
 
     private fun isCollinear(a: SboVec, b: SboVec, c: SboVec): Boolean {
@@ -276,5 +341,12 @@ object ArrowGuessBurrow {
         return vec.x > this.minX && vec.x <= this.maxX &&
                 vec.y > this.minY && vec.y <= this.maxY &&
                 vec.z > this.minZ && vec.z <= this.maxZ;
+    }
+
+    private fun Vector3f.toColor(): Color {
+        val r = (this.x * 255).toInt().coerceIn(0, 255)
+        val g = (this.y * 255).toInt().coerceIn(0, 255)
+        val b = (this.z * 255).toInt().coerceIn(0, 255)
+        return Color(r, g, b)
     }
 }
