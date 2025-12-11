@@ -85,7 +85,6 @@ object ArrowGuessBurrow {
         newArrow = false
         locations.clear()
         val guess = findClosestValidBlockToRayNew(arrow) ?: return
-        println(guess)
     }
 
     private fun registerBurrowDug() {
@@ -241,10 +240,6 @@ object ArrowGuessBurrow {
         if (possibilities.isEmpty()) return null
 
         allGuesses.add(possibilities)
-
-        if (possibilities.size > 1) {
-            Helper.showTitle("§eUse Spade!", "", 0, 50, 5)
-        }
 
         return possibilities[0]
     }

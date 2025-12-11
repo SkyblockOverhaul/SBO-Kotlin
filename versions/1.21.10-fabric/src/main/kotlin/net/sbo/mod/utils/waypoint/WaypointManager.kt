@@ -2,7 +2,7 @@ package net.sbo.mod.utils.waypoint
 
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents
-import net.sbo.mod.diana.PreciseGuessBurrow
+import net.sbo.mod.diana.guesses.PreciseGuessBurrow
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.util.math.BlockPos
