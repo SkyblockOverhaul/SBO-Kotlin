@@ -83,9 +83,10 @@ object ArrowGuessBurrow {
         locations.add(location)
 
         val arrow = detectArrow() ?: return
-        newArrow = false
         locations.clear()
         val guess = findClosestValidBlockToRayNew(arrow) ?: return
+        WaypointManager.updateGuess(guess, newArrow)
+        newArrow = false
     }
 
     private fun registerBurrowDug() {
@@ -104,14 +105,15 @@ object ArrowGuessBurrow {
         }
         if (currentChain == 1) return
 
-        // logic to remove guesses that are within 3 blocks of the dug location
         val containList = allGuesses.filter { guessList ->
             guessList.any { guess -> guess.distanceTo(location) <= 3 }
         }
 
-        //todo: Skyhanni one: containingLists.forEach { list -> list.forEach { GriffinBurrowHelper.removePreciseGuess(it) } }
-        containList.forEach { list -> list.forEach {  } }
-        // end of todoo/logic
+        containList.forEach { list ->
+            list.forEach {
+                WaypointManager.removeWaypointAt(it, "guess")
+            } 
+        }
 
         allGuesses.removeAll(containList)
     }
