@@ -14,15 +14,19 @@ import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.packets.PacketReceiveEvent
 import net.sbo.mod.utils.math.SboVec
 import java.util.regex.Pattern
-import kotlin.collections.toDoubleArray
-import kotlin.compareTo
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sign
 import kotlin.math.sqrt
-import kotlin.text.get
 import kotlin.time.Duration.Companion.minutes
 
+/**
+ * A utility object to guess the location of Griffin Burrows based on arrow particle effects.
+ *
+ * The credits to this object go fully to "SidOfThe7Cs" who made this incredible logic in the Skyhanni Mod:
+ *
+ * https://github.com/hannibal002/SkyHanni/pull/4916
+ */
 object ArrowGuessBurrow {
     private const val SHAFT_LENGTH = 20
     private const val PARTICLE_DETECTION_TOLERANCE = 0.12
