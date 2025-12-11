@@ -44,6 +44,7 @@ object ArrowGuessBurrow {
     private val HUB_BOUNDS_MIN = SboVec(-296.0, 0.0, -272.0)
     private val HUB_BOUNDS_MAX = SboVec(207.0, 256.0, 223.0)
     private val HUB_BOUNDS: Box = Box(HUB_BOUNDS_MIN.x, HUB_BOUNDS_MIN.y, HUB_BOUNDS_MIN.z, HUB_BOUNDS_MAX.x, HUB_BOUNDS_MAX.y, HUB_BOUNDS_MAX.z)
+    private var spadeTitleShown = false
 
     private val allowedBlocksAboveGround = buildList {
         add(Blocks.AIR)
@@ -116,13 +117,29 @@ object ArrowGuessBurrow {
         val packet = event.packet
         if (packet !is PlayerActionC2SPacket) return
         if (World.getWorld() != "Hub") return
-
         if (packet.action != PlayerActionC2SPacket.Action.START_DESTROY_BLOCK) return
 
         lastBlockClicked = SboVec(
             packet.pos.x.toDouble(),
             packet.pos.y.toDouble(),
             packet.pos.z.toDouble()
+        )
+    }
+
+    @SboEvent
+    fun onPlayerInteract(event: PlayerInteractEvent) {
+        val action = event.action
+        if (action != "useBlock") return
+        val player = SBOKotlin.mc.player
+        val item = player?.mainHandStack
+        if (item?.isEmpty == true) return
+        if (item == null || !item.name.string.contains("Spade")) return
+        if (event.pos ==  null) return
+
+        lastBlockClicked = SboVec(
+            event.pos.x.toDouble(),
+            event.pos.y.toDouble(),
+            event.pos.z.toDouble()
         )
     }
 
@@ -178,23 +195,24 @@ object ArrowGuessBurrow {
     }
 
     private fun findline(): List<SboVec> {
-        for (location in locations) {
+        val locationsSnapshot = locations.toSet()
+
+        for (location in locationsSnapshot) {
             val line = mutableListOf<SboVec>()
             val visited = mutableSetOf<SboVec>()
             line.add(location)
             visited.add(location)
 
-            if (extendLine(line, visited, locations, SHAFT_LENGTH, PARTICLE_DETECTION_TOLERANCE)) {
+            if (extendLine(line, visited, locationsSnapshot, SHAFT_LENGTH, PARTICLE_DETECTION_TOLERANCE)) {
                 return line.toList()
             }
         }
         return emptyList()
     }
-
     private fun extendLine(
         line: MutableList<SboVec>,
         visited: MutableSet<SboVec>,
-        locations: Iterable<SboVec>,
+        locations: Set<SboVec>,
         numPoints: Int,
         maxDist: Double
     ): Boolean {
@@ -280,12 +298,12 @@ object ArrowGuessBurrow {
         possibilities.forEach { guess ->
             when (parameters.color.toColor()) {
                 far -> {
-                    if (lastBlockClicked!!.distanceTo(guess) >= 281) {
+                    if (lastBlockClicked!!.distanceTo(guess) >= 280) {
                         bestPossibilitys.add(guess)
                     }
                 }
                 medium -> {
-                    if (lastBlockClicked!!.distanceTo(guess) in 120.0..280.0) {
+                    if (lastBlockClicked!!.distanceTo(guess) in 120.0..279.0) {
                         bestPossibilitys.add(guess)
                     }
                 }
@@ -304,8 +322,9 @@ object ArrowGuessBurrow {
 
         if (bestPossibilitys.isEmpty()) return null
         if (bestPossibilitys.size > 1) {
-            Chat.chat("Multiple possible burrow locations detected")
-        }
+            if (!spadeTitleShown) Helper.showTitle("§c Use Spade!", "", 0, 30, 0)
+            spadeTitleShown = true
+        } else spadeTitleShown = false
 
         return bestPossibilitys[0]
     }
