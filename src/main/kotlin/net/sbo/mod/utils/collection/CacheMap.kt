@@ -5,6 +5,15 @@ import com.google.common.cache.CacheBuilder
 import com.google.common.cache.RemovalCause
 import java.util.concurrent.ConcurrentMap
 
+/**
+ * A [MutableMap] implementation backed by a Guava [Cache].
+ *
+ * Note that operations involving iteration over the map's entries, keys, or values
+ * may not reflect the current state of the cache accurately due to the nature of
+ * the underlying cache implementation.
+ *
+ * Credits to this go fully to SkyHanni
+ */
 abstract class CacheMap<K : Any, V : Any> : MutableMap<K, V> {
 
     protected abstract val cache: Cache<K, V>

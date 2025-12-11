@@ -2,6 +2,12 @@ package net.sbo.mod.utils.collection
 
 import com.google.common.cache.RemovalCause
 
+
+/* An abstract set implementation backed by a CacheMap.
+ * Allows for creating sets with cache-like behavior (e.g., time-based expiration).
+ *
+ * Credits to this go fully to SkyHanni
+ */
 abstract class CacheSet<T : Any> : MutableSet<T> {
 
     abstract val cache: CacheMap<T, Unit>
