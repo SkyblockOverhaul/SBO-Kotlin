@@ -179,6 +179,7 @@ object BurrowDetector {
     fun resetBurrows() {
         WaypointManager.removeAllOfType("burrow")
         WaypointManager.removeAllOfType("guess")
+        WaypointManager.removeAllOfType("arrowGuess")
         burrows.clear()
         burrowsHistory.clear()
     }
