@@ -120,5 +120,9 @@ data class SboVec(var x: Double, var y: Double, var z: Double) {
         fun Vec3d.toSboVec(): SboVec {
             return SboVec(this.x, this.y, this.z)
         }
+
+        fun BlockPos.toSboVec(): SboVec {
+            return SboVec(this.x.toDouble(), this.y.toDouble(), this.z.toDouble())
+        }
     }
 }
