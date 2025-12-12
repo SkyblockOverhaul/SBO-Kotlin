@@ -326,12 +326,9 @@ object ArrowGuessBurrow {
     }
 
     private fun getArrowRange(offsetX: Float, offsetY: Float): IntRange? {
-        //Green Close
-        if (offsetY == 128.0f) return 0..117
-        //Red Medium
-        if (offsetY == 255.0f && offsetX == 255.0f) return 112..282
-        //Black Far
-        if (offsetX == 255.0f) return 281..600
+        if (offsetY == 128.0f) return 0..117 //Green Close
+        if (offsetY == 255.0f && offsetX == 255.0f) return 112..282 //Red Medium
+        if (offsetX == 255.0f) return 281..600 //Black Far
         return null
     }
 
