@@ -315,8 +315,13 @@ object ArrowGuessBurrow {
                 continue
             }
             if (hasSpade) {
+                //#if MC >= 1.21.9
+                //$$ val playerPos = player.entityPos.toSboVec()
+                //#else
+                val playerPos = player.pos.toSboVec()
+                //#endif
                 val isKnownBurrow = burrowLocations.contains(current)
-                if (!isKnownBurrow && current.distanceSq(player.pos.toSboVec()) < 900) {
+                if (!isKnownBurrow && current.distanceSq(playerPos) < 900) {
                     if (guess.moveToNext()) {
                         return
                     }
