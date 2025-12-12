@@ -26,7 +26,7 @@ class GuessEntry(val guesses: List<SboVec>) {
                 return moveToNext()
             }
 
-            WaypointManager.updateGuess(guesses[nextIndex], true)
+            WaypointManager.updateGuess(guesses[nextIndex])
             return true
         }
         return false

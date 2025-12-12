@@ -3,13 +3,9 @@ package net.sbo.mod.utils.waypoint
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.sbo.mod.diana.guesses.PreciseGuessBurrow
-import net.minecraft.client.MinecraftClient
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.util.math.BlockPos
 import net.sbo.mod.SBOKotlin
-import net.sbo.mod.diana.DianaMobDetect
-import net.sbo.mod.diana.DianaTracker
-import net.sbo.mod.overlays.DianaMobs
 import net.sbo.mod.settings.categories.Customization
 import net.sbo.mod.utils.render.WaypointRenderer
 import net.sbo.mod.settings.categories.Diana
@@ -26,7 +22,6 @@ import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.game.WorldChangeEvent
 import net.sbo.mod.utils.math.SboVec
-import java.awt.Color
 import kotlin.collections.iterator
 import kotlin.math.cos
 import kotlin.math.roundToInt
@@ -40,10 +35,6 @@ object WaypointManager {
     val waypoints = mutableMapOf<String, MutableList<Waypoint>>()
     var closestBurrow: Pair<Waypoint?, Double> = null to 1000.0
     var closestGuess: Pair<Waypoint?, Double> = null to 1000.0
-    var focusedGuess : Waypoint? = null
-    private val angleThreshold = Math.toRadians(4.0)
-    private val cosThreshold = cos(angleThreshold)
-    private var lastMultiGuessWp: Waypoint? = null
     val rareMobs: List<String> = listOf(
         "minos inquisitor",
         "inquisitor",
@@ -166,32 +157,6 @@ object WaypointManager {
             guessWp?.format(rareWp, closestBurrow.second)
         }
 
-        Register.onTick(1) { _ ->
-            if (!Diana.dianaMultiBurrowGuess) return@onTick
-            if (!Diana.focusedWarp) {
-                focusedGuess = null
-                return@onTick
-            }
-
-            val player = MinecraftClient.getInstance().player ?: return@onTick
-            val eyeLocation = player.eyePos
-            val lookVec = player.rotationVector.normalize()
-            var maxDot = -1.0
-            var bestGuess: Waypoint? = null
-
-            for (waypoint in getGuessWaypoints()) {
-                val dirToWaypoint = waypoint.pos.center().toVec3d().subtract(eyeLocation).normalize()
-                val dot = lookVec.dotProduct(dirToWaypoint)
-
-                if (dot > maxDot) {
-                    maxDot = dot
-                    bestGuess = waypoint
-                }
-            }
-
-            focusedGuess = bestGuess.takeIf { maxDot >= cosThreshold }
-        }
-
         //#if MC >= 1.21.9
         //$$ WorldRenderEvents.BEFORE_TRANSLUCENT.register(WaypointRenderer)
         //#else
@@ -228,18 +193,6 @@ object WaypointManager {
             waypoint.render(context)
         }
         this.guessWp?.render(context)
-    }
-
-    fun createGuessWaypoint(pos: SboVec?) : Waypoint? {
-        if (pos == null) return null
-        val color = Color(Customization.guessColor)
-        val r = color.red.toFloat() / 255.0f
-        val g = color.green.toFloat() / 255.0f
-        val b = color.blue.toFloat() / 255.0f
-
-        val guess = Waypoint("Guess", pos.x, pos.y, pos.z, r,g,b, 0,"guess")
-        guess.show()
-        return guess
     }
 
     /**
@@ -294,28 +247,18 @@ object WaypointManager {
     /**
      * Updates the guess waypoint position.
      * @param pos The new position for the guess waypoint.
-     * @param isNewGuess Indicates if this is the start of a new guess attempt.
      */
-    fun updateGuess(pos: SboVec?, isNewGuess: Boolean) {
+    fun updateGuess(pos: SboVec?, isNewGuess: Boolean = true) {
         if (pos == null) return
-        if (!Diana.dianaMultiBurrowGuess) {
-            guessWp?.apply {
-                val (exists, wp) = waypointExists("burrow", this.pos)
-                if (exists && wp != null) {
-                    this.hidden = wp.distanceToPlayer() < 60
-                } else {
-                    this.hidden = false
-                }
-                this.pos = pos
+        if (!isNewGuess && guessWp == null) return
+        guessWp?.apply {
+            val (exists, wp) = waypointExists("burrow", this.pos)
+            if (exists && wp != null) {
+                this.hidden = wp.distanceToPlayer() < 60
+            } else {
+                this.hidden = false
             }
-            return
-        }
-        if (isNewGuess || lastMultiGuessWp == null) {
-            val waypoint = createGuessWaypoint(pos) ?: return
-            addWaypoint(waypoint)
-            lastMultiGuessWp = waypoint
-        } else {
-            lastMultiGuessWp?.pos = pos
+            this.pos = pos
         }
     }
 
@@ -412,18 +355,10 @@ object WaypointManager {
     }
 
     fun warpToGuess() {
-        if (!Diana.dianaMultiBurrowGuess) {
-            val wp = guessWp ?: return
-            if (wp.hidden) return
-            getClosestWarp(wp.pos)?.let { executeWarpCommand(it) }
-            return
-        }
-        val targetWp = if (Diana.focusedWarp) {
-            focusedGuess
-        } else {
-            getGuessWaypoints().minByOrNull { it.pos.distanceTo(Player.getLastPosition()) }
-        } ?: return
-        getClosestWarp(targetWp.pos)?.let { executeWarpCommand(it) }
+        val wp = guessWp ?: return
+        if (wp.hidden) return
+        getClosestWarp(wp.pos)?.let { executeWarpCommand(it) }
+        return
     }
 
     fun warpToInq() {

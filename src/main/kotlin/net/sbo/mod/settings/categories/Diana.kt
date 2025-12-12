@@ -55,11 +55,6 @@ object Diana : CategoryKt("Diana") {
         this.description = Translated("Guess the burrow location. Needs Driping Lava Partciles and set /particlequality to Extreme for more accuracy")
     }
 
-    var dianaMultiBurrowGuess by boolean(false) {
-        this.name = Translated("Diana Multi Burrow Guess")
-        this.description = Translated("Multi guess the burrow location. Needs Driping Lava Partciles and set /particlequality to Extreme for more accuracy")
-    }
-
     var dianaBurrowDetect by boolean(true) {
         this.name = Translated("Diana Burrow Detection")
         this.description = Translated("Detects Diana burrows | to reset waypoints /sboclearburrows")
@@ -93,11 +88,6 @@ object Diana : CategoryKt("Diana") {
         this.slider = true
         this.name = Translated("Warp Delay (<X>ms)")
         this.description = Translated("The delay bevor you can warp after guessing with spade. (0 to disable)")
-    }
-
-    var focusedWarp by boolean(false) {
-        this.name = Translated("Focused Warp")
-        this.description = Translated("If enabled, you warp to the guess you look at instead of the closest one")
     }
 
     init {

@@ -18,10 +18,8 @@ import net.sbo.mod.utils.waypoint.Waypoint
 import java.awt.Color
 import net.sbo.mod.utils.waypoint.WaypointManager
 import net.sbo.mod.utils.math.SboVec
-import net.sbo.mod.utils.waypoint.WaypointManager.getGuessWaypoints
 import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.waypoint.WaypointManager.guessWp
-import net.sbo.mod.utils.waypoint.WaypointManager.removeWaypoint
 import java.util.regex.Pattern
 
 object BurrowDetector {
@@ -143,17 +141,6 @@ object BurrowDetector {
                 type = "burrow"
             )
             WaypointManager.addWaypoint(burrow.waypoint!!)
-            if (Diana.dianaMultiBurrowGuess) {
-                val toRemove = getGuessWaypoints()
-                    .filter { waypoint -> waypoint.pos.distanceTo(pos) < 2 }
-                    .toMutableList()
-
-                toRemove.forEach { waypoint ->
-                    waypoint.hide()
-                    removeWaypoint(waypoint)
-                    getGuessWaypoints().remove(waypoint)
-                }
-            }
         }
     }
 
@@ -163,17 +150,6 @@ object BurrowDetector {
         if (guessWp != null && guessWp!!.pos.distanceTo(playerPos) < 4) {
             guessWp?.hide()
         }
-
-        if(!Diana.dianaMultiBurrowGuess) return
-        val removedGuesses = getGuessWaypoints().filter { waypoint ->
-            waypoint.pos.distanceTo(playerPos) < 4
-        }
-
-        removedGuesses.forEach { waypoint ->
-            removeWaypoint(waypoint)
-        }
-
-        getGuessWaypoints().removeAll(removedGuesses)
     }
 
     fun resetBurrows() {
