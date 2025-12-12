@@ -116,5 +116,9 @@ data class SboVec(var x: Double, var y: Double, var z: Double) {
             require(arr.size >= 3) { "Array must contain at least 3 elements for x, y, z." }
             return SboVec(arr[0], arr[1], arr[2])
         }
+
+        fun Vec3d.toSboVec(): SboVec {
+            return SboVec(this.x, this.y, this.z)
+        }
     }
 }
