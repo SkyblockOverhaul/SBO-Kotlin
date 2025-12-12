@@ -1,6 +1,5 @@
 package net.sbo.mod.utils.waypoint
 
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
 import net.sbo.mod.settings.categories.Customization
 import net.sbo.mod.settings.categories.Diana
 import net.sbo.mod.utils.Player
@@ -10,6 +9,12 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 import java.awt.Color
+
+//#if MC < 1.21.9
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
+//#else
+//$$ import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext
+//#endif
 
 /**
  * @class Waypoint

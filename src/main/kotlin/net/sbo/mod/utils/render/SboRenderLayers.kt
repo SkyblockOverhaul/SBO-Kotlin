@@ -32,33 +32,31 @@ object SboRenderLayers {
             .build(false)
     )
 
-    fun getLines(lineWidth: Double, throughWalls: Boolean): RenderLayer {
-        return if (throughWalls) {
-            RenderLayer.of(
-                "lines_through_walls",
-                RenderLayer.DEFAULT_BUFFER_SIZE,
-                false,
-                true,
-                SboRenderPipelines.LINES_THROUGH_WALLS,
-                RenderLayer.MultiPhaseParameters.builder()
-                    .layering(RenderPhase.VIEW_OFFSET_Z_LAYERING)
-                    .lineWidth(RenderPhase.LineWidth(OptionalDouble.of(lineWidth)))
-                    .build(false)
-            )
-        } else {
-            RenderLayer.of(
-                "lines",
-                RenderLayer.DEFAULT_BUFFER_SIZE,
-                false,
-                true,
-                SboRenderPipelines.LINES,
-                RenderLayer.MultiPhaseParameters.builder()
-                    .layering(RenderPhase.VIEW_OFFSET_Z_LAYERING)
-                    .lineWidth(RenderPhase.LineWidth(OptionalDouble.of(lineWidth)))
-                    .build(false)
-            )
-        }
-    }
+    @JvmField
+    val LINES: RenderLayer.MultiPhase = RenderLayer.of(
+        "lines",
+        RenderLayer.DEFAULT_BUFFER_SIZE,
+        false,
+        true,
+        SboRenderPipelines.LINES,
+        RenderLayer.MultiPhaseParameters.builder()
+            .layering(RenderPhase.VIEW_OFFSET_Z_LAYERING)
+            .lineWidth(RenderPhase.LineWidth(OptionalDouble.empty()))
+            .build(false)
+    )
+
+    @JvmField
+    val LINES_THROUGH_WALLS: RenderLayer.MultiPhase = RenderLayer.of(
+        "sbo/lines_through_walls",
+        RenderLayer.DEFAULT_BUFFER_SIZE,
+        false,
+        true,
+        SboRenderPipelines.LINES_THROUGH_WALLS,
+        RenderLayer.MultiPhaseParameters.builder()
+            .layering(RenderPhase.VIEW_OFFSET_Z_LAYERING)
+            .lineWidth(RenderPhase.LineWidth(OptionalDouble.empty()))
+            .build(false)
+    )
 
     val BEACON_BEAM_OPAQUE: RenderLayer = RenderLayer.of(
         "beacon_beam_opaque",
