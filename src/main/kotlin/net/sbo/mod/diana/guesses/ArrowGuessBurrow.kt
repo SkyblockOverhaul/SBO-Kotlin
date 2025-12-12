@@ -305,19 +305,21 @@ object ArrowGuessBurrow {
     private fun checkMoveGuess() {
         val player = SBOKotlin.mc.player ?: return
         val item = player.mainHandStack
-        if (item == null || !item.name.string.contains("Spade")) return
+        val hasSpade = item != null && item.name.string.contains("Spade")
         val burrowLocations = BurrowDetector.burrows.values.map { it.waypoint?.pos ?: SboVec(0.0, 0.0, 0.0) }.toSet()
+
         for (guess in allGuesses.toList()) {
             val current = guess.getCurrent()
             if (!isBlockValid(current)) {
                 guess.moveToNext()
                 continue
             }
-
-            val isKnownBurrow = burrowLocations.contains(current)
-            if (!isKnownBurrow && current.distanceSq(player.pos.toSboVec()) < 900) { // within 30 blocks
-                if (guess.moveToNext()) {
-                    return
+            if (hasSpade) {
+                val isKnownBurrow = burrowLocations.contains(current)
+                if (!isKnownBurrow && current.distanceSq(player.pos.toSboVec()) < 900) {
+                    if (guess.moveToNext()) {
+                        return
+                    }
                 }
             }
         }
