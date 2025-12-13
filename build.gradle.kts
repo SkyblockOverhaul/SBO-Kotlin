@@ -20,6 +20,7 @@ repositories {
     maven("https://maven.teamresourceful.com/repository/maven-public/")
     maven("https://maven.terraformersmc.com/")
     maven("https://maven.azureaaron.net/releases")
+    maven("https://api.modrinth.com/maven")
 }
 
 toolkitMultiversion {
@@ -43,18 +44,21 @@ dependencies {
             modImplementation("com.terraformersmc:modmenu:${property("modmenu.version.1.21.10")}")
             modImplementation(include("com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-1.21.9:${property("rconfig.version.1.21.10")}")!!)
             modImplementation(include("gg.essential:universalcraft-1.21.9-fabric:${property("uc.version")}")!!)
+            compileOnly("maven.modrinth:iris:${property("iris.version.1.21.10")}+1.21.7-fabric")
         }
         MinecraftVersions.VERSION_1_21_7 -> {
             modImplementation("net.fabricmc.fabric-api:fabric-api:${mcData.dependencies.fabric.fabricApiVersion}")
             modImplementation("com.terraformersmc:modmenu:${property("modmenu.version.1.21.7")}")
             modImplementation(include("com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-${mcData.version}:${property("rconfig.version.1.21.7")}")!!)
             modImplementation(include("gg.essential:universalcraft-$mcData:${property("uc.version")}")!!)
+            compileOnly("maven.modrinth:iris:${property("iris.version.1.21.7")}+1.21.7-fabric")
         }
         MinecraftVersions.VERSION_1_21_5 -> {
             modImplementation("net.fabricmc.fabric-api:fabric-api:${mcData.dependencies.fabric.fabricApiVersion}")
             modImplementation("com.terraformersmc:modmenu:${property("modmenu.version.1.21.5")}")
             modImplementation(include("com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-${mcData.version}:${property("rconfig.version.1.21.5")}")!!)
             modImplementation(include("gg.essential:universalcraft-$mcData:${property("uc.version")}")!!)
+            compileOnly("maven.modrinth:iris:${property("iris.version.1.21.5")}+1.21.5-fabric")
         }
         else -> {}
     }
