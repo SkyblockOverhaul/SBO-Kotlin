@@ -41,6 +41,7 @@ import net.sbo.mod.utils.SoundHandler
 import net.sbo.mod.utils.events.SBOEvent
 import net.sbo.mod.utils.overlay.OverlayManager
 import net.sbo.mod.utils.events.SboEventGeneratedRegistry
+import net.sbo.mod.utils.game.TabList
 
 object SBOKotlin {
 	@JvmField
@@ -64,6 +65,9 @@ object SBOKotlin {
 			.orElse("unknown")
 
 		logger.info("Initializing SBO-Kotlin, version: $version...")
+
+        // Initialize scheduled tab list fetch
+        TabList.init()
 
 		// Load configuration and data
 		SboDataObject.init()
