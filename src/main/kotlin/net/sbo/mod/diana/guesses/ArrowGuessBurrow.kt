@@ -299,7 +299,7 @@ object ArrowGuessBurrow {
             spadeTitleShown = false
         }
 
-        return withinRange[0]
+        return withinRange.getOrNull(0)
     }
 
     private fun checkMoveGuess() {
