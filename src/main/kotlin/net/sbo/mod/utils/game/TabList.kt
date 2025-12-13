@@ -12,14 +12,17 @@ object TabList {
     private var cachedTabLines = emptyList<String>()
 
     /**
-     * Ensures the tab lines are fetched on the first call,
-     * and that future updates are scheduled for it each tick.
+     * Ensures the tab lines are fetched on the first call.
      */
     private val initOnce: Unit by lazy {
-        // The registered tick task would only update cache on next tick
-        // To avoid accessing uninitalized cache on first call, call it explicitly before registering tick task
+        // To avoid accessing uninitalized cache on first call, update cache explicitly once.
         updateCache()
+    }
 
+    /**
+     * Registers a task to update the cache each tick.
+     */
+    fun init() {
         Register.onTick(1) {
             // Periodic updates each tick
             updateCache()
