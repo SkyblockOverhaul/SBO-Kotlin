@@ -1,7 +1,6 @@
 package net.sbo.mod.partyfinder
 
 import gg.essential.universal.utils.toFormattedString
-import net.azureaaron.hmapi.network.packet.v2.s2c.PartyInfoS2CPacket
 import net.sbo.mod.settings.categories.PartyFinder
 import net.sbo.mod.utils.HypixelModApi
 import net.sbo.mod.utils.events.Register
@@ -174,8 +173,8 @@ object PartyFinderManager {
             updateParty()
         }
 
-        HypixelModApi.onError { packet ->
-            if (packet.id == PartyInfoS2CPacket.ID) {
+        HypixelModApi.onError { packetId ->
+            if (packetId == "party_info") {
                 creatingParty
                 updateBool = false
             }
