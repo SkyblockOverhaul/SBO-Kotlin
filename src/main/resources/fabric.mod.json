@@ -30,9 +30,6 @@
 			{
 				"value": "net.sbo.mod.SBOKotlin::onInitializeClient"
 			}
-		],
-		"modmenu": [
-			"net.sbo.mod.settings.ModMenuInterop"
 		]
 	},
 	"mixins": [
