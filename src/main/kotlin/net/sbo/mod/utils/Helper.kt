@@ -345,13 +345,13 @@ object Helper {
 
             if (!stack.isEmpty) {
                 val customData = stack.get(DataComponentTypes.CUSTOM_DATA)
-                val lore = ItemUtils.getLoreList(stack)
                 var id: String
                 var item: Item
                 val sbId = ItemUtils.getSBID(customData)
                 // print for debugging the lore lines
                 var isChimera = false
                 if (sbId == "ENCHANTED_BOOK") {
+                    val lore = ItemUtils.getLoreList(stack)
                     for (line in lore) {
                         if (line.contains("Chimera")) {
                             isChimera = true
@@ -419,7 +419,7 @@ object Helper {
     }
 
     fun checkDiana(): Boolean {
-        val diana = (Debug.itsAlwaysDiana || ((Mayor.perks.contains("Mythological Ritual") || Mayor.mayor == "Jerry") && hasSpade && World.getWorld() == "Hub"))
+        val diana = (Debug.itsAlwaysDiana || ((Mayor.perks.contains("Mythological Ritual") || Mayor.mayor == "Jerry" || Mayor.mayor == "Aura") && hasSpade && World.getWorld() == "Hub"))
         return diana
     }
 
@@ -513,6 +513,7 @@ object Helper {
         val id = when {
             sbId == "CHIMERA" -> "ENCHANTMENT_ULTIMATE_CHIMERA_1"
             sbId.endsWith("_SHARD") -> "${sbId.substringAfterLast('_')}_${sbId.substringBeforeLast('_')}"
+            sbId.endsWith("_DYE") -> "${sbId.substringAfterLast('_')}_${sbId.substringBeforeLast('_')}"
             else -> sbId
         }
         var ahPrice = priceDataAh[id]?.toDouble() ?: 0.0
@@ -562,6 +563,14 @@ object Helper {
         return BigDecimal(burrowsPerHr).setScale(2, RoundingMode.HALF_UP).toDouble()
     }
 
+    fun getMobsPerHr(tracker: DianaTrackerDataClass, timer: SboTimerManager.SBOTimer): Double {
+        val hours = timer.getHourTime()
+        if (hours <= 0.01) return 0.0
+        val totalMobs = tracker.mobs.TOTAL_MOBS.toDouble()
+        val mobsPerHr = totalMobs / hours
+        return BigDecimal(mobsPerHr).setScale(2, RoundingMode.HALF_UP).toDouble()
+    }
+
     fun getChance(mf: Int, looting: Int,rarity: String, lootshare: Boolean = false): Map<String, Double> {
         val baseChances: Map<String, Double> = when (rarity.lowercase().trim()) {
             "epic" -> mapOf("stick" to 0.0004, "relic" to 0.0002)
@@ -607,4 +616,5 @@ object Helper {
         return 0
     }
 }
+
 

@@ -58,11 +58,15 @@ object SboDataObject {
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
     private const val MAX_BACKUPS = 10
 
-    private val DATA_SAVER_EXECUTOR: ExecutorService = Executors.newThreadPerTaskExecutor(Thread
-            .ofVirtual()
-            .name("sbo-data-saver-thread-", 1) // sbo-data-saver-thread-1, sbo-data-saver-thread-2 etc. starting from 1 (second parameter)
-            .factory() // virtual threads are daemon by default
-    )
+    private val DATA_SAVER_EXECUTOR: ExecutorService = Executors.newSingleThreadExecutor { r ->
+        Thread(r, "sbo-data-saver-thread").apply { isDaemon = true }
+    }
+
+//    private val DATA_SAVER_EXECUTOR: ExecutorService = Executors.newThreadPerTaskExecutor(Thread
+//            .ofVirtual()
+//            .name("sbo-data-saver-thread-", 1) // sbo-data-saver-thread-1, sbo-data-saver-thread-2 etc. starting from 1 (second parameter)
+//            .factory() // virtual threads are daemon by default
+//    )
 
     fun init() {
         SBOConfigBundle = loadAllData("SBO")
@@ -395,13 +399,6 @@ object SboDataObject {
         }
     }
 
-    /**
-     * Saves the given data to a file in the mod's config directory.
-     * If the directory does not exist, it will be created.
-     * @param modName The name of the mod.
-     * @param data The data to save.
-     * @param fileName The name of the file to save the data in.
-     */
     fun <T> save(modName: String, data: T, fileName: String) {
         val modConfigDir = File(FabricLoader.getInstance().configDir.toFile(), modName)
         if (!modConfigDir.exists()) {
@@ -419,13 +416,18 @@ object SboDataObject {
      * @param configName The name of the config to save.
      */
     fun save(configName: String) {
-        configMapforSave[configName]?.first?.invoke()
-            ?: SBOKotlin.logger.warn("[$configName] is not a valid config name. Please use a valid config name")
+        DATA_SAVER_EXECUTOR.execute {
+            configMapforSave[configName]?.first?.invoke()
+                ?: SBOKotlin.logger.warn("[$configName] is not a valid config name. Please use a valid config name")
+        }
     }
 
     fun saveTrackerData() {
-        save("SBO", dianaTrackerTotal, "dianaTrackerTotal.json")
-        save("SBO", dianaTrackerSession, "dianaTrackerSession.json")
-        save("SBO", dianaTrackerMayor, "dianaTrackerMayor.json")
+        DATA_SAVER_EXECUTOR.execute {
+            save("SBO", dianaTrackerTotal, "dianaTrackerTotal.json")
+            save("SBO", dianaTrackerSession, "dianaTrackerSession.json")
+            save("SBO", dianaTrackerMayor, "dianaTrackerMayor.json")
+            SBOKotlin.logger.debug("[SBO] Diana Tracker data saved successfully.")
+        }
     }
 }

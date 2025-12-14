@@ -19,6 +19,10 @@ object Diana : CategoryKt("Diana") {
         INQ, MANTICORE, KING, SPHINX, OTHER
     }
 
+    enum class NoShurikenList {
+        INQ, MANTICORE, KING, SPHINX
+    }
+
     enum class SettingDiana {
         INSTASELL, SELLOFFER;
 
@@ -369,6 +373,11 @@ object Diana : CategoryKt("Diana") {
     var noShurikenOverlay by boolean(false) {
         this.name = Translated("No Shuriken Overlay")
         this.description = Translated("Shows an overlay when the RareMob has no shuriken applied /sboguis to move it")
+    }
+
+    var NoShurikenMobs by select(NoShurikenList.INQ, NoShurikenList.MANTICORE, NoShurikenList.KING, NoShurikenList.SPHINX) {
+        this.name = Translated("Select which Mobs to Check")
+        this.description = Translated("Select which mobs to check for shuriken")
     }
 
     init {

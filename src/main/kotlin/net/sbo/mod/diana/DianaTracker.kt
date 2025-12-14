@@ -77,7 +77,9 @@ object DianaTracker {
         Register.onChatMessageCancable(
             Pattern.compile("^§eThe election room is now closed\\. Clerk Seraphine is doing a final count of the votes\\.\\.\\.$", Pattern.DOTALL)
         ) { _, _ ->
-            checkMayorTracker()
+            sleep(10000) {
+                checkMayorTracker()
+            }
             true
         }
 
@@ -111,6 +113,7 @@ object DianaTracker {
         trackTreasuresWithChat()
         trackRngDropsWithChat()
         trackShardsWithChat()
+        trackMythTheFish()
     }
 
     fun trackWithPickuplog(item: Item) {
@@ -122,6 +125,7 @@ object DianaTracker {
             if (!checkDiana()) return@sleep
             when (item.itemId) {
                 "HILT_OF_REVELATIONS" -> onRareDropFromMob("HILT_OF_REVELATIONS", false, false, false, 0)
+                "CROWN_OF_GREED" -> onRareDropFromMob("CROWN_OF_GREED", false, false, false, 0)
             }
         }
     }
@@ -700,7 +704,6 @@ object DianaTracker {
         Register.onChatMessageCancable(Pattern.compile("^§aYou caught (.*?) (.*?) §aShards(.*?)$", Pattern.DOTALL)) { message, matchResult ->
             val shard = matchResult.group(2).removeFormatting()
             val amount = matchResult.group(1).removeFormatting().replace("x", "").trim().toIntOrNull() ?: 0
-            println("Detected shard chat: shard: $shard | amount: $amount")
             when (shard) {
                 "King Minos" -> trackItem("KING_MINOS_SHARD", amount)
                 "Sphinx" -> trackItem("SPHINX_SHARD", amount)
@@ -714,7 +717,6 @@ object DianaTracker {
         Register.onChatMessageCancable(Pattern.compile("^§aYou caught a (.*?) §aShard!$", Pattern.DOTALL)) { message, matchResult ->
             val shard = matchResult.group(1).removeFormatting()
             val amount = 1
-            println("Detected shard chat: shard: $shard | amount: $amount")
             when (shard) {
                 "King Minos" -> trackItem("KING_MINOS_SHARD", amount)
                 "Sphinx" -> trackItem("SPHINX_SHARD", amount)
@@ -723,6 +725,14 @@ object DianaTracker {
                 "Harpy" -> trackItem("HARPY_SHARD", amount)
             }
             true
+        }
+    }
+
+    fun trackMythTheFish() {
+        Register.onChatMessage(Regex("^(.*?) §eYou just dug out(.*?)$")) { message, matchResult ->
+            if (matchResult.groupValues[1].contains("Myth the Fish")) {
+                onRareDropFromMob("Myth the Fish", false, true, false, 0)
+            }
         }
     }
 
@@ -801,6 +811,7 @@ object DianaTracker {
             "CRETAN_URN" -> tracker.items.CRETAN_URN += amount
             "MYTHOS_FRAGMENT" -> tracker.items.MYTHOS_FRAGMENT += amount
             "HILT_OF_REVELATIONS" -> tracker.items.HILT_OF_REVELATIONS += amount
+            "MYTH_THE_FISH" -> tracker.items.MYTH_THE_FISH += amount
 
             "COINS" -> tracker.items.COINS += amount
             "GRIFFIN_FEATHER" -> tracker.items.GRIFFIN_FEATHER += amount
