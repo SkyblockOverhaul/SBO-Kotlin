@@ -1,7 +1,5 @@
 package net.sbo.mod.utils.waypoint
 
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.sbo.mod.diana.PreciseGuessBurrow
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.world.ClientWorld
@@ -31,8 +29,13 @@ import kotlin.collections.iterator
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.text.get
-//#if MC >= 1.21.9
+
+//#if MC > 1.21.9
+//$$ import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext
 //$$ import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents
+//#else
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 //#endif
 
 object WaypointManager {
