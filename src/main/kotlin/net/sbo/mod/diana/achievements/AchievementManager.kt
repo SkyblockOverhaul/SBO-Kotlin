@@ -585,7 +585,7 @@ object AchievementManager {
 
         addAchievement(121, "Capitalism on top!", "Get COA", "Rare")
         addAchievement(122, "Inflation speedrun any%", "Get a 10m coins COA", "Epic", 121)
-        addAchievement(123, "Already? Damn that was fast", "Get a 100m coins COA", "Legendary", 122)
-        addAchievement(124, "Too bad it steals my coins for nothing now", "Get a 1b coins COA", "Mythic", 123) // Final boss of capitalism // All that for 2.5 mf
+        addAchievement(123, "Already? Damn that was fast!", "Get a 100m coins COA", "Legendary", 122)
+        addAchievement(124, "Too bad it just steals my coins now", "Get a 1b coins COA", "Mythic", 123) // Final boss of capitalism // All that for 2.5 mf
     }
 }
