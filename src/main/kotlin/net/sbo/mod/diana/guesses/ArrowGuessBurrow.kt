@@ -305,6 +305,7 @@ object ArrowGuessBurrow {
     private fun checkMoveGuess() {
         val player = SBOKotlin.mc.player ?: return
         val item = player.mainHandStack
+        // this soulf only be true if the player has held the spade for 1s-2s
         val hasSpade = item != null && item.name.string.contains("Spade")
         val burrowLocations = BurrowDetector.burrows.values.map { it.waypoint?.pos ?: SboVec(0.0, 0.0, 0.0) }.toSet()
 
@@ -321,7 +322,7 @@ object ArrowGuessBurrow {
                 val playerPos = player.pos.toSboVec()
                 //#endif
                 val isKnownBurrow = burrowLocations.contains(current)
-                if (isKnownBurrow && current.distanceSq(playerPos) < 900) {
+                if (!isKnownBurrow && current.distanceSq(playerPos) < 900) {
                     if (guess.moveToNext()) {
                         return
                     }
