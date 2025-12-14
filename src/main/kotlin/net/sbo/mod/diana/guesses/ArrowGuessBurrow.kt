@@ -321,7 +321,7 @@ object ArrowGuessBurrow {
                 val playerPos = player.pos.toSboVec()
                 //#endif
                 val isKnownBurrow = burrowLocations.contains(current)
-                if (!isKnownBurrow && current.distanceSq(playerPos) < 900) {
+                if (isKnownBurrow && current.distanceSq(playerPos) < 900) {
                     if (guess.moveToNext()) {
                         return
                     }

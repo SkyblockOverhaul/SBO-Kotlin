@@ -18,14 +18,10 @@ class GuessEntry(val guesses: List<SboVec>) {
 
     fun moveToNext(): Boolean {
         WaypointManager.removeWaypointAt(getCurrent(), "guess")
-
         val nextIndex = currentIndex + 1
+
         if (nextIndex in guesses.indices) {
             currentIndex = nextIndex
-            if (!ArrowGuessBurrow.isBlockValid(guesses[nextIndex])) {
-                return moveToNext()
-            }
-
             WaypointManager.updateGuess(guesses[nextIndex])
             return true
         }
