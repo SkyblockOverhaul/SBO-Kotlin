@@ -4,6 +4,8 @@ import com.teamresourceful.resourcefulconfig.api.client.ResourcefulConfigScreen
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.MinecraftClient
+import net.minecraft.util.Identifier
+import net.sbo.mod.compat.IrisCompatibility
 import net.sbo.mod.diana.DianaTracker
 import net.sbo.mod.utils.waypoint.WaypointManager
 import org.slf4j.LoggerFactory
@@ -42,6 +44,7 @@ import net.sbo.mod.utils.SoundHandler
 import net.sbo.mod.utils.events.SBOEvent
 import net.sbo.mod.utils.overlay.OverlayManager
 import net.sbo.mod.utils.events.SboEventGeneratedRegistry
+import net.sbo.mod.utils.game.TabList
 
 object SBOKotlin {
 	@JvmField
@@ -53,10 +56,12 @@ object SBOKotlin {
 	internal const val MOD_ID = "sbo-kotlin"
 	internal val logger = LoggerFactory.getLogger(MOD_ID)
 
-	val configurator = Configurator("sbo")
+	val configurator = Configurator(MOD_ID)
 	val settings = Settings.register(configurator)
 
 	lateinit var version: String
+
+	fun id(path: String): Identifier = Identifier.of(MOD_ID, path)
 
 	@JvmStatic
 	fun onInitializeClient() {
@@ -65,6 +70,9 @@ object SBOKotlin {
 			.orElse("unknown")
 
 		logger.info("Initializing SBO-Kotlin, version: $version...")
+
+        // Initialize scheduled tab list fetch
+        TabList.init()
 
 		// Load configuration and data
 		SboDataObject.init()
@@ -80,7 +88,7 @@ object SBOKotlin {
 		PartyCommands.init()
 		Register.command("sbo") {
 			mc.send{
-				mc.setScreen(ResourcefulConfigScreen.getFactory("sbo").apply(null))
+				mc.setScreen(ResourcefulConfigScreen.getFactory(MOD_ID).apply(null))
 			}
 		}
 
@@ -124,6 +132,10 @@ object SBOKotlin {
 				unlockAchievement(38)
 				unregister()
 			}
+		}
+
+		if (FabricLoader.getInstance().isModLoaded("iris")) {
+			IrisCompatibility.init()
 		}
 
 		logger.info("SBO-Kotlin initialized successfully!")

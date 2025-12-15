@@ -10,7 +10,7 @@ import java.util.OptionalDouble
 object SboRenderLayers {
     @JvmField
     val FILLED_BOX: RenderLayer.MultiPhase = RenderLayer.of(
-        "filled_box",
+        "sbo/filled_box",
         RenderLayer.DEFAULT_BUFFER_SIZE,
         false,
         true,
@@ -22,7 +22,7 @@ object SboRenderLayers {
 
     @JvmField
     val FILLED_BOX_THROUGH_WALLS: RenderLayer.MultiPhase = RenderLayer.of(
-        "filled_box_through_walls",
+        "sbo/filled_box_through_walls",
         RenderLayer.DEFAULT_BUFFER_SIZE,
         false,
         true,

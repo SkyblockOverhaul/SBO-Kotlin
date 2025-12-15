@@ -125,6 +125,7 @@ object DianaTracker {
             if (!checkDiana()) return@sleep
             when (item.itemId) {
                 "HILT_OF_REVELATIONS" -> onRareDropFromMob("HILT_OF_REVELATIONS", false, false, false, 0)
+                "CROWN_OF_GREED" -> onRareDropFromMob("CROWN_OF_GREED", false, false, false, 0)
             }
         }
     }

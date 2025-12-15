@@ -1,5 +1,6 @@
 package net.sbo.mod.diana
 
+import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.player.PlayerEntity
 import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.diana.DianaMobDetect.RareDianaMob
@@ -25,7 +26,7 @@ object RareMobHighlight {
     fun init() {
         Register.onTick(4) {
             val world = mc.world ?: return@onTick
-            checkMobGlow(world)
+            world.checkMobGlow()
         }
     }
 
@@ -51,7 +52,7 @@ object RareMobHighlight {
         }
     }
 
-    private fun checkMobGlow(world: net.minecraft.world.World) {
+    private fun ClientWorld.checkMobGlow() {
         val iterator = rareMobs.iterator()
         while (iterator.hasNext()) {
             val mob = iterator.next()
@@ -61,7 +62,7 @@ object RareMobHighlight {
             //#else
             val entityWorld = mob.world
             //#endif
-            if (!mob.isAlive || entityWorld != world) {
+            if (!mob.isAlive || entityWorld != this) {
                 mob.isSboGlowing = false
                 iterator.remove()
                 continue
