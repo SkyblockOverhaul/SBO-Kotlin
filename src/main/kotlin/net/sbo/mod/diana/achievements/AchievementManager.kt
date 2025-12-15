@@ -336,10 +336,12 @@ object AchievementManager {
 
         unlockAchievement(121)
 
-        val mf = getValueFromLine(
-            Pattern.compile("\\+([0-9]*\\.?[0-9]+)✯ Magic Find ✿"),
-            getLoreList(helmet).map { it.removeFormatting() }
-            ).toDouble()
+        val mf = getLoreList(helmet)
+            .map { it.removeFormatting() }
+            .getValueFromLine(
+                Pattern.compile("\\+([0-9]*\\.?[0-9]+)✯ Magic Find ✿")
+            )
+            .toDouble()
 
         when (mf) {
             25.0 -> unlockAchievement(124)
@@ -348,8 +350,8 @@ object AchievementManager {
         }
     }
 
-    private fun getValueFromLine(regex: Pattern, lore: List<String>): String {
-        for (line in lore) {
+    private fun List<String>.getValueFromLine(regex: Pattern): String {
+        for (line in this) {
             val matcher = regex.matcher(line)
             if (matcher.find()) {
                 return matcher.group(1)
