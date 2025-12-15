@@ -3,16 +3,23 @@ package net.sbo.mod.diana.achievements
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.NbtComponent
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.text.Text
 import net.sbo.mod.SBOKotlin
+import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.diana.DianaMobDetect.RareDianaMob
+import net.sbo.mod.overlays.DianaLoot.totalProfit
 import net.sbo.mod.utils.Helper
+import net.sbo.mod.utils.Helper.removeFormatting
 import net.sbo.mod.utils.HypixelModApi.isOnHypixel
+import net.sbo.mod.utils.ItemUtils.getDisplayName
+import net.sbo.mod.utils.ItemUtils.getLoreList
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.data.DianaTrackerMayorData
 import net.sbo.mod.utils.data.PartyPlayerStats
@@ -21,9 +28,6 @@ import net.sbo.mod.utils.data.SboDataObject.achievementsData
 import net.sbo.mod.utils.data.SboDataObject.dianaTrackerMayor
 import net.sbo.mod.utils.data.SboDataObject.pastDianaEventsData
 import net.sbo.mod.utils.data.SboDataObject.sboData
-import net.sbo.mod.overlays.DianaLoot.totalProfit
-import net.sbo.mod.utils.Helper.removeFormatting
-import net.sbo.mod.utils.ItemUtils.getDisplayName
 import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.entity.EntitiyHitEvent
@@ -32,7 +36,7 @@ import net.sbo.mod.utils.events.impl.guis.GuiOpenEvent
 import java.lang.Thread.sleep
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.text.Regex
+import java.util.regex.Pattern
 
 object AchievementManager {
     val rarityColorDict = mapOf(
@@ -217,7 +221,7 @@ object AchievementManager {
         if (mobsData.MANTICORE >= 1) unlockAchievement(112)
 
         if (totalProfit(dianaTrackerMayor) >= 1_000_000_000L) unlockAchievement(84)
-
+        trackCOA()
     }
 
     fun trackSince() {
@@ -324,9 +328,38 @@ object AchievementManager {
                 trackingSlot.stack.name.removeFormatting().contains("Elusive Hunter II")
             ) unlockAchievement(120)
         }
-
-
     }
+
+    fun trackCOA() {
+        val helmet = mc.player?.inventory?.getStack(39) ?: ItemStack.EMPTY
+        if (!getDisplayName(helmet).contains("Crown of Avarice")) return
+
+        unlockAchievement(121)
+
+        val mf = getLoreList(helmet)
+            .map { it.removeFormatting() }
+            .getValueFromLine(
+                Pattern.compile("\\+([0-9]*\\.?[0-9]+)✯ Magic Find ✿")
+            )
+            .toDouble()
+
+        when (mf) {
+            25.0 -> unlockAchievement(124)
+            22.5 -> unlockAchievement(123)
+            20.0 -> unlockAchievement(122)
+        }
+    }
+
+    private fun List<String>.getValueFromLine(regex: Pattern): String {
+        for (line in this) {
+            val matcher = regex.matcher(line)
+            if (matcher.find()) {
+                return matcher.group(1)
+            }
+        }
+        return ""
+    }
+
 
     fun backTrackAchievements() {
         Chat.chat("§6[SBO] §eBacktracking Achievements...")
@@ -551,5 +584,10 @@ object AchievementManager {
         addAchievement(120, "Max Carnival", "Get all diana carnival perks maxed out", "Legendary")
 
         addAchievement(77, "From the ashes", "Drop a Phoenix pet from a Diana mob", "Impossible", hidden = true)
+
+        addAchievement(121, "Capitalism on top!", "Get COA", "Rare")
+        addAchievement(122, "Inflation speedrun any%", "Get a 10m coins COA", "Epic", 121)
+        addAchievement(123, "Already? Damn that was fast!", "Get a 100m coins COA", "Legendary", 122)
+        addAchievement(124, "All of that just for 2.5 mf", "Get a 1b coins COA", "Mythic", 123)
     }
 }
