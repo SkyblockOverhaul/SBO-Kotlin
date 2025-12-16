@@ -82,7 +82,7 @@ object PartyCommands {
             val secondArg = messageParts.getOrNull(1)
             val playerName = getPlayerName(unformattedPlayerName)
             val user = Player.getName() ?: return@onChatMessage
-            val commandsWithArgs = setOf("!since", "!demote", "!promote", "!ptme", "!transfer", "!stats", "!totalstats")
+            val commandsWithArgs = setOf("!since", "!demote", "!promote", "!ptme", "!transfer", "!stats", "!totalstats", "!sessionstats", "!sessionstat")
 
             if (messageParts.size > 1 && command !in commandsWithArgs) return@onChatMessage
             when (command) {
@@ -373,6 +373,14 @@ object PartyCommands {
                     if (secondArg?.lowercase() == user.lowercase()) {
                         sleep(200) {
                             DianaStats.sendPlayerStats(true)
+                        }
+                    }
+                }
+                "!sessionstats", "!sessionstat" -> {
+                    if (!settings.dianaPartyCommands) return@onChatMessage
+                    if (secondArg?.lowercase() == user.lowercase()) {
+                        sleep(200) {
+                            DianaStats.sendPlayerStats(null)
                         }
                     }
                 }

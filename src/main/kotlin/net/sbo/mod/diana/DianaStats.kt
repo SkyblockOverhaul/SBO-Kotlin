@@ -37,9 +37,18 @@ object DianaStats {
         }
     }
 
-    fun getPlayerStats(total: Boolean = false): PlayerStats {
-        val tracker: DianaTracker = if (total) SboDataObject.dianaTrackerTotal else SboDataObject.dianaTrackerMayor
-        val timer: SboTimerManager.SBOTimer = if (total) SboTimerManager.timerTotal else SboTimerManager.timerMayor
+    fun getPlayerStats(total: Boolean? = false): PlayerStats {
+        val tracker: DianaTracker = when (total) {
+            true -> SboDataObject.dianaTrackerTotal
+            false -> SboDataObject.dianaTrackerMayor
+            else -> SboDataObject.dianaTrackerSession
+        }
+
+        val timer: SboTimerManager.SBOTimer = when (total) {
+            true -> SboTimerManager.timerTotal
+            false -> SboTimerManager.timerMayor
+            else -> SboTimerManager.timerSession
+        }
 
         val playtime = tracker.items.TIME
         val playTimeHrs = playtime.toDouble() / TimeUnit.HOURS.toMillis(1)
@@ -75,7 +84,7 @@ object DianaStats {
         return stats
     }
 
-    fun sendPlayerStats(total: Boolean = false) {
+    fun sendPlayerStats(total: Boolean? = false) {
         val stats = getPlayerStats(total)
         val statsMessage = buildString {
             append("Playtime: ${stats.playtime} - ")
