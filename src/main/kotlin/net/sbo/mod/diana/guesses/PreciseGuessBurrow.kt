@@ -1,17 +1,13 @@
-package net.sbo.mod.diana
+package net.sbo.mod.diana.guesses
 
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket
 import net.minecraft.particle.ParticleTypes
 import net.sbo.mod.SBOKotlin
-import net.sbo.mod.guis.partyfinder.pages.Help
 import net.sbo.mod.settings.categories.Diana
-import net.sbo.mod.utils.Helper
-import net.sbo.mod.utils.Helper.hasSpade
-import net.sbo.mod.utils.Helper.playerHasItem
 import net.sbo.mod.utils.events.annotations.SboEvent
-import net.sbo.mod.utils.events.impl.packets.PacketReceiveEvent
 import net.sbo.mod.utils.events.impl.game.PlayerInteractEvent
 import net.sbo.mod.utils.events.impl.game.WorldChangeEvent
+import net.sbo.mod.utils.events.impl.packets.PacketReceiveEvent
 import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.math.PolynomialFitter
 import net.sbo.mod.utils.math.SboVec
@@ -49,13 +45,7 @@ object PreciseGuessBurrow {
         if (packet.parameters.type != ParticleTypes.DRIPPING_LAVA || packet.count != 2 || packet.speed != -0.5f) return
         val currLoc = SboVec(packet.x, packet.y, packet.z)
         this.lastLavaParticle = System.currentTimeMillis()
-//        val cooldown = when {
-//            playerHasItem("ANCESTRAL_SPADE") -> 3000L
-//            playerHasItem("ARCHAIC_SPADE") -> 2000L
-//            playerHasItem("DEIFIC_SPADE") -> 1000L
-//            else -> 1000L
-//        }
-        if (System.currentTimeMillis() - lastGuessTime > 3000) return
+        if (System.currentTimeMillis() - lastGuessTime > 1000) return
 
         if (this.particleLocations.isEmpty()) {
             this.particleLocations.add(currLoc)
@@ -70,7 +60,7 @@ object PreciseGuessBurrow {
         if (guessPosition == null) return
         finalLocation = guessPosition.down(0.5).roundLocationToBlock()
         finalLocation = guessPosition.down(0.5).roundLocationToBlock()
-        WaypointManager.updateGuess(finalLocation, newBurrow)
+        WaypointManager.updateGuess(finalLocation)
         newBurrow = false
     }
 

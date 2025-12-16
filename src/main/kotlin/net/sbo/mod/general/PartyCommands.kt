@@ -409,16 +409,16 @@ object PartyCommands {
                             Chat.command("pc Mobs since manti: ${sboData.mobsSinceManti}")
                         }
                         "core", "cores" -> sleep(200) {
-                            Chat.command("Mantis since core: ${sboData.mantiSinceCore}")
+                            Chat.command("pc Mantis since core: ${sboData.mantiSinceCore}")
                         }
                         "wool", "wools" -> sleep(200) {
-                            Chat.command("Mantis since wool: ${sboData.kingSinceLsWool}")
+                            Chat.command("pc Kings since wool: ${sboData.kingSinceWool}")
                         }
                         "corels", "lscore" -> sleep(200) {
-                            Chat.command("Mantis since lootshare core: ${sboData.mantiSinceLsCore}")
+                            Chat.command("pc Mantis since lootshare core: ${sboData.mantiSinceLsCore}")
                         }
                         "woolls", "lswool" -> sleep(200) {
-                            Chat.command("Mantis since lootshare wool: ${sboData.kingSinceLsWool}")
+                            Chat.command("pc Kings since lootshare wool: ${sboData.kingSinceLsWool}")
                         }
                     }
                     if (secondArg == null) {
@@ -431,4 +431,5 @@ object PartyCommands {
             }
         }
     }
+
 }

@@ -4,6 +4,7 @@ import net.minecraft.client.network.PlayerListEntry
 import net.minecraft.text.Text
 import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.utils.events.Register
+import java.util.Collections
 
 object TabList {
     /**
@@ -55,11 +56,8 @@ object TabList {
      */
     fun getTabEntries(): List<PlayerListEntry?> {
         val client = mc
-        return try {
-            client.player?.networkHandler?.playerList?.toList() ?: emptyList()
-        } catch (_: Exception) {
-            emptyList()
-        }
+        val playerListCollection = client.player?.networkHandler?.playerList ?: return emptyList()
+        return Collections.synchronizedCollection(playerListCollection).toList()
     }
 
     /**

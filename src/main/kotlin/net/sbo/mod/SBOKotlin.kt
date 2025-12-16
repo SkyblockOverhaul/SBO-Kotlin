@@ -4,6 +4,8 @@ import com.teamresourceful.resourcefulconfig.api.client.ResourcefulConfigScreen
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.MinecraftClient
+import net.minecraft.util.Identifier
+import net.sbo.mod.compat.IrisCompatibility
 import net.sbo.mod.diana.DianaTracker
 import net.sbo.mod.utils.waypoint.WaypointManager
 import org.slf4j.LoggerFactory
@@ -26,6 +28,7 @@ import net.sbo.mod.diana.DianaMobDetect
 import net.sbo.mod.diana.RareMobHighlight
 import net.sbo.mod.diana.achievements.AchievementManager
 import net.sbo.mod.diana.achievements.AchievementManager.unlockAchievement
+import net.sbo.mod.diana.guesses.ArrowGuessBurrow
 import net.sbo.mod.diana.sphinx.SphinxSolver
 import net.sbo.mod.general.HelpCommand
 import net.sbo.mod.overlays.Bobber
@@ -41,6 +44,7 @@ import net.sbo.mod.utils.SoundHandler
 import net.sbo.mod.utils.events.SBOEvent
 import net.sbo.mod.utils.overlay.OverlayManager
 import net.sbo.mod.utils.events.SboEventGeneratedRegistry
+import net.sbo.mod.utils.game.InventoryUtils
 import net.sbo.mod.utils.game.TabList
 
 object SBOKotlin {
@@ -57,6 +61,8 @@ object SBOKotlin {
 	val settings = Settings.register(configurator)
 
 	lateinit var version: String
+
+	fun id(path: String): Identifier = Identifier.of(MOD_ID, path)
 
 	@JvmStatic
 	fun onInitializeClient() {
@@ -118,6 +124,8 @@ object SBOKotlin {
 		MessageHider.init()
 		SphinxSolver.init()
 		RareMobHighlight.init()
+		ArrowGuessBurrow.init()
+		InventoryUtils.init()
 
 		Register.onTick(100) { unregister ->
 			if (mc.player != null && World.isInSkyblock()) {
@@ -126,6 +134,10 @@ object SBOKotlin {
 				unlockAchievement(38)
 				unregister()
 			}
+		}
+
+		if (FabricLoader.getInstance().isModLoaded("iris")) {
+			IrisCompatibility.init()
 		}
 
 		logger.info("SBO-Kotlin initialized successfully!")
