@@ -56,7 +56,7 @@ object OverlayManager {
         val mouseX = mc.mouse.x / scaleFactor
         val mouseY = mc.mouse.y / scaleFactor
         for (overlay in overlays.toList()) {
-            if (renderScreen == "")
+            if (renderScreen == "" && !mc.options.playerListKey.isPressed)
                 overlay.render(drawContext, mouseX, mouseY)
         }
     }

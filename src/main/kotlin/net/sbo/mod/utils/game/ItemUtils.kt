@@ -1,11 +1,10 @@
-package net.sbo.mod.utils
+package net.sbo.mod.utils.game
 
 import gg.essential.universal.utils.toFormattedString
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.NbtComponent
 import net.minecraft.item.ItemStack
 import net.minecraft.text.Text
-import net.sbo.mod.utils.chat.Chat
 
 object ItemUtils {
 
