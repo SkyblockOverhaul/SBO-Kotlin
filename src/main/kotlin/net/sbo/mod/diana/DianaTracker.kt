@@ -357,7 +357,6 @@ object DianaTracker {
 
                     val customMsg = Helper.checkCustomDropMessage("wool", magicfind)
                     if (customMsg.first) {
-                        Chat.chat(customMsg.second)
                         announceLootToParty("Shimmering Wool!", customMsg.second, true)
                     } else {
                         announceLootToParty("Shimmering Wool!", "Shimmering Wool!$mfPrefix")
@@ -397,7 +396,6 @@ object DianaTracker {
 
                     val customMsg = Helper.checkCustomDropMessage("core", magicfind)
                     if (customMsg.first) {
-                        Chat.chat(customMsg.second)
                         announceLootToParty("Manti-core!", customMsg.second, true)
                     } else {
                         announceLootToParty("Manti-core!", "Manti-core!$mfPrefix")
@@ -437,7 +435,6 @@ object DianaTracker {
 
                     val customMsg = Helper.checkCustomDropMessage("Stinger", magicfind)
                     if (customMsg.first) {
-                        Chat.chat(customMsg.second)
                         announceLootToParty("Fateful Stinger!", customMsg.second, true)
                     } else {
                         announceLootToParty("Fateful Stinger!", "Fateful Stinger!$mfPrefix")
@@ -487,7 +484,6 @@ object DianaTracker {
 
                     val customChimMsg = Helper.checkCustomDropMessage("Chimera", magicfind)
                     if (customChimMsg.first) {
-                        Chat.chat(customChimMsg.second)
                         announceLootToParty("Chimera!", customChimMsg.second, true)
                     } else {
                         announceLootToParty("Chimera!", "Chimera!$mfPrefix")
@@ -526,7 +522,6 @@ object DianaTracker {
 
                     val customMsg = Helper.checkCustomDropMessage("Brain Food", magicfind)
                     if (customMsg.first) {
-                        Chat.chat(customMsg.second)
                         announceLootToParty("Brain Food!", customMsg.second, true)
                     } else {
                         announceLootToParty("Brain Food!", "Brain Food!$mfPrefix")
@@ -585,6 +580,7 @@ object DianaTracker {
         val itemId = item.uppercase().replace(" ", "_").replace("-", "_")
         var mfPrefix = ""
         if (magicFind > 0) mfPrefix = " (+$magicFind ✯ Magic Find)"
+
         if (Diana.lootAnnouncerScreen && title) {
             val subTitle = if (Diana.lootAnnouncerPrice) "§6${Helper.getItemPriceFormatted(itemId, amount)} coins" else ""
             when (itemId) {
@@ -603,7 +599,7 @@ object DianaTracker {
             }
         }
 
-        if (partyAnnounce) {
+        if (partyAnnounce && shouldAnnouce(itemId)) {
             announceLootToParty("$item!", "$item!$mfPrefix")
         }
 
@@ -634,6 +630,17 @@ object DianaTracker {
         }
     }
 
+    private fun shouldAnnouce(itemId: String): Boolean {
+        return when (itemId) {
+            "MANTI_CORE" -> !Diana.coreMessageBool
+            "SHIMMERING_WOOL" -> !Diana.woolMessageBool
+            "FATEFUL_STINGER" -> !Diana.stingerMessageBool
+            "CHIMERA" -> !Diana.chimMessageBool
+            "BRAIN_FOOD" -> !Diana.bfMessageBool
+            else -> true
+        }
+    }
+
     fun trackBurrowsWithChat() {
         Register.onChatMessageCancable(Pattern.compile("^§eYou (.*?) Griffin [Bb]urrow(.*?)$", Pattern.DOTALL)) { message, matchResult ->
             val burrow = matchResult.group(2).removeFormatting()
@@ -651,12 +658,12 @@ object DianaTracker {
         }
     }
 
-    fun announceLootToParty(item: String, customMsg: String? = null, replaceChimMessage: Boolean = false) {
+    fun announceLootToParty(item: String, customMsg: String? = null, replaceDropMessage: Boolean = false) {
         if (!Diana.lootAnnouncerParty) return
         var msg = Helper.toTitleCase(item.replace("_LS", "").replace("_", " "))
         if (customMsg != null) msg = customMsg.removeFormatting()
 
-        if (replaceChimMessage) {
+        if (replaceDropMessage) {
             Chat.command("pc $msg")
         } else {
             lootAnnouncerBuffer.add(msg)
