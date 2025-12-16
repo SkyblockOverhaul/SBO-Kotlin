@@ -238,7 +238,7 @@ object Diana : CategoryKt("Diana") {
         this.description = Translated("Enables custom chim message")
     }
 
-    var customChimMessage by strings("&6[SBO] &6&lRARE DROP! &d&lChimera! &b{mf} &b#{amount}") {
+    var customChimMessage by strings("&6[SBO] &6&lRARE DROP! &dChimera! &b{mf} &b#{amount}") {
         this.name = Translated("Custom Chim Message Text")
         this.description = Translated("use: {mf} for MagicFind, {amount} for drop Amount this event and {percentage} for chimera/inquis ratio.")
     }
@@ -248,7 +248,7 @@ object Diana : CategoryKt("Diana") {
         this.description = Translated("Enables custom Manti-Core message (core/manti)")
     }
 
-    var customCoreMessage by strings("&6[SBO] &6&lRARE DROP! &d&lManti-Core! &b{mf} &b#{amount}") {
+    var customCoreMessage by strings("&6[SBO] &6&lRARE DROP! &6Manti-Core! &b{mf} &b#{amount}") {
         this.name = Translated("Custom Manti-Core Message Text")
         this.description = Translated("Use: {mf} for MagicFind, {amount} for drop amount this event and {percentage} for core/manti ratio.")
     }
@@ -258,7 +258,7 @@ object Diana : CategoryKt("Diana") {
         this.description = Translated("Enables custom Fateful Stinger message (stinger/manti)")
     }
 
-    var customStingerMessage by strings("&6[SBO] &6&lRARE DROP! &d&lFateful Stinger! &b{mf} &b#{amount}") {
+    var customStingerMessage by strings("&6[SBO] &6&lRARE DROP! &dFateful Stinger! &b{mf} &b#{amount}") {
         this.name = Translated("Custom Fateful Stinger Message Text")
         this.description = Translated("Use: {mf} for MagicFind, {amount} for drop amount this event and {percentage} for stinger/manti ratio.")
     }
@@ -268,7 +268,7 @@ object Diana : CategoryKt("Diana") {
         this.description = Translated("Enables custom Brain Food message (food/sphinx)")
     }
 
-    var customBfMessage by strings("&6[SBO] &6&lRARE DROP! &d&lBrain Food! &b{mf} &b#{amount}") {
+    var customBfMessage by strings("&6[SBO] &6&lRARE DROP! &5Brain Food! &b{mf} &b#{amount}") {
         this.name = Translated("Custom Brain Food Message Text")
         this.description = Translated("Use: {mf} for MagicFind, {amount} for drop amount this event and {percentage} for food/sphinx ratio.")
     }
@@ -278,25 +278,35 @@ object Diana : CategoryKt("Diana") {
         this.description = Translated("Enables custom Shimmering Wool message (wool/king)")
     }
 
-    var customWoolMessage by strings("&6[SBO] &6&lRARE DROP! &d&lShimmering Wool! &b{mf} &b#{amount}") {
+    var customWoolMessage by strings("&6[SBO] &6&lRARE DROP! &6Shimmering Wool! &b{mf} &b#{amount}") {
         this.name = Translated("Custom Shimmering Wool Message Text")
         this.description = Translated("Use: {mf} for MagicFind, {amount} for drop amount this event and {percentage} for wool/king ratio.")
     }
 
-
     init {
         button {
-            title = "Send Test Chim Message"
+            title = "Send All Test Messages"
             text = "Send Test"
-            description = "Sends a test message for the chimera message"
+            description = "Sends a test message for all rare drop messages"
             onClick {
-                val customChimMsg = Helper.checkCustomChimMessage(400)
-                if (customChimMsg.first) {
-                    Chat.chat(customChimMsg.second)
+                if (Helper.checkCustomDropMessage("Chimera", 400).first) {
+                    val drops = mutableListOf<String>()
+                    if (chimMessageBool) drops.add("Chimera")
+                    if (bfMessageBool) drops.add("Brain Food")
+                    if (woolMessageBool) drops.add("Wool")
+                    if (coreMessageBool) drops.add("Core")
+                    if (stingerMessageBool) drops.add("Stinger")
+
+                    for (drop: String in drops) {
+                        Chat.chat(
+                            Helper.checkCustomDropMessage(drop, 400).second
+                        )
+                    }
                 }
             }
         }
     }
+
 
     init {
         separator {

@@ -108,13 +108,68 @@ object Customization : CategoryKt("Customization") {
         }
     }
 
-    var inqSound by strings("exporb") {
+    var rareMobSound by strings("exporb") {
         this.name = Translated("Rare Spawn Sound")
         this.description = Translated("Set the sound that plays when an rare mob spawns. (enter filename)")
     }
-    var inqVolume by float(1.0f) {
+    var rareMobVolume by float(1.0f) {
         this.name = Translated("Rare Spawn Volume")
         this.description = Translated("Set the volume of the rare mob spawn sound")
+        this.range = 0.0f..1.0f
+        this.slider = true
+    }
+
+    var inqSound by strings("") {
+        this.name = Translated("Inq Sound")
+        this.description = Translated("Set the sound that plays when an Inquisitor Spawn. (enter filename)")
+    }
+    var inqVolume by float(1.0f) {
+        this.name = Translated("Inq volume Volume")
+        this.description = Translated("Set the volume of the Inquisitor spawn sound")
+        this.range = 0.0f..1.0f
+        this.slider = true
+    }
+
+    var sphinxSound by strings("") {
+        this.name = Translated("Sphinx Sound")
+        this.description = Translated("Set the sound that plays when a Sphinx spawns. (enter filename)")
+    }
+    var sphinxVolume by float(1.0f) {
+        this.name = Translated("Sphinx Volume")
+        this.description = Translated("Set the volume of the Sphinx spawn sound")
+        this.range = 0.0f..1.0f
+        this.slider = true
+    }
+
+    var kingSound by strings("") {
+        this.name = Translated("King Minos Sound")
+        this.description = Translated("Set the sound that plays when King Minos spawns. (enter filename)")
+    }
+    var kingVolume by float(1.0f) {
+        this.name = Translated("King Minos Volume")
+        this.description = Translated("Set the volume of the King Minos spawn sound")
+        this.range = 0.0f..1.0f
+        this.slider = true
+    }
+
+    var mantiSound by strings("") {
+        this.name = Translated("Manticores Sound")
+        this.description = Translated("Set the sound that plays when a Manticore spawns. (enter filename)")
+    }
+    var mantiVolume by float(1.0f) {
+        this.name = Translated("Manticores Volume")
+        this.description = Translated("Set the volume of the Manticore spawn sound")
+        this.range = 0.0f..1.0f
+        this.slider = true
+    }
+
+    var cocoonSound by strings("") {
+        this.name = Translated("Cocoon Sound")
+        this.description = Translated("Set the sound that plays when a rare mob gets cocooned (enter filename)")
+    }
+    var cocoonVolume by float(1.0f) {
+        this.name = Translated("Cocoon Volume")
+        this.description = Translated("Set the volume of the cocooning sound")
         this.range = 0.0f..1.0f
         this.slider = true
     }

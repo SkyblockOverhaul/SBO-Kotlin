@@ -236,7 +236,7 @@ object DianaMobDetect {
             }
             if (Diana.cocoonTitle) {
                 showTitle("§r§6§l<§b§l§kO§6§l> §b§lCOCOON! §6§l<§b§l§kO§6§l>", null, 10, 40, 10)
-                playCustomSound(Customization.inqSound[0], Customization.inqVolume)
+                playCustomSound(Customization.cocoonSound[0], Customization.cocoonVolume)
             }
         }
     }

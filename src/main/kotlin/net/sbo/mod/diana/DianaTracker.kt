@@ -355,7 +355,7 @@ object DianaTracker {
                         }
                     }
 
-                    val customMsg = Helper.checkCustomWoolMessage(magicfind)
+                    val customMsg = Helper.checkCustomDropMessage("wool", magicfind)
                     if (customMsg.first) {
                         Chat.chat(customMsg.second)
                         announceLootToParty("Shimmering Wool!", customMsg.second, true)
@@ -395,7 +395,7 @@ object DianaTracker {
                         }
                     }
 
-                    val customMsg = Helper.checkCustomCoreMessage(magicfind)
+                    val customMsg = Helper.checkCustomDropMessage("core", magicfind)
                     if (customMsg.first) {
                         Chat.chat(customMsg.second)
                         announceLootToParty("Manti-core!", customMsg.second, true)
@@ -435,7 +435,7 @@ object DianaTracker {
                         }
                     }
 
-                    val customMsg = Helper.checkCustomStingerMessage(magicfind)
+                    val customMsg = Helper.checkCustomDropMessage("Stinger", magicfind)
                     if (customMsg.first) {
                         Chat.chat(customMsg.second)
                         announceLootToParty("Fateful Stinger!", customMsg.second, true)
@@ -485,7 +485,7 @@ object DianaTracker {
                         }
                     }
 
-                    val customChimMsg = Helper.checkCustomChimMessage(magicfind)
+                    val customChimMsg = Helper.checkCustomDropMessage("Chimera", magicfind)
                     if (customChimMsg.first) {
                         Chat.chat(customChimMsg.second)
                         announceLootToParty("Chimera!", customChimMsg.second, true)
@@ -524,7 +524,7 @@ object DianaTracker {
                         }
                     }
 
-                    val customMsg = Helper.checkCustomBfMessage(magicfind)
+                    val customMsg = Helper.checkCustomDropMessage("Brain Food", magicfind)
                     if (customMsg.first) {
                         Chat.chat(customMsg.second)
                         announceLootToParty("Brain Food!", customMsg.second, true)
@@ -591,7 +591,7 @@ object DianaTracker {
                 "MANTI_CORE", "SHIMMERING_WOOL" -> {
                     Helper.showTitle("§c§l$item!", subTitle, 0, 25, 35)
                 }
-                "CHIMERA", "FABLED_STINGER" -> {
+                "CHIMERA", "FATEFUL_STINGER" -> {
                     Helper.showTitle("§d§l$item!", subTitle, 0, 25, 35)
                 }
                 "BRAIN_FOOD", "MINOS_RELIC", "BRAIDED_GRIFFIN_FEATHER" -> {

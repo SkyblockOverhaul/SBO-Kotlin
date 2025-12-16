@@ -34,6 +34,7 @@ import java.math.RoundingMode
 import kotlin.reflect.full.memberProperties
 import java.text.DecimalFormat
 import java.util.Locale
+import java.util.Locale.getDefault
 import java.util.regex.Pattern
 import java.util.concurrent.Executors
 import java.util.concurrent.ExecutorService
@@ -437,11 +438,10 @@ object Helper {
         }
     }
 
-    fun checkCustomChimMessage(dropName: String, magicFind: Int): Pair<Boolean, String> {
-
-        val text = Diana.customChimMessage[0].trim()
-        val trackerMayor = SboDataObject.dianaTrackerMayor
-        if (!Diana.chimMessageBool) {
+    fun checkCustomDropMessage(dropName: String, magicFind: Int): Pair<Boolean, String> {
+        val infos = getDropInfos(dropName)
+        val text = infos[0] as String
+        if (!(infos[1] as Boolean)) {
             return Pair(false, "")
         }
 
@@ -458,15 +458,15 @@ object Helper {
             }
 
             if (resultText.contains("{amount}")) {
-                val amount = trackerMayor.items.CHIMERA + trackerMayor.items.CHIMERA_LS
+                val amount = infos[2] as Int
                 resultText = resultText.replace("{amount}", amount.toString())
             }
 
             if (resultText.contains("{percentage}")) {
-                val minosInquisitorCount = trackerMayor.mobs.MINOS_INQUISITOR
-                val chimeraCount = trackerMayor.items.CHIMERA
-                val percentage = if (minosInquisitorCount > 0) {
-                    (chimeraCount.toDouble() / minosInquisitorCount.toDouble()) * 100
+                val mobCount = infos[3] as Int
+                val dropCount = infos[4] as Int
+                val percentage = if (mobCount > 0) {
+                    (dropCount.toDouble() / mobCount.toDouble()) * 100
                 } else {
                     0.0
                 }
@@ -479,10 +479,18 @@ object Helper {
         }
     }
 
-    private fun getDropInfos(dropName: String, mobName: String): List<Any> {
+    private fun getDropInfos(dropName: String): List<Any> {
         val trackerMayor = SboDataObject.dianaTrackerMayor
 
-        return when (dropName) {
+        return when (dropName.lowercase()) {
+            "chimera" -> listOf(
+                Diana.customChimMessage[0].trim(),
+                Diana.chimMessageBool,
+                trackerMayor.items.CHIMERA + trackerMayor.items.CHIMERA_LS,
+                trackerMayor.mobs.MINOS_INQUISITOR,
+                trackerMayor.items.CHIMERA
+            )
+
             "core" -> listOf(
                 Diana.customCoreMessage[0].trim(),
                 Diana.coreMessageBool,
@@ -499,7 +507,7 @@ object Helper {
                 trackerMayor.items.FATEFUL_STINGER
             )
 
-            "bf" -> listOf(
+            "brain food" -> listOf(
                 Diana.customBfMessage[0].trim(),
                 Diana.bfMessageBool,
                 trackerMayor.items.BRAIN_FOOD + trackerMayor.items.BRAIN_FOOD_LS,
@@ -513,14 +521,6 @@ object Helper {
                 trackerMayor.items.SHIMMERING_WOOL + trackerMayor.items.SHIMMERING_WOOL_LS,
                 trackerMayor.mobs.KING_MINOS,
                 trackerMayor.items.SHIMMERING_WOOL
-            )
-
-            "crown" -> listOf(
-                Diana.customCrownMessage[0].trim(),
-                Diana.crownMessageBool,
-                trackerMayor.items.CROWN_OF_GREED + trackerMayor.items.CROWN_OF_GREED_LS,
-                trackerMayor.mobs.KING_MINOS,
-                trackerMayor.items.CROWN_OF_GREED
             )
 
             else -> emptyList()
