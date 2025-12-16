@@ -267,10 +267,39 @@ object DianaMobDetect {
             Chat.command("pc x: ${playerPos.x.roundToInt()}, y: ${playerPos.y.roundToInt() - 1}, z: ${playerPos.z.roundToInt()} | $mob")
         }
 
-        Diana.announceKilltext.firstOrNull()?.let { killText ->
-            if (killText.isNotBlank()) {
-                sleep(ANNOUNCE_DELAY_MS) { Chat.command("pc " + Diana.announceKilltext[0]) }
+        when (mob) {
+            RareDianaMob.INQ.display -> {
+                Diana.announceInqText.firstOrNull()?.let { killText ->
+                    if (killText.isNotBlank()) {
+                        sleep(ANNOUNCE_DELAY_MS) { Chat.command("pc " + Diana.announceInqText[0]) }
+                    }
+                }
+            }
+
+            RareDianaMob.SPHINX.display -> {
+                Diana.announceSphinxText.firstOrNull()?.let { killText ->
+                    if (killText.isNotBlank()) {
+                        sleep(ANNOUNCE_DELAY_MS) { Chat.command("pc " + Diana.announceSphinxText[0]) }
+                    }
+                }
+            }
+
+            RareDianaMob.MANTI.display -> {
+                Diana.announceMantiText.firstOrNull()?.let { killText ->
+                    if (killText.isNotBlank()) {
+                        sleep(ANNOUNCE_DELAY_MS) { Chat.command("pc " + Diana.announceMantiText[0]) }
+                    }
+                }
+            }
+
+            RareDianaMob.KING.display -> {
+                Diana.announceKingText.firstOrNull()?.let { killText ->
+                    if (killText.isNotBlank()) {
+                        sleep(ANNOUNCE_DELAY_MS) { Chat.command("pc " + Diana.announceKingText[0]) }
+                    }
+                }
             }
         }
+
     }
 }

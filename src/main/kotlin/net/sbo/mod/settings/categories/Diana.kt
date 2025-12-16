@@ -402,9 +402,24 @@ object Diana : CategoryKt("Diana") {
         this.description = Literal("All coordinates from chat are considered rare mobs(King, Manti, Sphinx, Inq) only works in hub during diana")
     }
 
-    var announceKilltext by strings("") {
-        this.name = Literal("Send Text On Rare Mob Spawn")
-        this.description = Literal("Sends a text on Rare Mob spawn 5 seconds after spawn, use {since} for mobs since mob, {chance} for mob chance")
+    var announceInqText by strings("") {
+        this.name = Literal("Send Text On Inq Spawn")
+        this.description = Literal("Sends a text on Inq spawn 5 seconds after spawn, use {since} for mobs since mob, {chance} for mob chance")
+    }
+
+    var announceMantiText by strings("") {
+        this.name = Literal("Send Text On Manti Spawn")
+        this.description = Literal("Sends a text on Manti spawn 5 seconds after spawn, use {since} for mobs since mob, {chance} for mob chance")
+    }
+
+    var announceSphinxText by strings("") {
+        this.name = Literal("Send Text On Sphinx Spawn")
+        this.description = Literal("Sends a text on Sphinx spawn 5 seconds after spawn, use {since} for mobs since mob, {chance} for mob chance")
+    }
+
+    var announceKingText by strings("") {
+        this.name = Literal("Send Text On King Spawn")
+        this.description = Literal("Sends a text on King spawn 5 seconds after spawn, use {since} for mobs since mob, {chance} for mob chance")
     }
 
     var announceCocoon by boolean(false) {
@@ -434,11 +449,14 @@ object Diana : CategoryKt("Diana") {
 
     init {
         button {
-            title = "Send Test Message"
+            title = "Send All Test Messages"
             text = "Send Test"
-            description = "Sends a test message for the Rare mob spawn message"
+            description = "Sends all test messages for the Rare Mob spawn message"
             onClick {
-                Chat.chat(announceKilltext[0])
+                Chat.chat("Inq Message: " + announceInqText[0])
+                Chat.chat("Sphinx Message: " + announceSphinxText[0])
+                Chat.chat("Manti Message: " + announceMantiText[0])
+                Chat.chat("King Message: " + announceKingText[0])
             }
         }
     }
