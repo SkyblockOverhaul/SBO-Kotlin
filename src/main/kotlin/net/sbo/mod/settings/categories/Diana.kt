@@ -60,7 +60,7 @@ object Diana : CategoryKt("Diana") {
     }
 
     var arrowGuess by boolean(true) {
-        this.name = Literal("Arrow Guess")
+        this.name = Literal("[WIP]! Arrow Guess")
         this.description = Literal("Guesses the burrow location from the arrow direction after digging a burrow \n" +
             "§bNOTE!: This replaces the old Multi guess system!")
     }
