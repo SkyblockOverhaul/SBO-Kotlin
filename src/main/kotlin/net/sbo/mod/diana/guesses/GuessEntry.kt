@@ -12,17 +12,17 @@ class GuessEntry(val guesses: List<SboVec>) {
 
     fun removeGuesses() {
         guesses.forEach {
-            WaypointManager.removeWaypointAt(it, "guess")
+            WaypointManager.removeArrowGuess(it)
         }
     }
 
     fun moveToNext(): Boolean {
-        WaypointManager.removeWaypointAt(getCurrent(), "guess")
+        WaypointManager.removeArrowGuess(getCurrent())
         val nextIndex = currentIndex + 1
 
         if (nextIndex in guesses.indices) {
             currentIndex = nextIndex
-            WaypointManager.updateGuess(guesses[nextIndex])
+            WaypointManager.addArrowGuess(guesses[currentIndex])
             return true
         }
         return false

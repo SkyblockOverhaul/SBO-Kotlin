@@ -8,6 +8,7 @@ import net.minecraft.particle.DustParticleEffect
 import net.minecraft.particle.ParticleTypes
 import net.sbo.mod.SBOKotlin
 import net.sbo.mod.diana.burrows.BurrowDetector
+import net.sbo.mod.settings.categories.Diana
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.math.RaycastUtils
 import net.sbo.mod.utils.collection.TimeLimitedSet
@@ -31,6 +32,8 @@ import kotlin.math.sqrt
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+
+//todo: when not precise and normal guess was used remove latest arrow guess waypoint
 
 /**
  * A utility object to guess the location of Griffin Burrows based on arrow particle effects.
@@ -79,6 +82,7 @@ object ArrowGuessBurrow {
 
     @SboEvent
     fun onReceiveParticle(event: PacketReceiveEvent) {
+        if (!Diana.arrowGuess) return
         val packet = event.packet
         if (packet !is ParticleS2CPacket) return
         if (packet.distanceToPlayer() > 6.0) return
@@ -97,12 +101,13 @@ object ArrowGuessBurrow {
         locations.clear()
 
         val guess = findClosestValidBlockToRayNew(arrow, range) ?: return
-        WaypointManager.updateGuess(guess, newArrow)
+        WaypointManager.addArrowGuess(guess)
         newArrow = false
     }
 
     private fun registerBurrowDug() {
         Register.onChatMessageCancable(Pattern.compile("^§eYou (.*?) Griffin [Bb]urrow(.*?) §7\\((.*?)/(.*?)\\)$", Pattern.DOTALL)) { message, matchResult ->
+            if (!Diana.arrowGuess) return@onChatMessageCancable true
             val currentBurrow = matchResult.group(3).toIntOrNull() ?: return@onChatMessageCancable true
             val maxBurrow = matchResult.group(4).toIntOrNull() ?: return@onChatMessageCancable true
             lastBlockClicked?.let { onBurrowDug(it, currentBurrow, maxBurrow) }
@@ -111,7 +116,8 @@ object ArrowGuessBurrow {
     }
 
     private fun registerTick() {
-        Register.onTick(20) {
+        Register.onTick(4) {
+            if (!Diana.arrowGuess) return@onTick
             if (World.getWorld() != "Hub") return@onTick
             if (allGuesses.isEmpty()) return@onTick
             checkMoveGuess()
@@ -120,6 +126,7 @@ object ArrowGuessBurrow {
 
     @SboEvent
     fun onPlayerActionSend(event: PacketSendEvent) {
+        if (!Diana.arrowGuess) return
         val packet = event.packet
         if (packet !is PlayerActionC2SPacket) return
         if (World.getWorld() != "Hub") return
@@ -134,6 +141,7 @@ object ArrowGuessBurrow {
 
     @SboEvent
     fun onPlayerInteract(event: PlayerInteractEvent) {
+        if (!Diana.arrowGuess) return
         val action = event.action
         if (action != "useBlock") return
         val player = SBOKotlin.mc.player
@@ -282,7 +290,6 @@ object ArrowGuessBurrow {
 
             val distanceFromOrigin = candidatePoint.distance(ray.origin)
 
-            // take the ratio to account for errors
             val scaledDistance = (distanceToRay * 500000 / distanceFromOrigin).roundTo(5)
 
             candidates[candidateBlock] = Pair(scaledDistance.roundTo(5), distanceFromOrigin)
@@ -297,11 +304,13 @@ object ArrowGuessBurrow {
             allGuesses.add(GuessEntry(withinRange))
         }
 
-        if (withinRange.size > 1) {
-            if (!spadeTitleShown) Helper.showTitle("§c Use Spade!", "", 0, 30, 0)
-            spadeTitleShown = true
-        } else {
-            spadeTitleShown = false
+        if (Diana.showTitleWhenInaccurate) {
+            if (withinRange.size > 1) {
+                if (!spadeTitleShown) Helper.showTitle("§c Use Spade!", "", 0, 30, 0)
+                spadeTitleShown = true
+            } else {
+                spadeTitleShown = false
+            }
         }
 
         return withinRange.getOrNull(0)

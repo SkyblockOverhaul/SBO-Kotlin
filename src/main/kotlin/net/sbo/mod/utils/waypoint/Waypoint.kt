@@ -72,15 +72,16 @@ class Waypoint(
 
     fun format(
         inqWaypoints: List<Waypoint>,
-        closestBurrowDistance: Double
+        closestBurrowDistance: Double,
+        isBestGuess: Boolean = false
     ) {
         this.distanceRaw = distanceToPlayer()
         this.distanceText = if (distance) " §b[${distanceRaw.roundToInt()}m]" else ""
 
         when (this.type) {
-            "guess" -> {
+            "guess", "arrow" -> {
                 this.color = Color(Customization.guessColor)
-                this.line = Diana.guessLine && closestBurrowDistance > 60 && inqWaypoints.isEmpty()
+                this.line = Diana.guessLine && closestBurrowDistance > 60 && inqWaypoints.isEmpty() && isBestGuess
                 this.r = color.red / 255f
                 this.g = color.green / 255f
                 this.b = color.blue / 255f

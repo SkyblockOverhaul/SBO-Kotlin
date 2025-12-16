@@ -60,7 +60,7 @@ object PreciseGuessBurrow {
         if (guessPosition == null) return
         finalLocation = guessPosition.down(0.5).roundLocationToBlock()
         finalLocation = guessPosition.down(0.5).roundLocationToBlock()
-        WaypointManager.updateGuess(finalLocation, newBurrow)
+        WaypointManager.updateGuess(finalLocation)
         newBurrow = false
     }
 

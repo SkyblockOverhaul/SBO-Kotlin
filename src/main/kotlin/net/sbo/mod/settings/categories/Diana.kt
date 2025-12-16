@@ -59,6 +59,17 @@ object Diana : CategoryKt("Diana") {
         this.description = Literal("Guess the burrow location. Needs Driping Lava Partciles and set /particlequality to Extreme for more accuracy")
     }
 
+    var arrowGuess by boolean(true) {
+        this.name = Literal("Arrow Guess")
+        this.description = Literal("Guesses the burrow location from the arrow direction after digging a burrow \n" +
+            "§bNOTE!: This replaces the old Multi guess system!")
+    }
+
+    var showTitleWhenInaccurate by boolean(true) {
+        this.name = Literal("Show Title When Inaccurate")
+        this.description = Literal("Shows a title to guess normally when the arrow guess is inaccurate")
+    }
+
     var dianaBurrowDetect by boolean(true) {
         this.name = Literal("Diana Burrow Detection")
         this.description = Literal("Detects Diana burrows | to reset waypoints /sboclearburrows")
