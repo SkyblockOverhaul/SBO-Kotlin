@@ -599,10 +599,6 @@ object DianaTracker {
             }
         }
 
-        if (partyAnnounce && shouldAnnouce(itemId)) {
-            announceLootToParty("$item!", "$item!$mfPrefix")
-        }
-
         val isLootShare = gotLootShareRecently(2)
         if (isLootShare) {
             Chat.chat("§6[SBO] §cLootshared a $item!")
@@ -627,17 +623,6 @@ object DianaTracker {
             trackItem(itemId + "_LS", amount)
         } else {
             trackItem(itemId, amount)
-        }
-    }
-
-    private fun shouldAnnouce(itemId: String): Boolean {
-        return when (itemId) {
-            "MANTI_CORE" -> !Diana.coreMessageBool
-            "SHIMMERING_WOOL" -> !Diana.woolMessageBool
-            "FATEFUL_STINGER" -> !Diana.stingerMessageBool
-            "CHIMERA" -> !Diana.chimMessageBool
-            "BRAIN_FOOD" -> !Diana.bfMessageBool
-            else -> true
         }
     }
 
