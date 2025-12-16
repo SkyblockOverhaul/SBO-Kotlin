@@ -28,6 +28,7 @@ import net.sbo.mod.diana.DianaMobDetect
 import net.sbo.mod.diana.RareMobHighlight
 import net.sbo.mod.diana.achievements.AchievementManager
 import net.sbo.mod.diana.achievements.AchievementManager.unlockAchievement
+import net.sbo.mod.diana.guesses.ArrowGuessBurrow
 import net.sbo.mod.diana.sphinx.SphinxSolver
 import net.sbo.mod.general.HelpCommand
 import net.sbo.mod.overlays.Bobber
@@ -43,6 +44,7 @@ import net.sbo.mod.utils.SoundHandler
 import net.sbo.mod.utils.events.SBOEvent
 import net.sbo.mod.utils.overlay.OverlayManager
 import net.sbo.mod.utils.events.SboEventGeneratedRegistry
+import net.sbo.mod.utils.game.InventoryUtils
 import net.sbo.mod.utils.game.TabList
 
 object SBOKotlin {
@@ -122,6 +124,8 @@ object SBOKotlin {
 		MessageHider.init()
 		SphinxSolver.init()
 		RareMobHighlight.init()
+		ArrowGuessBurrow.init()
+		InventoryUtils.init()
 
 		Register.onTick(100) { unregister ->
 			if (mc.player != null && World.isInSkyblock()) {

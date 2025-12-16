@@ -1,0 +1,79 @@
+package net.sbo.mod.utils.game
+
+import net.minecraft.client.MinecraftClient
+import net.minecraft.component.DataComponentTypes
+import net.minecraft.item.ItemStack
+import net.minecraft.registry.Registries
+import net.sbo.mod.SBOKotlin
+import net.sbo.mod.utils.events.Register
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+
+object InventoryUtils {
+    private var currentItemId: String = "AIR"
+    private var currentItemStartTime: Long = System.currentTimeMillis()
+    private val heldHistory = mutableListOf<Triple<String, Long, Long>>()
+
+    fun init() {
+        Register.onTick(1) {
+            val client = SBOKotlin.mc
+            if (client.player == null) return@onTick
+            if (!World.isInSkyblock()) return@onTick
+            trackHeldItemDuration(client)
+        }
+    }
+
+    private fun trackHeldItemDuration(client: MinecraftClient) {
+        val stack = client.player?.mainHandStack ?: ItemStack.EMPTY
+
+        val newItemId = getInternalName(stack)
+        val now = System.currentTimeMillis()
+
+        if (newItemId != currentItemId) {
+            val durationHeld = now - currentItemStartTime
+            if (durationHeld > 50) {
+                heldHistory.add(Triple(currentItemId, durationHeld, now))
+            }
+            heldHistory.removeAll { (_, _, timestampStopped) -> (now - timestampStopped) > 5000 }
+            currentItemId = newItemId
+            currentItemStartTime = now
+        }
+    }
+
+    /**
+     * returns the SkyBlock ID (e.g. "HYPERION") if present,
+     * otherwise returns vanilla ID (e.g. "minecraft:iron_sword")
+     */
+    fun getInternalName(stack: ItemStack): String {
+        if (stack.isEmpty) return "AIR"
+
+        val customData = stack.get(DataComponentTypes.CUSTOM_DATA)
+        val sbId = ItemUtils.getSBID(customData)
+        if (sbId.isNotEmpty()) return sbId
+
+        return Registries.ITEM.getId(stack.item).toString()
+    }
+
+    /**
+     * Checks if an item is currently held OR was recently held.
+     * * @param itemId The Item ID (e.g. "HYPERION" or "minecraft:stick")
+     * @param duration The minimum time it must have been held (e.g. 500.milliseconds)
+     */
+    fun isItemHeld(
+        itemId: String,
+        duration: Duration
+    ): Boolean {
+        val now = System.currentTimeMillis()
+        val requiredMs = duration.inWholeMilliseconds
+
+        if (currentItemId.contains(itemId)) {
+            if ((now - currentItemStartTime) >= requiredMs) return true
+        }
+
+        return heldHistory.any { (histId, histDuration, stoppedAt) ->
+            histId.contains(itemId) &&
+            histDuration >= requiredMs &&
+            (now - stoppedAt) <= 200
+        }
+    }
+}

@@ -5,8 +5,6 @@ import net.sbo.mod.settings.categories.Diana
 import net.sbo.mod.utils.Player
 import net.sbo.mod.utils.math.SboVec
 import net.sbo.mod.utils.render.RenderUtils3D
-import net.sbo.mod.utils.waypoint.WaypointManager.closestGuess
-import net.sbo.mod.utils.waypoint.WaypointManager.focusedGuess
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
@@ -74,36 +72,16 @@ class Waypoint(
 
     fun format(
         inqWaypoints: List<Waypoint>,
-        closestBurrowDistance: Double
+        closestBurrowDistance: Double,
+        isBestGuess: Boolean = false
     ) {
         this.distanceRaw = distanceToPlayer()
         this.distanceText = if (distance) " §b[${distanceRaw.roundToInt()}m]" else ""
 
         when (this.type) {
-            "guess" -> {
-                val isMultiGuessActive = Diana.dianaMultiBurrowGuess
-                val isLineVisibleBase = Diana.guessLine && closestBurrowDistance > 60 && inqWaypoints.isEmpty()
-                var shouldShowWarpText: Boolean
-
-                if (isMultiGuessActive) {
-                    val isFocused = Diana.focusedWarp && focusedGuess == this
-                    val isClosest = !Diana.focusedWarp && closestGuess.first == this
-                    shouldShowWarpText = isFocused || isClosest
-                } else {
-                    shouldShowWarpText = true
-                }
-
-                this.color = if (focusedGuess == this) Color(Customization.focusedColor)
-                else Color(Customization.guessColor)
-
-                this.line = if (focusedGuess == this) {
-                    isLineVisibleBase
-                } else if (!isMultiGuessActive) {
-                    isLineVisibleBase
-                } else {
-                    isLineVisibleBase && closestGuess.first == this
-                }
-
+            "guess", "arrow" -> {
+                this.color = Color(Customization.guessColor)
+                this.line = Diana.guessLine && closestBurrowDistance > 60 && inqWaypoints.isEmpty() && isBestGuess
                 this.r = color.red / 255f
                 this.g = color.green / 255f
                 this.b = color.blue / 255f
@@ -112,13 +90,7 @@ class Waypoint(
                 WaypointManager.waypointExists("burrow", this.pos).let { (exists, wp) ->
                     if (exists && wp != null) this.hidden = wp.distanceToPlayer() < 60
                 }
-
-                if (shouldShowWarpText) {
-                    setWarpText()
-                } else {
-                    this.formattedText = "${this.text}${this.distanceText}"
-                    this.warp = null
-                }
+                setWarpText()
             }
             "rareMob" -> {
                 if (inqWaypoints.lastOrNull() == this) {

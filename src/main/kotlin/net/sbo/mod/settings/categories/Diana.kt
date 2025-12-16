@@ -59,9 +59,15 @@ object Diana : CategoryKt("Diana") {
         this.description = Literal("Guess the burrow location. Needs Driping Lava Partciles and set /particlequality to Extreme for more accuracy")
     }
 
-    var dianaMultiBurrowGuess by boolean(false) {
-        this.name = Literal("Diana Multi Burrow Guess")
-        this.description = Literal("Multi guess the burrow location. Needs Driping Lava Partciles and set /particlequality to Extreme for more accuracy")
+    var arrowGuess by boolean(true) {
+        this.name = Literal("[WIP]! Arrow Guess")
+        this.description = Literal("Guesses the burrow location from the arrow direction after digging a burrow \n" +
+            "§bNOTE!: This replaces the old Multi guess system!")
+    }
+
+    var showTitleWhenInaccurate by boolean(true) {
+        this.name = Literal("Show Title When Inaccurate")
+        this.description = Literal("Shows a title to guess normally when the arrow guess is inaccurate")
     }
 
     var dianaBurrowDetect by boolean(true) {
@@ -97,11 +103,6 @@ object Diana : CategoryKt("Diana") {
         this.slider = true
         this.name = Literal("Warp Delay (<X>ms)")
         this.description = Literal("The delay bevor you can warp after guessing with spade. (0 to disable)")
-    }
-
-    var focusedWarp by boolean(false) {
-        this.name = Literal("Focused Warp")
-        this.description = Literal("If enabled, you warp to the guess you look at instead of the closest one")
     }
 
     init {
