@@ -18,9 +18,7 @@ abstract class CacheSet<T : Any> : MutableSet<T> {
 
     override operator fun contains(element: T): Boolean = cache.containsKey(element)
 
-    override fun add(element: T): Boolean {
-        return (element in cache).also { cache[element] = Unit }
-    }
+    override fun add(element: T): Boolean = !(element in cache).also { cache[element] = Unit }
 
     override fun remove(element: T): Boolean {
         if (element !in cache) return false

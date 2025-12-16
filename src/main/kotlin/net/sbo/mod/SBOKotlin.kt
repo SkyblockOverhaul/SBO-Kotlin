@@ -44,6 +44,7 @@ import net.sbo.mod.utils.SoundHandler
 import net.sbo.mod.utils.events.SBOEvent
 import net.sbo.mod.utils.overlay.OverlayManager
 import net.sbo.mod.utils.events.SboEventGeneratedRegistry
+import net.sbo.mod.utils.game.InventoryUtils
 import net.sbo.mod.utils.game.TabList
 
 object SBOKotlin {
@@ -124,6 +125,7 @@ object SBOKotlin {
 		SphinxSolver.init()
 		RareMobHighlight.init()
 		ArrowGuessBurrow.init()
+		InventoryUtils.init()
 
 		Register.onTick(100) { unregister ->
 			if (mc.player != null && World.isInSkyblock()) {

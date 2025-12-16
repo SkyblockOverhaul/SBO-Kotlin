@@ -16,6 +16,7 @@ import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.game.PlayerInteractEvent
 import net.sbo.mod.utils.events.impl.packets.PacketReceiveEvent
 import net.sbo.mod.utils.events.impl.packets.PacketSendEvent
+import net.sbo.mod.utils.game.InventoryUtils
 import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.math.SboVec
 import net.sbo.mod.utils.math.SboVec.Companion.toSboVec
@@ -27,7 +28,9 @@ import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sign
 import kotlin.math.sqrt
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * A utility object to guess the location of Griffin Burrows based on arrow particle effects.
@@ -306,9 +309,7 @@ object ArrowGuessBurrow {
 
     private fun checkMoveGuess() {
         val player = SBOKotlin.mc.player ?: return
-        val item = player.mainHandStack
-        // this soulf only be true if the player has held the spade for 1s-2s
-        val hasSpade = item != null && item.name.string.contains("Spade")
+        val hasSpade = InventoryUtils.isItemHeld("SPADE", 1.seconds)
         val burrowLocations = BurrowDetector.burrows.values.map { it.waypoint?.pos ?: SboVec(0.0, 0.0, 0.0) }.toSet()
 
         for (guess in allGuesses.toList()) {
