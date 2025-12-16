@@ -475,11 +475,11 @@ object DianaTracker {
                         // normal brain food
                         if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.sphinxSinceFood} §eSphinx to get Brain Food!")
 
-                        if (sboData.b2bInq && sboData.sphinxSinceFood == 1) {
+                        if (sboData.b2bFood && sboData.sphinxSinceFood == 1) {
                             Chat.chat("§6[SBO] §cb2b2b Brain Food!")
                             unlockAchievement(98) // b2b2b food
                         }
-                        if (sboData.sphinxSinceFood == 1 && !sboData.b2bInq) {
+                        if (sboData.sphinxSinceFood == 1 && !sboData.b2bFood) {
                             Chat.chat("§6[SBO] §cb2b Brain Food!")
                             unlockAchievement(97) // b2b food
                             sboData.b2bInq = true
