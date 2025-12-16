@@ -25,6 +25,7 @@ import net.sbo.mod.utils.waypoint.WaypointManager
 import java.util.regex.Pattern
 import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sign
@@ -71,7 +72,7 @@ object ArrowGuessBurrow {
 
     private var lastBlockClicked: SboVec? = null
 
-    private val allGuesses = mutableListOf<GuessEntry>()
+    private val allGuesses = CopyOnWriteArrayList<GuessEntry>()
 
     private var newArrow = true
 

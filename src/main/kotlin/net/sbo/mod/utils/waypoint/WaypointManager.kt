@@ -20,6 +20,8 @@ import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.game.WorldChangeEvent
 import net.sbo.mod.utils.math.SboVec
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.collections.iterator
 import kotlin.math.roundToInt
 import kotlin.text.get
@@ -33,7 +35,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 
 object WaypointManager {
     var guessWp: Waypoint? = null
-    private val waypoints = mutableMapOf<String, MutableList<Waypoint>>()
+    private val waypoints = ConcurrentHashMap<String, CopyOnWriteArrayList<Waypoint>>()
     var closestBurrow: Pair<Waypoint?, Double> = null to 1000.0
     var closestGuess: Pair<Waypoint?, Double> = null to 1000.0
     val rareMobs: List<String> = listOf(
@@ -219,9 +221,7 @@ object WaypointManager {
      * @param waypoint The waypoint to add.
      */
     fun addWaypoint(waypoint: Waypoint) {
-        synchronized(waypoints) {
-            waypoints.getOrPut(waypoint.type.lowercase()) { mutableListOf() }.add(waypoint)
-        }
+        waypoints.computeIfAbsent(waypoint.type.lowercase()) { CopyOnWriteArrayList() }.add(waypoint)
         if (waypoint.type.lowercase() == "burrow") playCustomSound(Customization.burrowSound[0], Customization.burrowVolume)
     }
 
@@ -230,12 +230,10 @@ object WaypointManager {
      * @param waypoint The waypoint to remove.
      */
     fun removeWaypoint(waypoint: Waypoint) {
-        synchronized(waypoints) {
-            if (closestBurrow.first == waypoint) {
-                closestBurrow = null to 1000.0
-            }
-            waypoints[waypoint.type.lowercase()]?.remove(waypoint)
+        if (closestBurrow.first == waypoint) {
+            closestBurrow = null to 1000.0
         }
+        waypoints[waypoint.type.lowercase()]?.remove(waypoint)
     }
 
     /**
@@ -244,14 +242,12 @@ object WaypointManager {
      * @param type The type of the waypoint to remove.
      */
     fun removeWaypointAt(pos: SboVec, type: String) {
-        synchronized(waypoints) {
-            val waypoint = waypoints[type.lowercase()]?.find { it.pos == pos }
-            if (waypoint != null) {
-                waypoints[waypoint.type.lowercase()]?.remove(waypoint)
-                // Also reset closest burrow if needed
-                if (closestBurrow.first == waypoint) {
-                    closestBurrow = null to 1000.0
-                }
+        val list = waypoints[type.lowercase()]
+        val waypoint = list?.find { it.pos == pos }
+        if (waypoint != null) {
+            list.remove(waypoint)
+            if (closestBurrow.first == waypoint) {
+                closestBurrow = null to 1000.0
             }
         }
     }
@@ -261,9 +257,7 @@ object WaypointManager {
      * @param type The type of waypoints to remove.
      */
     fun removeAllOfType(type: String) {
-        synchronized(waypoints) {
-            waypoints[type.lowercase()]?.clear()
-        }
+        waypoints[type.lowercase()]?.clear()
     }
 
     /**
@@ -272,10 +266,8 @@ object WaypointManager {
      */
     fun removeWithinDistance(type: String, distance: Int) {
         val playerPos = Player.getLastPosition()
-        synchronized(waypoints) {
-            val list = waypoints[type.lowercase()] ?: return
-            list.removeIf { it.pos.distanceTo(playerPos) < distance }
-        }
+        val list = waypoints[type.lowercase()] ?: return
+        list.removeIf { it.pos.distanceTo(playerPos) < distance }
     }
 
     /**
@@ -342,10 +334,7 @@ object WaypointManager {
      * @param action The action to apply to each waypoint.
      */
     fun forEachWaypoint(action: (Waypoint) -> Unit) {
-        val allWaypoints = synchronized(waypoints) {
-            waypoints.values.flatten().filterNotNull()
-        }
-        allWaypoints.forEach(action)
+        waypoints.values.flatten().filterNotNull().forEach(action)
     }
 
     /**
@@ -355,9 +344,7 @@ object WaypointManager {
      * @return A list of waypoints of the specified type.
      */
     fun getWaypointsOfType(type: String): List<Waypoint> {
-        synchronized(waypoints) {
-            return waypoints[type.lowercase()]?.toList() ?: emptyList()
-        }
+        return waypoints[type.lowercase()] ?: emptyList()
     }
 
     private fun getBestGuess(): Waypoint? {
