@@ -324,7 +324,8 @@ object DianaTracker {
             if (magicfind > 0) mfPrefix = " (+$magicfind ✯ Magic Find)"
 
             when {
-                drop.contains("Shimmering Wool") -> { // todo: add achievements for wool, drop sound
+                drop.contains("Shimmering Wool") -> { // todo: add achievements for wool
+                    playCustomSound(Customization.woolSound[0], Customization.woolVolume)
                     onRareDropFromMob("Shimmering Wool", true, true, true, magicfind)
                     if (!isLootShare) {
                         // normal wool
@@ -353,8 +354,18 @@ object DianaTracker {
                             sboData.kingSinceLsWool = 0
                         }
                     }
+
+                    val customMsg = Helper.checkCustomWoolMessage(magicfind)
+                    if (customMsg.first) {
+                        Chat.chat(customMsg.second)
+                        announceLootToParty("Shimmering Wool!", customMsg.second, true)
+                    } else {
+                        announceLootToParty("Shimmering Wool!", "Shimmering Wool!$mfPrefix")
+                    }
+
                 }
-                drop.contains("Manti-core") -> { // todo: add achievements for core, drop sound
+                drop.contains("Manti-core") -> { // todo: add achievements for core
+                    playCustomSound(Customization.coreSound[0], Customization.coreVolume)
                     onRareDropFromMob("Manti-core", true, true, true, magicfind)
                     if (!isLootShare) {
                         // normal core
@@ -383,8 +394,18 @@ object DianaTracker {
                             sboData.mantiSinceLsCore = 0
                         }
                     }
+
+                    val customMsg = Helper.checkCustomCoreMessage(magicfind)
+                    if (customMsg.first) {
+                        Chat.chat(customMsg.second)
+                        announceLootToParty("Manti-core!", customMsg.second, true)
+                    } else {
+                        announceLootToParty("Manti-core!", "Manti-core!$mfPrefix")
+                    }
+
                 }
-                drop.contains("Fateful Stinger") -> { // todo: add achievements for stinger, drop sound
+                drop.contains("Fateful Stinger") -> { // todo: add achievements for stinger
+                    playCustomSound(Customization.stingerSound[0], Customization.stingerVolume)
                     onRareDropFromMob("Fateful Stinger", true, true, true, magicfind)
                     if (!isLootShare) {
                         // normal stinger
@@ -413,6 +434,15 @@ object DianaTracker {
                             sboData.mantiSinceLsStinger = 0
                         }
                     }
+
+                    val customMsg = Helper.checkCustomStingerMessage(magicfind)
+                    if (customMsg.first) {
+                        Chat.chat(customMsg.second)
+                        announceLootToParty("Fateful Stinger!", customMsg.second, true)
+                    } else {
+                        announceLootToParty("Fateful Stinger!", "Fateful Stinger!$mfPrefix")
+                    }
+
                 }
                 drop.contains("Enchanted Book") -> {
                     if (!drop.contains("Chimera")) return@onChatMessageCancable true
@@ -463,7 +493,8 @@ object DianaTracker {
                         announceLootToParty("Chimera!", "Chimera!$mfPrefix")
                     }
                 }
-                drop.contains("Brain Food") -> { // todo: add achievements for food, drop sound
+                drop.contains("Brain Food") -> { // todo: add achievements for food
+                    playCustomSound(Customization.bfSound[0], Customization.bfVolume)
                     onRareDropFromMob("Brain Food", true, true, true, magicfind)
                     if (!isLootShare) {
                         // normal brain food
@@ -492,6 +523,15 @@ object DianaTracker {
                             sboData.sphinxSinceLsFood = 0
                         }
                     }
+
+                    val customMsg = Helper.checkCustomBfMessage(magicfind)
+                    if (customMsg.first) {
+                        Chat.chat(customMsg.second)
+                        announceLootToParty("Brain Food!", customMsg.second, true)
+                    } else {
+                        announceLootToParty("Brain Food!", "Brain Food!$mfPrefix")
+                    }
+
                 }
                 drop.contains("Daedalus Stick") -> {
                     playCustomSound(Customization.stickSound[0], Customization.stickVolume)

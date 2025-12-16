@@ -243,6 +243,47 @@ object Diana : CategoryKt("Diana") {
         this.description = Translated("use: {mf} for MagicFind, {amount} for drop Amount this event and {percentage} for chimera/inquis ratio.")
     }
 
+    var coreMessageBool by boolean(false) {
+        this.name = Translated("Manti-Core Message")
+        this.description = Translated("Enables custom Manti-Core message (core/manti)")
+    }
+
+    var customCoreMessage by strings("&6[SBO] &6&lRARE DROP! &d&lManti-Core! &b{mf} &b#{amount}") {
+        this.name = Translated("Custom Manti-Core Message Text")
+        this.description = Translated("Use: {mf} for MagicFind, {amount} for drop amount this event and {percentage} for core/manti ratio.")
+    }
+
+    var stingerMessageBool by boolean(false) {
+        this.name = Translated("Fateful Stinger Message")
+        this.description = Translated("Enables custom Fateful Stinger message (stinger/manti)")
+    }
+
+    var customStingerMessage by strings("&6[SBO] &6&lRARE DROP! &d&lFateful Stinger! &b{mf} &b#{amount}") {
+        this.name = Translated("Custom Fateful Stinger Message Text")
+        this.description = Translated("Use: {mf} for MagicFind, {amount} for drop amount this event and {percentage} for stinger/manti ratio.")
+    }
+
+    var bfMessageBool by boolean(false) {
+        this.name = Translated("Brain Food Message")
+        this.description = Translated("Enables custom Brain Food message (food/sphinx)")
+    }
+
+    var customBfMessage by strings("&6[SBO] &6&lRARE DROP! &d&lBrain Food! &b{mf} &b#{amount}") {
+        this.name = Translated("Custom Brain Food Message Text")
+        this.description = Translated("Use: {mf} for MagicFind, {amount} for drop amount this event and {percentage} for food/sphinx ratio.")
+    }
+
+    var woolMessageBool by boolean(false) {
+        this.name = Translated("Shimmering Wool Message")
+        this.description = Translated("Enables custom Shimmering Wool message (wool/king)")
+    }
+
+    var customWoolMessage by strings("&6[SBO] &6&lRARE DROP! &d&lShimmering Wool! &b{mf} &b#{amount}") {
+        this.name = Translated("Custom Shimmering Wool Message Text")
+        this.description = Translated("Use: {mf} for MagicFind, {amount} for drop amount this event and {percentage} for wool/king ratio.")
+    }
+
+
     init {
         button {
             title = "Send Test Chim Message"

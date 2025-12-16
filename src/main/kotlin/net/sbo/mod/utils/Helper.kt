@@ -437,7 +437,8 @@ object Helper {
         }
     }
 
-    fun checkCustomChimMessage(magicFind: Int): Pair<Boolean, String> {
+    fun checkCustomChimMessage(dropName: String, magicFind: Int): Pair<Boolean, String> {
+
         val text = Diana.customChimMessage[0].trim()
         val trackerMayor = SboDataObject.dianaTrackerMayor
         if (!Diana.chimMessageBool) {
@@ -477,6 +478,55 @@ object Helper {
             return Pair(false, "")
         }
     }
+
+    private fun getDropInfos(dropName: String, mobName: String): List<Any> {
+        val trackerMayor = SboDataObject.dianaTrackerMayor
+
+        return when (dropName) {
+            "core" -> listOf(
+                Diana.customCoreMessage[0].trim(),
+                Diana.coreMessageBool,
+                trackerMayor.items.MANTI_CORE + trackerMayor.items.MANTI_CORE_LS,
+                trackerMayor.mobs.MANTICORE,
+                trackerMayor.items.MANTI_CORE
+            )
+
+            "stinger" -> listOf(
+                Diana.customStingerMessage[0].trim(),
+                Diana.stingerMessageBool,
+                trackerMayor.items.FATEFUL_STINGER + trackerMayor.items.FATEFUL_STINGER_LS,
+                trackerMayor.mobs.MANTICORE,
+                trackerMayor.items.FATEFUL_STINGER
+            )
+
+            "bf" -> listOf(
+                Diana.customBfMessage[0].trim(),
+                Diana.bfMessageBool,
+                trackerMayor.items.BRAIN_FOOD + trackerMayor.items.BRAIN_FOOD_LS,
+                trackerMayor.mobs.SPHINX,
+                trackerMayor.items.BRAIN_FOOD
+            )
+
+            "wool" -> listOf(
+                Diana.customWoolMessage[0].trim(),
+                Diana.woolMessageBool,
+                trackerMayor.items.SHIMMERING_WOOL + trackerMayor.items.SHIMMERING_WOOL_LS,
+                trackerMayor.mobs.KING_MINOS,
+                trackerMayor.items.SHIMMERING_WOOL
+            )
+
+            "crown" -> listOf(
+                Diana.customCrownMessage[0].trim(),
+                Diana.crownMessageBool,
+                trackerMayor.items.CROWN_OF_GREED + trackerMayor.items.CROWN_OF_GREED_LS,
+                trackerMayor.mobs.KING_MINOS,
+                trackerMayor.items.CROWN_OF_GREED
+            )
+
+            else -> emptyList()
+        }
+    }
+
 
     fun toTitleCase(input: String): String {
         return input.lowercase().replaceFirstChar { char -> char.uppercase() }

@@ -141,6 +141,54 @@ object Customization : CategoryKt("Customization") {
         this.slider = true
     }
 
+    var bfSound by strings("") {
+        this.name = Translated("Brain Food Drop Sound")
+        this.description = Translated("Set the sound that plays when you drop Brain Food. (enter filename)")
+    }
+
+    var bfVolume by float(1.0f) {
+        this.name = Translated("Brain Food Drop Volume")
+        this.description = Translated("Set the volume of the Brain Food drop sound")
+        this.range = 0.0f..1.0f
+        this.slider = true
+    }
+
+    var coreSound by strings("") {
+        this.name = Translated("Manti-Core Drop Sound")
+        this.description = Translated("Set the sound that plays when you drop a Manti-Core. (enter filename)")
+    }
+
+    var coreVolume by float(1.0f) {
+        this.name = Translated("Manti-Core Drop Volume")
+        this.description = Translated("Set the volume of the Manti-Core drop sound")
+        this.range = 0.0f..1.0f
+        this.slider = true
+    }
+
+    var stingerSound by strings("") {
+        this.name = Translated("Fateful Stinger Drop Sound")
+        this.description = Translated("Set the sound that plays when you drop a Fateful Stinger. (enter filename)")
+    }
+
+    var stingerVolume by float(1.0f) {
+        this.name = Translated("Fateful Stinger Drop Volume")
+        this.description = Translated("Set the volume of the Fateful Stinger drop sound")
+        this.range = 0.0f..1.0f
+        this.slider = true
+    }
+
+    var woolSound by strings("") {
+        this.name = Translated("Shimmering Wool Drop Sound")
+        this.description = Translated("Set the sound that plays when you drop Shimmering Wool. (enter filename)")
+    }
+
+    var woolVolume by float(1.0f) {
+        this.name = Translated("Shimmering Wool Drop Volume")
+        this.description = Translated("Set the volume of the Shimmering Wool drop sound")
+        this.range = 0.0f..1.0f
+        this.slider = true
+    }
+
     var relicSound by strings("") {
         this.name = Translated("Relic Drop Sound")
         this.description = Translated("Set the sound that plays when you drop a minos relic. (enter filename)")
