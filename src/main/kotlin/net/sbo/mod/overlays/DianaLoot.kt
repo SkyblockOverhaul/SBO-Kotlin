@@ -296,7 +296,8 @@ object DianaLoot {
     }
 
     private fun createProfitLine(totalProfitValue: Long, profitPerHr: Any, profitPerBurrow: Any): OverlayTextLine {
-        return OverlayTextLine("${YELLOW}Total Profit: $AQUA${Helper.formatNumber(totalProfitValue)} coins")
+        val pphText = if (profitPerHr == "NaN" || profitPerHr == "0.0") "" else " $GRAY[$AQUA$profitPerHr$GRAY/${AQUA}hr$GRAY]"
+        return OverlayTextLine("${YELLOW}Total Profit: $AQUA${Helper.formatNumber(totalProfitValue)} coins$pphText")
             .onHover { drawContext, textRenderer ->
                 val scaleFactor = mc.window.scaleFactor
                 val mouseX = mc.mouse.x / scaleFactor
@@ -352,4 +353,5 @@ object DianaLoot {
         }
         timerLine.text = text
     }
+
 }
