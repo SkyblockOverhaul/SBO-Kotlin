@@ -326,7 +326,10 @@ object WaypointManager {
      * @param action The action to apply to each waypoint.
      */
     fun forEachWaypoint(action: (Waypoint) -> Unit) {
-        waypoints.values.flatten().forEach(action)
+        @Suppress("UNCHECKED_CAST")
+        (waypoints.values.flatten() as List<Waypoint?>)
+            .filterNotNull()
+            .forEach(action)
     }
 
     fun getGuessWaypoints(): MutableList<Waypoint> {
