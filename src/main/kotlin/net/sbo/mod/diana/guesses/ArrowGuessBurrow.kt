@@ -21,6 +21,8 @@ import net.sbo.mod.utils.math.SboVec
 import net.sbo.mod.utils.math.SboVec.Companion.toSboVec
 import net.sbo.mod.utils.waypoint.WaypointManager
 import java.util.regex.Pattern
+import java.util.Collections
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sign
@@ -59,7 +61,7 @@ object ArrowGuessBurrow {
     }
 
     private val recentArrowParticles = TimeLimitedSet<SboVec>(1.minutes)
-    private val locations: MutableSet<SboVec> = mutableSetOf()
+    private val locations: MutableSet<SboVec> = Collections.newSetFromMap(ConcurrentHashMap())
 
     private var lastBlockClicked: SboVec? = null
 
@@ -370,4 +372,5 @@ object ArrowGuessBurrow {
                 vec.y > this.minY && vec.y <= this.maxY &&
                 vec.z > this.minZ && vec.z <= this.maxZ;
     }
+
 }
