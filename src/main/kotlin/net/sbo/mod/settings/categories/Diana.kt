@@ -62,10 +62,12 @@ object Diana : CategoryKt("Diana") {
     var arrowGuess by boolean(true) {
         this.name = Literal("[WIP]! Arrow Guess")
         this.description = Literal("Guesses the burrow location from the arrow direction after digging a burrow \n" +
-            "§bNOTE!: This replaces the old Multi guess system!")
+            "§bNOTE!: This replaces the old Multi guess system!\n" +
+            "§cHave Dust Particles enabled!!!"
+        )
     }
 
-    var showTitleWhenInaccurate by boolean(true) {
+    var showTitleWhenInaccurate by boolean(false) {
         this.name = Literal("Show Title When Inaccurate")
         this.description = Literal("Shows a title to guess normally when the arrow guess is inaccurate")
     }
