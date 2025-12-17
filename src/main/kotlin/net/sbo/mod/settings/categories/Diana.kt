@@ -63,7 +63,8 @@ object Diana : CategoryKt("Diana") {
         this.name = Literal("[WIP]! Arrow Guess")
         this.description = Literal("Guesses the burrow location from the arrow direction after digging a burrow \n" +
             "§bNOTE!: This replaces the old Multi guess system!\n" +
-            "§cHave Dust Particles enabled!!!"
+            "§cHave Dust Particles enabled!!!\n" +
+            "§aDo every burrow you see for doing diana the fastest way!"
         )
     }
 
@@ -263,6 +264,7 @@ object Diana : CategoryKt("Diana") {
     init {
         separator {
             this.title = "Diana Waypoints"
+            this.description =  "§bDisable View Bobbing in controls if lines are buggy"
         }
     }
 
