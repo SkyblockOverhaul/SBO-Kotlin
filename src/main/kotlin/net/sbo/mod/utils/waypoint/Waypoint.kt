@@ -63,11 +63,15 @@ class Waypoint(
         return sqrt((playerPos.x - this.pos.x).pow(2) + (playerPos.y - this.pos.y).pow(2) + (playerPos.z - this.pos.z).pow(2))
     }
 
-    private fun setWarpText() {
-        this.warp = WaypointManager.getClosestWarp(this.pos)
-        this.formattedText = this.warp?.let {
-            "$text§7 (warp $it)${this.distanceText}"
-        } ?: "${this.text}${this.distanceText}"
+    private fun setWarpText(isBestGuess: Boolean = true) {
+        if (isBestGuess) {
+            this.warp = WaypointManager.getClosestWarp(this.pos)
+            this.formattedText = this.warp?.let {
+                "$text§7 (warp $it)${this.distanceText}"
+            } ?: "${this.text}${this.distanceText}"
+        } else {
+            this.formattedText = "${this.text}${this.distanceText}"
+        }
     }
 
     fun format(
@@ -90,7 +94,7 @@ class Waypoint(
                 WaypointManager.waypointExists("burrow", this.pos).let { (exists, wp) ->
                     if (exists && wp != null) this.hidden = wp.distanceToPlayer() < 60
                 }
-                setWarpText()
+                setWarpText(isBestGuess)
             }
             "rareMob" -> {
                 if (inqWaypoints.lastOrNull() == this) {

@@ -25,6 +25,7 @@ import net.sbo.mod.utils.waypoint.WaypointManager
 import java.util.regex.Pattern
 import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sign
@@ -70,8 +71,9 @@ object ArrowGuessBurrow {
     private val locations: MutableSet<SboVec> = Collections.newSetFromMap(ConcurrentHashMap())
 
     private var lastBlockClicked: SboVec? = null
+    private var lastBurrowClicked: SboVec? = null
 
-    private val allGuesses = mutableListOf<GuessEntry>()
+    private val allGuesses = CopyOnWriteArrayList<GuessEntry>()
 
     private var newArrow = true
 
@@ -83,26 +85,16 @@ object ArrowGuessBurrow {
     @SboEvent
     fun onReceiveParticle(event: PacketReceiveEvent) {
         if (!Diana.arrowGuess) return
-        val packet = event.packet
-        if (packet !is ParticleS2CPacket) return
-        if (packet.distanceToPlayer() > 6.0) return
-        if (packet.parameters.type != ParticleTypes.DUST) return
-        if (packet.count != 0) return
-        if (packet.speed != 1.0f) return
-        val parameters = packet.parameters
-        if (parameters !is DustParticleEffect) return
-        val range = getArrowRange(packet.offsetX, packet.offsetY) ?: return
+        val packet = event.packet as? ParticleS2CPacket ?: return
+        if (!packet.isRelevant()) return
+
         val location = SboVec(packet.x, packet.y, packet.z)
-
+        if (!location.isCloseToLastBurrow()) return
         if(!recentArrowParticles.add(location)) return
+
+        val range = getArrowRange(packet.offsetX, packet.offsetY) ?: return
         locations.add(location)
-
-        val arrow = detectArrow() ?: return
-        locations.clear()
-
-        val guess = findClosestValidBlockToRayNew(arrow, range) ?: return
-        WaypointManager.addArrowGuess(guess)
-        newArrow = false
+        range.processArrowDetection()
     }
 
     private fun registerBurrowDug() {
@@ -158,6 +150,7 @@ object ArrowGuessBurrow {
     }
 
     private fun onBurrowDug(location: SboVec, currentChain: Int, maxChain: Int) {
+        lastBurrowClicked = location
         if (currentChain != maxChain) {
             locations.clear()
             newArrow = true
@@ -383,4 +376,23 @@ object ArrowGuessBurrow {
                 vec.z > this.minZ && vec.z <= this.maxZ;
     }
 
+    private fun ParticleS2CPacket.isRelevant() : Boolean {
+        if (this.parameters.type != ParticleTypes.DUST) return false
+        if (this.count != 0) return false
+        if (this.speed != 1.0f) return false
+        val parameters = this.parameters
+        return parameters is DustParticleEffect
+    }
+
+    private fun SboVec.isCloseToLastBurrow(): Boolean = lastBurrowClicked?.let { this.distanceTo(it) < 5 } ?: false
+
+    private fun IntRange.processArrowDetection(): IntRange {
+        val arrow = detectArrow() ?: return this
+        locations.clear()
+        findClosestValidBlockToRayNew(arrow, this)?.let {
+            WaypointManager.addArrowGuess(it)
+            newArrow = false
+        }
+        return this
+    }
 }
