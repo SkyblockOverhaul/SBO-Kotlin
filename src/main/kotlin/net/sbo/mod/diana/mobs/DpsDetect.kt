@@ -3,24 +3,34 @@ package net.sbo.mod.diana.mobs
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.sbo.mod.SBOKotlin.mc
+import net.sbo.mod.settings.categories.Diana
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.chat.Chat
+import net.sbo.mod.utils.collection.TimeLimitedSet
 import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.entity.EntityPlayerDamageEvent
 import net.sbo.mod.utils.events.impl.game.TickEvent
 import net.sbo.mod.utils.math.RaycastUtils
 import net.sbo.mod.utils.math.SboVec.Companion.toSboVec
+import kotlin.time.Duration.Companion.seconds
 
 object DpsDetect {
     private val healthMap = mutableMapOf<Int, Float>()
     private val damageLeaderboard = mutableMapOf<Int, MutableMap<String, Float>>()
     private val pendingAttacker = mutableMapOf<Int, String>()
     private val mobNames = mutableMapOf<Int, String>()
+    private val damageHistory = mutableMapOf<Int, MutableList<Pair<String, Float>>>()
 
-    private var lastMobStats: Map<String, Float>? = null
+    private val printedMobs = TimeLimitedSet<Int>(10.seconds)
+
+    private var lastMobHistory: List<Pair<String, Float>>? = null
     private var lastMobName: String = "Unknown"
 
+    //#if MC >= 1.21.9
+    //$$ private fun LivingEntity.sboPos() = entityPos.toSboVec()
+    //#else
     private fun LivingEntity.sboPos() = pos.toSboVec()
+    //#endif
     private fun PlayerEntity.sboLook() = getRotationVec(1.0f).toSboVec()
     private fun PlayerEntity.isRealPlayer() = uuid.version() == 4
     private fun String.isRareDianaMob(): Boolean =
@@ -28,11 +38,16 @@ object DpsDetect {
 
     @SboEvent
     fun onEntityDamage(event: EntityPlayerDamageEvent) {
+        if (!Diana.dpsTracker) return
+
         val mob = event.entity as? LivingEntity ?: return
-        if (!mob.name.string.isRareDianaMob()) return
+        val name = mob.name.string
+        if (!name.isRareDianaMob()) return
 
         val mobId = mob.id
-        val attackerName = (findGuaranteedAttacker(mob) ?: findPotentialAttacker(mob))?.name?.string
+
+        val attacker = findGuaranteedAttacker(mob) ?: findPotentialAttacker(mob)
+        val attackerName = attacker?.name?.string
 
         if (attackerName != null) {
             pendingAttacker[mobId] = attackerName
@@ -40,27 +55,32 @@ object DpsDetect {
             pendingAttacker.putIfAbsent(mobId, "Unknown Source")
         }
 
-        mobNames[mobId] = mob.name.string
+        mobNames[mobId] = name
 
         if (!healthMap.containsKey(mobId)) {
-            healthMap[mobId] = mob.maxHealth
-            processDamageUpdate(mobId, mob.health)
+            healthMap[mobId] = mob.health
         }
+
+        processDamageUpdate(mobId, mob.health)
     }
 
     @SboEvent
     fun onTick(event: TickEvent) {
+        if (!Diana.dpsTracker) {
+            if (healthMap.isNotEmpty()) clearAllData()
+            return
+        }
         val world = mc.world ?: return
         healthMap.keys.toList().forEach { mobId ->
             val mob = world.getEntityById(mobId) as? LivingEntity
+
             if (mob == null || !mob.isAlive) {
                 val lastHP = healthMap[mobId] ?: 0f
                 if (lastHP > 0f) processDamageUpdate(mobId, 0f)
 
-                lastMobStats = damageLeaderboard[mobId]?.toMap()
+                lastMobHistory = damageHistory[mobId]?.toList()
                 lastMobName = mobNames[mobId] ?: "Unknown Mob"
 
-                printSummary(mobId)
                 cleanup(mobId)
                 return@forEach
             }
@@ -81,6 +101,7 @@ object DpsDetect {
         damageLeaderboard.getOrPut(mobId) { mutableMapOf() }.apply {
             this[attacker] = (this[attacker] ?: 0f) + damageTaken
         }
+        damageHistory.getOrPut(mobId) { mutableListOf() }.add(attacker to damageTaken)
 
         healthMap[mobId] = currentHealth
     }
@@ -88,6 +109,7 @@ object DpsDetect {
     private fun findGuaranteedAttacker(target: LivingEntity): PlayerEntity? {
         val world = mc.world ?: return null
         if (mc.targetedEntity == target && mc.options.attackKey.isPressed) return mc.player
+
         val targetBox = target.boundingBox
         return world.players.firstOrNull { player ->
             player.isRealPlayer() && player.distanceTo(target) < 30.0 && player.handSwinging &&
@@ -108,42 +130,57 @@ object DpsDetect {
             .maxByOrNull { it.second }?.first
     }
 
-    private fun printSummary(mobId: Int) {
+    private fun displaySummary(mobId: Int) {
+        if (!printedMobs.add(mobId)) return
+
         val statsMap = damageLeaderboard[mobId] ?: return
+        val name = mobNames[mobId] ?: "Unknown Mob"
+        if (statsMap.isEmpty()) return
+
         val stats = statsMap.toList().sortedByDescending { it.second }
-        if (stats.isEmpty()) return
 
-        Chat.chat("§a▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬")
-        Chat.chat("§6§lDPS Summary: §e${mobNames[mobId] ?: "Mob"}")
+        val chatBreak = Chat.getChatBreak(" ", "§a§m")
+        Chat.chat(chatBreak)
 
-        stats.forEachIndexed { i, (name, dmg) ->
+        Chat.chat("§6§lDPS Summary: §e$name")
+        stats.forEachIndexed { i, (pName, dmg) ->
             val rankColor = when(i) { 0 -> "§e"; 1 -> "§f"; 2 -> "§6"; else -> "§7" }
-            val nameColor = if (name == mc.player?.name?.string) "§d" else "§b"
-            Chat.chat(" §7${i + 1}. $rankColor$nameColor$name §7- §c${Helper.formatNumber(dmg)}")
+            val nameColor = if (pName == mc.player?.name?.string) "§d" else "§b"
+            Chat.chat(" §7${i + 1}. $rankColor$nameColor$pName §7- §c${Helper.formatNumber(dmg)}")
         }
 
-        Chat.clickableChat(" §b§l[REPLAY HISTORY]", "§eClick to re-display this list later") {
+        Chat.clickableChat(" §b§l[VIEW CHRONOLOGICAL HISTORY]", "§eClick to see every individual hit in order") {
             showFullHistory()
         }
-        Chat.chat("§a▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬")
+
+        Chat.chat(chatBreak)
     }
 
     private fun showFullHistory() {
-        val stats = lastMobStats?.toList()?.sortedByDescending { it.second } ?: return
-
-        Chat.chat("§b§m${Chat.getChatBreak(" ", "§b§m")}")
-        Chat.chat("§6§lFull Damage History: §e$lastMobName")
-
-        stats.forEachIndexed { i, (name, dmg) ->
+        val history = lastMobHistory ?: return
+        val chatBreak = Chat.getChatBreak(" ", "§a§m")
+        Chat.chat(chatBreak)
+        Chat.chat("§6§lIndividual Hit Log: §e$lastMobName")
+        history.forEachIndexed { i, (name, dmg) ->
             val nameColor = if (name == mc.player?.name?.string) "§d" else "§b"
             Chat.chat(" §7${i + 1}. $nameColor$name §7- §c${Helper.formatNumber(dmg)}")
         }
-        Chat.chat("§b§m${Chat.getChatBreak(" ", "§b§m")}")
+        Chat.chat(chatBreak)
+    }
+
+    private fun clearAllData() {
+        healthMap.clear()
+        damageLeaderboard.clear()
+        damageHistory.clear()
+        pendingAttacker.clear()
+        mobNames.clear()
     }
 
     fun cleanup(mobId: Int) {
+        displaySummary(mobId)
         healthMap.remove(mobId)
         damageLeaderboard.remove(mobId)
+        damageHistory.remove(mobId)
         pendingAttacker.remove(mobId)
         mobNames.remove(mobId)
     }
