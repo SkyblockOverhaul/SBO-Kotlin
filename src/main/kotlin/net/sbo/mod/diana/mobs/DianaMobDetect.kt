@@ -1,4 +1,4 @@
-package net.sbo.mod.diana
+package net.sbo.mod.diana.mobs
 
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.ProfileComponent
@@ -56,7 +56,12 @@ object DianaMobDetect {
         INQ("Minos Inquisitor"),
         KING("King Minos"),
         SPHINX("Sphinx"),
-        MANTI("Manticore");
+        MANTI("Manticore"),
+        // todo remove later these are only for testing purposes
+        Champ("Champion"),
+        Mino("Minotaur"),
+        Nymph("Nymph"),
+        Harpy("Harpy");
 
         companion object {
             fun fromName(name: String): RareDianaMob? = entries.firstOrNull { name.contains(it.display, ignoreCase = true) }
@@ -193,6 +198,7 @@ object DianaMobDetect {
             RareDianaMob.MANTI -> Diana.NoShurikenList.MANTICORE in Diana.NoShurikenMobs
             RareDianaMob.KING -> Diana.NoShurikenList.KING in Diana.NoShurikenMobs
             RareDianaMob.SPHINX -> Diana.NoShurikenList.SPHINX in Diana.NoShurikenMobs
+            else -> false
         }
 
         if (!shouldCheck) return currentClosest to currentDistanceSq

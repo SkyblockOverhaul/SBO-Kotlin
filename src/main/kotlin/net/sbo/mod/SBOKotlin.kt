@@ -24,8 +24,8 @@ import net.sbo.mod.utils.events.ClickActionManager
 import net.sbo.mod.utils.HypixelModApi
 import net.sbo.mod.utils.game.World
 import net.sbo.mod.diana.burrows.BurrowDetector
-import net.sbo.mod.diana.DianaMobDetect
-import net.sbo.mod.diana.RareMobHighlight
+import net.sbo.mod.diana.mobs.DianaMobDetect
+import net.sbo.mod.diana.mobs.RareMobHighlight
 import net.sbo.mod.diana.achievements.AchievementManager
 import net.sbo.mod.diana.achievements.AchievementManager.unlockAchievement
 import net.sbo.mod.diana.guesses.ArrowGuessBurrow

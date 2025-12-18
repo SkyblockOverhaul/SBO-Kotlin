@@ -2,6 +2,7 @@ package net.sbo.mod.utils.events
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
@@ -13,6 +14,7 @@ import net.sbo.mod.utils.events.impl.game.ChatMessageAllowEvent
 import net.sbo.mod.utils.events.impl.game.ChatMessageEvent
 import net.sbo.mod.utils.events.impl.game.DisconnectEvent
 import net.sbo.mod.utils.events.impl.game.GameCloseEvent
+import net.sbo.mod.utils.events.impl.game.TickEvent
 import net.sbo.mod.utils.events.impl.game.WorldChangeEvent
 import net.sbo.mod.utils.events.impl.guis.GuiCloseEvent
 import net.sbo.mod.utils.events.impl.guis.GuiMouseClickAfter
@@ -75,6 +77,14 @@ object SBOEvent {
             val event = ChatMessageAllowEvent(message, signed, true)
             emit(event)
             event.isAllowed
+        }
+
+        /**
+         * Client Tick Event
+         * Fired every game tick (20 times per second) on the client.
+         */
+        ClientTickEvents.START_CLIENT_TICK.register { client ->
+            emit(TickEvent(client))
         }
 
         ScreenEvents.AFTER_INIT.register { client, screen, scaledWidth, scaledHeight ->

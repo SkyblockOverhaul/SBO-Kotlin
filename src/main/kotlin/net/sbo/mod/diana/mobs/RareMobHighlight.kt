@@ -1,9 +1,8 @@
-package net.sbo.mod.diana
+package net.sbo.mod.diana.mobs
 
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.player.PlayerEntity
 import net.sbo.mod.SBOKotlin.mc
-import net.sbo.mod.diana.DianaMobDetect.RareDianaMob
 import net.sbo.mod.settings.categories.Diana
 import net.sbo.mod.utils.accessors.isSboGlowing
 import net.sbo.mod.utils.accessors.setSboGlowColor
@@ -35,7 +34,7 @@ object RareMobHighlight {
         if (event.entity is PlayerEntity) {
             if (!Diana.HighlightRareMobs) return
             if (event.entity.uuid.version() == 4) return
-            if (RareDianaMob.entries.any { event.entity.name.string.contains(it.display, ignoreCase = true) }) {
+            if (DianaMobDetect.RareDianaMob.entries.any { event.entity.name.string.contains(it.display, ignoreCase = true) }) {
                 rareMobs.add(event.entity)
             }
         }
@@ -46,6 +45,7 @@ object RareMobHighlight {
         if (event.entity is PlayerEntity) {
             if (!Diana.HighlightRareMobs) return
             if (rareMobs.contains(event.entity)) {
+                DpsDetect.cleanup(event.entity.id)
                 event.entity.isSboGlowing = false
                 rareMobs.remove(event.entity)
             }
