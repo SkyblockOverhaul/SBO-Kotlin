@@ -315,6 +315,7 @@ object ArrowGuessBurrow {
         val burrowLocations = BurrowDetector.burrows.values.map { it.waypoint?.pos ?: SboVec(0.0, 0.0, 0.0) }.toSet()
 
         for (guess in allGuesses.toList()) {
+            if (guess == null) continue
             val current = guess.getCurrent()
             if (!isBlockValid(current)) {
                 guess.moveToNext()
