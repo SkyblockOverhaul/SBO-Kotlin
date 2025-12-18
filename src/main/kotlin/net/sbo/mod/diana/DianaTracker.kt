@@ -38,7 +38,6 @@ import net.sbo.mod.utils.data.SboDataObject.sboData
 import java.util.regex.Pattern
 
 object DianaTracker {
-    private val rareDrops = mapOf<String, String>("CHIMERA" to "§d", "HILT_OF_REVELATIONS" to "§9")
     private val otherDrops = listOf("ENCHANTED_ANCIENT_CLAW", "ANCIENT_CLAW", "ENCHANTED_GOLD")
     private val sackDrops = listOf("Enchanted Gold", "Ancient Claw", "Enchanted Ancient Claw")
     private val isMobOnCooldown: MutableMap<String, Boolean> = mutableMapOf()
@@ -96,9 +95,8 @@ object DianaTracker {
                 Chat.chat("§6[SBO] §cGG §eFound a §cPhoenix §epet!")
                 Helper.showTitle("§c§lPhoenix Pet!", "", 0, 25, 35)
             }
-            if (Helper.getSecondsPassed(lastDianaMobDeath) > 2) return@onChatMessageCancable true
-            val player = matchResult.group(1).removeFormatting()
-            if (player.contains(Player.getName()?: "")) return@onChatMessageCancable true
+            val player = matchResult.group(1).removeFormatting().lowercase()
+            if (!player.contains((Player.getName()?: "").lowercase())) return@onChatMessageCancable true
             sleep(1000) {
                 if (isInSkyblock() && checkDiana() && dianaMobDiedRecently(3)) unlockAchievement(77) // phoenix pet
             }
@@ -115,7 +113,6 @@ object DianaTracker {
 
     fun trackWithPickuplog(item: Item) {
         SBOKotlin.logger.info("debug trackWithPickuplog: itemid: |${item.itemId}|, ItemName: |${item.name}|, count: |${item.count}|, timestamp now ${System.currentTimeMillis()}, timestamp of item: |${item.creation}|, item age (senconds): |${Helper.getSecondsPassed(item.creation)}|s")
-        val isLootShare = gotLootShareRecently(2)
         sleep (1000) {
             if (Helper.getSecondsPassed(item.creation) > 5) return@sleep
 //            if (!dianaMobDiedRecently(3)) return@sleep
