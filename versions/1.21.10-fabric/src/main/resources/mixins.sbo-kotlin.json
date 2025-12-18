@@ -11,7 +11,8 @@
     "PlayerInteractMixin",
     "ScreenHandlerSlotUpdateS2CPacketMixin",
     "ScreenMixin",
-    "LivingEntityMixin"
+    "LivingEntityMixin",
+    "PlayerEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

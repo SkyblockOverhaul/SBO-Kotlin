@@ -20,7 +20,14 @@ import net.sbo.mod.utils.events.impl.guis.GuiCloseEvent
 import net.sbo.mod.utils.events.impl.guis.GuiMouseClickAfter
 import net.sbo.mod.utils.events.impl.guis.GuiMouseClickBefore
 import net.sbo.mod.utils.events.impl.guis.GuiPostRenderEvent
+import net.sbo.mod.utils.events.impl.render.WorldRenderEvent
 import kotlin.reflect.KClass
+
+//#if MC >= 1.21.9
+//$$ import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents
+//#else
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
+//#endif
 
 object SBOEvent {
     private val listeners = mutableMapOf<KClass<*>, MutableList<(Any) -> Unit>>()
@@ -85,6 +92,18 @@ object SBOEvent {
          */
         ClientTickEvents.START_CLIENT_TICK.register { client ->
             emit(TickEvent(client))
+        }
+
+        /**
+         * World Render Event
+         * Fired at the end of the world rendering phase.
+         */
+        //#if MC >= 1.21.9
+        //$$ WorldRenderEvents.END_MAIN.register { context ->
+        //#else
+        WorldRenderEvents.END.register { context ->
+        //#endif
+            emit(WorldRenderEvent(context))
         }
 
         ScreenEvents.AFTER_INIT.register { client, screen, scaledWidth, scaledHeight ->

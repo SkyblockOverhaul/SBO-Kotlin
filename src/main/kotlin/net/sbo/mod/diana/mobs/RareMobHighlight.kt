@@ -36,6 +36,9 @@ object RareMobHighlight {
             if (event.entity.uuid.version() == 4) return
             if (DianaMobDetect.RareDianaMob.entries.any { event.entity.name.string.contains(it.display, ignoreCase = true) }) {
                 rareMobs.add(event.entity)
+                if (Diana.dpsTracker) {
+                    DpsDetect.primeMob(event.entity)
+                }
             }
         }
     }

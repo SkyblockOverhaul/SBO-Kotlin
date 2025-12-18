@@ -6,12 +6,13 @@
     "EntityMixin",
     "GameMenuScreenMixin",
     "GameRenderMixin",
+    "LivingEntityMixin",
     "MinecraftClientMixin",
     "PacketMixin",
     "PlayerInteractMixin",
     "ScreenHandlerSlotUpdateS2CPacketMixin",
     "ScreenMixin",
-    "LivingEntityMixin"
+    "PlayerEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
