@@ -24,6 +24,7 @@ import net.sbo.mod.utils.events.annotations.SboEvent
 import net.sbo.mod.utils.events.impl.entity.DianaMobDeathEvent
 import net.sbo.mod.utils.events.impl.guis.GuiCloseEvent
 import net.sbo.mod.utils.events.impl.guis.GuiOpenEvent
+import net.sbo.mod.utils.game.ItemUtils
 import net.sbo.mod.utils.game.Mayor
 import net.sbo.mod.utils.game.ScoreBoard
 import net.sbo.mod.utils.game.World
@@ -345,13 +346,13 @@ object Helper {
 
             if (!stack.isEmpty) {
                 val customData = stack.get(DataComponentTypes.CUSTOM_DATA)
-                val lore = ItemUtils.getLoreList(stack)
                 var id: String
                 var item: Item
                 val sbId = ItemUtils.getSBID(customData)
                 // print for debugging the lore lines
                 var isChimera = false
                 if (sbId == "ENCHANTED_BOOK") {
+                    val lore = ItemUtils.getLoreList(stack)
                     for (line in lore) {
                         if (line.contains("Chimera")) {
                             isChimera = true
@@ -563,6 +564,14 @@ object Helper {
         return BigDecimal(burrowsPerHr).setScale(2, RoundingMode.HALF_UP).toDouble()
     }
 
+    fun getMobsPerHr(tracker: DianaTrackerDataClass, timer: SboTimerManager.SBOTimer): Double {
+        val hours = timer.getHourTime()
+        if (hours <= 0.01) return 0.0
+        val totalMobs = tracker.mobs.TOTAL_MOBS.toDouble()
+        val mobsPerHr = totalMobs / hours
+        return BigDecimal(mobsPerHr).setScale(2, RoundingMode.HALF_UP).toDouble()
+    }
+
     fun getChance(mf: Int, looting: Int,rarity: String, lootshare: Boolean = false): Map<String, Double> {
         val baseChances: Map<String, Double> = when (rarity.lowercase().trim()) {
             "epic" -> mapOf("stick" to 0.0004, "relic" to 0.0002)
@@ -608,4 +617,5 @@ object Helper {
         return 0
     }
 }
+
 

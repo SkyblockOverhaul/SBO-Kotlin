@@ -39,7 +39,7 @@ object SoundHandler {
     private fun currentResourcePackFormat(): Int {
         return try {
             //#if MC >= 1.21.9
-            //$$ (SharedConstants.getGameVersion().packVersion(ResourceType.CLIENT_RESOURCES) as Int)
+            //$$ SharedConstants.getGameVersion().packVersion(ResourceType.CLIENT_RESOURCES).major()
             //#elseif MC >= 1.21.7
             //$$ SharedConstants.getGameVersion().packVersion(ResourceType.CLIENT_RESOURCES)
             //#else
@@ -86,6 +86,20 @@ object SoundHandler {
 
         val packFormat = currentResourcePackFormat()
         val packMcmeta = File(generatedPackDir, "pack.mcmeta")
+        //#if MC >= 1.21.9
+        //$$ packMcmeta.writeText(
+            //$$ """
+            //$$ {
+              //$$ "pack": {
+                //$$ "description": "SBO Custom Sounds",
+                //$$ "pack_format": $packFormat,
+                //$$ "min_format": 65,
+                //$$ "max_format": 999
+              //$$ }
+            //$$ }
+            //$$ """.trimIndent()
+        //$$ )
+        //#else
         packMcmeta.writeText(
             """
             {
@@ -99,6 +113,7 @@ object SoundHandler {
             }
             """.trimIndent()
         )
+        //#endif
         writePackIcon()
         println("[$MOD_ID] Generated dynamic soundpack at: ${generatedPackDir.absolutePath}")
     }

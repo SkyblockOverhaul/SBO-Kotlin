@@ -23,6 +23,7 @@ import gg.essential.elementa.dsl.pixels
 import gg.essential.elementa.effects.OutlineEffect
 import gg.essential.universal.UKeyboard
 import net.minecraft.util.Util
+import net.sbo.mod.SBOKotlin.MOD_ID
 import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.guis.partyfinder.pages.CustomPage
 import net.sbo.mod.guis.partyfinder.pages.DianaPage
@@ -876,7 +877,7 @@ class PartyFinderGUI : WindowScreen(ElementaVersion.V10) {
 
     private fun settings() {
         mc.send{
-            displayScreen(ResourcefulConfigScreen.getFactory("sbo").apply(null))
+            displayScreen(ResourcefulConfigScreen.getFactory(MOD_ID).apply(null))
         }
     }
 

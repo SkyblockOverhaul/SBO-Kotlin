@@ -331,11 +331,8 @@ object PartyCommands {
                 "!mobs", "!mob" -> {
                     if (!settings.dianaPartyCommands) return@onChatMessage
                     val totalMobs = dianaTrackerMayor.mobs.TOTAL_MOBS
-                    val playTimeHrs = dianaTrackerMayor.items.TIME / TimeUnit.HOURS.toMillis(1)
-                    val mobsPerHr = if (playTimeHrs > 0) {
-                        val result = totalMobs.toDouble() / playTimeHrs
-                        BigDecimal(result).setScale(2, RoundingMode.HALF_UP).toDouble()
-                    } else 0.0
+                    val timer = SboTimerManager.timerMayor
+                    val mobsPerHr = Helper.getMobsPerHr(dianaTrackerMayor, timer)
                     sleep(200) {
                         Chat.command("pc Mobs: $totalMobs ($mobsPerHr/h)")
                     }
@@ -403,6 +400,18 @@ object PartyCommands {
                         "manti" -> sleep(200) {
                             Chat.command("pc Mobs since manti: ${sboData.mobsSinceManti}")
                         }
+                        "core", "cores" -> sleep(200) {
+                            Chat.command("pc Mantis since core: ${sboData.mantiSinceCore}")
+                        }
+                        "wool", "wools" -> sleep(200) {
+                            Chat.command("pc Kings since wool: ${sboData.kingSinceWool}")
+                        }
+                        "corels", "lscore" -> sleep(200) {
+                            Chat.command("pc Mantis since lootshare core: ${sboData.mantiSinceLsCore}")
+                        }
+                        "woolls", "lswool" -> sleep(200) {
+                            Chat.command("pc Kings since lootshare wool: ${sboData.kingSinceLsWool}")
+                        }
                     }
                     if (secondArg == null) {
                         sleep(200) {
@@ -414,4 +423,5 @@ object PartyCommands {
             }
         }
     }
+
 }
