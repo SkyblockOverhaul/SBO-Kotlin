@@ -58,10 +58,6 @@ object DianaTracker {
 
         Register.command("sboresetmayortracker") {
             resetMayorTracker()
-            DianaMobs.updateLines()
-            DianaLoot.updateLines()
-            SboTimerManager.timerMayor.reset()
-            SboTimerManager.activeTimers.forEach { it.pause() }
         }
 
         Register.command("sboresetstatstracker") {
