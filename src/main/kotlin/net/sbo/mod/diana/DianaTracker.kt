@@ -59,10 +59,6 @@ object DianaTracker {
 
         Register.command("sboresetmayortracker") {
             resetMayorTracker()
-            DianaMobs.updateLines()
-            DianaLoot.updateLines()
-            SboTimerManager.timerMayor.reset()
-            SboTimerManager.activeTimers.forEach { it.pause() }
         }
 
         Register.command("sboresetstatstracker") {
@@ -72,6 +68,7 @@ object DianaTracker {
             sboData.champsSinceRelic = 0
             sboData.inqsSinceLsChim = 0
             SboDataObject.save("SboData")
+            SboTimerManager.timerSession.reset()
             DianaStats.updateLines()
         }
 
@@ -670,6 +667,8 @@ object DianaTracker {
         dianaTrackerMayor.reset()
         dianaTrackerMayor.year = Mayor.mayorElectedYear
         dianaTrackerMayor.save()
+        SboTimerManager.timerMayor.reset()
+        SboTimerManager.activeTimers.forEach { it.pause() }
         DianaMobs.updateLines()
         DianaLoot.updateLines()
         Chat.chat("§6[SBO] §aDiana mayor tracker has been reset.")
