@@ -185,12 +185,14 @@ object AchievementManager {
         }
 
         when {
+            totalChimera >= 64 -> unlockAchievement(125)
             totalChimera >= 32 -> unlockAchievement(11)
             totalChimera >= 16 -> unlockAchievement(9)
             totalChimera >= 1 -> unlockAchievement(12)
         }
 
         when {
+            chimeraLsCount >= 32 -> unlockAchievement(126)
             chimeraLsCount >= 16 -> unlockAchievement(10)
             chimeraLsCount >= 1 -> unlockAchievement(13)
         }
@@ -439,8 +441,10 @@ object AchievementManager {
         addAchievement(12, "First Chimera", "Get your first Chimera", "Epic", repeatable = false)
         addAchievement(9, "Chimera V", "Get 16 chimera in one event", "Mythic", 12)
         addAchievement(11, "Chimera VI", "Get 32 Chimera in one event", "Divine", 9)
+        addAchievement(125, "Chimera VII", "Get 64 Chimera in one event", "Celestial", 11)
         addAchievement(13, "First lootshare Chimera", "Lootshare your first Chimera", "Legendary")
         addAchievement(10, "Tf?", "Get 16 lootshare Chimera in one event", "Divine", 13)
+        addAchievement(126, "Wtf?", "Get 32 lootshare Chimera in one event", "Celestial", 10)
 
         // Minotaur
         addAchievement(14, "First Stick", "Get your first Stick", "Uncommon", repeatable = false)

@@ -271,7 +271,7 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
             val posX = centeringOffset + (column * (achievementBoxWidth + spacingX))
             val posY = spacingY + (row * (achievementBoxHeight + spacingY))
             lastY = posY
-            val borderColor = if (achievement.isUnlocked()) Color(0, 255, 0) else Color(255, 0, 0)
+            val borderColor = if (achievement.isUnlocked(true)) Color(0, 255, 0) else Color(255, 0, 0)
             val achievementColor =  if (achievement.rarity != "Celestial") Color(Formatting.byCode(achievement.color[1])?.colorValue ?: 0xFFFFFF) else Color(0x7D00FF)
 
             val roundedOutline = UIRoundedRectangle(5f).constrain {
