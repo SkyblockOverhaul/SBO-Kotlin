@@ -65,6 +65,9 @@ object SBOKotlin {
 
 		logger.info("Initializing SBO-Kotlin, version: $version...")
 
+		// Initialize Mayor Data
+		Mayor.init()
+
 		// Load configuration and data
 		SboDataObject.init()
 
@@ -96,7 +99,6 @@ object SBOKotlin {
 		PartyFinderManager.init()
 		PartyCheck.init()
 		BurrowDetector.init()
-		Mayor.init()
 		DianaTracker.init()
 		PartyPlayer.init()
 		Pickuplog.init()

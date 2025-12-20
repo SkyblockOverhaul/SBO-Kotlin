@@ -231,38 +231,57 @@ object SboDataObject {
 
         return try {
             val typeToken = object : TypeToken<Map<String, Any>>() {}.type
-            val oldFormatData: Map<String, Any> = gson.fromJson(FileReader(dataFile), typeToken)
+            val rawData: Map<String, Any> = gson.fromJson(FileReader(dataFile), typeToken)
 
-            val combinedUnlockedIds = mutableSetOf<Int>()
-            val achievementMap = mutableMapOf<Int, Boolean>()
-            var isOldFormat = false
+            val foundUnlockedIds = mutableSetOf<Int>()
+            var needsMigration = false
 
-            // Iterate through all key-value pairs in the old file
-            for ((key, value) in oldFormatData) {
-                if (key != "unlocked" && value is Boolean) {
-                    // This handles the "1": true, "2": true, etc. pairs
-                    achievementMap[key.toInt()] = value
-                    key.toIntOrNull()?.let { combinedUnlockedIds.add(it) }
-                    isOldFormat = true
+            // migration 1: id keys ("1": true)
+            for ((key, value) in rawData) {
+                val id = key.toIntOrNull()
+                if (id != null && value is Boolean && value) {
+                    foundUnlockedIds.add(id)
+                    needsMigration = true
                 }
             }
 
-            // Add the already-unlocked list from the old file, if it exists
-            val existingUnlockedList = (oldFormatData["unlocked"] as? List<*>)?.filterIsInstance<Int>() ?: emptyList()
-            combinedUnlockedIds.addAll(existingUnlockedList)
+            // migration 2: "unlocked" list ("unlocked": [1, 2, 3])
+            val existingUnlockedList = (rawData["unlocked"] as? List<*>)?.mapNotNull {
+                (it as? Number)?.toInt() ?: it.toString().toIntOrNull()
+            } ?: emptyList()
 
-            if (isOldFormat) {
-                SBOKotlin.logger.info("[$modName] Old achievements file format detected. Migrating to new format.")
-                val newAchievementsData = AchievementsData(
-//                    unlocked = combinedUnlockedIds.toList().sorted(),
-                    achievements = achievementMap
-                )
+            if (existingUnlockedList.isNotEmpty()) {
+                foundUnlockedIds.addAll(existingUnlockedList)
+                needsMigration = true
+            }
+
+            // migration 3: "achievements" map ("achievements": { "10": true })
+            val oldAchievementsMap = rawData["achievements"] as? Map<*, *>
+            oldAchievementsMap?.forEach { (key, value) ->
+                val id = key.toString().toIntOrNull()
+                if (id != null && value == true) {
+                    foundUnlockedIds.add(id)
+                    needsMigration = true
+                }
+            }
+
+            if (rawData.containsKey("totalAchievements")) {
+                // already in the new format
+                load(modName, "sbo_achievements.json", defaultData, AchievementsData::class.java)
+            } else if (needsMigration) {
+                SBOKotlin.logger.info("[$modName] Legacy achievement format detected. Migrating...")
+
+                val newAchievementsData = AchievementsData()
+                foundUnlockedIds.forEach { id ->
+                    newAchievementsData.totalAchievements[id] = 1
+                }
+
+                // save new format
                 save(modName, newAchievementsData, "sbo_achievements.json")
-                SBOKotlin.logger.info("[$modName] Achievements data migrated successfully.")
+                SBOKotlin.logger.info("[$modName] Successfully migrated ${foundUnlockedIds.size} achievements.")
                 newAchievementsData
             } else {
-                // If not old format, load it directly as the new AchievementsData class
-                // which now includes the 'achievements' map.
+                // default load empty files
                 load(modName, "sbo_achievements.json", defaultData, AchievementsData::class.java)
             }
         } catch (e: Exception) {

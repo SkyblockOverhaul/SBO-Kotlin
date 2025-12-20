@@ -80,7 +80,7 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
         }
 
         if (this::unlockedCountText.isInitialized) {
-            val unlockedAchievements = AchievementManager.achievements.values.count { it.isUnlocked() }
+            val unlockedAchievements = AchievementManager.achievements.values.count { it.isUnlocked(true) }
             val totalAchievements = AchievementManager.achievements.values.count()
             val unlockedPercentage = (unlockedAchievements.toFloat() / totalAchievements * 100).toFixed(2)
             unlockedCountText.setText("Unlocked: $unlockedAchievements/$totalAchievements ($unlockedPercentage%)")
@@ -112,10 +112,10 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
         } childOf window
         titleText.setColor(Color.WHITE)
 
-        val unlockedAchievements = AchievementManager.achievements.values.count { it.isUnlocked() }
+        val unlockedAchievements = AchievementManager.achievements.values.count { it.isUnlocked(true) }
         val totalAchievements = AchievementManager.achievements.values.count()
         val unlockedPercentage = (unlockedAchievements.toFloat() / totalAchievements * 100).toFixed(2)
-        unlockedCountText = UIText("Unlocked: ${AchievementManager.achievementsUnlocked}/${totalAchievements} ($unlockedPercentage%)").constrain {
+        unlockedCountText = UIText("Unlocked: ${unlockedAchievements}/${totalAchievements} ($unlockedPercentage%)").constrain {
             x = CenterConstraint()
             y = SiblingConstraint(5f)
             textScale = 1.2.pixels

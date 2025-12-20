@@ -662,7 +662,13 @@ object DianaTracker {
     }
 
     fun checkMayorTracker() {
-        if (dianaTrackerMayor.year == 0 || dianaTrackerMayor.year >= Mayor.mayorElectedYear) return
+        if (dianaTrackerMayor.year == 0) {
+            dianaTrackerMayor.year = Mayor.mayorElectedYear
+            dianaTrackerMayor.save()
+            return
+        }
+
+        if (dianaTrackerMayor.year >= Mayor.mayorElectedYear) return
         var allZero = true
         for (item in dianaTrackerMayor.mobs::class.java.declaredFields) {
             item.isAccessible = true

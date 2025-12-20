@@ -3,14 +3,12 @@ package net.sbo.mod.diana.achievements
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.NbtComponent
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
-import net.minecraft.text.Text
 import net.sbo.mod.SBOKotlin
 import net.sbo.mod.SBOKotlin.mc
 import net.sbo.mod.diana.DianaMobDetect.RareDianaMob
@@ -52,7 +50,8 @@ object AchievementManager {
     )
 
     internal val achievements = mutableMapOf<Int, Achievement>()
-    var achievementsUnlocked = 0
+    var achievementsUnlockedTotal = 0
+    var achievementsUnlockedEvent = 0
     private val achievementQueue = ConcurrentLinkedQueue<Int>()
     private val isProcessingQueue = AtomicBoolean(false)
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
@@ -64,11 +63,10 @@ object AchievementManager {
                 return@command
             }
 
-            achievements.forEach { (_, achievement) ->
-                if (achievement.isUnlocked() && achievement.id != 38) {
-                    achievement.lock()
-                }
-            }
+            achievementsData.totalAchievements.clear()
+            achievementsData.currentEventAchievements.clear()
+            achievementsData.lastEventYear = -1
+
             SboDataObject.save("AchievementsData")
             Chat.chat("§6[SBO] §eAchievements locked")
         }
@@ -84,20 +82,11 @@ object AchievementManager {
         // Register.onChatMessage()
     }
 
-    @SboEvent
-    fun onEntityHit(event: EntitiyHitEvent) {
-        if (event.entity !is PlayerEntity) return
-        val isRareMob = RareDianaMob.entries.any { event.entity.name.string.contains(it.display, ignoreCase = true) } && event.entity.uuid.version() != 4
-        if (!isRareMob) return
-        if (getDisplayName(event.player.mainHandStack).contains("Shears", true) && event.entity.name.string.contains("King Minos")) unlockAchievement(92)
-        if (getDisplayName(event.player.mainHandStack).contains("Core", true) && event.entity.name.string.contains("Manticore")) unlockAchievement(93)
-    }
-
-    fun addAchievement(id: Int, name: String, description: String, rarity: String, previousId: Int? = null, hidden: Boolean = false) {
+    fun addAchievement(id: Int, name: String, description: String, rarity: String, previousId: Int? = null, hidden: Boolean = false, repeatable: Boolean = true) {
         if (achievements.containsKey(id)) {
             throw RuntimeException("Duplicate achievement ID detected: $id. Achievement with this ID already exists: ${achievements[id]?.name}")
         }
-        val achievement = Achievement(id, name, description, rarity, previousId, hidden)
+        val achievement = Achievement(id, name, description, rarity, previousId, hidden, repeatable)
         achievements[id] = achievement
         achievement.loadState()
     }
@@ -107,7 +96,9 @@ object AchievementManager {
     }
 
     fun unlockAchievement(id: Int) {
-        if (achievementsData.achievements[id] == null) {
+        val achievement = getAchievement(id) ?: return
+
+        if (achievement.canBeUnlocked()) {
             achievementQueue.add(id)
             processQueue()
         }
@@ -119,7 +110,7 @@ object AchievementManager {
                 while (achievementQueue.isNotEmpty()) {
                     val id = achievementQueue.poll()
                     val achievement = getAchievement(id)
-                    if (achievement != null && !achievement.isUnlocked()) {
+                    if (achievement != null && achievement.canBeUnlocked()) {
                         if (achievement.previousId != null && !getAchievement(achievement.previousId)?.isUnlocked()!!) {
                             achievementQueue.add(achievement.previousId)
                             achievementQueue.add(id)
@@ -135,9 +126,27 @@ object AchievementManager {
     }
 
     fun lockById(id: Int) {
-        if (achievementsData.achievements[id] == null) return
+        if (!achievements.containsKey(id)) return
         achievements[id]?.lock()
     }
+
+    fun backTrackAchievements() { // todo: needs rework because of new data structure
+        Chat.chat("§6[SBO] §eBacktracking Achievements...")
+        pastDianaEventsData.events.forEach { eventData ->
+            trackAchievementsItem(eventData)
+        }
+        trackSince()
+    }
+
+    @SboEvent
+    fun onEntityHit(event: EntitiyHitEvent) {
+        if (event.entity !is PlayerEntity) return
+        val isRareMob = RareDianaMob.entries.any { event.entity.name.string.contains(it.display, ignoreCase = true) } && event.entity.uuid.version() != 4
+        if (!isRareMob) return
+        if (getDisplayName(event.player.mainHandStack).contains("Shears", true) && event.entity.name.string.contains("King Minos")) unlockAchievement(92)
+        if (getDisplayName(event.player.mainHandStack).contains("Core", true) && event.entity.name.string.contains("Manticore")) unlockAchievement(93)
+    }
+
 
     fun trackAchievementsItem(tracker: DianaTrackerMayorData) {
         if (!isOnHypixel) return
@@ -360,15 +369,6 @@ object AchievementManager {
         return ""
     }
 
-
-    fun backTrackAchievements() {
-        Chat.chat("§6[SBO] §eBacktracking Achievements...")
-        pastDianaEventsData.events.forEach { eventData ->
-            trackAchievementsItem(eventData)
-        }
-        trackSince()
-    }
-
     fun trackWithCheckPlayer(playerInfo: PartyPlayerStats) {
         if (playerInfo.eman9) unlockAchievement(56)
 
@@ -436,25 +436,25 @@ object AchievementManager {
         addAchievement(7, "b2b2b Inquisitor", "Get 3 Inquisitors in a row", "Divine")
         addAchievement(75, "Back-to-Back Goat", "Get b2b chimera from b2b inquisitor", "Impossible", hidden = true)
 
-        addAchievement(12, "First Chimera", "Get your first Chimera", "Epic")
+        addAchievement(12, "First Chimera", "Get your first Chimera", "Epic", repeatable = false)
         addAchievement(9, "Chimera V", "Get 16 chimera in one event", "Mythic", 12)
         addAchievement(11, "Chimera VI", "Get 32 Chimera in one event", "Divine", 9)
         addAchievement(13, "First lootshare Chimera", "Lootshare your first Chimera", "Legendary")
         addAchievement(10, "Tf?", "Get 16 lootshare Chimera in one event", "Divine", 13)
 
         // Minotaur
-        addAchievement(14, "First Stick", "Get your first Stick", "Uncommon")
+        addAchievement(14, "First Stick", "Get your first Stick", "Uncommon", repeatable = false)
         addAchievement(8, "Can i make a ladder now?", "Get 7 Sticks in one event", "Epic", 14)
         addAchievement(3, "Back-to-Back Stick", "Get 2 Sticks in a row", "Divine")
         addAchievement(15, "1/6250", "Lootshare a Stick (1/6250)", "Impossible", hidden = true)
 
         // Champion
-        addAchievement(16, "First Relic", "Get your first Relic", "Epic")
+        addAchievement(16, "First Relic", "Get your first Relic", "Epic", repeatable = false)
         addAchievement(17, "1/25000", "Lootshare a Relic (1/25000)", "Impossible", hidden = true)
         addAchievement(5, "Back-to-Back Relic", "Get 2 Relics in a row", "Impossible")
 
         // Sphinx
-        addAchievement(115, "What do i click?", "Get your first Sphinx", "Uncommon")
+        addAchievement(115, "What do i click?", "Get your first Sphinx", "Uncommon", repeatable = false)
         addAchievement(107, "Back-to-Back Sphinx", "Get 2 Sphinx in a row", "Epic")
         addAchievement(108, "b2b2b Sphinx", "Get 3 Sphinx in a row", "Mythic", 107)
         addAchievement(97, "Back-to-Back Brain Food", "Get 2 Brain Food in a row", "Legendary")
@@ -464,7 +464,7 @@ object AchievementManager {
         addAchievement(85, "Might get some braincells back", "Get 5 brain food in one event", "Legendary")
 
         // Manticore
-        addAchievement(112, "Here, Kitty Kitty… OH NO.", "Spawn your first Manticore", "Epic")
+        addAchievement(112, "Here, Kitty Kitty… OH NO.", "Spawn your first Manticore", "Epic", repeatable = false)
         addAchievement(109, "b2b Manticore", "Spawn 2 Manticores in a row", "Divine")
         addAchievement(110, "b2b2b Manticore", "Spawn 3 Manticores in a row", "Celestial")
         addAchievement(113, "First core", "Drop your first Manti-core", "Mythic")
@@ -473,7 +473,7 @@ object AchievementManager {
         addAchievement(95, "Back-to-Back Lootshare core", "Lootshare 2 Manti-cores in a row", "Impossible")
 
         // King Minos
-        addAchievement(116, "Why do i hear boss music?", "get your first King Minos", "Legendary")
+        addAchievement(116, "Why do i hear boss music?", "get your first King Minos", "Legendary", repeatable = false)
         addAchievement(87, "b2b King Minos", "Get 2 King Minos in a row", "Celestial")
         addAchievement(117, "b2b2b King Minos", "Get 3 King Minos in a row", "Impossible")
         addAchievement(83, "First Wool", "Get your first Wool", "Mythic")
@@ -511,7 +511,7 @@ object AchievementManager {
         addAchievement(37, "No more Diana", "100 Inquisitors since Chimera", "Divine", 36)
 
         // Download SBO
-        addAchievement(38, "Real Diana non", "Download SBO", "Divine")
+        addAchievement(38, "Real Diana non", "Download SBO", "Divine", repeatable = false)
 
         // Magic Find
         addAchievement(39, "Fortune seeker", "Get a Diana drop with 300 Magic Find", "Uncommon")
@@ -522,38 +522,38 @@ object AchievementManager {
         addAchievement(43, "I don't need Magic Find", "Drop a Chimera, under 100 Magic Find", "Legendary", 44)
 
         // Bestiary
-        addAchievement(45, "Inquisitor Slayer", "Max the Inquisitor Bestiary", "Epic")
-        addAchievement(46, "Minotaur Slayer", "Max the Minotaur Bestiary", "Legendary")
-        addAchievement(47, "Champion Slayer", "Max the Champion Bestiary", "Epic")
-        addAchievement(48, "Hunter Slayer", "Max the Hunter Bestiary", "Epic")
-        addAchievement(49, "Lynx Slayer", "Max the Siamese Lynx Bestiary", "Epic")
-        addAchievement(50, "Gaia Slayer", "Max the Gaia Bestiary", "Legendary")
-        addAchievement(101, "Nymph Slayer", "Max the Nymph Bestiary", "Epic")
-        addAchievement(102, "Cretan Bull Slayer", "Max the Cretan Bull Bestiary", "Epic")
-        addAchievement(103, "Harpy Slayer", "Max the Harpy Bestiary", "Epic")
-        addAchievement(104, "Sphinx Slayer", "Max the Sphinx Bestiary", "Legendary")
-        addAchievement(105, "Manticore Slayer", "Max the Manticore Bestiary", "Mythic")
-        addAchievement(106, "King Minos Slayer", "Max the King Minos Bestiary", "Mythic")
-        addAchievement(51, "Time to get on the leaderboard", "Max all Diana Bestiaries", "Mythic", hidden = true)
+        addAchievement(45, "Inquisitor Slayer", "Max the Inquisitor Bestiary", "Epic", repeatable = false)
+        addAchievement(46, "Minotaur Slayer", "Max the Minotaur Bestiary", "Legendary", repeatable = false)
+        addAchievement(47, "Champion Slayer", "Max the Champion Bestiary", "Epic", repeatable = false)
+        addAchievement(48, "Hunter Slayer", "Max the Hunter Bestiary", "Epic", repeatable = false)
+        addAchievement(49, "Lynx Slayer", "Max the Siamese Lynx Bestiary", "Epic", repeatable = false)
+        addAchievement(50, "Gaia Slayer", "Max the Gaia Bestiary", "Legendary", repeatable = false)
+        addAchievement(101, "Nymph Slayer", "Max the Nymph Bestiary", "Epic", repeatable = false)
+        addAchievement(102, "Cretan Bull Slayer", "Max the Cretan Bull Bestiary", "Epic", repeatable = false)
+        addAchievement(103, "Harpy Slayer", "Max the Harpy Bestiary", "Epic", repeatable = false)
+        addAchievement(104, "Sphinx Slayer", "Max the Sphinx Bestiary", "Legendary", repeatable = false)
+        addAchievement(105, "Manticore Slayer", "Max the Manticore Bestiary", "Mythic", repeatable = false)
+        addAchievement(106, "King Minos Slayer", "Max the King Minos Bestiary", "Mythic", repeatable = false)
+        addAchievement(51, "Time to get on the leaderboard", "Max all Diana Bestiaries", "Mythic", hidden = true, repeatable = false)
 
         // Daedalus Axe
-        addAchievement(52, "Daedalus Mastery: Chimera V", "Chimera V on Daedalus Axe", "Legendary")
-        addAchievement(53, "Daedalus Mastery: Looting V", "Looting V on Daedalus Axe", "Legendary")
-        addAchievement(54, "Daedalus Mastery: Divine Gift III", "Divine Gift III on Daedalus Axe", "Legendary")
-        addAchievement(55, "Looking Clean", "Get max Divine Gift, Chimera, Looting", "Mythic", hidden = true)
-        addAchievement(56, "Now you can't complain", "Obtain Enderman Slayer 9", "Epic", hidden = true)
+        addAchievement(52, "Daedalus Mastery: Chimera V", "Chimera V on Daedalus Axe", "Legendary", repeatable = false)
+        addAchievement(53, "Daedalus Mastery: Looting V", "Looting V on Daedalus Axe", "Legendary", repeatable = false)
+        addAchievement(54, "Daedalus Mastery: Divine Gift III", "Divine Gift III on Daedalus Axe", "Legendary", repeatable = false)
+        addAchievement(55, "Looking Clean", "Get max Divine Gift, Chimera, Looting", "Mythic", hidden = true, repeatable = false)
+        addAchievement(56, "Now you can't complain", "Obtain Enderman Slayer 9", "Epic", hidden = true, repeatable = false)
 
         // Kills
-        addAchievement(57, "Oh look maxed Crest", "Kill 10k Diana Mobs", "Rare")
-        addAchievement(58, "Keep the grind going", "Kill 25k Diana Mobs", "Epic", 57)
-        addAchievement(59, "I am not addicted", "Kill 50k Diana Mobs", "Legendary", 58)
-        addAchievement(60, "100k gang", "Kill 100k Diana Mobs", "Mythic", 59)
-        addAchievement(61, "The grind never stops", "Kill 150k Diana Mobs", "Divine", 60, true)
+        addAchievement(57, "Oh look maxed Crest", "Kill 10k Diana Mobs", "Rare", repeatable = false)
+        addAchievement(58, "Keep the grind going", "Kill 25k Diana Mobs", "Epic", 57, repeatable = false)
+        addAchievement(59, "I am not addicted", "Kill 50k Diana Mobs", "Legendary", 58, repeatable = false)
+        addAchievement(60, "100k gang", "Kill 100k Diana Mobs", "Mythic", 59, repeatable = false)
+        addAchievement(61, "The grind never stops", "Kill 150k Diana Mobs", "Divine", 60, true, repeatable = false)
 
         // Leaderboard
-        addAchievement(62, "Mom look i am on the leaderboard", "Top 100 on the kills leaderboard", "Legendary")
-        addAchievement(63, "So this is what addiction feels like", "Top 50 on the kills leaderboard", "Mythic", 62)
-        addAchievement(64, "Diana is my life", "Top 10 on the kills leaderboard", "Divine", 63)
+        addAchievement(62, "Mom look i am on the leaderboard", "Top 100 on the kills leaderboard", "Legendary", repeatable = false)
+        addAchievement(63, "So this is what addiction feels like", "Top 50 on the kills leaderboard", "Mythic", 62, repeatable = false)
+        addAchievement(64, "Diana is my life", "Top 10 on the kills leaderboard", "Divine", 63, repeatable = false)
 
         // Burrows per hour
         addAchievement(68, "Dedicated Digger", "Get 350 burrows/hour (5h playtime)", "Uncommon")
@@ -572,22 +572,22 @@ object AchievementManager {
 
         addAchievement(84, "Those coins gotta be heavy?", "Make 1b profit in 1 event", "Legendary")
 
-        addAchievement(89, "Ever heard of gr*ss?", "Get top 100 king bestiary", "Legendary") // TODO
-        addAchievement(90, "Get a j*b", "Get top 10 king bestiary", "Mythic") // TODO
-        addAchievement(91, "King of the Hill", "Get top 1 king bestiary", "Impossible") // TODO
+        addAchievement(89, "Ever heard of gr*ss?", "Get top 100 king bestiary", "Legendary", repeatable = false) // TODO
+        addAchievement(90, "Get a j*b", "Get top 10 king bestiary", "Mythic", repeatable = false) // TODO
+        addAchievement(91, "King of the Hill", "Get top 1 king bestiary", "Impossible", repeatable = false) // TODO
 
-        addAchievement(92, "Why am I not getting a wool???", "Hit a king with a shear", "Uncommon", hidden = true)
-        addAchievement(93, "Why are you doing this?", "Hit a Manticore with 'core' in item name", "Uncommon", hidden = true)
-        addAchievement(118, "No wool? Sell his soul to the devil!", "Get a King's soul", "Epic", hidden = true)
+        addAchievement(92, "Why am I not getting a wool???", "Hit a king with a shear", "Uncommon", hidden = true, repeatable = false)
+        addAchievement(93, "Why are you doing this?", "Hit a Manticore with 'core' in item name", "Uncommon", hidden = true, repeatable = false)
+        addAchievement(118, "No wool? Sell his soul to the devil!", "Get a King's soul", "Epic", hidden = true, repeatable = false)
 
         addAchievement(119, "Knowledge is Power", "Get Myth the Fish from answering Sphinx question correct", "Mythic", hidden = true) // TODO track after merge with dianaV2
-        addAchievement(120, "Max Carnival", "Get all diana carnival perks maxed out", "Legendary")
+        addAchievement(120, "Max Carnival", "Get all diana carnival perks maxed out", "Legendary", repeatable = false)
 
         addAchievement(77, "From the ashes", "Drop a Phoenix pet from a Diana mob", "Impossible", hidden = true)
 
-        addAchievement(121, "Capitalism on top!", "Get COA", "Rare")
-        addAchievement(122, "Inflation speedrun any%", "Get a 10m coins COA", "Epic", 121)
-        addAchievement(123, "Already? Damn that was fast!", "Get a 100m coins COA", "Legendary", 122)
-        addAchievement(124, "All of that just for 2.5 mf", "Get a 1b coins COA", "Mythic", 123)
+        addAchievement(121, "Capitalism on top!", "Get COA", "Rare", repeatable = false)
+        addAchievement(122, "Inflation speedrun any%", "Get a 10m coins COA", "Epic", 121, repeatable = false)
+        addAchievement(123, "Already? Damn that was fast!", "Get a 100m coins COA", "Legendary", 122, repeatable = false)
+        addAchievement(124, "All of that just for 2.5 mf", "Get a 1b coins COA", "Mythic", 123, repeatable = false)
     }
 }
