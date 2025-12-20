@@ -253,43 +253,43 @@ object Diana : CategoryKt("Diana") {
     }
 
     var coreMessageBool by boolean(false) {
-        this.name = Translated("Manti-Core Message")
-        this.description = Translated("Enables custom Manti-Core message (core/manti)")
+        this.name = Literal("Manti-Core Message")
+        this.description = Literal("Enables custom Manti-Core message (core/manti)")
     }
 
     var customCoreMessage by strings("&6[SBO] &6&lRARE DROP! &6Manti-Core! &b{mf} &b#{amount}") {
-        this.name = Translated("Custom Manti-Core Message Text")
-        this.description = Translated("Use: {mf} for MagicFind, {amount} for drop amount this event and {percentage} for core/manti ratio.")
+        this.name = Literal("Custom Manti-Core Message Text")
+        this.description = Literal("Use: {mf} for MagicFind, {amount} for drop amount this event and {percentage} for core/manti ratio.")
     }
 
     var stingerMessageBool by boolean(false) {
-        this.name = Translated("Fateful Stinger Message")
-        this.description = Translated("Enables custom Fateful Stinger message (stinger/manti)")
+        this.name = Literal("Fateful Stinger Message")
+        this.description = Literal("Enables custom Fateful Stinger message (stinger/manti)")
     }
 
     var customStingerMessage by strings("&6[SBO] &6&lRARE DROP! &dFateful Stinger! &b{mf} &b#{amount}") {
-        this.name = Translated("Custom Fateful Stinger Message Text")
-        this.description = Translated("Use: {mf} for MagicFind, {amount} for drop amount this event and {percentage} for stinger/manti ratio.")
+        this.name = Literal("Custom Fateful Stinger Message Text")
+        this.description = Literal("Use: {mf} for MagicFind, {amount} for drop amount this event and {percentage} for stinger/manti ratio.")
     }
 
     var bfMessageBool by boolean(false) {
-        this.name = Translated("Brain Food Message")
-        this.description = Translated("Enables custom Brain Food message (food/sphinx)")
+        this.name = Literal("Brain Food Message")
+        this.description = Literal("Enables custom Brain Food message (food/sphinx)")
     }
 
     var customBfMessage by strings("&6[SBO] &6&lRARE DROP! &5Brain Food! &b{mf} &b#{amount}") {
-        this.name = Translated("Custom Brain Food Message Text")
-        this.description = Translated("Use: {mf} for MagicFind, {amount} for drop amount this event and {percentage} for food/sphinx ratio.")
+        this.name = Literal("Custom Brain Food Message Text")
+        this.description = Literal("Use: {mf} for MagicFind, {amount} for drop amount this event and {percentage} for food/sphinx ratio.")
     }
 
     var woolMessageBool by boolean(false) {
-        this.name = Translated("Shimmering Wool Message")
-        this.description = Translated("Enables custom Shimmering Wool message (wool/king)")
+        this.name = Literal("Shimmering Wool Message")
+        this.description = Literal("Enables custom Shimmering Wool message (wool/king)")
     }
 
     var customWoolMessage by strings("&6[SBO] &6&lRARE DROP! &6Shimmering Wool! &b{mf} &b#{amount}") {
-        this.name = Translated("Custom Shimmering Wool Message Text")
-        this.description = Translated("Use: {mf} for MagicFind, {amount} for drop amount this event and {percentage} for wool/king ratio.")
+        this.name = Literal("Custom Shimmering Wool Message Text")
+        this.description = Literal("Use: {mf} for MagicFind, {amount} for drop amount this event and {percentage} for wool/king ratio.")
     }
 
     init {
@@ -361,8 +361,8 @@ object Diana : CategoryKt("Diana") {
     var removeBeam by int(8) {
         this.range = 0..20
         this.slider = true
-        this.name = Translated("Remove Rare Mob Beam Distance")
-        this.description = Translated("Removes the rare mob waypoint beam when you are within this distance of it (0 to disable)")
+        this.name = Literal("Remove Rare Mob Beam Distance")
+        this.description = Literal("Removes the rare mob waypoint beam when you are within this distance of it (0 to disable)")
     }
 
     init {
@@ -447,13 +447,13 @@ object Diana : CategoryKt("Diana") {
     }
 
     var noShurikenOverlay by boolean(false) {
-        this.name = Translated("No Shuriken Overlay")
-        this.description = Translated("Shows an overlay when the RareMob has no shuriken applied /sboguis to move it")
+        this.name = Literal("No Shuriken Overlay")
+        this.description = Literal("Shows an overlay when the RareMob has no shuriken applied /sboguis to move it")
     }
 
     var NoShurikenMobs by select(NoShurikenList.INQ, NoShurikenList.MANTICORE, NoShurikenList.KING, NoShurikenList.SPHINX) {
-        this.name = Translated("Select which Mobs to Check")
-        this.description = Translated("Select which mobs to check for shuriken")
+        this.name = Literal("Select which Mobs to Check")
+        this.description = Literal("Select which mobs to check for shuriken")
     }
 
     init {

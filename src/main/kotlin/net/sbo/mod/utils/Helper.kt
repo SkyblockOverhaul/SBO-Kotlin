@@ -441,8 +441,8 @@ object Helper {
 
     fun checkCustomDropMessage(dropName: String, magicFind: Int): Pair<Boolean, String> {
         val infos = getDropInfos(dropName)
-        val text = infos[0] as String
-        if (!(infos[1] as Boolean)) {
+        val text = infos.template
+        if (!infos.isEnabled) {
             return Pair(false, "")
         }
 
@@ -459,18 +459,12 @@ object Helper {
             }
 
             if (resultText.contains("{amount}")) {
-                val amount = infos[2] as Int
+                val amount = infos.totalAmount
                 resultText = resultText.replace("{amount}", amount.toString())
             }
 
             if (resultText.contains("{percentage}")) {
-                val mobCount = infos[3] as Int
-                val dropCount = infos[4] as Int
-                val percentage = if (mobCount > 0) {
-                    (dropCount.toDouble() / mobCount.toDouble()) * 100
-                } else {
-                    0.0
-                }
+                val percentage = infos.percentage
                 resultText = resultText.replace("{percentage}", "%.2f%%".format(percentage))
             }
 
@@ -480,11 +474,22 @@ object Helper {
         }
     }
 
-    private fun getDropInfos(dropName: String): List<Any> {
+    data class DropInfo(
+        val template: String,
+        val isEnabled: Boolean,
+        val totalAmount: Int,
+        val mobCount: Int,
+        val dropCount: Int
+    ) {
+        val percentage: Double
+            get() = if (mobCount > 0) (dropCount.toDouble() / mobCount) * 100 else 0.0
+    }
+
+    private fun getDropInfos(dropName: String): DropInfo {
         val trackerMayor = SboDataObject.dianaTrackerMayor
 
         return when (dropName.lowercase()) {
-            "chimera" -> listOf(
+            "chimera" -> DropInfo(
                 Diana.customChimMessage[0].trim(),
                 Diana.chimMessageBool,
                 trackerMayor.items.CHIMERA + trackerMayor.items.CHIMERA_LS,
@@ -492,7 +497,7 @@ object Helper {
                 trackerMayor.items.CHIMERA
             )
 
-            "core" -> listOf(
+            "core" -> DropInfo(
                 Diana.customCoreMessage[0].trim(),
                 Diana.coreMessageBool,
                 trackerMayor.items.MANTI_CORE + trackerMayor.items.MANTI_CORE_LS,
@@ -500,7 +505,7 @@ object Helper {
                 trackerMayor.items.MANTI_CORE
             )
 
-            "stinger" -> listOf(
+            "stinger" -> DropInfo(
                 Diana.customStingerMessage[0].trim(),
                 Diana.stingerMessageBool,
                 trackerMayor.items.FATEFUL_STINGER + trackerMayor.items.FATEFUL_STINGER_LS,
@@ -508,7 +513,7 @@ object Helper {
                 trackerMayor.items.FATEFUL_STINGER
             )
 
-            "brain food" -> listOf(
+            "brain food" -> DropInfo(
                 Diana.customBfMessage[0].trim(),
                 Diana.bfMessageBool,
                 trackerMayor.items.BRAIN_FOOD + trackerMayor.items.BRAIN_FOOD_LS,
@@ -516,7 +521,7 @@ object Helper {
                 trackerMayor.items.BRAIN_FOOD
             )
 
-            "wool" -> listOf(
+            "wool" -> DropInfo(
                 Diana.customWoolMessage[0].trim(),
                 Diana.woolMessageBool,
                 trackerMayor.items.SHIMMERING_WOOL + trackerMayor.items.SHIMMERING_WOOL_LS,
@@ -524,7 +529,7 @@ object Helper {
                 trackerMayor.items.SHIMMERING_WOOL
             )
 
-            else -> emptyList()
+            else -> DropInfo("", false, 0, 0, 0)
         }
     }
 
