@@ -73,6 +73,11 @@ object Diana : CategoryKt("Diana") {
         this.description = Literal("Shows a title to guess normally when the arrow guess is inaccurate")
     }
 
+    var dontClearArrowGuess by boolean(true) {
+        this.name = Literal("Don't Clear Arrow Guess on World Change")
+        this.description = Literal("If enabled, the arrow guess waypoints will not be cleared when changing worlds/lobby")
+    }
+
     var dianaBurrowDetect by boolean(true) {
         this.name = Literal("Diana Burrow Detection")
         this.description = Literal("Detects Diana burrows | to reset waypoints /sboclearburrows")

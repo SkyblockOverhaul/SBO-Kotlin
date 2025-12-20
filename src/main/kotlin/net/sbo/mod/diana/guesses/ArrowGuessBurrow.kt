@@ -1,7 +1,6 @@
 package net.sbo.mod.diana.guesses
 
 import net.minecraft.block.Blocks
-import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket
 import net.minecraft.util.math.Box
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket
 import net.minecraft.particle.DustParticleEffect
@@ -12,11 +11,10 @@ import net.sbo.mod.settings.categories.Diana
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.math.RaycastUtils
 import net.sbo.mod.utils.collection.TimeLimitedSet
-import net.sbo.mod.utils.events.Register
 import net.sbo.mod.utils.events.annotations.SboEvent
-import net.sbo.mod.utils.events.impl.game.PlayerInteractEvent
+import net.sbo.mod.utils.events.impl.diana.BurrowDugEvent
+import net.sbo.mod.utils.events.impl.game.TickEvent
 import net.sbo.mod.utils.events.impl.packets.PacketReceiveEvent
-import net.sbo.mod.utils.events.impl.packets.PacketSendEvent
 import net.sbo.mod.utils.game.InventoryUtils
 import net.sbo.mod.utils.game.World
 import net.sbo.mod.utils.math.SboVec
@@ -71,16 +69,10 @@ object ArrowGuessBurrow {
     private val locations: MutableSet<SboVec> = Collections.newSetFromMap(ConcurrentHashMap())
 
     private var lastBlockClicked: SboVec? = null
-    private var lastBurrowClicked: SboVec? = null
 
     private val allGuesses = CopyOnWriteArrayList<GuessEntry>()
 
     private var newArrow = true
-
-    fun init() {
-        registerBurrowDug()
-        registerTick()
-    }
 
     @SboEvent
     fun onReceiveParticle(event: PacketReceiveEvent) {
@@ -97,60 +89,22 @@ object ArrowGuessBurrow {
         range.processArrowDetection()
     }
 
-    private fun registerBurrowDug() {
-        Register.onChatMessageCancable(Pattern.compile("^§eYou (.*?) Griffin [Bb]urrow(.*?) §7\\((.*?)/(.*?)\\)$", Pattern.DOTALL)) { message, matchResult ->
-            if (!Diana.arrowGuess) return@onChatMessageCancable true
-            val currentBurrow = matchResult.group(3).toIntOrNull() ?: return@onChatMessageCancable true
-            val maxBurrow = matchResult.group(4).toIntOrNull() ?: return@onChatMessageCancable true
-            lastBlockClicked?.let { onBurrowDug(it, currentBurrow, maxBurrow) }
-            true
-        }
-    }
-
-    private fun registerTick() {
-        Register.onTick(4) {
-            if (!Diana.arrowGuess) return@onTick
-            if (World.getWorld() != "Hub") return@onTick
-            if (allGuesses.isEmpty()) return@onTick
-            checkMoveGuess()
-        }
-    }
-
     @SboEvent
-    fun onPlayerActionSend(event: PacketSendEvent) {
+    fun onTick(event: TickEvent) {
         if (!Diana.arrowGuess) return
-        val packet = event.packet
-        if (packet !is PlayerActionC2SPacket) return
         if (World.getWorld() != "Hub") return
-        if (packet.action != PlayerActionC2SPacket.Action.START_DESTROY_BLOCK) return
-
-        lastBlockClicked = SboVec(
-            packet.pos.x.toDouble(),
-            packet.pos.y.toDouble(),
-            packet.pos.z.toDouble()
-        )
+        if (allGuesses.isEmpty()) return
+        checkMoveGuess()
     }
 
     @SboEvent
-    fun onPlayerInteract(event: PlayerInteractEvent) {
+    fun onBurrowDug(event: BurrowDugEvent) {
         if (!Diana.arrowGuess) return
-        val action = event.action
-        if (action != "useBlock") return
-        val player = SBOKotlin.mc.player
-        val item = player?.mainHandStack
-        if (item?.isEmpty == true) return
-        if (item == null || !item.name.string.contains("Spade")) return
-        if (event.pos ==  null) return
+        if (event.lastBlock == null) return
+        lastBlockClicked = event.lastBlock
 
-        lastBlockClicked = SboVec(
-            event.pos.x.toDouble(),
-            event.pos.y.toDouble(),
-            event.pos.z.toDouble()
-        )
-    }
-
-    private fun onBurrowDug(location: SboVec, currentChain: Int, maxChain: Int) {
-        lastBurrowClicked = location
+        val currentChain = event.currentBurrow
+        val maxChain = event.maxBurrow
         if (currentChain != maxChain) {
             locations.clear()
             newArrow = true
@@ -158,7 +112,7 @@ object ArrowGuessBurrow {
         if (currentChain == 1) return
 
         val containList = allGuesses.filter { guessEntry ->
-            guessEntry.guesses.any { guess -> guess.distanceTo(location) <= 3 }
+            guessEntry.guesses.any { guess -> guess.distanceTo(event.lastBlock) <= 3 }
         }
 
         containList.forEach { entry ->
@@ -385,7 +339,7 @@ object ArrowGuessBurrow {
         return parameters is DustParticleEffect
     }
 
-    private fun SboVec.isCloseToLastBurrow(): Boolean = lastBurrowClicked?.let { this.distanceTo(it) < 5 } ?: false
+    private fun SboVec.isCloseToLastBurrow(): Boolean = lastBlockClicked?.let { this.distanceTo(it) < 5 } ?: false
 
     private fun IntRange.processArrowDetection(): IntRange {
         val arrow = detectArrow() ?: return this

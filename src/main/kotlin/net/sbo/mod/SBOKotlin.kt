@@ -5,6 +5,7 @@ import com.teamresourceful.resourcefulconfig.api.loader.Configurator
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.MinecraftClient
 import net.minecraft.util.Identifier
+import net.minecraft.util.Util
 import net.sbo.mod.compat.IrisCompatibility
 import net.sbo.mod.diana.DianaTracker
 import net.sbo.mod.utils.waypoint.WaypointManager
@@ -28,7 +29,6 @@ import net.sbo.mod.diana.DianaMobDetect
 import net.sbo.mod.diana.RareMobHighlight
 import net.sbo.mod.diana.achievements.AchievementManager
 import net.sbo.mod.diana.achievements.AchievementManager.unlockAchievement
-import net.sbo.mod.diana.guesses.ArrowGuessBurrow
 import net.sbo.mod.diana.sphinx.SphinxSolver
 import net.sbo.mod.general.HelpCommand
 import net.sbo.mod.overlays.Bobber
@@ -41,11 +41,14 @@ import net.sbo.mod.qol.MessageHider
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.SboTimerManager
 import net.sbo.mod.utils.SoundHandler
+import net.sbo.mod.utils.chat.Chat
+import net.sbo.mod.utils.events.DianaEvents
 import net.sbo.mod.utils.events.SBOEvent
 import net.sbo.mod.utils.overlay.OverlayManager
 import net.sbo.mod.utils.events.SboEventGeneratedRegistry
 import net.sbo.mod.utils.game.InventoryUtils
 import net.sbo.mod.utils.game.TabList
+import net.sbo.mod.utils.version.UpdateChecker
 
 object SBOKotlin {
 	@JvmField
@@ -61,6 +64,7 @@ object SBOKotlin {
 	val settings = Settings.register(configurator)
 
 	lateinit var version: String
+	lateinit var mcVersion: String
 
 	fun id(path: String): Identifier = Identifier.of(MOD_ID, path)
 
@@ -70,10 +74,17 @@ object SBOKotlin {
 			.map { it.metadata.version.friendlyString }
 			.orElse("unknown")
 
+		mcVersion = FabricLoader.getInstance().rawGameVersion
+
+
+
 		logger.info("Initializing SBO-Kotlin, version: $version...")
 
         // Initialize scheduled tab list fetch
         TabList.init()
+
+		// Check for updates
+		UpdateChecker.check()
 
 		// Load configuration and data
 		SboDataObject.init()
@@ -84,6 +95,7 @@ object SBOKotlin {
 		// Register Annotation Pocessor and Events
 		SboEventGeneratedRegistry.registerAll()
 		SBOEvent.init()
+		DianaEvents.init()
 
 		// load Main Features
 		PartyCommands.init()
@@ -124,11 +136,12 @@ object SBOKotlin {
 		MessageHider.init()
 		SphinxSolver.init()
 		RareMobHighlight.init()
-		ArrowGuessBurrow.init()
 		InventoryUtils.init()
 
 		Register.onTick(100) { unregister ->
-			if (mc.player != null && World.isInSkyblock()) {
+			val player = mc.player
+			if (player != null && World.isInSkyblock()) {
+				if (UpdateChecker.isUpdateAvailable) UpdateChecker.printUpdateMessage()
 				DianaTracker.checkMayorTracker()
 				PartyPlayer.load()
 				unlockAchievement(38)
