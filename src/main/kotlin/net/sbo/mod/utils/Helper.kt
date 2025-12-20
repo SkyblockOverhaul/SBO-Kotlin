@@ -255,6 +255,10 @@ object Helper {
         return this.replace(Regex("§."), "")
     }
 
+    fun Text.removeFormatting(): String {
+        return this.string.replace(Regex("§."), "")
+    }
+
     fun matchLvlToColor(lvl: Int): String {
         return when {
             lvl >= 480 -> "§4$lvl"
