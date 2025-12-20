@@ -16,8 +16,8 @@ import net.sbo.mod.overlays.DianaLoot.totalProfit
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.Helper.removeFormatting
 import net.sbo.mod.utils.HypixelModApi.isOnHypixel
-import net.sbo.mod.utils.ItemUtils.getDisplayName
-import net.sbo.mod.utils.ItemUtils.getLoreList
+import net.sbo.mod.utils.game.ItemUtils.getDisplayName
+import net.sbo.mod.utils.game.ItemUtils.getLoreList
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.data.DianaTrackerMayorData
 import net.sbo.mod.utils.data.PartyPlayerStats
@@ -480,7 +480,7 @@ object AchievementManager {
         addAchievement(81, "Back-to-Back Wool", "Get 2 Wools in a row", "Impossible")
         addAchievement(111, "First Lootshare Wool", "Lootshare your first Wool", "Divine")
         addAchievement(82, "Back-to-Back Lootshare Wool", "Lootshare 2 Wools in a row", "Impossible")
-        addAchievement(88, "Let your party cope!", "Die to your Minos King", "Rare") // TODO
+//        addAchievement(88, "Let your party cope!", "Die to your Minos King", "Rare") // TODO
 
         // Burrows
         addAchievement(18, "Where the grind begins", "Get 5k burrows in one event", "Common")
@@ -572,15 +572,15 @@ object AchievementManager {
 
         addAchievement(84, "Those coins gotta be heavy?", "Make 1b profit in 1 event", "Legendary")
 
-        addAchievement(89, "Ever heard of gr*ss?", "Get top 100 king bestiary", "Legendary", repeatable = false) // TODO
-        addAchievement(90, "Get a j*b", "Get top 10 king bestiary", "Mythic", repeatable = false) // TODO
-        addAchievement(91, "King of the Hill", "Get top 1 king bestiary", "Impossible", repeatable = false) // TODO
+//        addAchievement(89, "Ever heard of gr*ss?", "Get top 100 king bestiary", "Legendary", repeatable = false) // TODO
+//        addAchievement(90, "Get a j*b", "Get top 10 king bestiary", "Mythic", repeatable = false) // TODO
+//        addAchievement(91, "King of the Hill", "Get top 1 king bestiary", "Impossible", repeatable = false) // TODO
 
         addAchievement(92, "Why am I not getting a wool???", "Hit a king with a shear", "Uncommon", hidden = true, repeatable = false)
         addAchievement(93, "Why are you doing this?", "Hit a Manticore with 'core' in item name", "Uncommon", hidden = true, repeatable = false)
         addAchievement(118, "No wool? Sell his soul to the devil!", "Get a King's soul", "Epic", hidden = true, repeatable = false)
 
-        addAchievement(119, "Knowledge is Power", "Get Myth the Fish from answering Sphinx question correct", "Mythic", hidden = true) // TODO track after merge with dianaV2
+        addAchievement(119, "Knowledge is Power", "Get Myth the Fish from answering Sphinx question correct", "Mythic", hidden = true)
         addAchievement(120, "Max Carnival", "Get all diana carnival perks maxed out", "Legendary", repeatable = false)
 
         addAchievement(77, "From the ashes", "Drop a Phoenix pet from a Diana mob", "Impossible", hidden = true)

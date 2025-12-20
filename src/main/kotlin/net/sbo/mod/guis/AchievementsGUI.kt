@@ -65,8 +65,8 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
         achievementList = AchievementManager.achievements.values.sortedBy { it.id }.let { achievements ->
             val filtered = when (filterType) {
                 AchievementFilter.RARITY -> achievements.sortedBy { rarityOrder.indexOf(it.rarity) }
-                AchievementFilter.LOCKED -> achievements.filter { !it.isUnlocked() }
-                AchievementFilter.UNLOCKED -> achievements.filter { it.isUnlocked() }
+                AchievementFilter.LOCKED -> achievements.filter { !it.isUnlocked(true) }
+                AchievementFilter.UNLOCKED -> achievements.filter { it.isUnlocked(true) }
                 else -> achievements
             }
 

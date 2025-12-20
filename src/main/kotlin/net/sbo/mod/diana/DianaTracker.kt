@@ -756,7 +756,7 @@ object DianaTracker {
         Register.onChatMessage(Regex("^(.*?) §eYou just dug out(.*?)$")) { message, matchResult ->
             if (matchResult.groupValues[1].contains("Myth the Fish")) {
                 onRareDropFromMob("Myth the Fish", false, true, false, 0)
-                // todo
+                unlockAchievement(119)
             }
         }
     }
