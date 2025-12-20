@@ -440,38 +440,16 @@ object Helper {
     }
 
     fun checkCustomDropMessage(dropName: String, magicFind: Int): Pair<Boolean, String> {
-        val infos = getDropInfos(dropName)
-        val text = infos.template
-        if (!infos.isEnabled) {
-            return Pair(false, "")
-        }
+        val info = getDropInfo(dropName) ?: return Pair(false, "")
 
-        if (text.isNotEmpty()) {
-            var resultText = text.replace('&', '§')
+        if (!info.isEnabled) return Pair(false, "")
 
-            if (resultText.contains("{mf}")) {
-                val mfMessage = if (magicFind > 0) {
-                    "(+$magicFind% ✯ Magic Find)"
-                } else {
-                    ""
-                }
-                resultText = resultText.replace("{mf}", mfMessage)
-            }
+        val resultText = info.template
+            .replace("{amount}", info.totalAmount.toString())
+            .replace("{percentage}", "%.2f".format(info.percentage))
+            .replace("{mf}", magicFind.toString())
 
-            if (resultText.contains("{amount}")) {
-                val amount = infos.totalAmount
-                resultText = resultText.replace("{amount}", amount.toString())
-            }
-
-            if (resultText.contains("{percentage}")) {
-                val percentage = infos.percentage
-                resultText = resultText.replace("{percentage}", "%.2f%%".format(percentage))
-            }
-
-            return Pair(true, resultText)
-        } else {
-            return Pair(false, "")
-        }
+        return Pair(true, resultText)
     }
 
     data class DropInfo(
@@ -485,51 +463,18 @@ object Helper {
             get() = if (mobCount > 0) (dropCount.toDouble() / mobCount) * 100 else 0.0
     }
 
-    private fun getDropInfos(dropName: String): DropInfo {
-        val trackerMayor = SboDataObject.dianaTrackerMayor
+    private fun getDropInfo(dropName: String): DropInfo? {
+        val tracker = SboDataObject.dianaTrackerMayor
+        val items = tracker.items
+        val mobs = tracker.mobs
 
         return when (dropName.lowercase()) {
-            "chimera" -> DropInfo(
-                Diana.customChimMessage[0].trim(),
-                Diana.chimMessageBool,
-                trackerMayor.items.CHIMERA + trackerMayor.items.CHIMERA_LS,
-                trackerMayor.mobs.MINOS_INQUISITOR,
-                trackerMayor.items.CHIMERA
-            )
-
-            "core" -> DropInfo(
-                Diana.customCoreMessage[0].trim(),
-                Diana.coreMessageBool,
-                trackerMayor.items.MANTI_CORE + trackerMayor.items.MANTI_CORE_LS,
-                trackerMayor.mobs.MANTICORE,
-                trackerMayor.items.MANTI_CORE
-            )
-
-            "stinger" -> DropInfo(
-                Diana.customStingerMessage[0].trim(),
-                Diana.stingerMessageBool,
-                trackerMayor.items.FATEFUL_STINGER + trackerMayor.items.FATEFUL_STINGER_LS,
-                trackerMayor.mobs.MANTICORE,
-                trackerMayor.items.FATEFUL_STINGER
-            )
-
-            "brain food" -> DropInfo(
-                Diana.customBfMessage[0].trim(),
-                Diana.bfMessageBool,
-                trackerMayor.items.BRAIN_FOOD + trackerMayor.items.BRAIN_FOOD_LS,
-                trackerMayor.mobs.SPHINX,
-                trackerMayor.items.BRAIN_FOOD
-            )
-
-            "wool" -> DropInfo(
-                Diana.customWoolMessage[0].trim(),
-                Diana.woolMessageBool,
-                trackerMayor.items.SHIMMERING_WOOL + trackerMayor.items.SHIMMERING_WOOL_LS,
-                trackerMayor.mobs.KING_MINOS,
-                trackerMayor.items.SHIMMERING_WOOL
-            )
-
-            else -> DropInfo("", false, 0, 0, 0)
+            "chimera" -> DropInfo(Diana.customChimMessage[0].trim(), Diana.chimMessageBool, items.CHIMERA + items.CHIMERA_LS, mobs.MINOS_INQUISITOR, items.CHIMERA)
+            "core" -> DropInfo(Diana.customCoreMessage[0].trim(), Diana.coreMessageBool, items.MANTI_CORE + items.MANTI_CORE_LS, mobs.MANTICORE, items.MANTI_CORE)
+            "stinger" -> DropInfo(Diana.customStingerMessage[0].trim(), Diana.stingerMessageBool, items.FATEFUL_STINGER + items.FATEFUL_STINGER_LS, mobs.MANTICORE, items.FATEFUL_STINGER)
+            "brain food" -> DropInfo(Diana.customBfMessage[0].trim(), Diana.bfMessageBool, items.BRAIN_FOOD + items.BRAIN_FOOD_LS, mobs.SPHINX, items.BRAIN_FOOD)
+            "wool" -> DropInfo(Diana.customWoolMessage[0].trim(), Diana.woolMessageBool, items.SHIMMERING_WOOL + items.SHIMMERING_WOOL_LS, mobs.KING_MINOS, items.SHIMMERING_WOOL)
+            else -> null
         }
     }
 
