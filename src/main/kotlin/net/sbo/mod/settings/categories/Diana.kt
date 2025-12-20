@@ -390,6 +390,11 @@ object Diana : CategoryKt("Diana") {
         this.description = Translated("Select which mobs to check for shuriken")
     }
 
+    var dpsTracker by boolean(false) {
+        this.name = Literal("Rare Mob DPS Tracker")
+        this.description = Literal("Tracks and displays the damage dealt in chat by players to rare mobs in Diana.")
+    }
+
     init {
         button {
             title = "Send Test Message"

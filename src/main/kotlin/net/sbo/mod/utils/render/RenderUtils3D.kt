@@ -188,6 +188,65 @@ object RenderUtils3D {
     }
 
     /**
+     * Specifically designed for entity nametags/scores.
+     * Removes the +0.5 block offset and uses a more stable scaling method.
+     * @param context The matrix stack for transformations.
+     * @param pos The position in the world where the text should be drawn.
+     * @param text The text to draw.
+     * @param color The color of the text in ARGB format.
+     * @param shadow Whether to draw the text with a shadow.
+     * @param scale The scale of the text.
+     * @param throughWalls Whether the text should be drawn through walls.
+     */
+    fun drawScore(
+        context: WorldRenderContext,
+        pos: SboVec,
+        yOffset: Double,
+        text: String,
+        color: Int,
+        shadow: Boolean,
+        scale: Double,
+        throughWalls: Boolean
+    ) {
+        context.pushPop {
+            val camera = context.getCamera()
+            val cameraPos = camera.pos
+            val cameraYaw = camera.yaw
+            val cameraPitch = camera.pitch
+            val textRenderer = mc.textRenderer
+
+            translate(pos.x - cameraPos.x, pos.y + yOffset - cameraPos.y, pos.z - cameraPos.z)
+
+            multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-cameraYaw))
+            multiply(RotationAxis.POSITIVE_X.rotationDegrees(cameraPitch))
+
+            val distance = cameraPos.distanceTo(Vec3d(pos.x, pos.y, pos.z))
+            val finalScale = (scale * max(1.0, distance * 0.15))
+
+            scale(-finalScale.toFloat(), -finalScale.toFloat(), finalScale.toFloat())
+
+            val textWidth = textRenderer.getWidth(text)
+            val xOffset = -textWidth / 2f
+
+            val consumers = context.consumers()!!
+            val layerType = if (throughWalls) TextRenderer.TextLayerType.SEE_THROUGH else TextRenderer.TextLayerType.NORMAL
+
+            textRenderer.draw(
+                text,
+                xOffset,
+                0f,
+                color,
+                shadow,
+                peek().positionMatrix,
+                consumers,
+                layerType,
+                0,
+                0xF000F0
+            )
+        }
+    }
+
+    /**
      * Draws a line from the player's eyes to a target point in the world.
      * @param context The world render context.
      * @param target The target position in the world.

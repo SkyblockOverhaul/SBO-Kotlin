@@ -3,14 +3,16 @@
   "package": "net.sbo.mod.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "EntityMixin",
     "GameMenuScreenMixin",
     "GameRenderMixin",
+    "LivingEntityMixin",
     "MinecraftClientMixin",
     "PacketMixin",
     "PlayerInteractMixin",
     "ScreenHandlerSlotUpdateS2CPacketMixin",
     "ScreenMixin",
-    "EntityMixin"
+    "PlayerEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
