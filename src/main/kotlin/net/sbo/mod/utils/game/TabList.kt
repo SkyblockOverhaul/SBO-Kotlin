@@ -13,14 +13,6 @@ object TabList {
     private var cachedTabLines = emptyList<String>()
 
     /**
-     * Ensures the tab lines are fetched on the first call.
-     */
-    private val initOnce: Unit by lazy {
-        // To avoid accessing uninitalized cache on first call, update cache explicitly once.
-        updateCache()
-    }
-
-    /**
      * Registers a task to update the cache each tick.
      */
     fun init() {
@@ -54,10 +46,8 @@ object TabList {
      * Returns a list of all PlayerListEntry objects from the current tab list.
      * Each PlayerListEntry object contains detailed information about a player.
      */
-    fun getTabEntries(): List<PlayerListEntry?> {
-        val client = mc
-        val playerListCollection = client.player?.networkHandler?.playerList ?: return emptyList()
-        return Collections.synchronizedCollection(playerListCollection).toList()
+    fun getTabEntries(): Collection<PlayerListEntry?> {
+        return mc.player?.networkHandler?.playerList ?: emptyList()
     }
 
     /**
@@ -67,8 +57,6 @@ object TabList {
      * @return The value associated with the key, or null if not found.
      */
     fun findInfo(key: String): String? {
-        initOnce
-
         for (line in cachedTabLines) {
             if (line.startsWith(key)) {
                 return line.substring(key.length).trim()
@@ -78,3 +66,4 @@ object TabList {
         return null
     }
 }
+
