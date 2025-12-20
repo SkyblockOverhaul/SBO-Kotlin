@@ -3,6 +3,7 @@ package net.sbo.mod.diana.achievements
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.sbo.mod.SBOKotlin.mc
+import net.sbo.mod.settings.categories.Debug
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.chat.Chat.textComponent
@@ -55,7 +56,7 @@ class Achievement(
         achievementsData.totalAchievements[id] = currentTotal + 1
 
 
-        if (repeatable) {
+        if ((this.repeatable && Debug.repeatableAchie)) {
             achievementsData.currentEventAchievements[id] = true
             AchievementManager.achievementsUnlockedEvent += 1
         }
@@ -70,7 +71,7 @@ class Achievement(
         achievementsData.totalAchievements.remove(id)
         achievementsData.currentEventAchievements.remove(id)
         AchievementManager.achievementsUnlockedTotal -= 1
-        if (this.repeatable) AchievementManager.achievementsUnlockedEvent -= 1
+        if ((this.repeatable && Debug.repeatableAchie)) AchievementManager.achievementsUnlockedEvent -= 1
         if (this.hidden) {
             this.description = "§k" + this.description
         }
@@ -82,7 +83,7 @@ class Achievement(
         } else {
             if (this.hidden) this.description = "§k" + this.description
         }
-        if (this.repeatable && isUnlocked()) {
+        if ((this.repeatable && Debug.repeatableAchie) && isUnlocked()) {
             AchievementManager.achievementsUnlockedEvent += 1
         }
     }
@@ -90,7 +91,7 @@ class Achievement(
     fun canBeUnlocked(): Boolean {
         checkYearReset()
 
-        if (!repeatable) {
+        if (!(this.repeatable && Debug.repeatableAchie)) {
             return (achievementsData.totalAchievements[id] ?: 0) == 0
         }
         return achievementsData.currentEventAchievements[id] != true
@@ -99,7 +100,7 @@ class Achievement(
     fun isUnlocked(total: Boolean = false): Boolean {
         checkYearReset()
 
-        if (repeatable && !total) {
+        if ((this.repeatable && Debug.repeatableAchie) && !total) {
             return achievementsData.currentEventAchievements[id] ?: false
         }
         return (achievementsData.totalAchievements[id] ?: 0) > 0
