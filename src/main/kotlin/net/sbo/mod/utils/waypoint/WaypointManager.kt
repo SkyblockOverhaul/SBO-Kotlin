@@ -187,8 +187,8 @@ object WaypointManager {
     fun onWorldChange(event: WorldChangeEvent) {
         guessWp?.hide()
         removeAllOfType("world")
-        removeAllOfType("gueess")
-        removeAllOfType("arrow")
+        removeAllOfType("guess")
+        if (!Diana.dontClearArrowGuess) removeAllOfType("arrow")
     }
 
     fun addRareMobWaypoint(player: String, pos: SboVec, mobName: String, playername: String) {
