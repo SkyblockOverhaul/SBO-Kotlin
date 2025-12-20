@@ -67,6 +67,7 @@ object DianaTracker {
             sboData.champsSinceRelic = 0
             sboData.inqsSinceLsChim = 0
             SboDataObject.save("SboData")
+            SboTimerManager.timerSession.reset()
             DianaStats.updateLines()
         }
 
