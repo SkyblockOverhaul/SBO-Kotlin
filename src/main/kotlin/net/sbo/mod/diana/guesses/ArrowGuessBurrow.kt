@@ -264,6 +264,7 @@ object ArrowGuessBurrow {
     }
 
     private fun checkMoveGuess() {
+        if (allGuesses.isEmpty()) return
         val player = SBOKotlin.mc.player ?: return
         val hasSpade = InventoryUtils.isItemHeld("SPADE", 1.seconds)
         val burrowLocations = BurrowDetector.burrows.values.map { it.waypoint?.pos ?: SboVec(0.0, 0.0, 0.0) }.toSet()
