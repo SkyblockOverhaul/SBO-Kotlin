@@ -27,7 +27,7 @@ object DianaEvents {
         if (packet.action != PlayerActionC2SPacket.Action.START_DESTROY_BLOCK) return
 
         val posString = "${packet.pos.x} ${packet.pos.y} ${packet.pos.z}"
-        if (BurrowDetector.burrows.contains(posString)) {
+        if (BurrowDetector.burrows.containsKey(posString)) {
             lastBurrowClicked = SboVec(
                 packet.pos.x.toDouble(),
                 packet.pos.y.toDouble(),
@@ -54,7 +54,7 @@ object DianaEvents {
         if (event.pos ==  null) return
 
         val posString = "${event.pos.x} ${event.pos.y} ${event.pos.z}"
-        if (BurrowDetector.burrows.contains(posString)) {
+        if (BurrowDetector.burrows.containsKey(posString)) {
             lastBurrowClicked = SboVec(
                 event.pos.x.toDouble(),
                 event.pos.y.toDouble(),
