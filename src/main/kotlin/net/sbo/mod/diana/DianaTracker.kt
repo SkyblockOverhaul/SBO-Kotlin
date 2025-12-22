@@ -112,7 +112,6 @@ object DianaTracker {
     }
 
     fun trackWithPickuplog(item: Item) {
-        SBOKotlin.logger.info("debug trackWithPickuplog: itemid: |${item.itemId}|, ItemName: |${item.name}|, count: |${item.count}|, timestamp now ${System.currentTimeMillis()}, timestamp of item: |${item.creation}|, item age (senconds): |${Helper.getSecondsPassed(item.creation)}|s")
         sleep (1000) {
             if (Helper.getSecondsPassed(item.creation) > 5) return@sleep
 //            if (!dianaMobDiedRecently(3)) return@sleep
