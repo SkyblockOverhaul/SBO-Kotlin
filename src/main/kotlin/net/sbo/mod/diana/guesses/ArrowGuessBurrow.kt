@@ -264,9 +264,15 @@ object ArrowGuessBurrow {
     }
 
     private fun checkMoveGuess() {
+        if (allGuesses.isEmpty()) return
         val player = SBOKotlin.mc.player ?: return
         val hasSpade = InventoryUtils.isItemHeld("SPADE", 1.seconds)
         val burrowLocations = BurrowDetector.burrows.values.map { it.waypoint?.pos ?: SboVec(0.0, 0.0, 0.0) }.toSet()
+        //#if MC >= 1.21.9
+        //$$ val playerPos = player.entityPos.toSboVec()
+        //#else
+        val playerPos = player.pos.toSboVec()
+        //#endif
 
         for (guess in allGuesses.toList()) {
             if (guess == null) continue
@@ -276,11 +282,6 @@ object ArrowGuessBurrow {
                 continue
             }
             if (hasSpade) {
-                //#if MC >= 1.21.9
-                //$$ val playerPos = player.entityPos.toSboVec()
-                //#else
-                val playerPos = player.pos.toSboVec()
-                //#endif
                 val isKnownBurrow = burrowLocations.contains(current)
                 if (!isKnownBurrow && current.distanceSq(playerPos) < 900) {
                     if (guess.moveToNext()) {

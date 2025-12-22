@@ -38,7 +38,6 @@ import net.sbo.mod.utils.data.SboDataObject.sboData
 import java.util.regex.Pattern
 
 object DianaTracker {
-    private val rareDrops = mapOf<String, String>("CHIMERA" to "§d", "HILT_OF_REVELATIONS" to "§9")
     private val otherDrops = listOf("ENCHANTED_ANCIENT_CLAW", "ANCIENT_CLAW", "ENCHANTED_GOLD")
     private val sackDrops = listOf("Enchanted Gold", "Ancient Claw", "Enchanted Ancient Claw")
     private val isMobOnCooldown: MutableMap<String, Boolean> = mutableMapOf()
@@ -95,9 +94,8 @@ object DianaTracker {
                 Chat.chat("§6[SBO] §cGG §eFound a §cPhoenix §epet!")
                 Helper.showTitle("§c§lPhoenix Pet!", "", 0, 25, 35)
             }
-            if (Helper.getSecondsPassed(lastDianaMobDeath) > 2) return@onChatMessageCancable true
-            val player = matchResult.group(1).removeFormatting()
-            if (player.contains(Player.getName()?: "")) return@onChatMessageCancable true
+            val player = matchResult.group(1).removeFormatting().lowercase()
+            if (!player.contains((Player.getName()?: "").lowercase())) return@onChatMessageCancable true
             sleep(1000) {
                 if (isInSkyblock() && checkDiana() && dianaMobDiedRecently(3)) unlockAchievement(77) // phoenix pet
             }
@@ -115,7 +113,6 @@ object DianaTracker {
 
     fun trackWithPickuplog(item: Item) {
         SBOKotlin.logger.info("debug trackWithPickuplog: itemid: |${item.itemId}|, ItemName: |${item.name}|, count: |${item.count}|, timestamp now ${System.currentTimeMillis()}, timestamp of item: |${item.creation}|, item age (senconds): |${Helper.getSecondsPassed(item.creation)}|s")
-        val isLootShare = gotLootShareRecently(2)
         sleep (1000) {
             if (Helper.getSecondsPassed(item.creation) > 5) return@sleep
 //            if (!dianaMobDiedRecently(3)) return@sleep
@@ -178,9 +175,11 @@ object DianaTracker {
 
                     if (sboData.b2bKing && sboData.mobsSinceKing == 1) {
                         Chat.chat("§6[SBO] §cb2b2b King Minos!")
+                        unlockAchievement(117) // b2b2b king
                     }
                     if (sboData.mobsSinceKing == 1 && !sboData.b2bKing) {
                         Chat.chat("§6[SBO] §cb2b King Minos!")
+                        unlockAchievement(87) // b2b king
                         sboData.b2bKing = true
                     }
                     if (sboData.kingSinceWool >= 2) sboData.b2bWool = false
@@ -206,9 +205,11 @@ object DianaTracker {
 
                     if (sboData.b2bManti && sboData.mobsSinceManti == 1) {
                         Chat.chat("§6[SBO] §cb2b2b Manticore!")
+                        unlockAchievement(110)
                     }
                     if (sboData.mobsSinceManti == 1 && !sboData.b2bManti) {
                         Chat.chat("§6[SBO] §cb2b Manticore!")
+                        unlockAchievement(109) // b2b manti
                         sboData.b2bManti = true
                     }
                     if (sboData.mantiSinceCore >= 2) sboData.b2bCore = false
@@ -261,9 +262,11 @@ object DianaTracker {
 
                     if (sboData.b2bSphinx && sboData.mobsSinceSphinx == 1) {
                         Chat.chat("§6[SBO] §cb2b2b Sphinx!")
+                        unlockAchievement(108)
                     }
                     if (sboData.mobsSinceSphinx == 1 && !sboData.b2bSphinx) {
                         Chat.chat("§6[SBO] §cb2b Sphinx!")
+                        unlockAchievement(107)
                         sboData.b2bSphinx = true
                     }
                     if (sboData.sphinxSinceFood >= 2) sboData.b2bFood = false
@@ -333,6 +336,7 @@ object DianaTracker {
                         }
                         if (sboData.kingSinceWool == 1 && !sboData.b2bWool) {
                             Chat.chat("§6[SBO] §cb2b Shimmering Wool!")
+                            unlockAchievement(81) // b2b wool
                             sboData.b2bWool = true
                         }
                         sboData.kingSinceWool = 0
@@ -346,6 +350,7 @@ object DianaTracker {
                             }
                             if (sboData.kingSinceLsWool == 1 && !sboData.b2bWoolLs) {
                                 Chat.chat("§6[SBO] §cb2b Lootshare Shimmering Wool!")
+                                unlockAchievement(82) // b2b ls wool
                                 sboData.b2bWoolLs = true
                             }
                             sboData.kingSinceLsWool = 0
@@ -372,6 +377,7 @@ object DianaTracker {
                         }
                         if (sboData.mantiSinceCore == 1 && !sboData.b2bCore) {
                             Chat.chat("§6[SBO] §cb2b Manti-core!")
+                            unlockAchievement(94)
                             sboData.b2bCore = true
                         }
                         sboData.mantiSinceCore = 0
@@ -385,6 +391,7 @@ object DianaTracker {
                             }
                             if (sboData.mantiSinceLsCore == 1 && !sboData.b2bCoreLs) {
                                 Chat.chat("§6[SBO] §cb2b Lootshare Manti-core!")
+                                unlockAchievement(95)
                                 sboData.b2bCoreLs = true
                             }
                             sboData.mantiSinceLsCore = 0
@@ -493,11 +500,13 @@ object DianaTracker {
                         // normal brain food
                         if (Diana.sendSinceMessage) Chat.chat("§6[SBO] §eTook §c${sboData.sphinxSinceFood} §eSphinx to get Brain Food!")
 
-                        if (sboData.b2bInq && sboData.sphinxSinceFood == 1) {
+                        if (sboData.b2bFood && sboData.sphinxSinceFood == 1) {
                             Chat.chat("§6[SBO] §cb2b2b Brain Food!")
+                            unlockAchievement(98) // b2b2b food
                         }
-                        if (sboData.sphinxSinceFood == 1 && !sboData.b2bInq) {
+                        if (sboData.sphinxSinceFood == 1 && !sboData.b2bFood) {
                             Chat.chat("§6[SBO] §cb2b Brain Food!")
+                            unlockAchievement(97) // b2b food
                             sboData.b2bInq = true
                         }
                         sboData.sphinxSinceFood = 0
@@ -508,9 +517,11 @@ object DianaTracker {
                         sleep(200) {
                             if (sboData.b2bFoodLs && sboData.sphinxSinceFood == 1) {
                                 Chat.chat("§6[SBO] §cb2b2b Lootshare Brain Food!")
+                                unlockAchievement(100) // b2b2b ls food
                             }
                             if (sboData.sphinxSinceFood == 1 && !sboData.b2bFoodLs) {
                                 Chat.chat("§6[SBO] §cb2b Lootshare Brain Food!")
+                                unlockAchievement(99) // b2b ls food
                                 sboData.b2bFoodLs = true
                             }
                             sboData.sphinxSinceLsFood = 0
@@ -569,6 +580,14 @@ object DianaTracker {
             SboDataObject.save("SboData")
             true
         }
+
+        Register.onChatMessageCancable(Pattern.compile("^§d§lWOW! (.*?) §6found a §2Mythological Dye§6!$", Pattern.DOTALL)) { message, matchResult ->
+            val player = matchResult.group(1).removeFormatting().lowercase().trim()
+            if (player.contains(Player.getName()?.lowercase()?.trim()?: "")) {
+                onRareDropFromMob("Mythological Dye", true, true, false, 0)
+            }
+            true
+        }
     }
 
     // todo: show title and announce to party based on value of the item
@@ -581,7 +600,7 @@ object DianaTracker {
         if (Diana.lootAnnouncerScreen && title) {
             val subTitle = if (Diana.lootAnnouncerPrice) "§6${Helper.getItemPriceFormatted(itemId, amount)} coins" else ""
             when (itemId) {
-                "MANTI_CORE", "SHIMMERING_WOOL" -> {
+                "MANTI_CORE", "SHIMMERING_WOOL", "MYTHOLOGICAL_DYE"  -> {
                     Helper.showTitle("§c§l$item!", subTitle, 0, 25, 35)
                 }
                 "CHIMERA", "FATEFUL_STINGER" -> {
@@ -676,7 +695,13 @@ object DianaTracker {
     }
 
     fun checkMayorTracker() {
-        if (dianaTrackerMayor.year == 0 || dianaTrackerMayor.year >= Mayor.mayorElectedYear) return
+        if (dianaTrackerMayor.year == 0) {
+            dianaTrackerMayor.year = Mayor.mayorElectedYear
+            dianaTrackerMayor.save()
+            return
+        }
+
+        if (dianaTrackerMayor.year >= Mayor.mayorElectedYear) return
         var allZero = true
         for (item in dianaTrackerMayor.mobs::class.java.declaredFields) {
             item.isAccessible = true
@@ -763,6 +788,7 @@ object DianaTracker {
         Register.onChatMessage(Regex("^(.*?) §eYou just dug out(.*?)$")) { message, matchResult ->
             if (matchResult.groupValues[1].contains("Myth the Fish")) {
                 onRareDropFromMob("Myth the Fish", false, true, false, 0)
+                unlockAchievement(119)
             }
         }
     }
@@ -838,6 +864,8 @@ object DianaTracker {
             "SHIMMERING_WOOL_LS" -> tracker.items.SHIMMERING_WOOL_LS += amount
             "BRAIN_FOOD" -> tracker.items.BRAIN_FOOD += amount
             "BRAIN_FOOD_LS" -> tracker.items.BRAIN_FOOD_LS += amount
+
+            "MYTHOLOGICAL_DYE" -> tracker.items.MYTHOLOGICAL_DYE += amount
 
             "CRETAN_URN" -> tracker.items.CRETAN_URN += amount
             "MYTHOS_FRAGMENT" -> tracker.items.MYTHOS_FRAGMENT += amount

@@ -1,6 +1,7 @@
 package net.sbo.mod.utils.data
 
 import com.google.gson.annotations.SerializedName
+import net.sbo.mod.utils.game.Mayor
 
 interface DianaTracker {
     var items: DianaItemsData
@@ -115,7 +116,10 @@ data class SboData(
 )
 
 data class AchievementsData(
-    var achievements: MutableMap<Int, Boolean> = mutableMapOf()
+    var achievements: MutableMap<Int, Boolean>? = mutableMapOf(),
+    var totalAchievements: MutableMap<Int, Int> = mutableMapOf(),
+    var currentEventAchievements: MutableMap<Int, Boolean> = mutableMapOf(),
+    var lastEventYear: Int = -1
 )
 
 data class PastDianaEventsData(
@@ -133,7 +137,7 @@ data class DianaTrackerSessionData(
 ) : DianaTracker
 
 data class DianaTrackerMayorData(
-    var year: Int = 0,
+    var year: Int = Mayor.mayorElectedYear,
     override var items: DianaItemsData = DianaItemsData(),
     override var mobs: DianaMobsData = DianaMobsData(),
 ) : DianaTracker {
@@ -195,6 +199,7 @@ data class DianaItemsData(
     @SerializedName("MINOTAUR_SHARD") var MINOTAUR_SHARD: Int = 0,
     @SerializedName("CRETAN_BULL_SHARD") var CRETAN_BULL_SHARD: Int = 0,
     @SerializedName("HARPY_SHARD") var HARPY_SHARD: Int = 0,
+    @SerializedName("MYTHOLOGICAL_DYE") var MYTHOLOGICAL_DYE: Int = 0,
     @SerializedName("MYTH_THE_FISH") var MYTH_THE_FISH: Int = 0,
 )
 

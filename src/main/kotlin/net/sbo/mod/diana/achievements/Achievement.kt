@@ -3,6 +3,7 @@ package net.sbo.mod.diana.achievements
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.sbo.mod.SBOKotlin.mc
+import net.sbo.mod.settings.categories.Debug
 import net.sbo.mod.utils.Helper
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.chat.Chat.textComponent
@@ -15,23 +16,28 @@ class Achievement(
     var description: String,
     val rarity: String,
     val previousId: Int? = null,
-    val timeout: Int = 1,
     val hidden: Boolean = false,
+    val repeatable: Boolean = false,
 ) {
     val color = AchievementManager.rarityColorDict[rarity] ?: "§f"
-    var unlocked: Boolean = false
 
-    fun unlock() {
-        achievementsData.achievements[id] = true
-        SboDataObject.save("AchievementsData")
+    private fun checkYearReset() {
+        val currentYear = SboDataObject.dianaTrackerMayor.year
+        if (achievementsData.lastEventYear != currentYear) {
+            achievementsData.currentEventAchievements.clear()
+            achievementsData.lastEventYear = currentYear
+            SboDataObject.save("AchievementsData")
+        }
+    }
 
+    private fun showUnlockEffects() {
         var hiddenExtra = ""
         if (this.hidden) {
             this.description = this.description.substring(2)
             hiddenExtra = "§7[Secret Achievement] "
         }
         val player = mc.player
-        if (this.rarity == "Divine" || this.rarity == "Impossible") {
+        if (this.rarity == "Divine" || this.rarity == "Impossible" || this.rarity == "Celestial") {
             Helper.showTitle("§kd§r $color$name §kd§r", "§aAchievement Unlocked!", 0, 50, 20)
             Chat.chat(textComponent("§6[SBO] §aAchievement Unlocked §7>> $color§kd§r $color$name §kd§r", "$hiddenExtra§a$description"))
             mc.world?.playSound(player, player?.blockPos, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.PLAYERS, 1.0f, 1.0f)
@@ -41,30 +47,63 @@ class Achievement(
             Chat.chat(textComponent("§6[SBO] §aAchievement Unlocked §7>> $color$name", "$hiddenExtra§a$description"))
             mc.world?.playSound(player, player?.blockPos, SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 1.0f, 1.0f)
         }
-        this.unlocked = true
-        AchievementManager.achievementsUnlocked += 1
+    }
+
+    fun unlock() {
+        checkYearReset()
+
+        val currentTotal = achievementsData.totalAchievements.getOrDefault(id, 0)
+        achievementsData.totalAchievements[id] = currentTotal + 1
+
+
+        if ((this.repeatable && Debug.repeatableAchie)) {
+            achievementsData.currentEventAchievements[id] = true
+            AchievementManager.achievementsUnlockedEvent += 1
+        }
+        AchievementManager.achievementsUnlockedTotal += 1
+
+        SboDataObject.save("AchievementsData")
+
+        showUnlockEffects()
     }
 
     fun lock() {
-        achievementsData.achievements.remove(id)
-        this.unlocked = false
-        AchievementManager.achievementsUnlocked -= 1
+        achievementsData.totalAchievements.remove(id)
+        achievementsData.currentEventAchievements.remove(id)
+        AchievementManager.achievementsUnlockedTotal -= 1
+        if ((this.repeatable && Debug.repeatableAchie)) AchievementManager.achievementsUnlockedEvent -= 1
         if (this.hidden) {
             this.description = "§k" + this.description
         }
     }
 
     fun loadState() {
-        this.unlocked = achievementsData.achievements[id] ?: false
-        if (this.unlocked) {
-            AchievementManager.achievementsUnlocked += 1
+        if (isUnlocked(true)) {
+            AchievementManager.achievementsUnlockedTotal += 1
         } else {
             if (this.hidden) this.description = "§k" + this.description
         }
+        if ((this.repeatable && Debug.repeatableAchie) && isUnlocked()) {
+            AchievementManager.achievementsUnlockedEvent += 1
+        }
     }
 
-    fun isUnlocked(): Boolean {
-        return achievementsData.achievements[id] ?: false
+    fun canBeUnlocked(): Boolean {
+        checkYearReset()
+
+        if (!(this.repeatable && Debug.repeatableAchie)) {
+            return (achievementsData.totalAchievements[id] ?: 0) == 0
+        }
+        return achievementsData.currentEventAchievements[id] != true
+    }
+
+    fun isUnlocked(total: Boolean = false): Boolean {
+        checkYearReset()
+
+        if ((this.repeatable && Debug.repeatableAchie) && !total) {
+            return achievementsData.currentEventAchievements[id] ?: false
+        }
+        return (achievementsData.totalAchievements[id] ?: 0) > 0
     }
 
     fun getDisplayName(): String {

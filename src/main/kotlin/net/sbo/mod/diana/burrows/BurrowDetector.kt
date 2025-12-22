@@ -17,10 +17,11 @@ import java.awt.Color
 import net.sbo.mod.utils.waypoint.WaypointManager
 import net.sbo.mod.utils.math.SboVec
 import net.sbo.mod.utils.game.World
+import java.util.concurrent.ConcurrentHashMap
 import java.util.regex.Pattern
 
 object BurrowDetector {
-    internal val burrows = mutableMapOf<String, Burrow>()
+    internal val burrows = ConcurrentHashMap<String, Burrow>()
     internal var removePos: SboVec = SboVec(0.0, 0.0, 0.0)
     internal val burrowsHistory = EvictingQueue<String>(2)
 

@@ -80,6 +80,9 @@ object SBOKotlin {
 
 		logger.info("Initializing SBO-Kotlin, version: $version...")
 
+		// Initialize Mayor Data
+		Mayor.init()
+
         // Initialize scheduled tab list fetch
         TabList.init()
 
@@ -92,7 +95,7 @@ object SBOKotlin {
 		// Load Custom Sound System
 		SoundHandler.init()
 
-		// Register Annotation Pocessor and Events
+		// Register Annotation Processor and Events
 		SboEventGeneratedRegistry.registerAll()
 		SBOEvent.init()
 		DianaEvents.init()
@@ -118,7 +121,6 @@ object SBOKotlin {
 		PartyFinderManager.init()
 		PartyCheck.init()
 		BurrowDetector.init()
-		Mayor.init()
 		DianaTracker.init()
 		PartyPlayer.init()
 		Pickuplog.init()

@@ -17,4 +17,9 @@ object Debug : CategoryKt("Debug") {
         this.name = Literal("Debug Messages")
         this.description = Literal("Enable debug messages for development purposes")
     }
+
+    var repeatableAchie by boolean(false) {
+        this.name = Literal("[WIP] Enable Repetable Achievements")
+        this.description = Literal("[WIP] allows you to unlock repeatable achievements for each new event")
+    }
 }
