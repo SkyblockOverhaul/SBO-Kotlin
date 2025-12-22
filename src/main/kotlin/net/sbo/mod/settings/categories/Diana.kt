@@ -247,24 +247,75 @@ object Diana : CategoryKt("Diana") {
         this.description = Literal("Enables custom chim message")
     }
 
-    var customChimMessage by strings("&6[SBO] &6&lRARE DROP! &d&lChimera! &b{mf} &b#{amount}") {
+    var customChimMessage by strings("&6[SBO] &6&lRARE DROP! &dChimera! &b{mf} &b#{amount}") {
         this.name = Literal("Custom Chim Message Text")
         this.description = Literal("use: {mf} for MagicFind, {amount} for drop Amount this event and {percentage} for chimera/inquis ratio.")
     }
 
+    var coreMessageBool by boolean(false) {
+        this.name = Literal("Manti-Core Message")
+        this.description = Literal("Enables custom Manti-Core message (core/manti)")
+    }
+
+    var customCoreMessage by strings("&6[SBO] &6&lRARE DROP! &6Manti-Core! &b{mf} &b#{amount}") {
+        this.name = Literal("Custom Manti-Core Message Text")
+        this.description = Literal("Use: {mf} for MagicFind, {amount} for drop amount this event and {percentage} for core/manti ratio.")
+    }
+
+    var stingerMessageBool by boolean(false) {
+        this.name = Literal("Fateful Stinger Message")
+        this.description = Literal("Enables custom Fateful Stinger message (stinger/manti)")
+    }
+
+    var customStingerMessage by strings("&6[SBO] &6&lRARE DROP! &dFateful Stinger! &b{mf} &b#{amount}") {
+        this.name = Literal("Custom Fateful Stinger Message Text")
+        this.description = Literal("Use: {mf} for MagicFind, {amount} for drop amount this event and {percentage} for stinger/manti ratio.")
+    }
+
+    var bfMessageBool by boolean(false) {
+        this.name = Literal("Brain Food Message")
+        this.description = Literal("Enables custom Brain Food message (food/sphinx)")
+    }
+
+    var customBfMessage by strings("&6[SBO] &6&lRARE DROP! &5Brain Food! &b{mf} &b#{amount}") {
+        this.name = Literal("Custom Brain Food Message Text")
+        this.description = Literal("Use: {mf} for MagicFind, {amount} for drop amount this event and {percentage} for food/sphinx ratio.")
+    }
+
+    var woolMessageBool by boolean(false) {
+        this.name = Literal("Shimmering Wool Message")
+        this.description = Literal("Enables custom Shimmering Wool message (wool/king)")
+    }
+
+    var customWoolMessage by strings("&6[SBO] &6&lRARE DROP! &6Shimmering Wool! &b{mf} &b#{amount}") {
+        this.name = Literal("Custom Shimmering Wool Message Text")
+        this.description = Literal("Use: {mf} for MagicFind, {amount} for drop amount this event and {percentage} for wool/king ratio.")
+    }
+
     init {
         button {
-            title = "Send Test Chim Message"
+            title = "Send All Test Messages"
             text = "Send Test"
-            description = "Sends a test message for the chimera message"
+            description = "Sends a test message for all rare drop messages"
             onClick {
-                val customChimMsg = Helper.checkCustomChimMessage(400)
-                if (customChimMsg.first) {
-                    Chat.chat(customChimMsg.second)
+                if (Helper.checkCustomDropMessage("Chimera", 400).first) {
+                    val drops = mutableListOf<String>()
+                    if (chimMessageBool) drops.add("Chimera")
+                    if (bfMessageBool) drops.add("Brain Food")
+                    if (woolMessageBool) drops.add("Wool")
+                    if (coreMessageBool) drops.add("Core")
+                    if (stingerMessageBool) drops.add("Stinger")
+
+                    for (drop: String in drops) {
+                        Chat.chat(
+                            Helper.checkCustomDropMessage(drop, 400).second
+                        )
+                    }
                 }
             }
         }
     }
+
 
     init {
         separator {
@@ -310,8 +361,8 @@ object Diana : CategoryKt("Diana") {
     var removeBeam by int(8) {
         this.range = 0..20
         this.slider = true
-        this.name = Translated("Remove Rare Mob Beam Distance")
-        this.description = Translated("Removes the rare mob waypoint beam when you are within this distance of it (0 to disable)")
+        this.name = Literal("Remove Rare Mob Beam Distance")
+        this.description = Literal("Removes the rare mob waypoint beam when you are within this distance of it (0 to disable)")
     }
 
     init {
@@ -360,9 +411,24 @@ object Diana : CategoryKt("Diana") {
         this.description = Literal("All coordinates from chat are considered rare mobs(King, Manti, Sphinx, Inq) only works in hub during diana")
     }
 
-    var announceKilltext by strings("") {
-        this.name = Literal("Send Text On Rare Mob Spawn")
-        this.description = Literal("Sends a text on Rare Mob spawn 5 seconds after spawn, use {since} for mobs since mob, {chance} for mob chance")
+    var announceInqText by strings("") {
+        this.name = Literal("Send Text On Inq Spawn")
+        this.description = Literal("Sends a text on Inq spawn 5 seconds after spawn, use {since} for mobs since mob, {chance} for mob chance")
+    }
+
+    var announceMantiText by strings("") {
+        this.name = Literal("Send Text On Manti Spawn")
+        this.description = Literal("Sends a text on Manti spawn 5 seconds after spawn, use {since} for mobs since mob, {chance} for mob chance")
+    }
+
+    var announceSphinxText by strings("") {
+        this.name = Literal("Send Text On Sphinx Spawn")
+        this.description = Literal("Sends a text on Sphinx spawn 5 seconds after spawn, use {since} for mobs since mob, {chance} for mob chance")
+    }
+
+    var announceKingText by strings("") {
+        this.name = Literal("Send Text On King Spawn")
+        this.description = Literal("Sends a text on King spawn 5 seconds after spawn, use {since} for mobs since mob, {chance} for mob chance")
     }
 
     var announceCocoon by boolean(false) {
@@ -381,22 +447,25 @@ object Diana : CategoryKt("Diana") {
     }
 
     var noShurikenOverlay by boolean(false) {
-        this.name = Translated("No Shuriken Overlay")
-        this.description = Translated("Shows an overlay when the RareMob has no shuriken applied /sboguis to move it")
+        this.name = Literal("No Shuriken Overlay")
+        this.description = Literal("Shows an overlay when the RareMob has no shuriken applied /sboguis to move it")
     }
 
     var NoShurikenMobs by select(NoShurikenList.INQ, NoShurikenList.MANTICORE, NoShurikenList.KING, NoShurikenList.SPHINX) {
-        this.name = Translated("Select which Mobs to Check")
-        this.description = Translated("Select which mobs to check for shuriken")
+        this.name = Literal("Select which Mobs to Check")
+        this.description = Literal("Select which mobs to check for shuriken")
     }
 
     init {
         button {
-            title = "Send Test Message"
+            title = "Send All Test Messages"
             text = "Send Test"
-            description = "Sends a test message for the Rare mob spawn message"
+            description = "Sends all test messages for the Rare Mob spawn message"
             onClick {
-                Chat.chat(announceKilltext[0])
+                Chat.chat("Inq Message: " + announceInqText[0])
+                Chat.chat("Sphinx Message: " + announceSphinxText[0])
+                Chat.chat("Manti Message: " + announceMantiText[0])
+                Chat.chat("King Message: " + announceKingText[0])
             }
         }
     }

@@ -324,7 +324,8 @@ object DianaTracker {
             if (magicfind > 0) mfPrefix = " (+$magicfind ✯ Magic Find)"
 
             when {
-                drop.contains("Shimmering Wool") -> { // todo: drop sound
+                drop.contains("Shimmering Wool") -> { // todo: add achievements for wool
+                    playCustomSound(Customization.woolSound[0], Customization.woolVolume)
                     onRareDropFromMob("Shimmering Wool", true, true, true, magicfind)
                     if (!isLootShare) {
                         // normal wool
@@ -355,8 +356,17 @@ object DianaTracker {
                             sboData.kingSinceLsWool = 0
                         }
                     }
+
+                    val customMsg = Helper.checkCustomDropMessage("wool", magicfind)
+                    if (customMsg.first) {
+                        announceLootToParty("Shimmering Wool!", customMsg.second, true)
+                    } else {
+                        announceLootToParty("Shimmering Wool!", "Shimmering Wool!$mfPrefix")
+                    }
+
                 }
-                drop.contains("Manti-core") -> { // todo: drop sound
+                drop.contains("Manti-core") -> { // todo: add achievements for core
+                    playCustomSound(Customization.coreSound[0], Customization.coreVolume)
                     onRareDropFromMob("Manti-core", true, true, true, magicfind)
                     if (!isLootShare) {
                         // normal core
@@ -387,8 +397,17 @@ object DianaTracker {
                             sboData.mantiSinceLsCore = 0
                         }
                     }
+
+                    val customMsg = Helper.checkCustomDropMessage("core", magicfind)
+                    if (customMsg.first) {
+                        announceLootToParty("Manti-core!", customMsg.second, true)
+                    } else {
+                        announceLootToParty("Manti-core!", "Manti-core!$mfPrefix")
+                    }
+
                 }
-                drop.contains("Fateful Stinger") -> { // todo: drop sound
+                drop.contains("Fateful Stinger") -> { // todo: add achievements for stinger
+                    playCustomSound(Customization.stingerSound[0], Customization.stingerVolume)
                     onRareDropFromMob("Fateful Stinger", true, true, true, magicfind)
                     if (!isLootShare) {
                         // normal stinger
@@ -417,6 +436,14 @@ object DianaTracker {
                             sboData.mantiSinceLsStinger = 0
                         }
                     }
+
+                    val customMsg = Helper.checkCustomDropMessage("Stinger", magicfind)
+                    if (customMsg.first) {
+                        announceLootToParty("Fateful Stinger!", customMsg.second, true)
+                    } else {
+                        announceLootToParty("Fateful Stinger!", "Fateful Stinger!$mfPrefix")
+                    }
+
                 }
                 drop.contains("Enchanted Book") -> {
                     if (!drop.contains("Chimera")) return@onChatMessageCancable true
@@ -459,15 +486,15 @@ object DianaTracker {
                         }
                     }
 
-                    val customChimMsg = Helper.checkCustomChimMessage(magicfind)
+                    val customChimMsg = Helper.checkCustomDropMessage("Chimera", magicfind)
                     if (customChimMsg.first) {
-                        Chat.chat(customChimMsg.second)
                         announceLootToParty("Chimera!", customChimMsg.second, true)
                     } else {
                         announceLootToParty("Chimera!", "Chimera!$mfPrefix")
                     }
                 }
-                drop.contains("Brain Food") -> { // todo: drop sound
+                drop.contains("Brain Food") -> { // todo: add achievements for food
+                    playCustomSound(Customization.bfSound[0], Customization.bfVolume)
                     onRareDropFromMob("Brain Food", true, true, true, magicfind)
                     if (!isLootShare) {
                         // normal brain food
@@ -500,6 +527,14 @@ object DianaTracker {
                             sboData.sphinxSinceLsFood = 0
                         }
                     }
+
+                    val customMsg = Helper.checkCustomDropMessage("Brain Food", magicfind)
+                    if (customMsg.first) {
+                        announceLootToParty("Brain Food!", customMsg.second, true)
+                    } else {
+                        announceLootToParty("Brain Food!", "Brain Food!$mfPrefix")
+                    }
+
                 }
                 drop.contains("Daedalus Stick") -> {
                     playCustomSound(Customization.stickSound[0], Customization.stickVolume)
@@ -561,13 +596,14 @@ object DianaTracker {
         val itemId = item.uppercase().replace(" ", "_").replace("-", "_")
         var mfPrefix = ""
         if (magicFind > 0) mfPrefix = " (+$magicFind ✯ Magic Find)"
+
         if (Diana.lootAnnouncerScreen && title) {
             val subTitle = if (Diana.lootAnnouncerPrice) "§6${Helper.getItemPriceFormatted(itemId, amount)} coins" else ""
             when (itemId) {
                 "MANTI_CORE", "SHIMMERING_WOOL", "MYTHOLOGICAL_DYE"  -> {
                     Helper.showTitle("§c§l$item!", subTitle, 0, 25, 35)
                 }
-                "CHIMERA", "FABLED_STINGER" -> {
+                "CHIMERA", "FATEFUL_STINGER" -> {
                     Helper.showTitle("§d§l$item!", subTitle, 0, 25, 35)
                 }
                 "BRAIN_FOOD", "MINOS_RELIC", "BRAIDED_GRIFFIN_FEATHER" -> {
@@ -577,10 +613,6 @@ object DianaTracker {
                     Helper.showTitle("§6§l$item!", subTitle, 0, 25, 35)
                 }
             }
-        }
-
-        if (partyAnnounce) {
-            announceLootToParty("$item!", "$item!$mfPrefix")
         }
 
         val isLootShare = gotLootShareRecently(2)
@@ -627,12 +659,12 @@ object DianaTracker {
         }
     }
 
-    fun announceLootToParty(item: String, customMsg: String? = null, replaceChimMessage: Boolean = false) {
+    fun announceLootToParty(item: String, customMsg: String? = null, replaceDropMessage: Boolean = false) {
         if (!Diana.lootAnnouncerParty) return
         var msg = Helper.toTitleCase(item.replace("_LS", "").replace("_", " "))
         if (customMsg != null) msg = customMsg.removeFormatting()
 
-        if (replaceChimMessage) {
+        if (replaceDropMessage) {
             Chat.command("pc $msg")
         } else {
             lootAnnouncerBuffer.add(msg)

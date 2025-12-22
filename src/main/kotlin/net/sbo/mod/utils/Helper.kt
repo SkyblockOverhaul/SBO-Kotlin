@@ -35,6 +35,7 @@ import java.math.RoundingMode
 import kotlin.reflect.full.memberProperties
 import java.text.DecimalFormat
 import java.util.Locale
+import java.util.Locale.getDefault
 import java.util.regex.Pattern
 import java.util.concurrent.Executors
 import java.util.concurrent.ExecutorService
@@ -442,46 +443,45 @@ object Helper {
         }
     }
 
-    fun checkCustomChimMessage(magicFind: Int): Pair<Boolean, String> {
-        val text = Diana.customChimMessage[0].trim()
-        val trackerMayor = SboDataObject.dianaTrackerMayor
-        if (!Diana.chimMessageBool) {
-            return Pair(false, "")
-        }
+    fun checkCustomDropMessage(dropName: String, magicFind: Int): Pair<Boolean, String> {
+        val info = getDropInfo(dropName) ?: return Pair(false, "")
 
-        if (text.isNotEmpty()) {
-            var resultText = text.replace('&', '§')
+        if (!info.isEnabled) return Pair(false, "")
 
-            if (resultText.contains("{mf}")) {
-                val mfMessage = if (magicFind > 0) {
-                    "(+$magicFind% ✯ Magic Find)"
-                } else {
-                    ""
-                }
-                resultText = resultText.replace("{mf}", mfMessage)
-            }
+        val resultText = info.template
+            .replace("{amount}", info.totalAmount.toString())
+            .replace("{percentage}", "%.2f".format(info.percentage))
+            .replace("{mf}", magicFind.toString())
 
-            if (resultText.contains("{amount}")) {
-                val amount = trackerMayor.items.CHIMERA + trackerMayor.items.CHIMERA_LS
-                resultText = resultText.replace("{amount}", amount.toString())
-            }
+        return Pair(true, resultText)
+    }
 
-            if (resultText.contains("{percentage}")) {
-                val minosInquisitorCount = trackerMayor.mobs.MINOS_INQUISITOR
-                val chimeraCount = trackerMayor.items.CHIMERA
-                val percentage = if (minosInquisitorCount > 0) {
-                    (chimeraCount.toDouble() / minosInquisitorCount.toDouble()) * 100
-                } else {
-                    0.0
-                }
-                resultText = resultText.replace("{percentage}", "%.2f%%".format(percentage))
-            }
+    data class DropInfo(
+        val template: String,
+        val isEnabled: Boolean,
+        val totalAmount: Int,
+        val mobCount: Int,
+        val dropCount: Int
+    ) {
+        val percentage: Double
+            get() = if (mobCount > 0) (dropCount.toDouble() / mobCount) * 100 else 0.0
+    }
 
-            return Pair(true, resultText)
-        } else {
-            return Pair(false, "")
+    private fun getDropInfo(dropName: String): DropInfo? {
+        val tracker = SboDataObject.dianaTrackerMayor
+        val items = tracker.items
+        val mobs = tracker.mobs
+
+        return when (dropName.lowercase()) {
+            "chimera" -> DropInfo(Diana.customChimMessage[0].trim(), Diana.chimMessageBool, items.CHIMERA + items.CHIMERA_LS, mobs.MINOS_INQUISITOR, items.CHIMERA)
+            "core" -> DropInfo(Diana.customCoreMessage[0].trim(), Diana.coreMessageBool, items.MANTI_CORE + items.MANTI_CORE_LS, mobs.MANTICORE, items.MANTI_CORE)
+            "stinger" -> DropInfo(Diana.customStingerMessage[0].trim(), Diana.stingerMessageBool, items.FATEFUL_STINGER + items.FATEFUL_STINGER_LS, mobs.MANTICORE, items.FATEFUL_STINGER)
+            "brain food" -> DropInfo(Diana.customBfMessage[0].trim(), Diana.bfMessageBool, items.BRAIN_FOOD + items.BRAIN_FOOD_LS, mobs.SPHINX, items.BRAIN_FOOD)
+            "wool" -> DropInfo(Diana.customWoolMessage[0].trim(), Diana.woolMessageBool, items.SHIMMERING_WOOL + items.SHIMMERING_WOOL_LS, mobs.KING_MINOS, items.SHIMMERING_WOOL)
+            else -> null
         }
     }
+
 
     fun toTitleCase(input: String): String {
         return input.lowercase().replaceFirstChar { char -> char.uppercase() }
