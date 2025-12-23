@@ -252,12 +252,14 @@ object Helper {
         return builder.toString().trim()
     }
 
+    private val COLOR_REGEX: Regex = Regex("§.")
+
     fun String.removeFormatting(): String {
-        return this.replace(Regex("§."), "")
+        return this.replace(COLOR_REGEX, "")
     }
 
     fun Text.removeFormatting(): String {
-        return this.string.replace(Regex("§."), "")
+        return this.string.replace(COLOR_REGEX, "")
     }
 
     fun matchLvlToColor(lvl: Int): String {
@@ -353,7 +355,8 @@ object Helper {
                 val customData = stack.get(DataComponentTypes.CUSTOM_DATA)
                 var id: String
                 var item: Item
-                val sbId = ItemUtils.getSBID(customData)
+                val nbt = customData?.copyNbt()
+                val sbId = ItemUtils.getSBID(customData, nbt)
                 // print for debugging the lore lines
                 var isChimera = false
                 if (sbId == "ENCHANTED_BOOK") {
@@ -369,18 +372,18 @@ object Helper {
                 if (!isChimera) {
                     item = Item(
                         sbId,
-                        ItemUtils.getUUID(customData),
+                        ItemUtils.getUUID(customData, nbt),
                         ItemUtils.getDisplayName(stack),
-                        ItemUtils.getTimestamp(customData),
+                        ItemUtils.getTimestamp(customData, nbt),
                         stack.count
                     )
                     id = if (item.itemUUID != "") item.itemUUID else item.itemId
                 } else {
                     item = Item(
                         "CHIMERA",
-                        ItemUtils.getUUID(customData),
+                        ItemUtils.getUUID(customData, nbt),
                         "§d§lChimera",
-                        ItemUtils.getTimestamp(customData),
+                        ItemUtils.getTimestamp(customData, nbt),
                         stack.count
                     )
                     id = "CHIMERA"
