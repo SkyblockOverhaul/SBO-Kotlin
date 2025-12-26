@@ -145,7 +145,7 @@ object DianaTracker {
 
     fun trackScavengerCoins(amount: Long) {
         if (amount <= 0) return
-        if (!dianaMobDiedRecently(4) && !gotLootShareRecently(4)) return
+        if (!dianaMobDiedRecently(4)) return
         if (!checkDiana()) return
         if (amount > 150000 || !allowScavTracking) return
         trackItem("SCAVENGER_COINS", amount.toInt())
