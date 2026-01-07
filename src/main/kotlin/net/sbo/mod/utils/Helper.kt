@@ -528,17 +528,21 @@ object Helper {
             else -> sbId
         }
 
-        val ahPrice = priceDataAh[id]?.toDouble() ?: 0.0
-        val npcPrice = npcSellValueMap[id]?.toDouble() ?: 0.0
-
         val bzProduct = priceDataBazaar?.products?.get(id)
         val bazaarPrice = if (Diana.bazaarSettingDiana == Diana.SettingDiana.INSTASELL) {
             bzProduct?.quick_status?.sellPrice
         } else {
             bzProduct?.quick_status?.buyPrice
-        } ?: 0.0
+        }
 
-        val bestUnitPrice = maxOf(ahPrice, npcPrice, bazaarPrice)
+        if (bazaarPrice != null && bazaarPrice > 0.0) {
+            return (bazaarPrice * amount).roundToLong()
+        }
+
+        val ahPrice = priceDataAh[id]?.toDouble() ?: 0.0
+        val npcPrice = npcSellValueMap[id]?.toDouble() ?: 0.0
+
+        val bestUnitPrice = if (npcPrice > ahPrice) npcPrice else ahPrice
 
         return (bestUnitPrice * amount).roundToLong()
     }
