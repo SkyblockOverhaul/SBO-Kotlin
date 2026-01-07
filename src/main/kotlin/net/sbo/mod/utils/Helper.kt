@@ -520,30 +520,27 @@ object Helper {
     fun getItemPrice(sbId: String, amount: Int = 1): Long {
         val id = when {
             sbId == "CHIMERA" -> "ENCHANTMENT_ULTIMATE_CHIMERA_1"
-            sbId.endsWith("_SHARD") -> "${sbId.substringAfterLast('_')}_${sbId.substringBeforeLast('_')}"
-            sbId.endsWith("_DYE") -> "${sbId.substringAfterLast('_')}_${sbId.substringBeforeLast('_')}"
+            sbId.endsWith("_SHARD") || sbId.endsWith("_DYE") -> {
+                val suffix = sbId.substringAfterLast('_')   // "SHARD"
+                val name = sbId.substringBeforeLast('_')   // "WITHER"
+                "${suffix}_${name}"
+            }
             else -> sbId
         }
-        var ahPrice = priceDataAh[id]?.toDouble() ?: 0.0
-        if (npcSellValueMap.containsKey(id)) {
-            val npcPrice = npcSellValueMap[id]?.toDouble() ?: 0.0
-            if (npcPrice > ahPrice) {
-                ahPrice = npcPrice
-            }
-        }
 
+        val ahPrice = priceDataAh[id]?.toDouble() ?: 0.0
+        val npcPrice = npcSellValueMap[id]?.toDouble() ?: 0.0
+
+        val bzProduct = priceDataBazaar?.products?.get(id)
         val bazaarPrice = if (Diana.bazaarSettingDiana == Diana.SettingDiana.INSTASELL) {
-            priceDataBazaar?.products?.get(id)?.quick_status?.sellPrice
-        }
-        else {
-            priceDataBazaar?.products?.get(id)?.quick_status?.buyPrice
-        }
+            bzProduct?.quick_status?.sellPrice
+        } else {
+            bzProduct?.quick_status?.buyPrice
+        } ?: 0.0
 
-        return when {
-            ahPrice != 0.0 -> (ahPrice * amount).roundToLong()
-            bazaarPrice != null -> (bazaarPrice * amount).roundToLong()
-            else -> 0L
-        }
+        val bestUnitPrice = maxOf(ahPrice, npcPrice, bazaarPrice)
+
+        return (bestUnitPrice * amount).roundToLong()
     }
 
     fun getItemPriceFormatted(sbId: String, amount: Int = 1): String {
