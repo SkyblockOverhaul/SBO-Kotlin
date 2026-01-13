@@ -140,10 +140,10 @@ class Overlay(
         return maxWidth
     }
 
-    fun isOverOverlay(mouseX: Double, mouseY: Double): Boolean {
+    fun isOverOverlay(mouseX: Double, mouseY: Double, width: Int = getTotalWidth(), height: Int = getTotalHeight()): Boolean {
         if (!condition()) return false
-        val totalWidth = getTotalWidth() * scale
-        val totalHeight = getTotalHeight() * scale
+        val totalWidth = width * scale
+        val totalHeight = height * scale
 
         return mouseX >= x && mouseX <= x + totalWidth && mouseY >= y && mouseY <= y + totalHeight
     }
@@ -171,7 +171,7 @@ class Overlay(
             drawContext.drawText(textRenderer, "X: ${x.toInt()} Y: ${y.toInt()} Scale: ${String.format("%.1f", scale)}", (currentX).toInt(), (currentY - textRenderer.fontHeight - 1).toInt(), Color(255, 255, 255, 200).rgb, true)
         }
 
-        if (isOverOverlay(mouseX, mouseY) && Helper.currentScreen is OverlayEditScreen) {
+        if (isOverOverlay(mouseX, mouseY, totalWidth, totalHeight) && Helper.currentScreen is OverlayEditScreen) {
             drawContext.fill(currentX.toInt(), currentY.toInt(), (currentX + totalWidth).toInt(), (currentY + totalHeight).toInt(), Color(0, 0, 0, 100).rgb)
         }
 
@@ -195,6 +195,10 @@ class Overlay(
     }
 
     private fun drawDebugBox(drawContext: DrawContext, x: Int, y: Int, width: Int, height: Int) {
+        //#if MC >= 1.21.9
+        //$$ drawContext.drawStrokedRectangle(x, y, width, height, Color(255, 0, 0, 170).rgb)
+        //#else
         drawContext.drawBorder(x, y, width, height, Color(255, 0, 0, 170).rgb)
+        //#endif
     }
 }

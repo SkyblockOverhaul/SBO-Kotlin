@@ -58,11 +58,15 @@ object SboDataObject {
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
     private const val MAX_BACKUPS = 10
 
-    private val DATA_SAVER_EXECUTOR: ExecutorService = Executors.newThreadPerTaskExecutor(Thread
-            .ofVirtual()
-            .name("sbo-data-saver-thread-", 1) // sbo-data-saver-thread-1, sbo-data-saver-thread-2 etc. starting from 1 (second parameter)
-            .factory() // virtual threads are daemon by default
-    )
+    private val DATA_SAVER_EXECUTOR: ExecutorService = Executors.newSingleThreadExecutor { r ->
+        Thread(r, "sbo-data-saver-thread").apply { isDaemon = true }
+    }
+
+//    private val DATA_SAVER_EXECUTOR: ExecutorService = Executors.newThreadPerTaskExecutor(Thread
+//            .ofVirtual()
+//            .name("sbo-data-saver-thread-", 1) // sbo-data-saver-thread-1, sbo-data-saver-thread-2 etc. starting from 1 (second parameter)
+//            .factory() // virtual threads are daemon by default
+//    )
 
     fun init() {
         SBOConfigBundle = loadAllData("SBO")
@@ -84,6 +88,8 @@ object SboDataObject {
         saveAndBackupAllDataThreaded("SBO")
     }
 
+
+
     fun <T> load(modName: String, fileName: String, defaultData: T, type: Class<T>): T {
         val modConfigDir = File(FabricLoader.getInstance().configDir.toFile(), modName)
         if (!modConfigDir.exists()) {
@@ -98,53 +104,55 @@ object SboDataObject {
         }
 
         return try {
-            FileReader(dataFile).use { reader ->
-                val loadedData = gson.fromJson(reader, type)
-                val jsonObject = JsonParser.parseReader(FileReader(dataFile)).asJsonObject
+            val loadedData = FileReader(dataFile).use { reader ->
+                gson.fromJson(reader, type)
+            }
 
-                var dataModified = false
+            val jsonObject = FileReader(dataFile).use { reader ->
+                JsonParser.parseReader(reader).asJsonObject
+            }
 
-                if (loadedData is DianaTracker) {
-                    if (jsonObject.has("items")) {
-                        val itemsObject = jsonObject.getAsJsonObject("items")
+            var dataModified = false
 
-                        val totalTime = itemsObject.get("totalTime")?.asLong ?: 0
-                        val sessionTime = itemsObject.get("sessionTime")?.asLong ?: 0
-                        val mayorTime = itemsObject.get("mayorTime")?.asLong ?: 0
-                        val oldTime = maxOf(totalTime, sessionTime, mayorTime)
+            if (loadedData is DianaTracker) {
+                if (jsonObject.has("items")) {
+                    val itemsObject = jsonObject.getAsJsonObject("items")
 
-                        if (oldTime > 0) {
-                            loadedData.items.TIME = oldTime
-                            dataModified = true
-                        }
+                    val totalTime = itemsObject.get("totalTime")?.asLong ?: 0
+                    val sessionTime = itemsObject.get("sessionTime")?.asLong ?: 0
+                    val mayorTime = itemsObject.get("mayorTime")?.asLong ?: 0
+                    val oldTime = maxOf(totalTime, sessionTime, mayorTime)
+
+                    if (oldTime > 0) {
+                        loadedData.items.TIME = oldTime
+                        dataModified = true
                     }
                 }
+            }
 
-                if (loadedData is PastDianaEventsData) {
-                    val eventsArray = jsonObject.getAsJsonArray("events")
-                    if (eventsArray != null) {
-                        for ((index, element) in eventsArray.withIndex()) {
-                            val eventObject = element.asJsonObject
-                            if (eventObject.has("items")) {
-                                val itemsObject = eventObject.getAsJsonObject("items")
-                                val oldTime = itemsObject.get("mayorTime")?.asLong ?: 0
+            if (loadedData is PastDianaEventsData) {
+                val eventsArray = jsonObject.getAsJsonArray("events")
+                if (eventsArray != null) {
+                    for ((index, element) in eventsArray.withIndex()) {
+                        val eventObject = element.asJsonObject
+                        if (eventObject.has("items")) {
+                            val itemsObject = eventObject.getAsJsonObject("items")
+                            val oldTime = itemsObject.get("mayorTime")?.asLong ?: 0
 
-                                if (oldTime > 0) {
-                                    loadedData.events[index].items.TIME = oldTime
-                                    dataModified = true
-                                }
+                            if (oldTime > 0) {
+                                loadedData.events[index].items.TIME = oldTime
+                                dataModified = true
                             }
                         }
                     }
                 }
-
-                if (dataModified) {
-                    SBOKotlin.logger.info("[$modName] Old data format detected and migrated. Saving updated file.")
-                    save(modName, loadedData, fileName)
-                }
-
-                loadedData
             }
+
+            if (dataModified) {
+                SBOKotlin.logger.info("[$modName] Old data format detected and migrated. Saving updated file.")
+                save(modName, loadedData, fileName)
+            }
+            loadedData
         } catch (_: JsonSyntaxException) {
             SBOKotlin.logger.error("[$modName] Error parsing JSON in $fileName, resetting to default data.")
             save(modName, defaultData, fileName)
@@ -391,13 +399,6 @@ object SboDataObject {
         }
     }
 
-    /**
-     * Saves the given data to a file in the mod's config directory.
-     * If the directory does not exist, it will be created.
-     * @param modName The name of the mod.
-     * @param data The data to save.
-     * @param fileName The name of the file to save the data in.
-     */
     fun <T> save(modName: String, data: T, fileName: String) {
         val modConfigDir = File(FabricLoader.getInstance().configDir.toFile(), modName)
         if (!modConfigDir.exists()) {
@@ -415,13 +416,18 @@ object SboDataObject {
      * @param configName The name of the config to save.
      */
     fun save(configName: String) {
-        configMapforSave[configName]?.first?.invoke()
-            ?: SBOKotlin.logger.warn("[$configName] is not a valid config name. Please use a valid config name")
+        DATA_SAVER_EXECUTOR.execute {
+            configMapforSave[configName]?.first?.invoke()
+                ?: SBOKotlin.logger.warn("[$configName] is not a valid config name. Please use a valid config name")
+        }
     }
 
     fun saveTrackerData() {
-        save("SBO", dianaTrackerTotal, "dianaTrackerTotal.json")
-        save("SBO", dianaTrackerSession, "dianaTrackerSession.json")
-        save("SBO", dianaTrackerMayor, "dianaTrackerMayor.json")
+        DATA_SAVER_EXECUTOR.execute {
+            save("SBO", dianaTrackerTotal, "dianaTrackerTotal.json")
+            save("SBO", dianaTrackerSession, "dianaTrackerSession.json")
+            save("SBO", dianaTrackerMayor, "dianaTrackerMayor.json")
+            SBOKotlin.logger.debug("[SBO] Diana Tracker data saved successfully.")
+        }
     }
 }

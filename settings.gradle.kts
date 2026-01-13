@@ -19,8 +19,8 @@ pluginManagement {
     }
 
     plugins {
-        kotlin("jvm") version("2.2.10")
-        id("dev.deftu.gradle.multiversion-root") version("2.58.0")
+        kotlin("jvm") version("2.2.21")
+        id("dev.deftu.gradle.multiversion-root") version("2.64.0")
     }
 }
 
@@ -29,7 +29,8 @@ include("event-processor")
 
 listOf(
     "1.21.5-fabric",
-    "1.21.7-fabric"
+    "1.21.7-fabric",
+    "1.21.10-fabric"
 ).forEach { version ->
     include(":$version")
     project(":$version").apply {
