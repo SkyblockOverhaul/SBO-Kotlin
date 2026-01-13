@@ -455,6 +455,7 @@ object Helper {
             .replace("{amount}", info.totalAmount.toString())
             .replace("{percentage}", "%.2f".format(info.percentage))
             .replace("{mf}", magicFind.toString())
+            .replace('&', '§')
 
         return Pair(true, resultText)
     }

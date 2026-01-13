@@ -658,12 +658,10 @@ object DianaTracker {
         }
     }
 
-    private val ALT_COLOR_REGEX: Regex = Regex("&.")
-
     fun announceLootToParty(item: String, customMsg: String? = null, replaceDropMessage: Boolean = false) {
         if (!Diana.lootAnnouncerParty) return
         var msg = Helper.toTitleCase(item.replace("_LS", "").replace("_", " "))
-        if (customMsg != null) msg = customMsg.removeFormatting().replace(ALT_COLOR_REGEX, "")
+        if (customMsg != null) msg = customMsg.removeFormatting()
 
         if (replaceDropMessage) {
             Chat.command("pc $msg")
