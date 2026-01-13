@@ -94,15 +94,19 @@ object WaypointManager {
                         }
                         "king minos", "king" -> {
                             Helper.showTitle("§r§6§l<§b§l§kO§6§l> §b§lKING MINOS! §6§l<§b§l§kO§6§l>", player, 0, 90, 20)
+                            playCustomSound(Customization.kingSound[0], Customization.kingVolume)
                         }
                         "manticore" -> {
                             Helper.showTitle("§r§6§l<§b§l§kO§6§l> §b§lMANTICORE! §6§l<§b§l§kO§6§l>", player, 0, 90, 20)
+                            playCustomSound(Customization.mantiSound[0], Customization.mantiVolume)
                         }
                         "sphinx" -> {
                             Helper.showTitle("§r§6§l<§b§l§kO§6§l> §b§lSPHINX! §6§l<§b§l§kO§6§l>", player, 0, 90, 20)
+                            playCustomSound(Customization.sphinxSound[0], Customization.sphinxVolume)
                         }
                         else -> {
                             Helper.showTitle("§r§6§l<§b§l§kO§6§l> §b§lRARE MOB! §6§l<§b§l§kO§6§l>", player, 0, 90, 20)
+                            playCustomSound(Customization.rareMobSound[0], Customization.rareMobVolume)
                         }
                     }
                     addRareMobWaypoint(
@@ -187,8 +191,8 @@ object WaypointManager {
     fun onWorldChange(event: WorldChangeEvent) {
         guessWp?.hide()
         removeAllOfType("world")
-        removeAllOfType("gueess")
-        removeAllOfType("arrow")
+        removeAllOfType("guess")
+        if (!Diana.dontClearArrowGuess) removeAllOfType("arrow")
     }
 
     fun addRareMobWaypoint(player: String, pos: SboVec, mobName: String, playername: String) {

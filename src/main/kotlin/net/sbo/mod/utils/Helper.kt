@@ -35,6 +35,7 @@ import java.math.RoundingMode
 import kotlin.reflect.full.memberProperties
 import java.text.DecimalFormat
 import java.util.Locale
+import java.util.Locale.getDefault
 import java.util.regex.Pattern
 import java.util.concurrent.Executors
 import java.util.concurrent.ExecutorService
@@ -251,8 +252,14 @@ object Helper {
         return builder.toString().trim()
     }
 
+    private val COLOR_REGEX: Regex = Regex("§.")
+
     fun String.removeFormatting(): String {
-        return this.replace(Regex("§."), "")
+        return this.replace(COLOR_REGEX, "")
+    }
+
+    fun Text.removeFormatting(): String {
+        return this.string.replace(COLOR_REGEX, "")
     }
 
     fun matchLvlToColor(lvl: Int): String {
@@ -348,7 +355,8 @@ object Helper {
                 val customData = stack.get(DataComponentTypes.CUSTOM_DATA)
                 var id: String
                 var item: Item
-                val sbId = ItemUtils.getSBID(customData)
+                val nbt = customData?.copyNbt()
+                val sbId = ItemUtils.getSBID(customData, nbt)
                 // print for debugging the lore lines
                 var isChimera = false
                 if (sbId == "ENCHANTED_BOOK") {
@@ -364,18 +372,18 @@ object Helper {
                 if (!isChimera) {
                     item = Item(
                         sbId,
-                        ItemUtils.getUUID(customData),
+                        ItemUtils.getUUID(customData, nbt),
                         ItemUtils.getDisplayName(stack),
-                        ItemUtils.getTimestamp(customData),
+                        ItemUtils.getTimestamp(customData, nbt),
                         stack.count
                     )
                     id = if (item.itemUUID != "") item.itemUUID else item.itemId
                 } else {
                     item = Item(
                         "CHIMERA",
-                        ItemUtils.getUUID(customData),
+                        ItemUtils.getUUID(customData, nbt),
                         "§d§lChimera",
-                        ItemUtils.getTimestamp(customData),
+                        ItemUtils.getTimestamp(customData, nbt),
                         stack.count
                     )
                     id = "CHIMERA"
@@ -438,46 +446,46 @@ object Helper {
         }
     }
 
-    fun checkCustomChimMessage(magicFind: Int): Pair<Boolean, String> {
-        val text = Diana.customChimMessage[0].trim()
-        val trackerMayor = SboDataObject.dianaTrackerMayor
-        if (!Diana.chimMessageBool) {
-            return Pair(false, "")
-        }
+    fun checkCustomDropMessage(dropName: String, magicFind: Int): Pair<Boolean, String> {
+        val info = getDropInfo(dropName) ?: return Pair(false, "")
 
-        if (text.isNotEmpty()) {
-            var resultText = text.replace('&', '§')
+        if (!info.isEnabled) return Pair(false, "")
 
-            if (resultText.contains("{mf}")) {
-                val mfMessage = if (magicFind > 0) {
-                    "(+$magicFind% ✯ Magic Find)"
-                } else {
-                    ""
-                }
-                resultText = resultText.replace("{mf}", mfMessage)
-            }
+        val resultText = info.template
+            .replace("{amount}", info.totalAmount.toString())
+            .replace("{percentage}", "%.2f".format(info.percentage) + "%")
+            .replace("{mf}", if (magicFind > 0) "$magicFind" else "")
+            .replace('&', '§')
 
-            if (resultText.contains("{amount}")) {
-                val amount = trackerMayor.items.CHIMERA + trackerMayor.items.CHIMERA_LS
-                resultText = resultText.replace("{amount}", amount.toString())
-            }
+        return Pair(true, resultText)
+    }
 
-            if (resultText.contains("{percentage}")) {
-                val minosInquisitorCount = trackerMayor.mobs.MINOS_INQUISITOR
-                val chimeraCount = trackerMayor.items.CHIMERA
-                val percentage = if (minosInquisitorCount > 0) {
-                    (chimeraCount.toDouble() / minosInquisitorCount.toDouble()) * 100
-                } else {
-                    0.0
-                }
-                resultText = resultText.replace("{percentage}", "%.2f%%".format(percentage))
-            }
+    data class DropInfo(
+        val template: String,
+        val isEnabled: Boolean,
+        val totalAmount: Int,
+        val mobCount: Int,
+        val dropCount: Int
+    ) {
+        val percentage: Double
+            get() = if (mobCount > 0) (dropCount.toDouble() / mobCount) * 100 else 0.0
+    }
 
-            return Pair(true, resultText)
-        } else {
-            return Pair(false, "")
+    private fun getDropInfo(dropName: String): DropInfo? {
+        val tracker = SboDataObject.dianaTrackerMayor
+        val items = tracker.items
+        val mobs = tracker.mobs
+
+        return when (dropName.lowercase()) {
+            "chimera" -> DropInfo(Diana.customChimMessage[0].trim(), Diana.chimMessageBool, items.CHIMERA + items.CHIMERA_LS, mobs.MINOS_INQUISITOR, items.CHIMERA)
+            "core" -> DropInfo(Diana.customCoreMessage[0].trim(), Diana.coreMessageBool, items.MANTI_CORE + items.MANTI_CORE_LS, mobs.MANTICORE, items.MANTI_CORE)
+            "stinger" -> DropInfo(Diana.customStingerMessage[0].trim(), Diana.stingerMessageBool, items.FATEFUL_STINGER + items.FATEFUL_STINGER_LS, mobs.MANTICORE, items.FATEFUL_STINGER)
+            "brain food" -> DropInfo(Diana.customBfMessage[0].trim(), Diana.bfMessageBool, items.BRAIN_FOOD + items.BRAIN_FOOD_LS, mobs.SPHINX, items.BRAIN_FOOD)
+            "wool" -> DropInfo(Diana.customWoolMessage[0].trim(), Diana.woolMessageBool, items.SHIMMERING_WOOL + items.SHIMMERING_WOOL_LS, mobs.KING_MINOS, items.SHIMMERING_WOOL)
+            else -> null
         }
     }
+
 
     fun toTitleCase(input: String): String {
         return input.lowercase().replaceFirstChar { char -> char.uppercase() }
@@ -513,30 +521,31 @@ object Helper {
     fun getItemPrice(sbId: String, amount: Int = 1): Long {
         val id = when {
             sbId == "CHIMERA" -> "ENCHANTMENT_ULTIMATE_CHIMERA_1"
-            sbId.endsWith("_SHARD") -> "${sbId.substringAfterLast('_')}_${sbId.substringBeforeLast('_')}"
-            sbId.endsWith("_DYE") -> "${sbId.substringAfterLast('_')}_${sbId.substringBeforeLast('_')}"
+            sbId.endsWith("_SHARD") || sbId.endsWith("_DYE") -> {
+                val suffix = sbId.substringAfterLast('_')   // "SHARD"
+                val name = sbId.substringBeforeLast('_')   // "WITHER"
+                "${suffix}_${name}"
+            }
             else -> sbId
         }
-        var ahPrice = priceDataAh[id]?.toDouble() ?: 0.0
-        if (npcSellValueMap.containsKey(id)) {
-            val npcPrice = npcSellValueMap[id]?.toDouble() ?: 0.0
-            if (npcPrice > ahPrice) {
-                ahPrice = npcPrice
-            }
-        }
 
+        val bzProduct = priceDataBazaar?.products?.get(id)
         val bazaarPrice = if (Diana.bazaarSettingDiana == Diana.SettingDiana.INSTASELL) {
-            priceDataBazaar?.products?.get(id)?.quick_status?.sellPrice
-        }
-        else {
-            priceDataBazaar?.products?.get(id)?.quick_status?.buyPrice
+            bzProduct?.quick_status?.sellPrice
+        } else {
+            bzProduct?.quick_status?.buyPrice
         }
 
-        return when {
-            ahPrice != 0.0 -> (ahPrice * amount).roundToLong()
-            bazaarPrice != null -> (bazaarPrice * amount).roundToLong()
-            else -> 0L
+        if (bazaarPrice != null && bazaarPrice > 0.0) {
+            return (bazaarPrice * amount).roundToLong()
         }
+
+        val ahPrice = priceDataAh[id]?.toDouble() ?: 0.0
+        val npcPrice = npcSellValueMap[id]?.toDouble() ?: 0.0
+
+        val bestUnitPrice = if (npcPrice > ahPrice) npcPrice else ahPrice
+
+        return (bestUnitPrice * amount).roundToLong()
     }
 
     fun getItemPriceFormatted(sbId: String, amount: Int = 1): String {

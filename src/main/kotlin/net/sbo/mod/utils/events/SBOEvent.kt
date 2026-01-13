@@ -2,10 +2,14 @@ package net.sbo.mod.utils.events
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback
+import net.minecraft.util.ActionResult
+import net.sbo.mod.utils.events.impl.entity.EntitiyHitEvent
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents
 import net.sbo.mod.utils.events.impl.entity.EntityLoadEvent
 import net.sbo.mod.utils.events.impl.entity.EntityUnloadEvent
@@ -13,6 +17,7 @@ import net.sbo.mod.utils.events.impl.game.ChatMessageAllowEvent
 import net.sbo.mod.utils.events.impl.game.ChatMessageEvent
 import net.sbo.mod.utils.events.impl.game.DisconnectEvent
 import net.sbo.mod.utils.events.impl.game.GameCloseEvent
+import net.sbo.mod.utils.events.impl.game.TickEvent
 import net.sbo.mod.utils.events.impl.game.WorldChangeEvent
 import net.sbo.mod.utils.events.impl.guis.GuiCloseEvent
 import net.sbo.mod.utils.events.impl.guis.GuiMouseClickAfter
@@ -77,6 +82,15 @@ object SBOEvent {
             event.isAllowed
         }
 
+        /**
+         * Client Tick Event
+         * Fired every game tick (20 times per second) on the client.
+         */
+        ClientTickEvents.START_CLIENT_TICK.register { client ->
+            emit(TickEvent(client))
+        }
+
+
         ScreenEvents.AFTER_INIT.register { client, screen, scaledWidth, scaledHeight ->
             /**
              * GUI Close Event
@@ -123,6 +137,15 @@ object SBOEvent {
                 emit(GuiMouseClickAfter(s, mouseX, mouseY, button))
             }
             //#endif
+        }
+
+        /**
+         * Entity Hit Event
+         * Fired when a player hits an entity.
+         */
+        AttackEntityCallback.EVENT.register { player, world, hand, entity, hitResult ->
+            emit(EntitiyHitEvent(player, world, hand, entity, hitResult))
+            ActionResult.PASS
         }
     }
 

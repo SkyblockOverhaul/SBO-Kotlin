@@ -24,7 +24,6 @@ object HypixelModApi {
     private val partyInfoListeners = mutableListOf<(isInParty: Boolean, isLeader: Boolean, members: List<String>) -> Unit>()
     private val errorListeners = mutableListOf<(packet: ErrorS2CPacket) -> Unit>()
 
-
     fun init() {
         HypixelPacketEvents.HELLO.register(::handlePacket)
         HypixelPacketEvents.PARTY_INFO.register(::handlePacket)
@@ -43,22 +42,10 @@ object HypixelModApi {
 
     private fun handlePacket(packet: HypixelS2CPacket) {
         when (packet) {
-            is HelloS2CPacket -> {
-                onHelloPacket(packet)
-            }
-
-            is LocationUpdateS2CPacket -> {
-                onLocationUpdatePacket(packet)
-            }
-
-            is PartyInfoS2CPacket -> {
-                onPartyInfoPacket(packet)
-            }
-
-            is ErrorS2CPacket -> {
-                onErrorPacket(packet)
-            }
-
+            is HelloS2CPacket -> onHelloPacket(packet)
+            is LocationUpdateS2CPacket -> onLocationUpdatePacket(packet)
+            is PartyInfoS2CPacket -> onPartyInfoPacket(packet)
+            is ErrorS2CPacket -> onErrorPacket(packet)
             else -> {}
         }
     }

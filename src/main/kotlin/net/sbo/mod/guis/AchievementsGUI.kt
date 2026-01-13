@@ -1,5 +1,4 @@
 package net.sbo.mod.guis
-//todo: remake this with Vexel https://github.com/meowing-xyz/vexel
 
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
@@ -8,41 +7,66 @@ import gg.essential.elementa.components.ScrollComponent
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIRoundedRectangle
 import gg.essential.elementa.components.UIText
+import gg.essential.elementa.components.UIWrappedText
+import gg.essential.elementa.components.input.UITextInput
+import gg.essential.elementa.constraints.AdditiveConstraint
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.ChildBasedSizeConstraint
 import gg.essential.elementa.constraints.FillConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
+import gg.essential.elementa.constraints.SubtractiveConstraint
 import gg.essential.elementa.dsl.childOf
 import gg.essential.elementa.dsl.constrain
 import gg.essential.elementa.dsl.percent
 import gg.essential.elementa.dsl.pixels
+import gg.essential.elementa.dsl.toConstraint
+import gg.essential.universal.UKeyboard
 import net.sbo.mod.diana.achievements.Achievement
 import net.sbo.mod.diana.achievements.AchievementManager
 import net.sbo.mod.utils.data.SboDataObject
 import java.awt.Color
 import kotlin.math.floor
+import net.minecraft.util.Formatting
+import net.sbo.mod.SBOKotlin.mc
 
 class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
     enum class AchievementFilter {
         DEFAULT, RARITY, LOCKED, UNLOCKED
     }
 
-    private val rarityOrder = listOf("Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Divine", "Impossible")
+    enum class TypeFilter {
+        ALL, REPEATABLE
+    }
+
+    private val rarityOrder = listOf("Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Divine", "Celestial", "Impossible")
 
     private var filterType = AchievementFilter.DEFAULT
+    private var typeFilter = TypeFilter.ALL
     private var achievementList: List<Achievement> = emptyList()
     private var sboData = SboDataObject.sboData
+    private var searchQuery = ""
 
     private lateinit var contentPanel: UIComponent
     private lateinit var scrollComponent: ScrollComponent
     private lateinit var titleText : UIText
     private lateinit var unlockedCountText: UIText
     private lateinit var filterText: UIText
+    private lateinit var typeText: UIText
     private lateinit var filterButtonOutline: UIRoundedRectangle
+    private lateinit var typeButtonOutline: UIRoundedRectangle
     private lateinit var achievementsContainer: UIBlock
+    private lateinit var searchInputOutline: UIRoundedRectangle
 
     init {
         renderGui()
+
+        window.onKeyType { typedChar, keyCode ->
+            if (keyCode == UKeyboard.KEY_ESCAPE) {
+                mc.send {
+                    displayScreen(null)
+                }
+            }
+        }
     }
 
     override fun initScreen(width: Int, height: Int) {
@@ -52,25 +76,54 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
         renderAchievements()
     }
 
+
     private fun updateAchievementList() {
-        achievementList = AchievementManager.achievements.values.sortedBy { it.id }.let { achievements ->
-            when (filterType) {
-                AchievementFilter.RARITY -> achievements.sortedBy { rarityOrder.indexOf(it.rarity) }
-                AchievementFilter.LOCKED -> achievements.filter { !it.isUnlocked() }
-                AchievementFilter.UNLOCKED -> achievements.filter { it.isUnlocked() }
-                else -> achievements
+        val allAchievements = AchievementManager.achievements.values.toList()
+
+        val typeFilteredStatsBasis = when (typeFilter) {
+            TypeFilter.REPEATABLE -> allAchievements.filter { it.repeatable }
+            TypeFilter.ALL -> allAchievements
+        }
+
+        achievementList = typeFilteredStatsBasis.sortedBy { it.id }.let { base ->
+            val statusFiltered = when (filterType) {
+                AchievementFilter.RARITY -> base.sortedBy { rarityOrder.indexOf(it.rarity) }
+                AchievementFilter.LOCKED -> base.filter { !it.isUnlocked(true) }
+                AchievementFilter.UNLOCKED -> base.filter { it.isUnlocked(true) }
+                else -> base
+            }
+
+            if (searchQuery.isNotEmpty()) {
+                statusFiltered.filter { it.name.contains(searchQuery, ignoreCase = true) ||
+                        it.description.contains(searchQuery, ignoreCase = true) ||
+                        it.rarity.contains(searchQuery, ignoreCase = true) }
+            } else {
+                statusFiltered
             }
         }
 
         if (this::unlockedCountText.isInitialized) {
-            val unlockedAchievements = AchievementManager.achievements.values.count { it.isUnlocked() }
-            val totalAchievements = AchievementManager.achievements.values.count()
-            val unlockedPercentage = (unlockedAchievements.toFloat() / totalAchievements * 100).toFixed(2)
-            unlockedCountText.setText("Unlocked: $unlockedAchievements/$totalAchievements ($unlockedPercentage%)")
+            val unlockedInType = typeFilteredStatsBasis.count { it.isUnlocked(true) }
+            val totalInType = typeFilteredStatsBasis.size
+
+            val unlockedPercentage = if (totalInType > 0) {
+                (unlockedInType.toFloat() / totalInType * 100).toFixed(2)
+            } else "0.00"
+
+            val prefix = when(typeFilter) {
+                TypeFilter.REPEATABLE -> "Repeatable "
+                else -> ""
+            }
+
+            unlockedCountText.setText("${prefix}Unlocked: $unlockedInType/$totalInType ($unlockedPercentage%)")
         }
 
         if (this::filterText.isInitialized) {
             filterText.setText("Filter: ${filterType.name.lowercase().replaceFirstChar { it.uppercase() }}")
+        }
+
+        if (this::typeText.isInitialized) {
+            typeText.setText("Type: ${typeFilter.name.replace("_", "-").lowercase().replaceFirstChar { it.uppercase() }}")
         }
     }
 
@@ -95,10 +148,7 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
         } childOf window
         titleText.setColor(Color.WHITE)
 
-        val unlockedAchievements = AchievementManager.achievements.values.count { it.isUnlocked() }
-        val totalAchievements = AchievementManager.achievements.values.count()
-        val unlockedPercentage = (unlockedAchievements.toFloat() / totalAchievements * 100).toFixed(2)
-        unlockedCountText = UIText("Unlocked: ${AchievementManager.achievementsUnlocked}/${totalAchievements} ($unlockedPercentage%)").constrain {
+        unlockedCountText = UIText("").constrain {
             x = CenterConstraint()
             y = SiblingConstraint(5f)
             textScale = 1.2.pixels
@@ -123,46 +173,109 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
         filterButtonOutline = UIRoundedRectangle(5f).constrain {
             x = achievementsContainer.getLeft().pixels
             y = (achievementsContainer.getTop() - 40).pixels
-            width = 122.pixels
+            width = 90.pixels
             height = 32.pixels
         } childOf window
-        filterButtonOutline.setColor(Color(255, 255, 255, 255)) // White outline color
+        filterButtonOutline.setColor(Color.WHITE)
 
         val filterButton = UIRoundedRectangle(5f).constrain {
             x = CenterConstraint()
             y = CenterConstraint()
-            width = 120.pixels
-            height = 30.pixels
+            width = SubtractiveConstraint(FillConstraint(), 2.pixels)
+            height = SubtractiveConstraint(FillConstraint(), 2.pixels)
         } childOf filterButtonOutline
         filterButton.setColor(Color.BLACK)
 
-        filterText = UIText("Filter: ${filterType.name.lowercase().replaceFirstChar { it.uppercase() }}").constrain {
+        filterText = UIText("").constrain {
             x = CenterConstraint()
             y = CenterConstraint()
-            textScale = 1.0.pixels
         } childOf filterButton
-        filterText.setColor(Color.WHITE)
 
-        filterButton.onMouseClick { event ->
-            val filterOptions = AchievementFilter.entries.toTypedArray()
-            val currentIndex = filterOptions.indexOf(filterType)
-            filterType = if (event.mouseButton == 0) {
-                filterOptions[(currentIndex + 1) % filterOptions.size]
-            } else {
-                filterOptions[(currentIndex + filterOptions.size - 1) % filterOptions.size]
-            }
+        filterButton.onMouseClick {
+            val options = AchievementFilter.entries.toTypedArray()
+            filterType = options[(filterType.ordinal + 1) % options.size]
             sboData.achievementFilter = filterType.name
             SboDataObject.save("SboData")
             updateAchievementList()
             renderAchievements()
         }
+
+        typeButtonOutline = UIRoundedRectangle(5f).constrain {
+            x = SiblingConstraint(10f)
+            y = (achievementsContainer.getTop() - 40).pixels
+            width = 110.pixels
+            height = 32.pixels
+        } childOf window
+        typeButtonOutline.setColor(Color.WHITE)
+
+        val typeButton = UIRoundedRectangle(5f).constrain {
+            x = CenterConstraint()
+            y = CenterConstraint()
+            width = SubtractiveConstraint(FillConstraint(), 2.pixels)
+            height = SubtractiveConstraint(FillConstraint(), 2.pixels)
+        } childOf typeButtonOutline
+        typeButton.setColor(Color.BLACK)
+
+        typeText = UIText("").constrain {
+            x = CenterConstraint()
+            y = CenterConstraint()
+        } childOf typeButton
+
+        typeButton.onMouseClick {
+            val options = TypeFilter.entries.toTypedArray()
+            typeFilter = options[(typeFilter.ordinal + 1) % options.size]
+            updateAchievementList()
+            renderAchievements()
+        }
+
+        searchInputOutline = UIRoundedRectangle(5f).constrain {
+            x = (achievementsContainer.getRight() - 100).pixels
+            y = (achievementsContainer.getTop() - 40).pixels
+            width = 100.pixels
+            height = 32.pixels
+        } childOf window
+        searchInputOutline.setColor(Color.WHITE)
+
+        val searchInputBg = UIRoundedRectangle(5f).constrain {
+            x = CenterConstraint()
+            y = CenterConstraint()
+            width = SubtractiveConstraint(FillConstraint(), 2.pixels)
+            height = SubtractiveConstraint(FillConstraint(), 2.pixels)
+        } childOf searchInputOutline
+        searchInputBg.setColor(Color.BLACK)
+
+        val searchInput = UITextInput("Search...").constrain {
+            x = 5.pixels
+            y = AdditiveConstraint(CenterConstraint(), 3.pixels)
+            width = SubtractiveConstraint(FillConstraint(), 5.pixels)
+            height = 15.pixels
+        } childOf searchInputBg
+
+        searchInputBg.onMouseClick {
+            searchInput.grabWindowFocus()
+            searchInput.focus()
+        }
+
+        searchInput.onKeyType { _, _ ->
+            searchQuery = searchInput.getText()
+            updateAchievementList()
+            renderAchievements()
+        }
+
+        searchInputBg.onMouseEnter { searchInputOutline.setColor(Color.CYAN) }
+        searchInputBg.onMouseLeave { searchInputOutline.setColor(Color.WHITE) }
+        typeButton.onMouseEnter { typeButtonOutline.setColor(Color.CYAN) }
+        typeButton.onMouseLeave { typeButtonOutline.setColor(Color.WHITE) }
+        filterButton.onMouseEnter { filterButtonOutline.setColor(Color.CYAN) }
+        filterButton.onMouseLeave { filterButtonOutline.setColor(Color.WHITE) }
+
     }
 
     private fun renderAchievements() {
         contentPanel.clearChildren()
 
         val achievementBoxWidth = 200f
-        val achievementBoxHeight = 45f
+        val achievementBoxHeight = 55f
         val spacingX = 20f
         val spacingY = 20f
         val columns = floor((scrollComponent.getWidth() - spacingX) / (achievementBoxWidth + spacingX)).toInt()
@@ -172,7 +285,35 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
         var lastY = 0f
 
         filterButtonOutline.constrain {
-            x = (achievementsContainer.getLeft() + centeringOffset).pixels
+            x = when (columns) {
+                2 -> {
+                    (achievementsContainer.getLeft() + centeringOffset - 80).pixels
+                }
+                1 -> {
+                    (achievementsContainer.getLeft() + centeringOffset - 120).pixels
+                }
+                else -> {
+                    (achievementsContainer.getLeft() + centeringOffset).pixels
+                }
+            }
+            y = if (columns == 1) {
+                (achievementsContainer.getTop() - 15).pixels
+            } else {
+                (achievementsContainer.getTop() - 40).pixels
+            }
+        }
+
+        typeButtonOutline.constrain {
+            x = SiblingConstraint(10f)
+            y = if (columns == 1) {
+                (achievementsContainer.getTop() - 15).pixels
+            } else {
+                (achievementsContainer.getTop() - 40).pixels
+            }
+        }
+
+        searchInputOutline.constrain {
+            x = (achievementsContainer.getRight() - centeringOffset - 100).pixels
             y = if (columns == 1) {
                 (achievementsContainer.getTop() - 15).pixels
             } else {
@@ -196,7 +337,8 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
             val posX = centeringOffset + (column * (achievementBoxWidth + spacingX))
             val posY = spacingY + (row * (achievementBoxHeight + spacingY))
             lastY = posY
-            val borderColor = if (achievement.isUnlocked()) Color(0, 255, 0) else Color(255, 0, 0)
+            val borderColor = if (achievement.isUnlocked(true)) Color(0, 255, 0) else Color(255, 0, 0)
+            val achievementColor =  if (achievement.rarity != "Celestial") Color(Formatting.byCode(achievement.color[1])?.colorValue ?: 0xFFFFFF) else Color(0x7D00FF)
 
             val roundedOutline = UIRoundedRectangle(5f).constrain {
                 x = posX.pixels
@@ -211,20 +353,24 @@ class AchievementsGUI : WindowScreen(ElementaVersion.V10) {
                 width = achievementBoxWidth.pixels
                 height = achievementBoxHeight.pixels
             }.setColor(Color(0, 0, 0, 255))
-                .addChild(UIText(achievement.getDisplayName()).constrain {
+                .addChild(UIText(achievement.name).constrain {
                     x = 5.pixels
                     y = 5.pixels
                     textScale = 1.0.pixels
+                    color = achievementColor.toConstraint()
                 })
-                .addChild(UIText("§7${achievement.description}").constrain {
+                .addChild(UIWrappedText("§7${achievement.description}").constrain {
                     x = 5.pixels
                     y = SiblingConstraint(5f)
+                    width = SubtractiveConstraint(achievementBoxWidth.pixels, 5.pixels)
+                    height = 18.pixels
                     textScale = 1.0.pixels
                 })
-                .addChild(UIText("${achievement.color}${achievement.rarity}").constrain {
+                .addChild(UIText(achievement.rarity).constrain {
                     x = 5.pixels
                     y = SiblingConstraint(5f)
                     textScale = 0.8.pixels
+                    color = achievementColor.toConstraint()
                 }) childOf roundedOutline
 
             roundedOutline childOf contentPanel

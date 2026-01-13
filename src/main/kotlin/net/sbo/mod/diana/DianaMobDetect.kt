@@ -103,6 +103,8 @@ object DianaMobDetect {
                     continue
                 }
 
+                checkCocoon(entity)
+
                 val name = entity.customName?.formattedString() ?: entity.name.formattedString()
                 if (name.contains("§2✿", ignoreCase = true)) {
                     tracked[id] = entity
@@ -127,7 +129,7 @@ object DianaMobDetect {
                     defeated.remove(id)
                     continue
                 }
-                checkCocoon(armorStand)
+
                 checkDianaMob(armorStand, id)?.let { overlayLines.add(it) }
 
                 val result = checkStarlessMob(armorStand, id, player, closestStarlessMob, closestDistanceSq)
@@ -236,7 +238,7 @@ object DianaMobDetect {
             }
             if (Diana.cocoonTitle) {
                 showTitle("§r§6§l<§b§l§kO§6§l> §b§lCOCOON! §6§l<§b§l§kO§6§l>", null, 10, 40, 10)
-                playCustomSound(Customization.inqSound[0], Customization.inqVolume)
+                playCustomSound(Customization.cocoonSound[0], Customization.cocoonVolume)
             }
         }
     }
@@ -267,10 +269,39 @@ object DianaMobDetect {
             Chat.command("pc x: ${playerPos.x.roundToInt()}, y: ${playerPos.y.roundToInt() - 1}, z: ${playerPos.z.roundToInt()} | $mob")
         }
 
-        Diana.announceKilltext.firstOrNull()?.let { killText ->
-            if (killText.isNotBlank()) {
-                sleep(ANNOUNCE_DELAY_MS) { Chat.command("pc " + Diana.announceKilltext[0]) }
+        when (mob) {
+            RareDianaMob.INQ.display -> {
+                Diana.announceInqText.firstOrNull()?.let { killText ->
+                    if (killText.isNotBlank()) {
+                        sleep(ANNOUNCE_DELAY_MS) { Chat.command("pc " + Diana.announceInqText[0]) }
+                    }
+                }
+            }
+
+            RareDianaMob.SPHINX.display -> {
+                Diana.announceSphinxText.firstOrNull()?.let { killText ->
+                    if (killText.isNotBlank()) {
+                        sleep(ANNOUNCE_DELAY_MS) { Chat.command("pc " + Diana.announceSphinxText[0]) }
+                    }
+                }
+            }
+
+            RareDianaMob.MANTI.display -> {
+                Diana.announceMantiText.firstOrNull()?.let { killText ->
+                    if (killText.isNotBlank()) {
+                        sleep(ANNOUNCE_DELAY_MS) { Chat.command("pc " + Diana.announceMantiText[0]) }
+                    }
+                }
+            }
+
+            RareDianaMob.KING.display -> {
+                Diana.announceKingText.firstOrNull()?.let { killText ->
+                    if (killText.isNotBlank()) {
+                        sleep(ANNOUNCE_DELAY_MS) { Chat.command("pc " + Diana.announceKingText[0]) }
+                    }
+                }
             }
         }
+
     }
 }

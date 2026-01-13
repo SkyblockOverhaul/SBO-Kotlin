@@ -67,6 +67,7 @@ object DianaLoot {
     )
 
     private val LOOT_ITEMS = listOf<LootItemData>(
+        LootItemData("MYTHOLOGICAL_DYE", "Mythological Dye", RED),
         LootItemData("SHIMMERING_WOOL", "Shimmering Wool", RED, combined = true, dropMobId = "KING_MINOS", dropMobLsId = "KING_MINOS_LS"),
         LootItemData("MANTI_CORE", "Manti-core", RED, combined = true, dropMobId = "MANTICORE", dropMobLsId = "MANTICORE_LS"),
         LootItemData("KING_MINOS_SHARD", "King Minos Shard", RED, isRarerDrop = true, dropMobId = "KING_MINOS"),
@@ -156,11 +157,15 @@ object DianaLoot {
         val totalAmount = amountBase + amountLs
         val priceLs = Helper.getItemPriceFormatted(itemNameLs.replace("_LS", ""), amountLs)
         val priceCombined = Helper.getItemPriceFormatted(itemNameBase, totalAmount)
+        val percent = data.dropMobId?.let { dropId ->
+            calcPercentOne(tracker.items, tracker.mobs, itemNameBase, dropId)
+        }
+        val percentText = percent?.let { " $GRAY($AQUA${it}%$GRAY)" } ?: ""
         val percentLs = data.dropMobLsId?.let { dropLsId ->
             calcPercentOne(tracker.items, tracker.mobs, itemNameLs, dropLsId)
         }
         val percentLsText = percentLs?.let { " $GRAY($AQUA${it}%$GRAY)" } ?: ""
-        val baseText = "$GOLD$priceCombined $GRAY| ${data.color}${data.name}: $AQUA${Helper.formatNumber(amountBase, true)}"
+        val baseText = "$GOLD$priceCombined $GRAY| ${data.color}${data.name}: $AQUA${Helper.formatNumber(amountBase, true)}$percentText"
         val lsText = "$GOLD$priceLs $GRAY| ${data.color}${data.name} $GRAY[${AQUA}LS$GRAY]: $AQUA${Helper.formatNumber(amountLs, true)}$percentLsText"
         val combinedText = "$baseText $GRAY[${AQUA}LS$GRAY:$AQUA${Helper.formatNumber(amountLs, true)}$GRAY]"
 
@@ -296,7 +301,7 @@ object DianaLoot {
     }
 
     private fun createProfitLine(totalProfitValue: Long, profitPerHr: Any, profitPerBurrow: Any): OverlayTextLine {
-        val pphText = if (profitPerHr == "NaN" || profitPerHr == "0.0") "" else " $GRAY[$AQUA$profitPerHr$GRAY/${AQUA}hr$GRAY]"
+        val pphText = if (profitPerHr == "NaN" || profitPerHr == "0.0") "" else "$GRAY[$AQUA$profitPerHr$GRAY/${AQUA}hr$GRAY]"
         return OverlayTextLine("${YELLOW}Total Profit: $AQUA${Helper.formatNumber(totalProfitValue)} $pphText")
             .onHover { drawContext, textRenderer ->
                 val scaleFactor = mc.window.scaleFactor
