@@ -453,8 +453,8 @@ object Helper {
 
         val resultText = info.template
             .replace("{amount}", info.totalAmount.toString())
-            .replace("{percentage}", "%.2f".format(info.percentage))
-            .replace("{mf}", magicFind.toString())
+            .replace("{percentage}", "%.2f".format(info.percentage) + "%")
+            .replace("{mf}", if (magicFind > 0) "$magicFind" else "")
             .replace('&', '§')
 
         return Pair(true, resultText)

@@ -533,7 +533,6 @@ object DianaTracker {
                     } else {
                         announceLootToParty("Brain Food!", "Brain Food!$mfPrefix")
                     }
-
                 }
                 drop.contains("Daedalus Stick") -> {
                     playCustomSound(Customization.stickSound[0], Customization.stickVolume)
@@ -664,6 +663,7 @@ object DianaTracker {
         if (customMsg != null) msg = customMsg.removeFormatting()
 
         if (replaceDropMessage) {
+            if (customMsg != null) Chat.chat(customMsg)
             Chat.command("pc $msg")
         } else {
             lootAnnouncerBuffer.add(msg)
