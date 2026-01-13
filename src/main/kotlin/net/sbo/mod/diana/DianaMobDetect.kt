@@ -103,6 +103,8 @@ object DianaMobDetect {
                     continue
                 }
 
+                checkCocoon(entity)
+                
                 val name = entity.customName?.formattedString() ?: entity.name.formattedString()
                 if (name.contains("§2✿", ignoreCase = true)) {
                     tracked[id] = entity
@@ -127,7 +129,7 @@ object DianaMobDetect {
                     defeated.remove(id)
                     continue
                 }
-                checkCocoon(armorStand)
+
                 checkDianaMob(armorStand, id)?.let { overlayLines.add(it) }
 
                 val result = checkStarlessMob(armorStand, id, player, closestStarlessMob, closestDistanceSq)
