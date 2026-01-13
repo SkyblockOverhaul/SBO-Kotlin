@@ -104,7 +104,7 @@ object DianaMobDetect {
                 }
 
                 checkCocoon(entity)
-                
+
                 val name = entity.customName?.formattedString() ?: entity.name.formattedString()
                 if (name.contains("§2✿", ignoreCase = true)) {
                     tracked[id] = entity
