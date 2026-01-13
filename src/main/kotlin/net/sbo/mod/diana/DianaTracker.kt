@@ -661,7 +661,7 @@ object DianaTracker {
     fun announceLootToParty(item: String, customMsg: String? = null, replaceDropMessage: Boolean = false) {
         if (!Diana.lootAnnouncerParty) return
         var msg = Helper.toTitleCase(item.replace("_LS", "").replace("_", " "))
-        if (customMsg != null) msg = customMsg.removeFormatting()
+        if (customMsg != null) msg = customMsg.removeFormatting().replace("&", "")
 
         if (replaceDropMessage) {
             Chat.command("pc $msg")
