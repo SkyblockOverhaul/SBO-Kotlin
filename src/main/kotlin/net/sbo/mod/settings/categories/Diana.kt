@@ -189,6 +189,11 @@ object Diana : CategoryKt("Diana") {
         this.description = Literal("Shows stats like Mobs since Inquisitor, Inquisitors since Chimera, /sboguis to move the overlay")
     }
 
+    var resetSessionOnGameRestart by boolean(true) {
+        this.name = Literal("Reset Session on Game Restart")
+        this.description = Literal("Resets the Diana session tracker when you restart Minecraft")
+    }
+
     var magicFindTracker by boolean(false) {
         this.name = Literal("Magic Find Tracker")
         this.description = Literal("Shows your highest magic find for sticks and chimeras (only after you dropped it once), /sboguis to move the overlay")
