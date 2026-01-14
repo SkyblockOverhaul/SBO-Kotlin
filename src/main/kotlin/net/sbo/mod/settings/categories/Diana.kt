@@ -189,7 +189,7 @@ object Diana : CategoryKt("Diana") {
         this.description = Literal("Shows stats like Mobs since Inquisitor, Inquisitors since Chimera, /sboguis to move the overlay")
     }
 
-    var resetSessionOnGameRestart by boolean(true) {
+    var resetSessionOnGameRestart by boolean(false) {
         this.name = Literal("Reset Session on Game Restart")
         this.description = Literal("Resets the Diana session tracker when you restart Minecraft")
     }
@@ -518,4 +518,5 @@ object Diana : CategoryKt("Diana") {
         this.name = Literal("Sphinx Solver")
         this.description = Literal("Helps you solve the sphinx riddle by showing you the answer choices in chat and it automatically clicks the correct one for you when you click anywehre while the chat is open.")
     }
+
 }
